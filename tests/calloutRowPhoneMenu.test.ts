@@ -21,9 +21,9 @@ function harness(test: TestContext): Harness {
 
 /** Native phone presentation can hide the keyboard before show returns. */
 function duringShow(menu: Menu, effect: () => void): void {
-	const show = menu.showAtMouseEvent.bind(menu);
-	menu.showAtMouseEvent = (event) => {
-		const result = show(event);
+	const show = menu.showAtPosition.bind(menu);
+	menu.showAtPosition = (position, doc) => {
+		const result = show(position, doc);
 		effect();
 		return result;
 	};

@@ -2,9 +2,12 @@
  * editor/CalloutMetadataSuggest.ts — the dropdown after `[!type|`.
  *
  * Opens once the cursor is past a token's first `|` and still inside it: the
- * colours a callout can take from its metadata, then the words the active
- * theme and snippets react to (`metadataSuggestions.ts` decides which, and
- * what each pick writes).
+ * colours a callout can take from its metadata, then the user's own words,
+ * then the words the active theme and snippets react to
+ * (`metadataSuggestions.ts` decides which, and what each pick writes).
+ * Settings → Editor → Metadata can turn it off (on its own: the type
+ * dropdown has a switch of its own), leave the theme's words out, and holds
+ * the user's words.
  *
  * ## Keys, mirroring the type dropdown
  *
@@ -30,7 +33,8 @@
  * the callout editor's colour menu draws (a third for a gradient), a theme's
  * word in code type. When the rows come from more than one place, each group
  * sits under a sticky heading — **Colors**, the theme's name, a snippet's.
- * What a row needs to work (spaces, first or last, which colour it replaces)
+ * **Use "…"** belongs to none of them, so a thin line sets it apart from
+ * whatever is above it. What a row needs to work (spaces, first or last, which colour it replaces)
  * is said once, on a line at the bottom, for the highlighted row only.
  *
  * Closes itself before writing, as the type dropdown does: Admonition's own
@@ -75,6 +79,8 @@ import {
 } from "./calloutWriter";
 import { scanLineForCalloutTokens, tokenEnd } from "./calloutTokens";
 import type { CalloutRenderRole } from "../types";
+import { createSuggestionRow } from "../ui/suggestionRow";
+import type { MetadataWordSource } from "../manager/theme/ThemeMetadataCatalog";
 
 /** Fewer than Obsidian's 100: flexcyon alone reacts to ~700 words. */
 const ROW_LIMIT = 50;
@@ -116,6 +122,8 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 		editor: Editor,
 		_file: TFile | null,
 	): EditorSuggestTriggerInfo | null {
+		// Settings → Editor → Metadata → Metadata autocomplete.
+		if (!this.plugin.settings.suggestions.metadata) return null;
 		const text = editor.getLine(cursor.line);
 		const trigger = readCalloutTrigger(text, cursor.ch, this.plugin.settings);
 		if (!trigger || trigger.pipeCh === -1) return null;
@@ -155,20 +163,25 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 		// The injector's, so a colour its stylesheet stands down on (a word the
 		// user's own snippet styles) is never offered as one.
 		const injector = this.plugin.cssInjector;
+		const { suggestions } = this.plugin.settings;
+		const styling = injector.metadataCatalog.sourcesNow();
+		// The theme's words only while the user wants them; a snippet is the
+		// user's own CSS and always speaks. The user's own list comes first.
+		const offered = suggestions.themeMetadata
+			? styling
+			: styling.filter((source) => source.origin !== "theme");
+		const own = ownWordsSource(suggestions.metadataWords);
 		const rows = buildMetadataSuggestions({
 			slot,
 			calloutId: slot.calloutId,
-			// A block callout under a name this plugin leaves to the theme (or,
-			// for a stock alias, to Obsidian) is not ours even when the rest of
-			// the callout is.
-			themeOwned:
-				!resolved.unknown &&
-				(resolved.themeOwned ||
-					(slot.role === "regular" &&
-						resolved.def !== undefined &&
-						this.plugin.registry.leavesBlockName(resolved.def, slot.calloutId))),
+			// A block callout takes a metadata colour even when the theme draws
+			// it (the stylesheet repaints its frame, title and icon). Heading
+			// and inline callouts are our own DOM, which a theme-owned type does
+			// not get at all, so there is nothing for a colour to paint.
+			themeOwned: slot.role !== "regular" && !resolved.unknown && resolved.themeOwned,
 			colors: injector.metadataColorEntries(),
-			sources: injector.metadataCatalog.sourcesNow(),
+			sources: own ? [own, ...offered] : offered,
+			styling,
 			locale: getLocale(),
 		}).slice(0, ROW_LIMIT);
 		// Headings over the rows that will actually show, not the ones cut off.
@@ -228,36 +241,47 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 			});
 			parent.insertBefore(headingEl, el);
 		}
-		el.addClass("callout-studio-suggestion");
-		const iconEl = el.createDiv({ cls: "callout-studio-suggestion-icon" });
-		const textEl = el.createDiv({ cls: "callout-studio-suggestion-text" });
-		const name = (text: string) =>
-			textEl.createDiv({ cls: "callout-studio-suggestion-name", text });
-
+		// Obsidian's suggestion anatomy, as in the `[!` popover (S10-16): a
+		// small icon, then the words in the list's normal text colour.
 		switch (item.kind) {
-			case "finish":
+			case "finish": {
+				const { iconEl } = createSuggestionRow(el, { title: t("metadataSuggest.finish") });
 				setIcon(iconEl, "corner-down-left");
-				name(t("metadataSuggest.finish"));
 				return;
-			case "typed":
-				el.addClass("callout-studio-suggestion-create-new");
+			}
+			case "typed": {
+				// A line above it: it belongs to none of the groups above (a
+				// theme's, say), and without one it read as their last word. A
+				// sibling, like the headings, so the arrow keys pass it by.
+				if (parent && el.previousElementSibling) {
+					parent.insertBefore(parent.createDiv({ cls: "cs-meta-suggestion-separator" }), el);
+				}
+				const { iconEl } = createSuggestionRow(el, {
+					title: t("metadataSuggest.useTyped", { text: item.text }),
+				});
 				setIcon(iconEl, "text-cursor-input");
-				name(t("metadataSuggest.useTyped", { text: item.text }));
+				// Kept as a hook; the row looks like any other now.
+				el.addClass("callout-studio-suggestion-create-new");
 				return;
-			case "theme":
-				setIcon(iconEl, "brush");
-				name(item.word.word).addClass("cs-meta-suggestion-word");
+			}
+			case "theme": {
+				const { iconEl, titleEl } = createSuggestionRow(el, { title: item.word.word });
+				// A word the user added wears a person; a stylesheet's, a brush.
+				setIcon(iconEl, item.origin === "user" ? "user" : "brush");
+				titleEl.addClass("cs-meta-suggestion-word");
 				return;
+			}
 			case "color": {
-				// The word alone, in its colour: it is what gets written, and the
-				// palette's display name would only say it twice.
-				const colors = resolveCurrentModeColors(item.entry.palette);
-				renderColorCircles(iconEl, colors, { size: 14 });
-				const nameEl = name(item.entry.key);
-				nameEl.addClass("cs-meta-suggestion-word");
-				nameEl.style.color = colors.accent;
+				// The word alone, beside its colours, as Obsidian's own
+				// highlight-colour suggestions put a swatch beside the colour's
+				// name: it is what gets written, and the palette's display name
+				// would only say it twice. The colours are in the circles, so the
+				// word is in normal text (until 2026-10-24 it wore the accent).
+				const { iconEl, titleEl } = createSuggestionRow(el, { title: item.entry.key, slot: "swatch" });
+				renderColorCircles(iconEl, resolveCurrentModeColors(item.entry.palette), { size: 14 });
+				titleEl.addClass("cs-meta-suggestion-word");
 				if (item.viaAlias) {
-					nameEl.createSpan({ cls: "cs-meta-suggestion-alias", text: ` · ${item.viaAlias}` });
+					titleEl.createSpan({ cls: "cs-meta-suggestion-alias", text: ` · ${item.viaAlias}` });
 				}
 				return;
 			}
@@ -364,6 +388,20 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 		);
 		placeCursorAfterPick(editor, lineNo, "regular", existingTitle === "");
 	}
+}
+
+/**
+ * The user's own words (Settings → Editor → Metadata → Your words) as one more
+ * group of words, or null when there are none. Each may stand anywhere and
+ * on any callout: the user added it, so the user knows where it goes.
+ */
+function ownWordsSource(words: readonly string[]): MetadataWordSource | null {
+	if (words.length === 0) return null;
+	return {
+		label: t("metadataSuggest.yourWords"),
+		origin: "user",
+		words: words.map((word) => ({ word, placement: "anywhere", guards: null })),
+	};
 }
 
 /**

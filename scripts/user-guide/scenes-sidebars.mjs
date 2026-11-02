@@ -6,19 +6,18 @@ import { createOccurrencesFrame } from "../../src/usage/occurrencesViewFrame.ts"
 import { OccurrenceResults } from "../../src/usage/occurrenceResults.ts";
 import { OccurrenceTypeChoices, occurrencePickerChoices, ALL_TYPES_ID } from "../../src/usage/occurrenceTypeChoices.ts";
 import { scanCalloutOccurrences } from "../../src/usage/scanCalloutOccurrences.ts";
-import { SettingsRecoveryModal } from "../../src/settings/SettingsRecoveryModal.ts";
+import { VERSION_HISTORY_PAGE } from "../../src/settings/declarative/versionHistoryPage.ts";
 import { SettingsRecoveryDetailsModal } from "../../src/settings/SettingsRecoveryDetailsModal.ts";
 import { mergeVersions } from "../../src/manager/setupVersions.ts";
 import { setupDetails } from "../../src/manager/setupDetails.ts";
 import { differingEntries } from "../../src/manager/setupDifference.ts";
-import { renderSaveStatusBanner } from "../../src/settings/saveStatusBanner.ts";
-import { renderBackupSection, renderResetSection } from "../../src/settings/sections/DataManagementSection.ts";
+import { confirmAndResetEverything } from "../../src/settings/resetEverything.ts";
 import { createPortableConversionFrame, updatePortableSelection } from "../../src/portable/portableConversionFrame.ts";
 import { portableConversionRows, renderPortableConversionRows } from "../../src/portable/portableConversionRows.ts";
 import { preparePortableCalloutConversion } from "../../src/utils/portableCalloutVault.ts";
 import { PortableConversionHelpModal } from "../../src/portable/PortableConversionHelpModal.ts";
 import { QuickInsertModal } from "../../src/settings/QuickInsertModal.ts";
-import { openModal } from "./fixture-host.mjs";
+import { mountSettings, openModal, settingsContext } from "./fixture-host.mjs";
 
 const copy = value => JSON.parse(JSON.stringify(value));
 const waitFor = async predicate => {
@@ -40,15 +39,17 @@ function seedCallouts(plugin) {
 	plugin.cssInjector.inject(false);
 }
 
-function panel(cls, width = 780) {
-	const el = document.body.createDiv({ cls, attr: { id: "guide-scene" } });
-	el.style.width = `${width}px`;
-	return el;
-}
 
-function clearFileHeadingBackgrounds(root) {
-	// These static illustrations keep file labels on the surrounding surface.
-	for (const heading of root.querySelectorAll(".cs-sidebar-file-heading")) heading.style.background = "transparent";
+/**
+ * A sidebar view as Obsidian lays it out: the leaf's content, and in it the
+ * view's content, which is returned. (The pane's icon button, help or filter,
+ * is drawn by the pane's own frame, at the end of its first row.)
+ */
+function sidebarPanel(cls, width, height) {
+	const leaf = document.body.createDiv({ cls: "workspace-leaf-content", attr: { id: "guide-scene" } });
+	leaf.style.width = `${width}px`;
+	leaf.style.height = `${height}px`;
+	return leaf.createDiv({ cls: `view-content ${cls}` });
 }
 
 const noteSources = {
@@ -78,9 +79,8 @@ async function findScene(plugin, pickerOpen) {
 	const all = Object.entries(noteSources).flatMap(([path, text]) => scanCalloutOccurrences(path, text));
 	const index = { dataRevision: 1, query: () => ({ occurrences: all, fileCount: Object.keys(noteSources).length }) };
 	const types = new OccurrenceTypeChoices(plugin.registry, index);
-	const root = panel("view-content cs-occurrences-view", 640);
-	root.style.height = "650px";
-	const frame = createOccurrencesFrame(root);
+	const root = sidebarPanel("cs-occurrences-view", 640, 650);
+	const frame = createOccurrencesFrame(root, () => {});
 	let selected = pickerOpen ? ALL_TYPES_ID : "project";
 	const picker = new CalloutCombobox(frame.pickerHost, {
 		registry: plugin.registry, choices: () => occurrencePickerChoices(types, selected), value: selected,
@@ -94,21 +94,26 @@ async function findScene(plugin, pickerOpen) {
 	const shown = pickerOpen ? all : all.filter(row => row.rawId === "project");
 	frame.summary.setText(t("usage.summary", { count: shown.length, files: new Set(shown.map(row => row.path)).size }));
 	new OccurrenceResults(100).render(frame.results, shown, 100, true, () => {}, () => {});
-	clearFileHeadingBackgrounds(frame.results);
 	if (pickerOpen) {
-		const input = frame.pickerHost.querySelector("input");
-		input.click();
+		// The field opens the list; its search box is inside the list.
+		const field = frame.pickerHost.querySelector(".cs-combobox .cs-dropdown-field");
+		field.click();
+		await waitFor(() => field.getAttribute("aria-expanded") === "true");
 		// A real search makes registered and note-only choices visible together.
+		const input = frame.pickerHost.querySelector(".cs-combobox input");
 		input.value = "de";
 		input.dispatchEvent(new Event("input", { bubbles: true }));
-		await waitFor(() => input.getAttribute("aria-expanded") === "true");
 	}
 	return metadata(pickerOpen ? "Find callouts: searchable type picker" : "Find callouts: Project note occurrences",
 		pickerOpen ? "The production CalloutCombobox searches registered types and the unregistered idea type derived by the real source scanner from synthetic notes."
 			: "The production occurrences sidebar frame and cards show source references to project across three synthetic notes, with block and heading formats counted separately.");
 }
 
-function recoveryFixture(plugin) {
+/**
+ * `older` adds one version beneath the three the guide shows: a window that
+ * cuts the list off (the website's) needs a row for the rail to run into.
+ */
+function recoveryFixture(plugin, { older = false } = {}) {
 	seedCallouts(plugin);
 	const current = copy(plugin.registry.toSaveData());
 	const previous = copy(current);
@@ -119,16 +124,33 @@ function recoveryFixture(plugin) {
 	const oldest = copy(previous);
 	oldest.callouts = oldest.callouts.filter(row => row.id !== "meeting");
 	const source = (data, kind, time, reason) => ({ kind, time, reason, data, origin: "this-device", path: kind === "backup" ? ".obsidian/plugins/callout-studio/backups/example.json" : null, historyHash: kind === "history" ? `fixture-${time}` : null });
+	// Times on the day the guide is drawn and the day before, so the day
+	// headings read "today" and "yesterday" whenever the pictures are made.
+	// (The clock time is set, not added to midnight: on a daylight-saving day
+	// the hours from midnight are not the time on the clock.)
+	const at = (daysAgo, hours, minutes) => {
+		const time = new Date();
+		time.setDate(time.getDate() - daysAgo);
+		time.setHours(hours, minutes, 0, 0);
+		return time.getTime();
+	};
 	const sources = [
-		source(current, "history", 1791093600000, "edit"),
-		source(previous, "backup", 1791089400000, "before-import"),
-		source(oldest, "backup", 1791003000000, "before-reset"),
-		source(oldest, "history", 1791002400000, "edit"),
+		source(current, "history", at(0, 9, 0), "edit"),
+		source(previous, "backup", at(0, 7, 50), "before-import"),
+		source(oldest, "backup", at(1, 7, 50), "before-reset"),
+		source(oldest, "history", at(1, 7, 40), "edit"),
 	];
+	if (older) {
+		// A colour of its own makes it a setup of its own: one setup kept in two
+		// places is one row.
+		const earliest = copy(oldest);
+		earliest.callouts.find(row => row.id === "project").colorDark = "#f472b6";
+		sources.push(source(earliest, "history", at(1, 7, 10), "edit"));
+	}
 	const versions = mergeVersions(sources);
 	plugin.recovery = {
 		listVersions: async () => versions,
-		difference: data => ({ callouts: data.callouts?.length ?? 0, changed: differingEntries(current, data).size }),
+		differences: () => data => ({ callouts: data.callouts?.length ?? 0, changed: differingEntries(current, data).size }),
 		details: (source, version) => ({ ...setupDetails(source, current), version }),
 		restore: async () => { throw new Error("Guide fixtures never restore settings"); },
 		removeVersion: async () => { throw new Error("Guide fixtures never delete backups"); },
@@ -136,11 +158,10 @@ function recoveryFixture(plugin) {
 	return { current, previous, versions };
 }
 
-async function historyScene(plugin) {
-	recoveryFixture(plugin);
-	const modal = new SettingsRecoveryModal(plugin.app, plugin);
-	const result = openModal(modal, { title: "Version history", description: "The actual version-history timeline compares synthetic saved setups with the current setup. The entries and timestamps are documentation fixtures." });
-	await waitFor(() => modal.contentEl.querySelector(".cs-recovery-row"));
+async function historyScene(plugin, options) {
+	recoveryFixture(plugin, options);
+	const result = mountSettings(plugin, { path: [VERSION_HISTORY_PAGE], title: "Version history", description: "The actual version-history page draws a timeline of synthetic saved setups, each compared with the current setup. The entries and timestamps are documentation fixtures." });
+	await waitFor(() => document.querySelector("#guide-scene .cs-recovery-row"));
 	return result;
 }
 
@@ -159,20 +180,12 @@ async function pausedScene(plugin) {
 		isFrozen: true, hasRecoveryState: true,
 		status: { reason: "missing", frozenReason: "missing", subscribe: () => () => {} },
 	});
-	const root = panel("guide-saving-panels", 780);
-	const savingPanel = root.createDiv({ cls: "callout-studio-settings cs-settings-paused guide-settings" });
-	// The real settings pane removes its top inset; this standalone crop needs it.
-	savingPanel.style.setProperty("padding", "32px", "important");
-	renderSaveStatusBanner(plugin, savingPanel, { retry: async () => false, startFresh: async () => false, showBackup() {}, pausedNote: true });
-	const historyPanel = root.createDiv({ cls: "callout-studio-settings cs-settings-paused guide-settings" });
-	historyPanel.style.setProperty("padding", "32px", "important");
-	renderBackupSection({ app: plugin.app, plugin, display() {}, registerDisposer() {} }, historyPanel);
-	// A standalone section needs no divider or gap above its first heading.
-	const historyHeading = historyPanel.querySelector(".setting-item-heading");
-	historyHeading.style.setProperty("margin-top", "0");
-	historyHeading.style.setProperty("padding-top", "0");
-	historyHeading.style.setProperty("border-top", "none");
-	return metadata("Saving paused: missing settings file", "Two separately framed settings crops show the actual Saving is paused banner above the production Version history section, with a visible gap between them. No settings file is read or written.");
+	Object.assign(plugin, { retrySettingsRecovery: async () => false, startFreshSettings: async () => false });
+	return mountSettings(plugin, {
+		boxes: ["banners", "version-history"],
+		title: "Saving paused: missing settings file",
+		description: "The settings' main page while saving is paused, showing only its first box, the actual Saving is paused notice, and the Version history box further down the page. No settings file is read or written.",
+	});
 }
 
 async function conversionScene(plugin) {
@@ -182,25 +195,20 @@ async function conversionScene(plugin) {
 	};
 	syntheticVault(plugin, conversionSources);
 	const plan = await preparePortableCalloutConversion(plugin.app);
-	const root = panel("view-content cs-portable-view", 640);
-	root.style.height = "670px";
-	const frame = createPortableConversionFrame(root);
+	const root = sidebarPanel("cs-portable-view", 640, 670);
+	const frame = createPortableConversionFrame(root, () => {});
 	frame.retry.hidden = true;
 	updatePortableSelection(frame, plan, true);
 	renderPortableConversionRows(frame.results, plan, portableConversionRows(plan), 100, false, undefined, () => {});
-	clearFileHeadingBackgrounds(frame.results);
 	return metadata("Review conversion before changing notes", "The actual conversion planner reads only synthetic Markdown. Its proposed heading and inline replacements are rendered by the production sidebar frame, selection summary, and before/after cards.");
 }
 
 async function resetScene(plugin) {
 	seedCallouts(plugin);
 	syntheticVault(plugin);
-	const root = panel("callout-studio-settings guide-settings");
-	renderResetSection({ app: plugin.app, plugin, display() {}, registerDisposer() {} }, root);
-	root.querySelector("button.mod-warning").click();
+	// The Danger zone's Reset everything runs this very flow.
+	void confirmAndResetEverything(settingsContext(plugin));
 	await waitFor(() => document.querySelector(".cs-confirm-acknowledge"));
-	root.removeAttribute("id");
-	root.style.display = "none";
 	const modal = document.querySelector(".modal-container:last-of-type .modal");
 	modal.id = "guide-scene";
 	return metadata("Reset everything confirmation", "The real Danger zone action computes the inventory and note-reference count from synthetic callouts and notes, then opens its actual confirmation. The acknowledgement stays unticked; no reset is performed.");
@@ -223,12 +231,25 @@ async function quickInsertScene(plugin, filtered) {
 	attachSyntheticEditor(plugin);
 	plugin.localState.quickInsertSource = filtered ? "user" : "all";
 	const modal = new QuickInsertModal(plugin);
-	const result = openModal(modal, { title: filtered ? "Quick insert: My callouts" : "Quick insert block callout", description: filtered ? "The actual Quick insert modal filters to synthetic user-defined callouts and renders their real block previews. The source dropdown is opened through its production control."
+	const result = openModal(modal, { title: filtered ? "Quick insert: My callouts" : "Quick insert block callout", description: filtered ? "The actual Quick insert modal filters to synthetic user-defined callouts and renders their real block previews. The source funnel opens its production menu."
 		: "The actual Quick insert modal builds its previews with the plugin's generated CSS and reading processor. A synthetic writable note supplies the insertion target; nothing is inserted." });
 	await waitFor(() => modal.contentEl.querySelector(".cs-qi-preview .callout"));
 	if (filtered) {
-		modal.contentEl.querySelector(".cs-quick-insert-filter input").click();
-		await waitFor(() => modal.contentEl.querySelector(".cs-quick-insert-filter input").getAttribute("aria-expanded") === "true");
+		const field = modal.contentEl.querySelector(".cs-quick-insert-filter");
+		field.click();
+		await waitFor(() => field.getAttribute("aria-expanded") === "true");
+		// Obsidian adds its menu to <body>. Keep the real menu inside the
+		// exported window, just under its funnel.
+		const menuEl = document.querySelector("body > .menu");
+		if (!menuEl) throw new Error("The source funnel did not open Obsidian's menu");
+		const modalRect = modal.modalEl.getBoundingClientRect();
+		const fieldRect = field.getBoundingClientRect();
+		modal.modalEl.appendChild(menuEl);
+		menuEl.style.position = "absolute";
+		// Obsidian moves a menu left rather than let it run off the window.
+		const left = Math.min(fieldRect.left - modalRect.left, modalRect.width - menuEl.offsetWidth - 16);
+		menuEl.style.left = `${left}px`;
+		menuEl.style.top = `${fieldRect.bottom - modalRect.top + 2}px`;
 	}
 	return result;
 }

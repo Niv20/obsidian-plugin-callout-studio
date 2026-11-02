@@ -3,16 +3,14 @@ import { MarkdownRenderer, Component, TFile } from "obsidian";
 import { CalloutRegistry } from "../../src/manager/CalloutRegistry.ts";
 import { CSSInjector } from "../../src/manager/CSSInjector.ts";
 import { createCalloutReadingPostProcessor } from "../../src/reading/calloutPostProcessor.ts";
-import { createCalloutListsController } from "../../src/settings/sections/CalloutListsSection.ts";
-import { renderCalloutRow } from "../../src/settings/sections/CalloutRowRenderer.ts";
-import { freshPaging } from "../../src/settings/sections/calloutListsSignature.ts";
-import { CalloutEditor } from "../../src/settings/CalloutEditor.ts";
 import { PACK_MANIFEST } from "../../src/icons/data/packManifest.ts";
+import { mountSettingsPage } from "./settingsPage.mjs";
 
 export function makeHost() {
 	const texts = new Map(), files = new Map(), caches = new Map();
 	const app = {
 		appId: "user-guide-fixture",
+		isDarkMode: () => document.body.classList.contains("theme-dark"),
 		customCss: { theme: "", snippets: [], enabledSnippets: new Set() },
 		vault: {
 			configDir: ".obsidian", getName: () => "Documentation", getMarkdownFiles: () => [...files.values()], getConfig: () => true,
@@ -42,11 +40,11 @@ export function makeHost() {
 		manifest: { id: "callout-studio", name: "Callout Studio", version: "2.16.0", dir: ".obsidian/plugins/callout-studio" },
 		settingsWriter: { isFrozen: false, isDestroyed: false, matchesLastWrite: () => true },
 		localState: {
-			isExpanded: kind => kind !== "builtin", setExpanded() {}, iconCategory: () => "all", setIconCategory() {},
+			iconCategory: () => "all", setIconCategory() {},
 			emojiSkinTone: 0, setEmojiSkinTone() {}, quickInsertSource: "all", setQuickInsertSource() {},
 		},
 		icons: { packs: { state: () => "unavailable", info: id => PACK_MANIFEST[id], onChange: () => () => {}, loadAllFromDisk: async () => {} }, deleteLibrary: async () => {} },
-		locales: { isReady: () => true }, ensureLocale: async () => true, applyLocaleChange() {},
+		locales: { isReady: () => true, state: () => "ready", onChange: () => () => {} }, ensureLocale: async () => true, applyLocaleChange() {},
 		customCommands: { list: () => [], migrateCalloutId() {}, refresh() {} },
 		saveSettings: async () => {}, ensureIconArtwork: async () => {}, ensureIconArtworkFor: async () => {},
 		refreshCallouts() {}, refreshRenderModes() {}, hasIconFetchFailed: () => false,
@@ -79,21 +77,14 @@ export function openModal(modal, metadata = {}) {
 	return { selector: "#guide-scene", ...metadata };
 }
 
+/** What a settings flow is handed (src/settings/sections/types.ts), for a still picture. */
 export function settingsContext(plugin) {
-	return { app: plugin.app, plugin, display() {}, registerDisposer() {} };
+	return { app: plugin.app, plugin, redraw() {}, registerDisposer() {} };
 }
 
-/** metadata.render(panel, context) can mount a focused production section. */
-export function mountSettings(plugin, metadata = {}) {
-	const panel = document.body.createDiv({ cls: "callout-studio-settings guide-settings", attr: { id: "guide-scene" } });
-	const ctx = settingsContext(plugin);
-	if (metadata.render) metadata.render(panel, ctx);
-	else createCalloutListsController(ctx, {
-		paging: freshPaging(), onAddNewCallout: async () => new CalloutEditor(plugin).open(),
-		renderRow: (container, def, kind) => renderCalloutRow(ctx, container, def, kind, { onEdit() {}, onOpenBuiltInMenu() {}, onOpenUserMenu() {} }),
-	}).render(panel);
-	const { render, ...publicMetadata } = metadata;
-	return { selector: "#guide-scene", ...publicMetadata };
+/** The settings as Obsidian draws them; see settingsPage.mjs for the options. */
+export function mountSettings(plugin, options = {}) {
+	return mountSettingsPage(plugin, options);
 }
 
 export async function renderMarkdown(plugin, parent, markdown) {

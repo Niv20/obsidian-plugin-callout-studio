@@ -7,23 +7,19 @@
  * cascade, so none of this is visible to it. Each rule here is one a tidy-up
  * would plausibly "restore":
  *
- * - A box is drawn as the settings lists draw a callout row: a borderless pill
- *   on the raised surface, its icon on a tile of the window's own colour. Both
- *   are the `--cs-surface` pair, which is what keeps them apart on mobile dark.
- * - Chrome stays grey-lit. The accent belongs to one thing, the active card of
- *   the plugin import window (and the dashed outline a dragged file lands in),
- *   and nothing on a box turns green: a file that was uploaded is confirmed by
- *   a notice, not by its icon. The purple icons the boxes used to wear, and
- *   the green one after them, are the regressions this guards.
- * - A box that a click would act on answers the pointer with a neutral step of
- *   its own fill; nothing else does.
- * - Every hover sits behind `(hover: hover)`, so a tapped box on a phone
- *   doesn't stay lit.
+ * - A card is drawn as Obsidian draws its own radio cards (finding S9-10): a
+ *   2px outline in the border colour, no fill, no hover, and the chosen card's
+ *   outline in the accent. Its radio is Obsidian's own, drawn by app.css.
+ * - Chrome stays grey-lit. The accent belongs to the chosen card (and the tint
+ *   a dragged file lands in), and nothing on a card turns green: a file that
+ *   was uploaded is confirmed by a notice, not by its icon. The purple icons
+ *   the boxes used to wear, and the green one after them, are the regressions
+ *   this guards.
  * - The paste box has one fixed height and scrolls: it neither grows with what
  *   is pasted nor can be dragged larger.
- * - The pill's word is trimmed to cap height and baseline. Without that, a UI
- *   font with a deep line box below the baseline (Ploni, and most Hebrew faces)
- *   sets the word visibly high in the pill.
+ * - "Recommended" is Obsidian's own flat flair, painted by Obsidian: the plugin
+ *   sets no fill, colour, corners or size for it, only drops the flair's margin
+ *   where the title line's gap already spaces it.
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -33,11 +29,6 @@ import { parseRules, valueOf, type CssRule } from "./support/cssInjectorHarness"
 
 const rules = parseRules(readFileSync(join(process.cwd(), "styles.css"), "utf8"));
 
-const HOVER_MEDIA = "@media (hover: hover)";
-const TEXT_BOX = "@supports (text-box: trim-both cap alphabetic)";
-/** The window's own colour, and the shade raised off it. */
-const SURFACE = "var(--cs-surface, var(--background-primary))";
-const RAISED = "var(--cs-surface-raised, var(--background-secondary))";
 
 /** Every rule whose selector list names `selector` as one of its entries. */
 function rulesNaming(selector: string): CssRule[] {
@@ -51,24 +42,18 @@ function only(selector: string): CssRule {
 }
 
 describe("the shared import/export boxes at rest", () => {
-	it("draws a box as a borderless pill on the raised surface, like a callout row", () => {
+	it("draws a card as an outline with no fill, as Obsidian's radio cards are", () => {
 		const box = only(".cs-option-box");
-		assert.equal(valueOf(box, "background"), RAISED);
-		assert.equal(valueOf(box, "border-radius"), "8px");
-		assert.deepEqual(
-			box.props.filter((p) => p.startsWith("border") && p !== "border-radius"),
-			[],
-			"no border: the fill is what makes it a box",
-		);
-		const row = rulesNaming(".callout-studio-row").find((r) => r.at.length === 0 && r.props.includes("background"));
-		assert.ok(row);
-		assert.equal(valueOf(row, "background"), RAISED, "the row it is modelled on");
+		assert.equal(valueOf(box, "border"), "2px solid var(--background-modifier-border)");
+		assert.equal(valueOf(box, "border-radius"), "var(--radius-m)");
+		assert.equal(valueOf(box, "corner-shape"), "var(--corner-shape)");
+		assert.equal(valueOf(box, "background"), undefined, "no fill of its own");
 	});
 
-	it("sets the icon on a tile of the window's own colour, in the icon grey", () => {
-		const tile = only(".cs-option-box-icon");
-		assert.equal(valueOf(tile, "background"), SURFACE);
-		assert.equal(valueOf(tile, "color"), "var(--text-muted)");
+	it("sets the icon in the icon grey, with no tile", () => {
+		const icon = only(".cs-option-box-icon");
+		assert.equal(valueOf(icon, "color"), "var(--text-muted)");
+		assert.equal(valueOf(icon, "background"), undefined);
 	});
 
 	it("spends the accent only on the active card and on a file's drop target", () => {
@@ -92,20 +77,17 @@ describe("the shared import/export boxes at rest", () => {
 		);
 	});
 
-	it("marks a chooser's box with a quiet chevron and a plugin import card with a radio dot", () => {
-		assert.equal(valueOf(only(".cs-option-box-mark"), "color"), "var(--text-faint)");
-		const dot = only(".cs-option-radio");
-		assert.equal(valueOf(dot, "border-radius"), "50%");
-		assert.equal(valueOf(dot, "color"), "transparent", "its check is there, and uncoloured, until chosen");
-		const chosen = only(".cs-option-box.is-selected .cs-option-radio");
-		assert.equal(valueOf(chosen, "background"), "var(--checkbox-color)");
-		assert.equal(valueOf(chosen, "color"), "var(--text-on-accent)");
+	it("leaves the radio to Obsidian, but for its margin and a disabled one's fade", () => {
+		const radio = only(".cs-option-radio");
+		assert.deepEqual(radio.props, ["margin"]);
+		const disabled = only(".cs-option-radio:disabled");
+		assert.equal(valueOf(disabled, "pointer-events"), "none", "a click on it reaches its card");
 	});
 
-	it("rings the active card in the accent without moving anything", () => {
+	it("outlines the chosen card in the accent, with no wash and no ring", () => {
 		const chosen = only(".cs-option-box.is-selected");
-		assert.equal(valueOf(chosen, "box-shadow"), "inset 0 0 0 2px var(--interactive-accent)");
-		assert.match(valueOf(chosen, "background") ?? "", /^color-mix\( in srgb, var\(--interactive-accent\) \d+%, /);
+		assert.deepEqual(chosen.props, ["border-color"]);
+		assert.equal(valueOf(chosen, "border-color"), "var(--interactive-accent)");
 	});
 
 	it("sets the plugin import window's instructions as a caption, not body text", () => {
@@ -115,48 +97,16 @@ describe("the shared import/export boxes at rest", () => {
 	});
 });
 
-describe("the shared import/export boxes on hover", () => {
-	it("steps an enabled box's own fill toward the text colour", () => {
-		const rule = only('.cs-option-box[tabindex="0"]:hover');
-		assert.deepEqual(rule.at, [HOVER_MEDIA]);
-		assert.match(
-			valueOf(rule, "background") ?? "",
-			/^color-mix\( in srgb, var\(--cs-surface-raised, var\(--background-secondary\)\) \d+%, var\(--text-normal\) \)$/,
-		);
-	});
-
-	it("reserves hover feedback for boxes a click would act on, on hover-capable devices", () => {
-		const hovering = rules.filter(
-			(r) => r.selector.includes(".cs-option-box") && r.selector.includes(":hover"),
-		);
-		assert.ok(hovering.length > 0);
-		for (const rule of hovering) {
-			assert.deepEqual(rule.at, [HOVER_MEDIA]);
-			// A chooser's box (`[tabindex="0"]`), a card that a click would
-			// choose (`is-choosable`), and a card's own button — which also
-			// steps off the card's fill while the pointer is on the card but
-			// not on it. The active card and an empty one stay as they are
-			// under the pointer.
-			for (const selector of rule.selector.split(/,\s*/)) {
-				assert.match(
-					selector,
-					/^\.cs-option-box(?:\[tabindex="0"\]:hover(?: \.cs-option-box-mark)?|\.is-choosable:hover| \.cs-import-action:hover|(?:\[tabindex="0"\]|\.is-choosable):hover \.cs-import-action:not\(:hover\))$/,
-					selector,
-				);
-			}
-		}
-	});
-
-	it("steps a choosable card the same way a chooser's box steps", () => {
-		const box = only('.cs-option-box[tabindex="0"]:hover');
-		const card = only(".cs-option-box.is-choosable:hover");
-		assert.equal(valueOf(card, "background"), valueOf(box, "background"));
+describe("the shared cards under the pointer", () => {
+	it("do not answer it: only a card's own controls do, as Obsidian's", () => {
+		const hovering = rules.filter((r) => /\.cs-option-/.test(r.selector) && r.selector.includes(":hover"));
+		assert.deepEqual(hovering.map((r) => r.selector), []);
 	});
 });
 
 describe("the plugin import window's cards", () => {
 	it("gives the paste box one fixed height that scrolls and cannot be dragged larger", () => {
-		const box = only(".cs-import-paste-input.cs-text-control.cs-text-control.cs-text-control.cs-text-control");
+		const box = only(".cs-import-paste-input.cs-text-control");
 		assert.match(valueOf(box, "height") ?? "", /^\d+px$/, "a fixed height, not auto and not a share of the content");
 		assert.equal(valueOf(box, "resize"), "none");
 		assert.equal(valueOf(box, "overflow"), "auto");
@@ -165,16 +115,11 @@ describe("the plugin import window's cards", () => {
 		}
 		assert.equal(valueOf(box, "flex"), "0 0 100%", "a line of its own, across the card");
 		assert.equal(valueOf(box, "direction"), "ltr", "code reads left to right, even in a right-to-left window");
-		// `.cs-text-control` sets `height: auto` from four classes; this has to
-		// outweigh it rather than rely on coming later in the file.
-		const base = rulesNaming(".cs-text-control.cs-text-control.cs-text-control.cs-text-control")
-			.find((r) => r.props.includes("height"));
-		assert.ok(base);
-		assert.equal(valueOf(base, "height"), "auto");
-		assert.equal(
-			box.selector.split(".").length - 1,
-			5,
-			"one class more than the four of the rule whose height it takes back",
+		// Nothing else of the plugin's sets a text field's height any more (the
+		// face is Obsidian's), so two classes clear Obsidian's `textarea` (0,0,1).
+		assert.deepStrictEqual(
+			rules.filter((r) => r.selector.includes(".cs-text-control") && r.props.includes("height")).map((r) => r.selector),
+			[".cs-import-paste-input.cs-text-control"],
 		);
 		assert.equal(valueOf(only(".cs-import-manual"), "flex-wrap"), "wrap", "the card lets it take that line");
 	});
@@ -189,37 +134,34 @@ describe("the plugin import window's cards", () => {
 		assert.ok(calm);
 	});
 
-	it("gives a card's own button a face of its own, so it stays a button on a phone", () => {
+	it("leaves a card's own button to Obsidian, except that it never shrinks", () => {
+		// Upload and Paste are Obsidian's own buttons (decision 14 of the
+		// native-look plan). The only thing the plugin adds is layout: a long
+		// file name must not squeeze them.
 		const button = only(".cs-option-box .cs-import-action");
-		assert.equal(valueOf(button, "flex-shrink"), "0", "never squeezed by a long file name");
-		assert.equal(valueOf(button, "background-color"), "var(--cs-btn-face, var(--interactive-normal))");
-		assert.match(valueOf(button, "border") ?? "", /^1px solid /);
+		assert.deepEqual(button.props, ["flex-shrink"]);
+		assert.equal(valueOf(button, "flex-shrink"), "0");
+		assert.deepEqual(rules.filter((r) => r.selector.includes(".cs-import-action") && r !== button).map((r) => r.selector), []);
 	});
 });
 
-describe("the Recommended pill", () => {
-	it("centres its word on the capitals, where text-box is supported", () => {
-		const word = only(".cs-recommended-badge-text");
-		assert.deepEqual(word.at, [TEXT_BOX]);
-		assert.equal(valueOf(word, "text-box"), "trim-both cap alphabetic");
-		const pill = rulesNaming(".cs-recommended-badge").find((r) => r.at.includes(TEXT_BOX));
-		assert.ok(pill, "the trimmed pill sets its own block padding");
-		assert.ok(valueOf(pill, "padding-block"), "with the line box gone, padding is the pill's height");
-	});
-
-	it("sets its word a step below the UI's smaller size", () => {
-		const pill = rulesNaming(".cs-recommended-badge").find((r) => r.at.length === 0);
-		assert.ok(pill);
-		assert.equal(valueOf(pill, "font-size"), "calc(var(--font-ui-smaller) - 1px)");
-	});
-
-	it("is a chip of the window's own colour, so it needs no hover fill of its own", () => {
-		const pill = rulesNaming(".cs-recommended-badge").find((r) => r.at.length === 0);
-		assert.ok(pill);
-		assert.equal(valueOf(pill, "background"), SURFACE);
+describe("the Recommended tag", () => {
+	it("is Obsidian's flat flair, with no paint of the plugin's own", () => {
+		const badgeRules = rules.filter((r) => r.selector.includes(".cs-recommended-badge"));
+		assert.ok(badgeRules.length > 0);
+		for (const rule of badgeRules) {
+			for (const prop of ["background", "background-color", "color", "border-radius", "font-size", "padding"]) {
+				assert.equal(valueOf(rule, prop), undefined, `${rule.selector} sets ${prop}`);
+			}
+		}
 		assert.deepEqual(
 			rules.filter((r) => r.selector.includes(".cs-recommended-badge") && r.selector.includes(":hover")),
 			[],
 		);
+	});
+
+	it("lets the title line's gap space it, instead of the flair's margin", () => {
+		const head = only(".cs-option-box-head > .cs-recommended-badge");
+		assert.equal(valueOf(head, "margin-inline-start"), "0");
 	});
 });

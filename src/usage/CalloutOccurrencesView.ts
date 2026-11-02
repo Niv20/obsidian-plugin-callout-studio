@@ -1,4 +1,4 @@
-import { ItemView, type WorkspaceLeaf, type ViewStateResult } from "obsidian";
+import { ItemView, type Menu, type WorkspaceLeaf, type ViewStateResult } from "obsidian";
 import { t } from "../i18n";
 import { registerMenuScopeHost } from "../ui/menuEscape";
 import { STATISTICS_ICON_ID } from "../icons/uiIcons";
@@ -13,7 +13,9 @@ import { ALL_TYPES_ID, OccurrenceTypeChoices, occurrencePickerChoices } from "./
 import { OccurrenceResults } from "./occurrenceResults";
 import { navigateToCalloutOccurrence } from "./navigation";
 import { SidebarCursorSync } from "../ui/sidebarCursorSync";
-import { createOccurrencesFrame, OCCURRENCE_ROLES, type OccurrencesFrame } from "./occurrencesViewFrame";
+import { SidebarParking } from "../ui/sidebarParking";
+import { createOccurrencesFrame, OCCURRENCE_ROLES, openFormatMenu, type OccurrencesFrame } from "./occurrencesViewFrame";
+import { LoadOnScroll } from "../ui/loadOnScroll";
 
 export const CALLOUT_OCCURRENCES_VIEW = "callout-studio-occurrences";
 const PAGE_SIZE = 100;
@@ -43,6 +45,15 @@ export class CalloutOccurrencesView extends ItemView {
 	private busyStatusGeneration = 0;
 	private busyStatusKind: "loading" | "stale" | null = null;
 	private frame: OccurrencesFrame | null = null;
+	/** The format menu while it is open, so closing the view closes it too. */
+	private formatMenu: Menu | null = null;
+	/** Draws the next 100 results as the list's end scrolls into reach (finding S10-07). */
+	private readonly loadOnScroll = new LoadOnScroll(() => this.frame?.scroll ?? null, () => {
+		this.limit += PAGE_SIZE;
+		this.render();
+	});
+	/** Keeps the file groups far from the screen from being drawn, so a long list does not slow the editor. */
+	private readonly parking = new SidebarParking(() => this.frame?.scroll ?? null);
 	private disposeMenuHost?: () => void;
 	private picker: CalloutCombobox | null = null;
 	private lastIndexState = "";
@@ -81,6 +92,7 @@ export class CalloutOccurrencesView extends ItemView {
 	}
 	refreshLabels(): void {
 		if (!this.opened) return;
+		// A new frame is drawn in the new language, the filter button's label included.
 		this.clearFrame();
 		this.render();
 	}
@@ -101,7 +113,7 @@ export class CalloutOccurrencesView extends ItemView {
 		if (this.frame) this.frame.scroll.scrollTop = 0;
 		this.activeFile.cancelReveal();
 		this.picker?.setValue(this.selectedType);
-		this.frame?.roleSelect.setValue(this.role ?? "");
+		this.paintFilter();
 		if (this.opened) this.render();
 		await super.setState(state, result);
 	}
@@ -135,13 +147,36 @@ export class CalloutOccurrencesView extends ItemView {
 		this.registry.offChange(this.registryChanged);
 		this.activeFile.close();
 		this.clearFrame();
+		this.formatMenu?.hide();
+		this.formatMenu = null;
+		this.loadOnScroll.stop();
 		this.cachedQuery = null;
 		return Promise.resolve();
 	}
+
+	/**
+	 * The format filter button was pressed: open the format menu under it
+	 * (finding S10-05). The button stays lit while a format is chosen
+	 * ({@link paintFilter}).
+	 */
+	private openFormats(button: HTMLElement): void {
+		this.formatMenu?.hide();
+		this.formatMenu = openFormatMenu(button, this.role, (role) => {
+			if (role === this.role) return;
+			this.role = role;
+			this.resetResults();
+			this.render();
+		});
+	}
+
+	/** Light the filter button while one format is chosen, as Obsidian lights an active icon button. */
+	private paintFilter(): void {
+		this.frame?.filter.toggleClass("is-active", this.role !== undefined);
+	}
 	private clearFrame(): void {
+		this.parking.stop();
 		this.picker?.destroy();
 		this.picker = null;
-		this.frame?.roleSelect.destroy();
 		this.disposeMenuHost?.(); this.disposeMenuHost = undefined;
 		this.frame = null;
 		this.resultCards.clear();
@@ -170,6 +205,8 @@ export class CalloutOccurrencesView extends ItemView {
 		this.limit = PAGE_SIZE;
 		this.navigationGeneration++;
 		this.resultCards.select(null); this.cursor.reset();
+		// A new search starts with every note's results showing.
+		this.resultCards.fold.clear();
 		// render() preserves the current scroll offset after a picker commit.
 		this.activeFile.cancelReveal();
 		this.app.workspace.requestSaveLayout();
@@ -245,12 +282,7 @@ export class CalloutOccurrencesView extends ItemView {
 	private ensureFrame(): OccurrencesFrame {
 		if (this.frame) return this.frame;
 		this.disposeMenuHost = registerMenuScopeHost(this.contentEl, this.app);
-		const frame = this.frame = createOccurrencesFrame(this.contentEl);
-		frame.roleSelect.onChange((value) => {
-			this.role = OCCURRENCE_ROLES.includes(value as CalloutRenderRole) ? value as CalloutRenderRole : undefined;
-			this.resetResults();
-			this.render();
-		});
+		const frame = this.frame = createOccurrencesFrame(this.contentEl, (button) => this.openFormats(button));
 		this.picker = new CalloutCombobox(frame.pickerHost, {
 			registry: this.registry, choices: () => occurrencePickerChoices(this.typeChoices, this.selectedType), value: this.selectedType,
 			ariaLabel: t("vaultStats.columnType"), labelOf: (def) => def.id === ALL_TYPES_ID ? t("usage.allTypes") : def.id,
@@ -283,13 +315,21 @@ export class CalloutOccurrencesView extends ItemView {
 		const complete = index.status === "ready" && !this.failed;
 		const scrollTop = this.frame?.scroll.scrollTop ?? 0;
 		const frame = this.ensureFrame();
-		frame.roleSelect.setValue(this.role ?? "");
+		this.paintFilter();
 		const busy = !this.failed && (index.status === "idle" || index.status === "loading" || index.status === "stale");
 		this.syncBusyStatus(busy);
-		frame.status.setText(this.failed || index.status === "disposed" ? t("usage.failed")
-			: busy && this.busyStatusVisible && this.busyStatusKind === "loading" ? t("usage.loading")
-			: index.status === "partial" ? t("usage.partial", { count: index.failures.length })
-			: busy && this.busyStatusVisible ? t("usage.stale") : "");
+		const failed = this.failed || index.status === "disposed";
+		const partial = index.status === "partial";
+		const working = busy && this.busyStatusVisible;
+		frame.status.setText(failed ? t("usage.failed")
+			: working && this.busyStatusKind === "loading" ? t("usage.loading")
+			: partial ? t("usage.partial", { count: index.failures.length })
+			: working ? t("usage.stale") : "");
+		// A long scan shows Obsidian's thin bar across the top of the results
+		// (finding S10-08); its words stay in the live region for a screen
+		// reader, but are not drawn. A problem is drawn, in the warning colour.
+		frame.scroll.toggleClass("is-loading", working);
+		frame.status.toggleClass("cs-visually-hidden", !failed && !partial);
 		frame.failures.empty();
 		if (index.failures.length > 0) {
 			const details = frame.failures.createEl("details");
@@ -298,9 +338,12 @@ export class CalloutOccurrencesView extends ItemView {
 		}
 		frame.summary.setText(complete || this.results.length > 0
 			? t("usage.summary", { count: this.results.length, files: this.cachedQuery.result.fileCount }) : "");
-		this.resultCards.render(frame.results, this.results, this.limit, complete,
+		const drawn = this.resultCards.render(frame.results, this.results, this.limit, complete,
 			(path, section) => this.activeFile.addSection(path, section), () => this.activeFile.clearSections());
 		frame.scroll.scrollTop = scrollTop;
+		// New groups to keep an eye on: the far ones are parked, so a long list does not slow the editor.
+		if (drawn) this.parking.watch(frame.results);
+		this.loadOnScroll.watch(this.resultCards.sentinel);
 		this.activeFile.sync(this.results, this.limit, index.status, this.failed);
 		// New or moved cards: the caret may sit in a different one now.
 		this.cursor.schedule();

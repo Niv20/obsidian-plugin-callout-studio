@@ -10,8 +10,8 @@
  * reported via `onReorder(from, to)`.
  *
  * While the row floats, a placeholder marks the slot it lands in if released
- * now: an empty grey box from the theme's UI palette, the row's exact size,
- * under every row. It follows the slot from neighbour to neighbour, sliding
+ * now: an empty box in the accent colour, as in Obsidian's own lists, the
+ * row's exact size, under every row. It follows the slot from neighbour to neighbour, sliding
  * with them, and goes when the dropped row has settled onto it.
  *
  * Pointer Events are used (not HTML5 drag) so the same code works with mouse,
@@ -26,28 +26,57 @@
  * float/slide/settle are skipped and reordering is instant (as it used to be).
  * There is no placeholder then either — the row never leaves its slot, so it
  * marks the slot itself.
+ *
+ * Given a `scroller`, a drag also scrolls it when the row is held near its top
+ * or bottom edge, as Obsidian's own lists do (finding S4-12): a list taller
+ * than the window can then be reordered end to end in one gesture. That keeps
+ * working under reduced motion — it is how the row gets there, not decoration.
  */
 import {
 	REORDER_DURATION_MS,
+	REORDER_EASING,
 	animateReorder,
 	cancelReorderAnimation,
 	prefersReducedMotion,
 } from "./flip";
+import { cancelFrame, requestFrameFor, type FrameHandle } from "../utils/elementFrame";
 
 export interface DragSortOptions {
 	/** CSS selector matching each reorderable row (a direct child of container). */
 	rowSelector: string;
 	/** CSS selector for the drag handle inside a row. */
 	handleSelector: string;
-	/**
-	 * Optional grouping key. A dragged row can only be reordered among rows that
-	 * share its group; rows of other groups act as fixed walls it can never cross.
-	 * Omit to treat the whole list as one group (unconstrained reorder). Used to
-	 * keep the enabled and disabled menu-item bands separate.
-	 */
-	groupOf?: (row: HTMLElement) => unknown;
 	/** Called once on release when the row's index actually changed. */
 	onReorder: (fromIndex: number, toIndex: number) => void;
+	/**
+	 * The element that scrolls the list, for the edge auto-scroll. Read when a
+	 * drag starts. Default: none, and a drag never scrolls anything.
+	 */
+	scroller?: () => HTMLElement | null;
+}
+
+/**
+ * The edge auto-scroll's numbers, Obsidian's own (app.js): the zone is 50px
+ * from the edge, or a third of the scroller's height if that is less, and the
+ * scroll grows to 15px a frame as the pointer nears the very edge.
+ */
+const EDGE_ZONE_PX = 50;
+const EDGE_MAX_STEP_PX = 15;
+
+/**
+ * How far `scroller` should scroll this frame for a pointer at `y`: negative
+ * near its top edge, positive near its bottom one, 0 anywhere else.
+ */
+function edgeStep(scroller: HTMLElement, y: number): number {
+	const box = scroller.getBoundingClientRect();
+	const zone = Math.min(EDGE_ZONE_PX, box.height / 3);
+	if (zone <= 0) return 0;
+	// How deep into the zone the pointer is, from 0 at its inner edge to 1 at
+	// the scroller's edge (and past it, held at 1).
+	const depth = (into: number): number => Math.min(1, into / zone);
+	if (y < box.top + zone) return -EDGE_MAX_STEP_PX * depth(box.top + zone - y);
+	if (y > box.bottom - zone) return EDGE_MAX_STEP_PX * depth(y - (box.bottom - zone));
+	return 0;
 }
 
 /** The drop placeholder's class; styles.css draws it. */
@@ -84,6 +113,12 @@ export function makeDragSortable(
 	 * placeholder along and removes it when it lands.
 	 */
 	let placeholder: HTMLElement | null = null;
+	/** The pointer's latest height, kept for the frames that scroll between moves. */
+	let lastY = 0;
+	/** The scroller of the current drag, when the list was given one. */
+	let scrollEl: HTMLElement | null = null;
+	/** The edge auto-scroll's next frame, while a drag with a scroller runs. */
+	let edgeFrame: FrameHandle | null = null;
 
 	const rows = (): HTMLElement[] =>
 		Array.from(container.querySelectorAll<HTMLElement>(opts.rowSelector)).filter(
@@ -120,25 +155,27 @@ export function makeDragSortable(
 	};
 
 	const onPointerMove = (e: PointerEvent): void => {
-		const dragEl = dragging;
-		if (!dragEl || e.pointerId !== pointerId) return;
+		if (!dragging || e.pointerId !== pointerId) return;
 		e.preventDefault();
-		const y = e.clientY;
+		lastY = e.clientY;
+		track(lastY);
+	};
 
-		// Rows the dragged one may reorder among: its own group only. Rows in
-		// other groups are ignored here, so they act as fixed walls the dragged
-		// row can never cross (e.g. enabled items never sink into the disabled
-		// band, and vice versa).
-		const groupOf = opts.groupOf;
-		const dragGroup = groupOf ? groupOf(dragEl) : undefined;
-		const siblings = rows().filter(
-			(el) => el !== dragEl && (!groupOf || groupOf(el) === dragGroup),
-		);
+	/**
+	 * Put the dragged row where a pointer at `y` (window coordinates) means:
+	 * into the slot it is over, and glued under the pointer. Run on every move,
+	 * and again whenever the list scrolls under a pointer that has not moved.
+	 */
+	const track = (y: number): void => {
+		const dragEl = dragging;
+		if (!dragEl) return;
 
-		// First same-group sibling whose vertical midpoint is below the pointer;
-		// the dragged row should sit just before it. If none, it goes to the end
-		// of its group — right after the last same-group sibling, never past a
-		// wall into the next group.
+		// The other rows, in order: the dragged one is placed among them.
+		const siblings = rows().filter((el) => el !== dragEl);
+
+		// First row whose vertical midpoint is below the pointer; the dragged row
+		// should sit just before it. If none, it goes to the end of the list,
+		// right after the last row.
 		let ref: HTMLElement | null = null;
 		for (const el of siblings) {
 			const rect = el.getBoundingClientRect();
@@ -155,11 +192,11 @@ export function makeDragSortable(
 			needsMove = dragEl.nextElementSibling !== ref;
 			place = () => container.insertBefore(dragEl, ref);
 		} else if (last) {
-			// Move to the end of the group: immediately after its last member.
+			// Move to the end of the list: immediately after the last row.
 			needsMove = last.nextElementSibling !== dragEl;
 			place = () => container.insertBefore(dragEl, last.nextElementSibling);
 		} else {
-			// Sole member of its group — nothing to reorder against.
+			// The only row: nothing to reorder against.
 			needsMove = false;
 			place = () => {};
 		}
@@ -192,8 +229,46 @@ export function makeDragSortable(
 		dragEl.style.transform = `translateY(${currentTransform}px)`;
 	};
 
+	/**
+	 * Obsidian's own "something is being dragged" state on the window's body: a
+	 * grabbing cursor everywhere and no tooltips opening mid-drag. Every way a
+	 * gesture ends goes through `detachGesture`, which clears it — a body left
+	 * with it would keep the whole app's cursor grabbing.
+	 */
+	let grabbing = false;
+	const setGrabbing = (on: boolean): void => {
+		if (grabbing === on) return;
+		grabbing = on;
+		container.ownerDocument.body.toggleClass("is-grabbing", on);
+	};
+
+	/** The list scrolled (the edge auto-scroll, a wheel): the slot under the pointer moved. */
+	const onScroll = (): void => track(lastY);
+
+	/**
+	 * Each frame of a drag, scroll the scroller if the pointer is held near one
+	 * of its edges, then find the slot again: the rows moved, the pointer did not.
+	 */
+	const scheduleEdgeScroll = (): void => {
+		edgeFrame = requestFrameFor(container, () => {
+			edgeFrame = null;
+			if (!dragging || !scrollEl) return;
+			const step = edgeStep(scrollEl, lastY);
+			if (step !== 0) {
+				const before = scrollEl.scrollTop;
+				scrollEl.scrollTop = before + step;
+				if (scrollEl.scrollTop !== before) track(lastY);
+			}
+			scheduleEdgeScroll();
+		});
+	};
+
 	const detachGesture = (): void => {
 		const capturedId = pointerId;
+		edgeFrame = cancelFrame(edgeFrame);
+		scrollEl?.removeEventListener("scroll", onScroll);
+		scrollEl = null;
+		setGrabbing(false);
 		dragging = null;
 		startIndex = -1;
 		pointerId = -1;
@@ -237,7 +312,7 @@ export function makeDragSortable(
 					{ transform: `translateY(${offset}px)` },
 					{ transform: "translateY(0px)" },
 				],
-				{ duration: REORDER_DURATION_MS, easing: "ease" },
+				{ duration: REORDER_DURATION_MS, easing: REORDER_EASING },
 			);
 			// Drop the inline follow-transform now: the animation overrides it while
 			// running and, with no fill, the row rests at its natural slot after.
@@ -278,9 +353,11 @@ export function makeDragSortable(
 		startIndex = rows().indexOf(row);
 		reduceMotion = prefersReducedMotion();
 		grabOffset = e.clientY - visualTop;
+		lastY = e.clientY;
 		currentTransform = reduceMotion ? 0 : visualTop - row.getBoundingClientRect().top;
 		if (!reduceMotion) row.style.transform = `translateY(${currentTransform}px)`;
 		container.addClass("cs-dragging");
+		setGrabbing(true);
 		row.addClass("is-dragging");
 		if (!reduceMotion) placeholder = createPlaceholder(row);
 		container.setPointerCapture(pointerId);
@@ -288,6 +365,11 @@ export function makeDragSortable(
 		container.addEventListener("pointerup", onPointerUp);
 		container.addEventListener("pointercancel", onPointerUp);
 		container.addEventListener("lostpointercapture", onPointerUp);
+		scrollEl = opts.scroller?.() ?? null;
+		if (scrollEl) {
+			scrollEl.addEventListener("scroll", onScroll, { passive: true });
+			scheduleEdgeScroll();
+		}
 	};
 
 	container.addEventListener("pointerdown", onPointerDown);

@@ -1,4 +1,5 @@
 import { MarkdownView, TFile, type App, type EventRef, type WorkspaceLeaf } from "obsidian";
+import { unparkGroupOf } from "./sidebarParking";
 
 /** Tracks the document behind the sidebar and reveals its group in the current query. */
 export class SidebarActiveFile {
@@ -72,7 +73,12 @@ export class SidebarActiveFile {
 			this.pendingPath = this.path;
 			this.onChange(this.path);
 		}
-		for (const [path, section] of this.sections) section.toggleClass("is-active-file", path === this.path);
+		// The open note's title row takes Obsidian's active-item fill (`is-active`).
+		for (const [path, section] of this.sections) {
+			const active = path === this.path;
+			section.toggleClass("is-active-file", active);
+			section.querySelector(".search-result-file-title")?.toggleClass("is-active", active);
+		}
 		const path = this.pendingPath;
 		if (!path) return;
 		const at = results.findIndex((occurrence) => occurrence.path === path);
@@ -86,6 +92,8 @@ export class SidebarActiveFile {
 		}
 		const section = this.sections.get(path);
 		if (section) {
+			// Drawn again before the jump, so the group is not blank for a frame (ui/sidebarParking.ts).
+			unparkGroupOf(section);
 			section.scrollIntoView({ block: "start" });
 			this.pendingPath = null;
 		}

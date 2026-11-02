@@ -18,7 +18,7 @@
  *   the pack stays in memory for the session, and the artwork of the icons
  *   actually in use is separately copied into `data.json`, which syncs.
  */
-import { Notice, normalizePath, requestUrl } from "obsidian";
+import { normalizePath, requestUrl } from "obsidian";
 import type { App, PluginManifest } from "obsidian";
 import type { IconPackId } from "../types";
 import { t } from "../i18n";
@@ -30,6 +30,7 @@ import {
 import { forgetPackData, isPackLoaded, setPackData } from "./packData";
 import { parseVerifiedPack, verifyPackText } from "./packValidation";
 import { IconTaskScope } from "./IconTaskScope";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 /**
  * `requestUrl` cannot be aborted and reports no progress, so a hung connection
@@ -214,7 +215,7 @@ export class PackDataStore {
 			console.warn(`[CalloutStudio] could not cache pack "${id}" to disk`, e);
 			if (!this.diskWriteBroken) {
 				this.diskWriteBroken = true;
-				new Notice(t("iconPack.diskWriteFailed"));
+				showNotice("problem", t("iconPack.diskWriteFailed"));
 			}
 		}
 	}

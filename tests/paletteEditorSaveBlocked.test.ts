@@ -1,15 +1,19 @@
 /**
  * The palette editor's Save is dimmed, not disabled, while the name or the
- * colors duplicate another palette — and pressing it says which.
+ * colors duplicate another palette — and pressing it says which. And where
+ * the editor says a name is taken, or a colour is hard to read: under the
+ * field, through Obsidian's `setErrorMessage` (finding S7-06), or in a line
+ * under it (S6-12).
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import type { App } from "obsidian";
+import { Setting, type App } from "obsidian";
 import { t } from "../src/i18n";
 import { PaletteEditorModal } from "../src/settings/PaletteEditorModal";
 import type { CustomPalette } from "../src/types";
 import { bakePaletteColors, findPresetByPaletteId } from "../src/utils/colorPalettes";
-import { el } from "./support/fakeDom";
+import { el, type FakeElement } from "./support/fakeDom";
+import { readRepoFile } from "./support/sourceScan";
 
 type Options = ConstructorParameters<typeof PaletteEditorModal>[1];
 type Internals = {
@@ -20,6 +24,10 @@ type Internals = {
 	currentColorPalette(): Omit<CustomPalette, "id" | "name">;
 	updateValidity(): void;
 	saveBlockedReason(): string | null;
+	nameSetting: Setting | null;
+	colorCardEl: HTMLElement | null;
+	colorErrorEl: HTMLElement | null;
+	applyDerived(): void;
 };
 
 function editor(options: Options = {}) {
@@ -177,5 +185,59 @@ describe("a brand-new palette's starting color", () => {
 		const twin = twinOf("Sunrise");
 		const { internals } = editor({ existing: twin, takenColors: [] });
 		assert.equal(internals.baseColor, twin.baseColor ?? twin.colorLight);
+	});
+});
+
+describe("where the palette editor says what is wrong", () => {
+	it("says a taken name under the Name field, and takes it away once the name is free", () => {
+		const { internals } = editor({ seedName: "Sunrise", takenNames: ["sunrise"] });
+		// The Name row, as onOpen builds it: a real (stub) Setting.
+		const nameSetting = new Setting(el() as unknown as HTMLElement);
+		internals.nameSetting = nameSetting;
+		internals.updateValidity();
+		const row = nameSetting.settingEl as unknown as FakeElement;
+		assert.equal(row.hasClass("is-invalid"), true);
+		assert.equal((nameSetting.errorEl as unknown as FakeElement).textContent, t("palette.nameExists"));
+		internals.name = "Sunrise 2";
+		internals.updateValidity();
+		assert.equal(row.hasClass("is-invalid"), false);
+	});
+
+	it("writes a low-contrast colour as a line under it, not a badge on the swatch", () => {
+		// A full-width line of its own (paletteContrastLine.ts, tested in
+		// paletteColorView.test.ts); the row's setErrorMessage gave it half a row.
+		const source = readRepoFile("src/settings/PaletteEditorModal.ts");
+		assert.match(source, /contrastLineAfter\(textRow,/);
+		assert.doesNotMatch(source, /SHOW_TEXT_COLOR_CHANNEL/, "the Text color row is no longer behind a flag");
+		assert.doesNotMatch(source, /accentRow\.setErrorMessage|warnEl/);
+		const css = readRepoFile("styles.css");
+		assert.ok(!css.includes(".cs-contrast-warning"), "the corner badge is gone");
+		assert.ok(!css.includes("cs-input-invalid"), "no red edge of our own on a field");
+	});
+});
+
+describe("the palette editor's groups (S7-05)", () => {
+	it("builds Palette and Colors as Obsidian setting groups with the editors' row inset", () => {
+		const source = readRepoFile("src/settings/PaletteEditorModal.ts");
+		assert.match(source, /new SettingGroup\(adjustCol\)\s*\.setHeading\(t\("palette\.groupPalette"\)\)\s*\.addClass\("cs-editor-group"\)/);
+		assert.match(source, /\.setHeading\(t\("palette\.advancedColors"\)\)\s*\.addClass\("cs-editor-group"\)/);
+		assert.doesNotMatch(source, /createControlGroup|createSliderRow/, "no plugin-drawn card left");
+		assert.match(source, /\.setName\(t\("palette\.bgIntensity"\)\)\s*\.setClass\("cs-stacked-slider"\)/);
+	});
+
+	it("puts the duplicate-colour line first in the Colors box, and takes it out when the clash goes", () => {
+		const twin = twinOf("Sunrise");
+		const { internals } = editor({ seedName: "Sunrise", seed: twin, takenColors: [twin] });
+		const box = el();
+		box.createDiv({ cls: "setting-item" });
+		internals.colorCardEl = box as unknown as HTMLElement;
+		internals.colorErrorEl = el({ cls: "cs-palette-color-error" }) as unknown as HTMLElement;
+		internals.updateValidity();
+		assert.equal(box.children[0], internals.colorErrorEl, "the first line of the box");
+		assert.match((internals.colorErrorEl as unknown as FakeElement).textContent, /Twin/);
+		internals.baseColor = "#123456";
+		internals.applyDerived();
+		internals.updateValidity();
+		assert.equal(box.children.includes(internals.colorErrorEl as unknown as FakeElement), false, "out of the box, not hidden in it");
 	});
 });

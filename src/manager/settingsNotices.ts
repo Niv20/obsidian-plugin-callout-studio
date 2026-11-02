@@ -14,11 +14,12 @@ import { Notice } from "obsidian";
 import type { App, Plugin } from "obsidian";
 import { t } from "../i18n";
 import { settingsSaveMessage } from "./settingsSaveMessage";
-import { en } from "../i18n/en";
 import { reportSettingsSaveFailure } from "./settingsSaveReporter";
 import type { SettingsWriter } from "./SettingsWriter";
 import type { SettingsSaveStatus } from "./settingsSaveStatus";
 import { ConfirmModal } from "../utils/ConfirmModal";
+import { showActionNotice } from "../ui/noticeAction";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 /** Called after cached locale setup, once recovery has supplied the preference. */
 export function registerMissingSettingsNotice(
@@ -78,15 +79,16 @@ export function offerFreshStart(
 	pluginId: string,
 	status?: Pick<SettingsSaveStatus, "frozenReason" | "subscribe">,
 ): { refresh: () => void; dispose: () => void } {
-	const frag = createFragment();
-	const text = frag.appendChild(createEl("p", { text: t("saveStatus.missingNotice") }));
-	const action = frag.appendChild(
-		createEl("a", {
-			text: t("saveStatus.openSettings"),
-			cls: "cs-notice-action",
-		}),
-	);
-	const notice = new Notice(frag, 0);
+	// Stays up (0) until it is clicked, or the pause ends. A click anywhere on
+	// a notice hides it (Obsidian does that), the button included, so pressing
+	// it is the end of the notice either way.
+	const { notice, buttonEl } = showActionNotice("paused", t("saveStatus.missingNotice"), {
+		label: t("saveStatus.openSettings"),
+		run: () => {
+			openPluginSettings(app, pluginId);
+			dispose();
+		},
+	}, 0);
 	const dispose = () => {
 		unsubscribe?.();
 		notice.hide();
@@ -95,19 +97,11 @@ export function offerFreshStart(
 		if (status.frozenReason !== null) return;
 		dispose();
 	});
-	action.addEventListener("click", (event) => {
-		event.preventDefault();
-		// The notice stands if the pane could not be opened: the session is
-		// still frozen, and this is still the only thing saying so.
-		if (openPluginSettings(app, pluginId)) {
-			dispose();
-		}
-	});
 	return {
 		// Update the existing nodes: a dismissed notice must never be reopened.
 		refresh: () => {
-			text.textContent = t("saveStatus.missingNotice");
-			action.textContent = t("saveStatus.openSettings");
+			notice.setMessage(t("saveStatus.missingNotice"));
+			buttonEl.textContent = t("saveStatus.openSettings");
 		},
 		dispose,
 	};
@@ -129,7 +123,7 @@ export function openPluginSettings(app: App, pluginId: string): boolean {
 			console.error("[callout-studio] settings tab could not be opened", error);
 		}
 	}
-	new Notice(t("notice.openSettingsFailed"));
+	showNotice("problem", t("notice.openSettingsFailed"));
 	return false;
 }
 
@@ -155,7 +149,7 @@ export async function confirmFreshStart(
 		t("confirm.saveDisplayedSettings"),
 		t(hasRecoveryState ? "saveStatus.restoreSettings" : "saveStatus.createSettingsFile"),
 		undefined,
-		"mod-cta",
+		"cta",
 	).confirm();
 	if (!ok) return false;
 	try {
@@ -164,8 +158,8 @@ export async function confirmFreshStart(
 		return saved;
 	} catch (error) {
 		console.error("[callout-studio] fresh start failed", error);
-		const message = en["saveStatus.retryFailed"]!;
-		new Notice(message, 10000);
+		const message = t("saveStatus.retryFailed");
+		showNotice("problem", message);
 		return false;
 	}
 }

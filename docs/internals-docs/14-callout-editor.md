@@ -59,6 +59,62 @@ against one fixed tint strength - it calls `derivedBgAmount()` (see
 palette editor's intensity slider produces tints at any strength between
 `MIN_BG_COLOR_AMOUNT` and `MAX_BG_COLOR_AMOUNT`.
 
+## The form box and the groups beside the preview
+
+The four rows that describe the callout (**Display name**, **Callout IDs**,
+**Color**, **Icon**) are built into one Obsidian `SettingGroup` without a
+heading (`new Setting(general.listEl)`), so they read as one rounded box with
+inset lines between the rows, the way an Obsidian settings page opens with its
+general rows (finding S5-15). The group carries `cs-editor-group`, whose only
+job is `--setting-items-padding-x: var(--size-4-4)`: the rows sit 16px in from
+the box's edge, the window's own inset, instead of Obsidian's default 20px.
+
+The preview panel below starts 24px under the box (`margin-top:
+var(--size-4-6)`), the gap Obsidian leaves between two groups; where the panel
+stacks into one column (a phone, a narrow window), `row-gap` puts the same
+24px between the preview and the first adjustment group. Until 2026-10-23 the
+rows were loose in the window and a hairline `border-top` on the panel was
+what set the form off from the preview; the box now does that.
+
+The panel is built from the same parts (findings S5-07 and S5-14):
+
+- **Live preview** is an Obsidian group heading above the preview's box, not
+  a grey strip inside it. `LiveCalloutPreview` draws it for every window that
+  passes a `title` (`new Setting(parent).setHeading()`), and the box takes
+  `--setting-items-radius`, the corners of an Obsidian settings box.
+- **The three icon-adjustment groups and Picture** are `SettingGroup`s with a
+  heading, carrying `cs-editor-group` too, so their controls end on the same
+  line as the form's. The column adds no gap of its own: Obsidian's
+  `.setting-group + .setting-group` margin (24px) spaces them.
+- **A slider row stacks** (`cs-stacked-slider`): the name on its own line, the
+  track under it at full width, because the 260px column is too narrow for
+  Obsidian's name-beside-slider row. The value readout keeps the 7ch reserve
+  of every slider in the plugin.
+- **The heading's ↺** is the group's extra button (`addExtraButton`). It
+  overhangs the text line by its own padding (`margin-block`, as Obsidian's
+  Bases toolbar buttons do), so every heading in the panel is one line tall and
+  "Live preview" lines up with the first adjustment heading.
+
+`settingGroupEl()` (`ui/settingGroupEl.ts`) finds a group's outer element
+through the declared `listEl`, for hiding a whole group (no icon, or a
+picture that cannot follow the callout's colour).
+
+## A built-in's name, and Save while it saves
+
+A built-in's display name cannot change: Obsidian declares it. Its row shows
+the name inside a disabled text field (`addText` + `setDisabled(true)`), so it
+reads as a rectangle like the other rows' fields but cannot be focused or
+clicked. (It was bare `addDisplayValue` text pinned to the row's edge until
+2026-11-01.) `nameTextInput` stays `null` for a built-in; every reader already
+uses `?.`.
+
+While a save runs, **Save** keeps its words and its width and shows Obsidian's
+own spinner: `updateSaveState()` calls `setButtonBusy`
+([`ui/busyButton.ts`](../../src/ui/busyButton.ts): `mod-loading`, `aria-busy`,
+and `disabled` so a second press cannot start a second save; finding S5-V3).
+It used to read **Saving…**; the `editor.saving` key is no longer used.
+`tests/editorFormValues.test.ts` pins both.
+
 ## Field-level reset for built-ins
 
 The editor keeps a separate `builtInDefault` alongside `baselineDef`.
@@ -66,9 +122,9 @@ The editor keeps a separate `builtInDefault` alongside `baselineDef`.
 reset target would simply restore the customization. `builtInDefault` is the
 pristine shipped definition returned by `CalloutRegistry.getBuiltInDefault()`
 and is the target for the conditional return arrows on IDs, icon, color, and
-each render role's icon-adjustment card.
+each render role's icon-adjustment group.
 
-`iconAdjustGroup.ts` translates each complete card header through
+`iconAdjustGroup.ts` translates each complete group heading through
 `editor.blockIconAdjustments`, `editor.headingIconAdjustments`, or
 `editor.inlineIconAdjustments`. All 32 languages have these short headers,
 with word order controlled by each locale rather than a joined prefix and role.
@@ -108,13 +164,15 @@ built-in can still take an alias. More IDs cost the stylesheet little: the
 icon's artwork is written once per callout, not once per name (see
 [Icon painting](06-css-generation.md#icon-painting)).
 
-Each icon-adjustment card owns one return arrow for its Size / Horizontal /
-Vertical trio. It resets only that render role and calls the preview once;
+Each icon-adjustment group owns one return arrow, in its heading, for its
+Size / Horizontal / Vertical trio. It resets only that render role and calls the preview once;
 other roles keep their values. The target is
 `resolveIconAdjust(builtInDefault, role)`, not hard-coded `0 / 0 / 1`, so a
 future built-in with a non-neutral shipped adjustment remains correct.
-The compact header reset shares the settings-wide layout rule: showing it must
-preserve the colored header's natural height. See
+It is invisible until the trio differs from the defaults (`paintResetIdle`,
+`ui/resetArrow.ts`: `cs-reset-idle`, `visibility: hidden`), so it keeps its room
+and nothing beside it moves when it appears; while invisible it is out of the Tab order and hidden from screen
+readers. See also
 [settings resets](16-settings-ui-and-modals.md#scoped-reset-controls).
 
 There is a storage trap here: moving every thumb back to its shipped position
@@ -584,13 +642,59 @@ restore the save calls if its own `add`/`update` is refused. Moved ids are left
 out of the title and fold passes: their notes belonged to another callout until
 this Save, and nobody was asked about them.
 
-`TagInput` carries the field's messages. A refused id stays in the field. A
-`validate` result may be a `TagMessage` renderer - an **offer**, drawn over
-whatever lasting message was showing, kept until the typed text changes, then
-the lasting message comes back. `showExternalNote` draws a lasting message in
-the muted colour, and `addTagUnchecked` adds the moved id without asking
-`validate` again. The link keeps the field's focus on `mousedown`, as the + does:
-a blur would commit the typed id again and redraw the message under the pointer.
+`TagInput` carries the field's messages, in two places (finding S5-V1):
+
+- **Under the field**, where Obsidian shows a rejected value: a short message.
+  The editor passes `showFieldError`, which calls `setSettingError(idsSetting, …)`
+  (`ui/settingError.ts`) - the row's `setErrorMessage`, so Obsidian draws its
+  own `div.setting-item-error` in the warning colour, end-aligned, and marks
+  the row `is-invalid`. Short means about what was typed or about the field
+  as a whole: a duplicate, a too-long ID, "At least one ID is required", the
+  "Maximum N IDs" line. Obsidian builds that line inside the control column,
+  which here is only as wide as the field (228px on a desktop), and "Maximum
+  10 IDs. Delete one to add another." broke into two lines there. Since
+  2026-10-31 `setSettingError` moves the line (once; Obsidian reuses the
+  element) up to be a child of the row, and the stylesheet gives it a line
+  across the whole row: the row wraps, the label column's flex-basis is 0 so
+  the field stays beside it, and a negative top margin brings the row's gap
+  down to 8px (the 4px the line had inside the control sat too tight against
+  the pills). Still end-aligned, so a
+  short message stays under the field's edge and a long one grows toward the
+  label. Nothing else in the row moves.
+- **Under the label**, in the wide column: the lasting **note**
+  (`showExternalNote`, "On save, "test" moves here from X.") in the muted
+  colour, and every **wide** message in the warning colour (`.cs-tag-message`).
+  A wide message is a sentence that names another callout, a theme or
+  Obsidian, which wrapped into a tall strip in the field's 220px column:
+  "test" is an ID of X. You can move it here.", "…is the main ID of X. To use
+  it here, delete X first.", the theme and stock-ID refusals, the dash
+  collision and the theme warnings. The caller marks one with `wide(message)`
+  from `ui/TagInput.ts`; `CalloutEditor.takenIdMessage` and `updateIdWarning`
+  do. `TagRefusal` is `TagMessage | WideTagMessage`, what `validate` and
+  `showExternalError` accept.
+
+`paintMessages` draws both places from the state, taking the first of these
+candidates that belongs to each: an **offer** (a `validate` result that is a
+renderer or wide, like "move it here"), a lasting error the editor sets
+(`showExternalError`), the "full" message, then the plain refusal of what is
+typed (a duplicate, a too-long ID, a `validate` string). A short message and a
+wide one can therefore show together. The "full" message is not stored: it is
+read off the tag count each time, so a note the editor sets in `onChange`
+cannot wipe it (it used to share the lasting slot, and a tenth ID that arrived
+by "move it here" left a disabled field with no reason). A refused id stays in
+the field, and its refusal stays with it until the typed text changes - no
+timer takes it away. An unchanged message is not redrawn, so an offer's button
+survives the blur that commits the same id again.
+
+There is no animation: Obsidian's messages appear at once. Without
+`showFieldError` (a field outside a row, as in the tests) TagInput draws the
+same `div.setting-item-error` itself, under the pills. `addTagUnchecked` adds
+the moved id without asking `validate` again. The link keeps the field's focus
+on `mousedown`, as the + does: a blur would commit the typed id again and
+redraw the message under the pointer. Until 2026-10-23 all of this was one red
+line under the label that faded in and out, a passing error left after 2.5s,
+and two of its refusals were English-only (now `editor.idAlreadyHere` and
+`editor.idTooLong`).
 
 ### Material icons fetch on save, not on pick
 
@@ -614,7 +718,27 @@ immediately. Network availability is not a prerequisite for keeping a callout.
 grid, driven entirely by its `IconPack`), `IconGrid` (paging + keyboard
 navigation), `ImagePanel` ("Your images" upload/manage), `allSources.ts` (the
 pooled cross-source search), `IconLibrariesModal` (the **Manage icon libraries**
-window - see [Settings UI and modals](16-settings-ui-and-modals.md#iconlibrariesmodal---libraries-in-two-bands)).
+window - see [Settings UI and modals](16-settings-ui-and-modals.md#iconlibrariesmodal---libraries-in-three-obsidian-groups)).
+
+`IconGrid` is one Tab stop, as Obsidian's own pick lists are (finding S8-V1):
+a "roving tabindex". One cell has `tabindex="0"` - the chosen icon, or else
+the first cell on screen - and every other `-1`, which the arrows and a click
+can still focus but Tab skips. Tab therefore lands in the grid once and the
+next Tab goes on to Load more, Cancel and Confirm, instead of walking through
+up to 120 icons a page. The 0 moves with the focus (`focusin` on the grid),
+with a pick (`markSelected`), and to the chosen icon when `revealSelected`
+brings it in; when the cells on screen change - a new list, a collapsed group,
+a new page - `syncTabStop()` keeps exactly one, on screen. Group headers stay
+Tab stops of their own: each is a button that folds its group.
+
+`IconGrid`'s left and right arrows follow the reading direction: under a
+right-to-left interface (`.mod-rtl`, read through the grid's computed
+`direction`) the next cell is to the left. Results swap in at once, with no
+fade, as in Obsidian's own result lists - a fade replayed on every keystroke.
+A notice in a library's panel is quiet text, not a box: the trademark notice
+is muted small text, and the Material font failure is a line in
+`--text-warning` with its **Retry** button. Dragging a picture over **Your
+images** lays Obsidian's 10% accent drop tint over the grid area.
 
 The source menu lists only what can be picked from right now:
 `icons/iconLibraries.ts` decides it (`menuLibraries()`,
@@ -622,7 +746,9 @@ The source menu lists only what can be picked from right now:
 `sourcePicker.ts` lays it out in up to three groups, each the listbox's own
 `groupOf` heading (`.cs-combobox-group-label`, sticky at the top of the
 scrolling menu, each held inside its own `.cs-combobox-group`), always shown -
-there is no `hideSingleGroup` here:
+there is no `hideSingleGroup` here. Its rows have no lines between them, and
+the check on the library on screen is the row's own colour, as the check is in
+Obsidian's pickers:
 
 | Heading (key) | Rows | When |
 | --- | --- | --- |
@@ -668,9 +794,9 @@ Material's webfont), so an open menu catches up.
 A text button, **Manage libraries** (`iconPicker.manageLibraries`), ends the
 source row and opens the **Manage icon libraries** window on top. It replaced a
 gear: it is where libraries are downloaded now, which an icon left people to
-guess. It wears the shared grey face (`--cs-btn-face`, held by
-`secondaryButtons.test.ts` like the window footer's Cancel) and the field
-rule's own height, so it stands level with the menu; its label never wraps, and
+guess. It is Obsidian's own grey button (no face of the plugin's, held by
+`secondaryButtons.test.ts` like the window footer's Cancel), `--input-height`
+tall like the library dropdown beside it; its label never wraps, and
 it has no `aria-label`, since its words name it and Obsidian would turn the
 attribute into a tooltip. The editor opens the
 picker as `new IconPicker(plugin, this.icon, { id: this.existingId, name })`:
@@ -678,11 +804,17 @@ picker as `new IconPicker(plugin, this.icon, { id: this.existingId, name })`:
 picker hands the window the callout being edited (`EditedCallout`: that id and
 name plus the icon it was opened on) so deleting a library the draft uses
 asks first - see [Icons](13-icons.md#the-callout-being-edited-counts-as-a-user).
-`openLibraries()` first awaits `packs.loadAllFromDisk()`, the same read the picker
-does before its first paint (free once done): a library downloaded in an earlier
-session reads as missing until its file is read back, and a quick press on
-**Manage libraries** would otherwise list it under **Libraries to download** for
-a moment.
+`openLibraries()` opens the window through `openIconLibraries`
+([`iconpicker/openIconLibraries.ts`](../../src/settings/iconpicker/openIconLibraries.ts),
+the same opener the settings' Icon libraries row uses), which first awaits
+`packs.loadAllFromDisk()`, the same read the picker does before its first paint
+(cheap once done): a library downloaded in an earlier session reads as missing
+until its file is read back, and a quick press on **Manage libraries** would
+otherwise list it under **Libraries to download** for a moment. The opener then
+calls the picker's `beforeOpen`, where the picker takes what it shows (the pool
+and `panelContents()`) - after the read, so the comparison below sees only what
+the window changed - and where it declines if it was closed meanwhile. The
+counts come from the picker's own (`sourceCounts.ts`).
 When that window closes
 having changed something, `openLibraries()` takes it in: a library that was
 offered and no longer is (deleted, or hidden) gives way to All sources, and an
@@ -733,7 +865,11 @@ needs **no special case** to render it; it's just another source as far as
 The pool is built from `pickerSources()` - the libraries the picker offers,
 in the user's order - so its result groups come in that order too. A
 group heading uses `iconPicker.sourceGroup` to show the library name followed
-by its exact filtered result count in parentheses, in every locale. A
+by its exact filtered result count in parentheses, in every locale. It is set
+as Obsidian sets a group heading - small, semibold, muted, in sentence case -
+and folds with Obsidian's own triangle: a `span.collapse-icon` holding
+`right-triangle`, which app.css sizes and turns by the reading direction once
+`.is-collapsed` is on it. A
 downloadable source counts only when **every** file it draws from is present -
 not "any": Font Awesome pools names across three separate files
 (Solid/Regular/Brands), and a missing file would silently drop every name only

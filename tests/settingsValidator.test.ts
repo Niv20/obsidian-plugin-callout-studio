@@ -16,7 +16,7 @@
  * `customPalettes` / `userImages` / `customCommands` come back as whatever the
  * file said — **empty arrays when the file said nothing** — and merging them by
  * id against the user's own is the *caller's* job, in
- * `DataManagementSection.applyImport`. The tests below state that boundary
+ * `backupImport.applyImport`. The tests below state that boundary
  * explicitly, because reading this function alone makes `Object.assign` look
  * safe, and it is exactly what would wipe the three lists a user builds up.
  * The other half of that boundary — the merge itself — is
@@ -226,7 +226,7 @@ describe("sanitizeImportedSettings — the merge against defaults", () => {
 
 describe("sanitizeImportedSettings — the three lists the user builds up", () => {
 	it("returns EMPTY arrays when the file carries none of them", () => {
-		// This is the whole reason DataManagementSection must merge by id: an
+		// This is the whole reason backupImport must merge by id: an
 		// Object.assign of this result would replace the user's palettes,
 		// pictures and commands with nothing.
 		const { settings } = sanitizeImportedSettings({});

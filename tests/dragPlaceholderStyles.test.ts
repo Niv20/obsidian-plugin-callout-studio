@@ -8,8 +8,8 @@
  *
  * - The box is laid out from the four properties DragSortList writes, against
  *   the list, which therefore has to be positioned.
- * - It is the row's shape — the row's corners — and the theme's neutral
- *   resting-border shade, rather than the accent highlight.
+ * - It is Obsidian's own drop slot (`.drag-ghost-hidden:before`): the accent
+ *   at 30% with 5px corners, as when a ribbon item is dragged in Settings.
  * - It never takes a pointer that is meant for the rows under the drag.
  * - It fades in only where motion is allowed, and its entrance animates
  *   `scale`, never `transform`: the FLIP slide between slots owns that one.
@@ -37,12 +37,13 @@ describe("the drop placeholder", () => {
 		for (const side of ["top", "left", "width", "height"]) {
 			assert.match(valueOf(box, side) ?? "", new RegExp(`^var\\(--cs-drag-placeholder-${side},`));
 		}
-		assert.equal(valueOf(only(".cs-menu-customize-list"), "position"), "relative");
+		// The one sortable list left: Manage icon libraries' Available box.
+		assert.equal(valueOf(only(".cs-icon-library-available .setting-items"), "position"), "relative");
 	});
 
-	it("has the row's corners and the theme's neutral UI shade", () => {
-		assert.equal(valueOf(box, "border-radius"), valueOf(only(".callout-studio-row"), "border-radius"));
-		assert.equal(valueOf(box, "background"), "var(--background-modifier-border)");
+	it("is Obsidian's own drop slot: the accent at 30%, with 5px corners", () => {
+		assert.equal(valueOf(box, "border-radius"), "5px");
+		assert.equal(valueOf(box, "background-color"), "color-mix(in oklch, var(--interactive-accent) 30%, transparent)");
 	});
 
 	it("never takes the pointer", () => {

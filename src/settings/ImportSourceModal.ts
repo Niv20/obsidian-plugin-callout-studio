@@ -5,37 +5,33 @@
  *
  * Owns only the choice between the three. Callout Studio's own format goes
  * straight to the file picker; the other two open PluginImportModal with their
- * own PluginImportSource (settings/pluginImport/). Each source is one option
- * box (settings/optionBox.ts) — the same box Export's format chooser and the
- * plugin import window draw. The two other plugins sit under a caption of
- * their own, so the window reads as "your own backup, or somebody else's
- * data" rather than as three equal rows.
+ * own PluginImportSource (settings/pluginImport/). Each source is a row with
+ * its own button (settings/choiceRow.ts), as Export's format chooser draws
+ * its formats. The window is two of Obsidian's setting groups: your own
+ * backup, then the other plugins under the heading "From another plugin", so
+ * it reads as "your own backup, or somebody else's data" rather than as three
+ * equal rows.
  */
-import { Modal } from "obsidian";
+import { Modal, SettingGroup } from "obsidian";
 import { t } from "../i18n";
-import { processImportedJSON } from "./sections/DataManagementSection";
+import { processImportedJSON } from "./sections/backupImport";
 import { applyModalChrome } from "./modalChrome";
-import {
-	renderOptionBox,
-	renderOptionGroupLabel,
-	renderOptionList,
-	type OptionBoxSpec,
-} from "./optionBox";
+import { addChoiceRow, type ChoiceRowSpec } from "./choiceRow";
 import { PluginImportModal } from "./pluginImport/PluginImportModal";
 import { ADMONITION_IMPORT } from "./pluginImport/admonitionImportSource";
 import { CALLOUT_MANAGER_IMPORT } from "./pluginImport/calloutManagerImportSource";
-import type { SettingsSectionContext } from "./sections/types";
+import type { SettingsContext } from "./sections/types";
 
 export class ImportSourceModal extends Modal {
 	private fileInput!: HTMLInputElement;
 
-	constructor(private readonly ctx: SettingsSectionContext) {
+	constructor(private readonly ctx: SettingsContext) {
 		super(ctx.app);
 	}
 
 	onOpen(): void {
 		this.modalEl.addClass("callout-studio-import-source-modal");
-		// No footer: every box here IS the action.
+		// No footer: each row's button is the action.
 		applyModalChrome(this);
 		this.setTitle(t("import.chooseSource"));
 
@@ -45,7 +41,7 @@ export class ImportSourceModal extends Modal {
 		// actually showing Chromium's file chooser; calling .click() on a
 		// real, DOM-connected input directly from the trusted click listener
 		// is not. Its own 'change' handler closes this modal, rather than the
-		// box's onActivate — closing any earlier risks tearing down focus
+		// button's onActivate — closing any earlier risks tearing down focus
 		// before the (asynchronous) dialog-opening request lands.
 		this.fileInput = this.contentEl.createEl("input", {
 			cls: "cs-import-file-input",
@@ -60,22 +56,23 @@ export class ImportSourceModal extends Modal {
 			void processImportedJSON(this.ctx, file);
 		});
 
-		const list = renderOptionList(this.contentEl);
-
-		// The export chooser uses the same Lucide icon for this backup.
-		renderOptionBox(list, {
+		// Your own backup, in a group with no heading. The export chooser uses
+		// the same Lucide icon for this backup.
+		addChoiceRow(new SettingGroup(this.contentEl), {
 			icon: "paintbrush",
 			title: t("import.sourceStudio"),
 			desc: t("import.sourceStudioDesc"),
+			buttonText: t("import.upload"),
 			onActivate: () => this.fileInput.click(),
 		});
 
-		renderOptionGroupLabel(list, t("import.sourceOtherPlugins"));
-		const plugins: OptionBoxSpec[] = [
+		const others = new SettingGroup(this.contentEl).setHeading(t("import.sourceOtherPlugins"));
+		const plugins: ChoiceRowSpec[] = [
 			{
 				icon: "file",
 				title: t("import.sourceCalloutManager"),
 				desc: t("import.sourceCalloutManagerDesc"),
+				buttonText: t("settings.import"),
 				onActivate: () => {
 					this.close();
 					new PluginImportModal(this.ctx, CALLOUT_MANAGER_IMPORT).open();
@@ -85,14 +82,14 @@ export class ImportSourceModal extends Modal {
 				icon: "message-square-quote",
 				title: t("import.sourceAdmonition"),
 				desc: t("import.sourceAdmonitionDesc"),
+				buttonText: t("settings.import"),
 				onActivate: () => {
 					this.close();
 					new PluginImportModal(this.ctx, ADMONITION_IMPORT).open();
 				},
 			},
 		];
-
-		for (const plugin of plugins) renderOptionBox(list, plugin);
+		for (const plugin of plugins) addChoiceRow(others, plugin);
 	}
 
 	onClose(): void {

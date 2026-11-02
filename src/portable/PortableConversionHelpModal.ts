@@ -15,7 +15,10 @@ export class PortableConversionHelpModal extends Modal {
 		this.contentEl.createEl("p", { text: t("portable.intro") });
 		this.contentEl.createEl("p", { text: t("portable.helpIntro") });
 		renderPortableRules(this.contentEl);
-		this.contentEl.createEl("p", { cls: "cs-portable-warning", text: t("portable.backup") });
+		// Advice, so a line of the window's own text rather than a box. It is the
+		// one thing here that cannot be taken back, so it is bold and in
+		// Obsidian's warning colour (`p.mod-warning`) rather than plain text.
+		this.contentEl.createEl("p", { cls: "mod-warning cs-portable-backup", text: t("portable.backup") });
 	}
 
 	onClose(): void {

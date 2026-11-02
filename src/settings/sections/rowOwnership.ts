@@ -26,15 +26,16 @@
  * Its own module because `CalloutRowActions.ts` sits at the line cap the
  * repo's ratchet freezes it at.
  */
-import { Menu } from "obsidian";
+import { Menu, type App } from "obsidian";
 import { t } from "../../i18n";
+import { activeThemeName } from "../../manager/theme/customCssApi";
 import {
 	handleCalloutDelete,
 	handleCalloutReplace,
 	handleClearCalloutUsages,
 } from "./calloutVaultActions";
 import type { CalloutDefinition } from "../../types";
-import type { SettingsSectionContext } from "./types";
+import type { SettingsContext } from "./types";
 import { disableWhenUnused } from "../../usage/usageMenuItem";
 import { ROW_MENU_SECTION } from "./rowMenuSections";
 
@@ -47,13 +48,13 @@ export interface StyleOwnerFacts {
 }
 
 /** Read the facts off the live plugin. */
-export function styleOwnerFacts(ctx: SettingsSectionContext): StyleOwnerFacts {
+export function styleOwnerFacts(ctx: SettingsContext): StyleOwnerFacts {
 	return { themeOwns: (def) => ctx.plugin.registry.themeOwns(def) };
 }
 
 /** {@link isThemeStyled}, asked of the live plugin. */
 export function isThemeSupplied(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): boolean {
 	return ctx.plugin.registry.themeOwns(def);
@@ -91,6 +92,30 @@ export function partitionByStyleOwner(
 	return { fromTheme, own, builtIn };
 }
 
+/** Every callout the plugin knows, split into the three lists. */
+export function partitionCallouts(ctx: SettingsContext): ReturnType<typeof partitionByStyleOwner> {
+	return partitionByStyleOwner(styleOwnerFacts(ctx), [
+		...ctx.plugin.registry.getThemeProvided(),
+		...ctx.plugin.registry.getUserDefined(),
+		...ctx.plugin.registry.getBuiltIn(),
+	]);
+}
+
+/** The active theme's name, or "Your theme" while Obsidian's default theme is on. */
+export function activeThemeLabel(app: App): string {
+	return activeThemeName(app) ?? t("settings.themeCalloutsDefaultTheme");
+}
+
+/**
+ * The theme's callout styles are switched off while a theme is active —
+ * what keeps its section, and the switch in it, on screen with no rows.
+ * In Obsidian's default theme the switch has nothing to take away.
+ */
+export function themeStylesSwitchedOff(ctx: SettingsContext): boolean {
+	return !ctx.plugin.registry.settings.themeCalloutStyles.enabled &&
+		activeThemeName(ctx.app) !== null;
+}
+
 /**
  * Whether Delete can really remove this callout.
  *
@@ -102,7 +127,7 @@ export function partitionByStyleOwner(
  * {@link addConvertUsesItem}, which every row has.
  */
 export function deleteRemovesRow(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): boolean {
 	return !def.builtIn && !isThemeSupplied(ctx, def);
@@ -115,7 +140,7 @@ export function deleteRemovesRow(
  */
 export function addReplaceItem(
 	menu: Menu,
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 	usage?: { fileCount: number; totalCount: number },
 ): void {
@@ -146,7 +171,7 @@ export function addReplaceItem(
  */
 export function addConvertUsesItem(
 	menu: Menu,
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 	usage?: { fileCount: number; totalCount: number },
 ): void {
@@ -171,7 +196,7 @@ export function addConvertUsesItem(
  */
 export function addDeleteItem(
 	menu: Menu,
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): void {
 	if (!deleteRemovesRow(ctx, def)) return;

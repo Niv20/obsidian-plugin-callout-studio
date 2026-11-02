@@ -11,7 +11,8 @@
  * a hex makes invalid at computed-value time — the declaration silently unsets
  * and the colour disappears.
  *
- * So what survives here is the *core* half: what the running Obsidian expects.
+ * So what survives here is the *core* half, and it is fixed: Obsidian 1.13.4
+ * is the plugin's minimum, so core always spells its accent as a full colour.
  * `manager/theme/accentDialect.ts` answers the theme half by reading the
  * theme's own text, and `StudioWeightCache.dialect()` is where the two meet.
  * Every function below now takes that answer as an argument rather than
@@ -20,7 +21,6 @@
  * `StudioWeightCache` already documents, and it is also what made the old
  * behaviour impossible to test per theme.
  */
-import { requireApiVersion } from "obsidian";
 import type {
 	AccentDialect,
 	AccentSpelling,
@@ -28,31 +28,13 @@ import type {
 import { hexToRgbString } from "./colorUtils";
 
 /**
- * Cached version check. `null` until first computed; avoids calling
- * `requireApiVersion` for every callout on every CSS inject.
- */
-let calloutColorIsRaw: boolean | null = null;
-
-/**
- * True when the running Obsidian keeps `--callout-*` as bare RGB triplets, i.e.
- * ≤1.12.
- */
-export function calloutColorUsesRawTriplet(): boolean {
-	if (calloutColorIsRaw === null) {
-		calloutColorIsRaw = !requireApiVersion("1.13.0");
-	}
-	return calloutColorIsRaw;
-}
-
-/**
- * The spelling the running Obsidian itself uses.
+ * The spelling Obsidian itself uses for `--callout-*`: a full CSS colour.
  *
  * The fallback for every vault whose theme has no opinion — 196 of the 257 in
  * the dev vault — which is what keeps the dialect machinery invisible there.
+ * Before 1.13 core used bare triplets; the plugin no longer runs there.
  */
-export function coreAccentDialect(): AccentSpelling {
-	return calloutColorUsesRawTriplet() ? "triplet" : "color";
-}
+export const CORE_ACCENT_SPELLING: AccentSpelling = "color";
 
 /**
  * The value to assign to Obsidian's `--callout-color`, in the spelling the
@@ -103,5 +85,5 @@ export function accentVarSpelling(
 	dialect: AccentDialect,
 	mode: "light" | "dark",
 ): AccentSpelling {
-	return dialect.declared.get(cssVar)?.[mode] ?? coreAccentDialect();
+	return dialect.declared.get(cssVar)?.[mode] ?? CORE_ACCENT_SPELLING;
 }

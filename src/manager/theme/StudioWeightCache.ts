@@ -43,7 +43,7 @@ import { studioWeightFor } from "./studioWeight";
 import { ThemeCalloutStore } from "./ThemeCalloutStore";
 import type { AccentDialect } from "./accentDialect";
 import type { CalloutSurface } from "./calloutSurface";
-import { coreAccentDialect } from "../../utils/calloutColorFormat";
+import { CORE_ACCENT_SPELLING } from "../../utils/calloutColorFormat";
 
 export class StudioWeightCache {
 	private store: ThemeCalloutStore | null = null;
@@ -103,7 +103,7 @@ export class StudioWeightCache {
 	 * the accent declarations outside any inject pass.
 	 */
 	dialect(): AccentDialect {
-		this.accent ??= this.themeCallouts().accentDialect(coreAccentDialect());
+		this.accent ??= this.themeCallouts().accentDialect(CORE_ACCENT_SPELLING);
 		return this.accent;
 	}
 

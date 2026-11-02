@@ -4,6 +4,8 @@ Open a callout for editing and click its current icon to open the icon picker. Y
 The source selector and search field stay aligned as search results change, even when there are no matches.
 On desktop, the available search field is ready for typing when an icon source opens, including **Custom Icons**. On a phone or tablet, tap the search field when you want to type; opening the picker or changing sources does not open the keyboard.
 
+With the keyboard, Tab lands once in the grid of icons, on the selected icon or else the first one; the arrow keys move inside it, and the next Tab goes on to the buttons.
+
 **Confirm** stays dimmed while no icon is selected, which includes right after you switch to another source, because that clears the selection. Press it and a message asks you to select an icon.
 
 ![Lucide icon picker searching for book, with Book open selected in dark mode](../../assets/user-guide/icon-picker.svg)
@@ -12,7 +14,7 @@ On desktop, the available search field is ready for typing when an icon source o
 
 The picker can offer Lucide, Tabler Icons, Material Symbols, Emoji, Font Awesome, Octicons, RPG Awesome, and Simple Icons.
 
-The source menu lists only what you can pick from right now. Under **Search** is **All sources**, which searches every library at once. Under **Libraries** are the libraries on this device, in the order you set in **Manage icon libraries** (see below), with rounded counts such as **3.8K+** that keep catalog sizes easy to scan. Each heading stays pinned to the top of the menu while its rows scroll underneath it. A line at the bottom, such as **3 more libraries available for download**, tells you how many more you can get. It isn't a button: you download libraries with **Manage libraries**, next to the menu. Once every library is on this device the line goes away, and it comes back as soon as you delete one. On a phone, the menu leaves out its **Choose source** caption to keep room for the library's name.
+The source menu lists only what you can pick from right now. Under **Search** is **All sources**, which searches every library at once. Under **Libraries** are the libraries on this device, in the order you set in **Manage icon libraries** (see below), with rounded counts such as **3.8K+** that keep catalog sizes easy to scan. Each heading stays pinned to the top of the menu while its rows scroll underneath it. A line at the bottom, such as **3 more libraries available for download**, tells you how many more you can get. It isn't a button: you download libraries with **Manage libraries**, next to the menu, or from **Icon libraries** in the plugin's settings. Once every library is on this device the line goes away, and it comes back as soon as you delete one. On a phone, the menu leaves out its **Choose source** caption to keep room for the library's name.
 
 If you edit a callout whose icon comes from a library this device doesn't have - you deleted it, or you downloaded it only on another device - the callout keeps its icon, and the picker opens on that library. The source menu names it, and when you open the menu it is listed first, under its own **Deleted library** heading. It stays there while you look through other libraries, so you can always go back to it. It still counts toward the libraries available for download: keeping the icon does not keep the full library. That library shows its one-time download prompt, in the middle of the picker, where its icons would be: download it to choose a new icon from it, or choose from another library instead. The library of the icon you are editing is listed under **Current icon** if you hid it.
 
@@ -29,9 +31,8 @@ Moving the pointer again highlights the row under it.
 - **Material Symbols** downloads only the specific SVG you select, keeping its stored footprint small.
 
 Search works offline. Depending on the selected source, the filters at the top can narrow icons by category, style, stroke weight, or emoji skin tone.
-In **All sources**, each library's result heading shows its matching icon count in parentheses, such as **Lucide (12)**.
-Across all libraries, filters expand to use the available row width, including when they wrap below the search field.
-For Tabler Icons, the search field is slightly narrower to leave more room for the style and category filters.
+In **All sources**, each library's result heading shows how many of its icons match as a small faint number at the end of the line, as Obsidian's search does.
+Each filter is as wide as its current choice, and the search field takes the rest of the row. On a phone, the filters share a row of their own below the search field.
 For Material Symbols, search sits above the style, weight, and category filters so their choices stay readable.
 The source and filters use matching selection fields and menus. The emoji skin tone menu shows a
 sample hand beside each tone, so you can see the choice before selecting it.
@@ -40,26 +41,29 @@ sample hand beside each tone, so you can see the choice before selecting it.
 
 ## Manage icon libraries
 
-Click **Manage libraries** at the end of the source row to open **Manage icon libraries**. This is also where you download a library: the source menu lists only the libraries already on this device. The window works like **Customize menu items**: one list, divided by lines, under these headings.
+**Manage icon libraries** opens from two places, and it is the same window in both:
+
+- In the icon picker, click **Manage libraries** at the end of the source row. The window sits over the picker, so your unsaved choice stays where it is. This is the quickest way to get a library when the icon you want isn't in the ones you have.
+- In the plugin's settings, open **Colors and icons** and press **Manage libraries** on **Icon libraries**. It won't open while a callout editor is open: press it then and a message asks you to finish with the editor first.
+
+This is also where you download a library: the source menu lists only the libraries already on this device. The libraries are in up to three boxes, like the lists in Obsidian's own settings, each under its heading.
 
 Your search text stays in place when you return, including after reordering, downloading, deleting, or hiding a library. The results update to reflect those changes. If removing the active library returns you to **All sources**, the same search continues there.
 
-- **Available libraries** are the ones the picker offers, in the order it offers them. Drag a row by its handle - or focus the handle and press the up and down arrow keys - to change that order. While you drag, a grey slot that follows the active palette shows where the row will land. The reset arrow sits on this heading.
-- **Libraries to download** are the ones not downloaded on this device yet. Their rows are dimmed and have no handle, because their order can't change anything until they're downloaded.
+- **Available libraries** are the ones the picker offers, in the order it offers them. Drag a row by its handle - or focus the handle and press the up and down arrow keys - to change that order. While you drag, a slot in your accent colour shows where the row will land, as in Obsidian's own lists, and holding the row near the top or bottom of the window scrolls it. The reset arrow sits at the end of this heading.
+- **Libraries to download** are the ones not downloaded on this device yet. Their rows have no handle, because their order can't change anything until they're downloaded.
 - **Hidden libraries** appears only while you have hidden one of the libraries that come with the plugin, and lists it so you can show it again.
 
 ![Manage icon libraries showing available sources and libraries to download in a bounded dark-mode window](../../assets/user-guide/icon-libraries.svg)
 
-The three headings are as large as **Built-in commands** in **Commands and shortcuts**.
-
 Each row has one button:
 
-- A library you download has a **trash** button above the line and a **download** button below it. Under its name you see how many icons it has and its size, so you know what a download costs and what deleting frees.
-- **Lucide, Material, Emoji, and Custom Icons** come with the plugin and can't be deleted, so their button hides them from the picker instead, and shows them again from below the line. Hiding **Material** also stops the picker from loading its preview font from Google.
+- A library you download has a **trash** button in **Available libraries** and a **download** button under **Libraries to download**. Under its name you see how many icons it has and its size, so you know what a download costs and what deleting frees.
+- **Lucide, Material, Emoji, and Custom Icons** come with the plugin and can't be deleted, so their button hides them from the picker instead, and shows them again from **Hidden libraries**. Hiding **Material** also stops the picker from loading its preview font from Google.
 
-Some libraries can be downloaded and deleted; **Lucide**, **Emoji** and **Material** come with the plugin, so they can only be hidden. A library you download takes its place in your order rather than jumping to the end. The picker always keeps at least one library, so the last one above the line can't be removed.
+Some libraries can be downloaded and deleted; **Lucide**, **Emoji** and **Material** come with the plugin, so they can only be hidden. A library you download takes its place in your order rather than jumping to the end. The picker always keeps at least one library, so the last one in **Available libraries** can't be removed.
 
-The window scrolls only when the library you pressed moves to a place you can't see. Delete or hide one and it drops below the line; the window scrolls down with it, so you see where it went. Download one and, the moment the download finishes, the row rises into **Available libraries**; the window scrolls up with it. In every other case - dragging, the arrow keys, the reset arrow, a download that is still running or fails, a question you decline, a library that lands in view anyway - the window stays where it is.
+The window scrolls by itself only when the library you pressed moves to a place you can't see. Delete or hide one and it moves to a lower box; the window scrolls down to it, so you see where it went. Download one and, the moment the download finishes, the row moves into **Available libraries**; the window scrolls up to it. In every other case - dragging, the arrow keys, the reset arrow, a download that is still running or fails, a question you decline, a library that lands in view anyway - the window stays where it is.
 
 The arrow on the **Available libraries** heading resets everything to how the plugin came: the default order, every library shown, and none of the libraries you downloaded. If any are on the device, it lists them and asks before it deletes them; callouts that use their icons keep them, as with any delete. It never downloads anything. The arrow shows only while something differs from that, so it is also the quickest way to see whether a library is still taking up space.
 
@@ -77,7 +81,7 @@ Three things are worth knowing before you use one:
 
 - **Logos are trademarks of their owners.** Use a logo only to represent the company, product, or service it belongs to, and follow its owner's brand guidelines. The picker keeps this reminder on screen while the source is selected.
 - **Some logos are missing on purpose.** Simple Icons itself no longer carries some well-known brands, and Callout Studio leaves out the few logos whose own license restricts how they may be used or passed on. If you have the right to use such a logo, add its file under **Custom Icons** instead.
-- **Some logos have a license of their own that asks for credit.** **Icon licenses & credits**, at the bottom of the plugin settings, links to the full list, which also names every logo that was left out and why.
+- **Some logos have a license of their own that asks for credit.** The **License** icon (the scales icon) in the row of small icons at the bottom of the plugin settings opens a window with the full list, which also names every logo that was left out and why.
 
 ## Use your own graphic
 

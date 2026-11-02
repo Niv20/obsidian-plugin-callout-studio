@@ -1,157 +1,109 @@
 /**
- * tests/dangerButtons.test.ts — the red buttons answer the pointer.
+ * tests/dangerButtons.test.ts — every red button is Obsidian's quiet red button.
  *
- * Sibling to `secondaryButtons.test.ts`, and the same class of bug reached from
- * a third side. The greys had rules that resolved against the wrong surface;
- * the reds have a rule that resolves against *nothing*.
+ * One vocabulary (`src/ui/destructiveButton.ts`): a destructive action is
+ * `mod-destructive` alone — `setDestructive()` on a `ButtonComponent`,
+ * `DESTRUCTIVE_BUTTON_CLASSES` on a raw `<button>` — which Obsidian paints as red
+ * words on a light red wash on every device, the look of its own Log out button
+ * and of our Reset everything. Never `setCta()` beside it (that is the solid
+ * red, which the plugin no longer wears), never the older `mod-warning`, which
+ * `.is-mobile` paints grey with bold red text, so the same button was red on a
+ * desktop and grey on a phone, and never `ButtonComponent.setWarning()`, which
+ * 1.13 deprecates. `mod-warning` on a paragraph is something else — Obsidian's
+ * warning-coloured line, as in its own "Delete file?" — and stays allowed.
  *
- * Obsidian ships a hover for its red-button variants:
- *
- *     button.mod-warning       { background-color: var(--background-modifier-error) }
- *     button.mod-warning:hover { background-color: var(--background-modifier-error-hover) }
- *
- * and then, under `body`, defines both of those tokens as `var(--color-red)`.
- * The rule matches, fires, and paints the colour already there — Δlum 0.0% in
- * both themes. Delete, Replace and "Start fresh" were never missing a hover
- * rule; they were running a no-op, which is why the gap survived so long in a
- * stylesheet that otherwise looks like it handles them.
- *
- * So the contract mirrors the grey one: a token declared beside the grey pair,
- * mixed from the resting fill with `--mono-rgb-100` for direction, and a
- * hover-only rule heavy enough to land. Judge the step in **CIEDE2000**, not
- * Δlum and not CIE76 — light lands at ΔE00 4.19 against the grey face's 4.10,
- * and dark is deliberately smaller (2.84 vs 5.26) because closing that gap
- * costs white-text contrast on a fill Obsidian already ships below AA.
- *
- * What this file guards is the part that silently rots: the token existing, the
- * direction being the theme's rather than a hardcoded `black`, the rule
- * outranking Obsidian's own hover, both historical red classes being covered,
- * and the resting fill staying unclaimed so a theme keeps its own red.
+ * And nothing of ours repaints one. A locked red button is Obsidian's 70% dim
+ * of the same face (`aria-disabled`), and a lit one has no hover of its own: the
+ * plugin used to step the solid red darker with a token of its own, and this
+ * file keeps that from coming back. The two small ✕ badges the stylesheet does
+ * paint (the icon tile's and the image panel's) wear the same quiet red by the
+ * same tokens, never the palette's solid `--color-red`.
  */
 import assert from "node:assert";
-import { describe, it } from "node:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { compareSpecificity, specificityOf } from "../src/utils/cssSpecificity";
+import { describe, it } from "node:test";
+import { DESTRUCTIVE_BUTTON_CLASSES } from "../src/ui/destructiveButton";
+import { parseRules } from "./support/cssInjectorHarness";
+import { at, literals, pluginSourceFiles, report } from "./support/sourceScan";
 
-const css = readFileSync(join(process.cwd(), "styles.css"), "utf8").replace(
-	/\/\*[\s\S]*?\*\//g,
-	"",
-);
+const css = readFileSync(join(process.cwd(), "styles.css"), "utf8");
+const rules = parseRules(css);
 
-/** Collapsed whitespace, so a selector can be matched across its wrapped lines. */
-const flat = css.replace(/\s+/g, " ");
+/** A selector with its `:not(…)` arguments removed: what it actually selects. */
+const selecting = (selector: string): string => selector.replace(/:not\([^()]*\)/g, "");
 
-describe("the danger hover token", () => {
-	it("is declared beside the grey pair, not in a block of its own", () => {
-		const block = /\{([^{}]*--cs-btn-face\s*:[^{}]*)\}/.exec(css)?.[1] ?? "";
-		assert.ok(block, "no rule declares --cs-btn-face");
-		assert.match(
-			block,
-			/--cs-btn-danger-face-hover\s*:/,
-			"--cs-btn-danger-face-hover must sit with --cs-btn-face so the two " +
-				"families cannot drift onto different scopes",
-		);
+describe("a red button's classes", () => {
+	it("are Obsidian's quiet destructive button, with no solid-red mod-cta", () => {
+		assert.deepStrictEqual(DESTRUCTIVE_BUTTON_CLASSES, ["mod-destructive"]);
 	});
 
-	it("is mixed from the resting error fill", () => {
-		assert.match(
-			flat,
-			/--cs-btn-danger-face-hover: color-mix\( in srgb, var\(--background-modifier-error\) 92%/,
-			"the hover has to be mixed from --background-modifier-error, so a theme " +
-				"that retunes its red gets a hover derived from that red",
-		);
+	it("never pair setDestructive() with setCta(), which is the solid red", () => {
+		const found: string[] = [];
+		for (const file of pluginSourceFiles()) {
+			for (const match of file.code.matchAll(/\.setDestructive\(\s*\)\s*\.setCta\(\s*\)/g)) found.push(at(file, match.index ?? 0));
+		}
+		assert.deepStrictEqual(found, [], report("a red button is setDestructive() alone", found));
 	});
-	it("takes its direction from the theme, never a hardcoded black", () => {
-		const decl =
-			/--cs-btn-danger-face-hover: color-mix\(([^;]*)\);/.exec(flat)?.[1] ?? "";
-		assert.match(
-			decl,
-			/rgb\(var\(--mono-rgb-100\)\)/,
-			"without --mono-rgb-100 the red darkens in dark mode too, which is the " +
-				"one rule the shared button face exists to make true everywhere",
-		);
-		assert.doesNotMatch(
-			decl,
-			/\bblack\b|#000/,
-			"a literal black cannot flip with the theme",
-		);
+
+	it("never include mod-warning, which only ever classes a warning paragraph", () => {
+		const found: string[] = [];
+		for (const file of pluginSourceFiles()) {
+			for (const literal of literals(file.text)) {
+				if (!/\bmod-warning\b/.test(literal.value)) continue;
+				// The createEl call this literal is an option of, in the same statement.
+				const before = file.text.slice(0, literal.start);
+				const call = before.slice(before.lastIndexOf("createEl("));
+				const tag = call.includes(";") ? undefined : /^createEl\(\s*"(\w+)"/.exec(call)?.[1];
+				if (tag !== "p") found.push(at(file, literal.start));
+			}
+		}
+		assert.deepStrictEqual(found, [], report("mod-warning is grey with red text on a mobile button", found));
+	});
+
+	it("never come from ButtonComponent.setWarning()", () => {
+		// MenuItem.setWarning(true) is the menu API and stays; only the button's
+		// argument-less form is the deprecated one.
+		const found: string[] = [];
+		for (const file of pluginSourceFiles()) {
+			for (const match of file.code.matchAll(/\.setWarning\(\s*\)/g)) found.push(at(file, match.index ?? 0));
+		}
+		assert.deepStrictEqual(found, [], report("use setDestructive() alone", found));
 	});
 });
 
-/**
- * Obsidian's own red hover, which ours has to outrank. It lives inside
- * `@media (hover: hover)`, so the media query buys no specificity — the
- * selector alone decides it.
- */
-const OBSIDIAN_WARNING_HOVER = specificityOf("button.mod-warning:hover");
-
-describe("the red hover lands", () => {
-	const SELECTORS = [
-		"body:not(.is-mobile) .callout-studio-settings button:is(.mod-warning, .mod-destructive):not( :disabled, .cs-btn-disabled ):hover",
-		"body:not(.is-mobile) .cs-modal button:is(.mod-warning, .mod-destructive):not( :disabled, .cs-btn-disabled ):hover",
-		"body:not(.is-mobile) .callout-studio-editor button:is(.mod-warning, .mod-destructive):not( :disabled, .cs-btn-disabled ):hover",
-	];
-
-	it("Obsidian's bar is (0,2,1)", () => {
-		assert.deepStrictEqual(OBSIDIAN_WARNING_HOVER, [0, 2, 1]);
+describe("styles.css leaves red buttons to Obsidian", () => {
+	it("has no rule for the legacy mod-warning class", () => {
+		const named = rules.filter((rule) => /\.mod-warning\b/.test(rule.selector));
+		assert.deepStrictEqual(named.map((rule) => rule.selector), []);
 	});
 
-	for (const selector of SELECTORS) {
-		const root = /\.(callout-studio-settings|cs-modal|callout-studio-editor)/.exec(selector)?.[1];
+	it("repaints no red button, at rest or under the pointer", () => {
+		const painting = rules.filter((rule) => /\.mod-destructive\b/.test(selecting(rule.selector)));
+		assert.deepStrictEqual(painting.map((rule) => rule.selector), []);
+	});
 
-		it(`${root} carries the rule`, () => {
-			assert.ok(
-				flat.includes(selector),
-				`${selector} is missing — red buttons under .${root} would fall back ` +
-					"to Obsidian's no-op hover",
-			);
-		});
+	it("declares no red hover token of its own", () => {
+		assert.doesNotMatch(css.replace(/\/\*[\s\S]*?\*\//g, ""), /--cs-btn-danger-face-hover/);
+	});
 
-		it(`${root} outranks button.mod-warning:hover`, () => {
-			assert.ok(
-				compareSpecificity(specificityOf(selector), OBSIDIAN_WARNING_HOVER) > 0,
-				`${selector} is ${JSON.stringify(specificityOf(selector))}, which does not ` +
-					`outrank ${JSON.stringify(OBSIDIAN_WARNING_HOVER)}`,
-			);
-		});
-	}
-
-	it("is desktop-only, and skips the mobile red-text treatment", () => {
-		const at = flat.indexOf(SELECTORS[1]!);
-		assert.ok(at > 0);
-		const before = flat.slice(0, at);
-		assert.match(
-			before.slice(-160),
-			/@media \(hover: hover\) \{[^{]*$/,
-			"the rule must sit inside @media (hover: hover), or a touch device keeps " +
-				"the hovered red stuck after a tap",
-		);
-		for (const selector of SELECTORS) {
-			assert.ok(
-				selector.startsWith("body:not(.is-mobile)"),
-				".is-mobile button.mod-warning drops the red fill for grey-with-red-text; " +
-					"a tablet with a pointer satisfies hover: hover and would hover it red",
-			);
+	it("paints its two ✕ badges in the quiet red, with no solid red, white glyph or hover of their own", () => {
+		const badges = rules.filter((rule) => /\b(?:cs-icon-tile-clear|icon-picker-image-delete)\b/.test(rule.selector));
+		assert.ok(badges.length >= 2, "the badge rules are found");
+		const painted = badges.filter((rule) => rule.props.includes("background-color"));
+		assert.equal(painted.length, 2, "one painting rule per badge");
+		for (const rule of badges) {
+			const text = rule.decls.join(";");
+			assert.doesNotMatch(text, /--color-red|#fff\b|#e93147/, `${rule.selector} wears no solid red`);
+			// The reveal rules (`:hover` on the tile) only fade the badge in; a colour on hover is what is banned.
+			if (rule.props.some((prop) => prop === "color" || prop.startsWith("background"))) {
+				assert.doesNotMatch(rule.selector, /:hover/, `${rule.selector} has no hover colour`);
+			}
 		}
-	});
-
-	it("paints only the hover — the resting fill stays the theme's", () => {
-		for (const className of ["mod-warning", "mod-destructive"]) {
-			assert.doesNotMatch(
-				flat,
-				new RegExp(
-					`(?:\\.cs-modal|\\.callout-studio-settings|\\.callout-studio-editor) button\\.${className}(?!:not|:hover|\\s*,)[^{]*\\{[^}]*background`,
-				),
-				`claiming .${className}'s resting fill at our weight would beat a ` +
-					"theme that paints it directly; only the hover is ours to set",
-			);
-		}
-	});
-
-	it("covers Obsidian 1.13's destructive-plus-CTA warning buttons", () => {
-		for (const selector of SELECTORS) {
-			assert.match(selector, /:is\(\.mod-warning, \.mod-destructive\)/);
+		for (const rule of painted) {
+			const text = rule.decls.join(";");
+			assert.match(text, /--background-modifier-error/, `${rule.selector}: Obsidian's red wash`);
+			assert.match(text, /color:\s*var\(--text-error\)/, `${rule.selector}: Obsidian's red words`);
 		}
 	});
 });

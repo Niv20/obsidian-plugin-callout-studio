@@ -243,9 +243,10 @@ export function metadataColorEntries(
 }
 
 /**
- * The entries in force for these settings — none at all while the hidden
- * `metadataColors` switch is off, which is what keeps every consumer (the
- * stylesheet, the export painters, the `|` suggestions) quiet together.
+ * The entries in force for these settings — none at all while the
+ * `metadataColors` switch (Settings → Editor → Metadata → Metadata colors)
+ * is off, which is what keeps every consumer (the stylesheet, the export
+ * painters, the `|` suggestions) quiet together.
  * `reserved` as for {@link metadataColorEntries}; every consumer passes the
  * same set (`CSSInjector.metadataColorEntries`), so they agree on it too.
  */

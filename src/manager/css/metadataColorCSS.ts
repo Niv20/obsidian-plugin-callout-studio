@@ -67,10 +67,17 @@
  * always comes later. Without it a weaker colour's dark block would outweigh
  * a stronger colour's unscoped light rule in dark mode.
  *
- * Callouts the theme owns are excluded — the plugin promised to leave those
- * alone, and a palette painted over a theme's own construction would rarely
- * look like either. Unknown ids are not: the rule names no id, so a callout
- * no definition covers takes the colour too.
+ * ## Callouts the theme draws
+ *
+ * A word written in the note is the user's own, per-callout request, so it is
+ * honoured on a block callout the theme draws too (Lumines paints all thirteen
+ * built-ins). The colour block above reaches the accent variables and the
+ * background; a theme that paints the frame, the title and the icon from its
+ * own variables would still show those in its colour, a red callout with a
+ * blue edge. So for the names the theme owns, a second block (`themeDrawnRules`)
+ * points the three things core reads at the accent. Only the live sheet has
+ * it: the exported snippet names no theme. Unknown ids need nothing special:
+ * the rule names no id, so a callout no definition covers takes the colour too.
  */
 import type { CalloutDefinition } from "../../types";
 import { bakePaletteColors } from "../../utils/colorPalettes";
@@ -247,12 +254,7 @@ function colorRules(
 	const words = metadataWordSelector(entryWords(entry));
 	const imp = ctx.important;
 	const weight = Math.max(1, ctx.weight);
-	const owned =
-		standalone || ctx.themeOwnedAttrIds.length === 0
-			? ""
-			: `:not(${ctx.themeOwnedAttrIds
-					.map((id) => `[data-callout="${cssAttrValue(id)}"]`)
-					.join(", ")})`;
+	const themeDrawn = standalone ? [] : ctx.themeOwnedAttrIds;
 	const rules: string[] = [];
 
 	// Accent and background, light then dark — the same two blocks a
@@ -302,9 +304,43 @@ function colorRules(
 		);
 	}
 
-	const blocks = [nest(`${".callout".repeat(weight)}[data-callout]${owned}${words}`, rules)];
+	const blocks = [nest(`${".callout".repeat(weight)}[data-callout]${words}`, rules)];
+	if (themeDrawn.length > 0) blocks.push(themeDrawnRules(def, words, themeDrawn, ctx));
 	if (!standalone) blocks.push(...tokenBlocks(def, words, ctx));
 	return blocks.join("\n\n");
+}
+
+/**
+ * The frame, the title and the icon of a callout the theme draws, taken from
+ * the colour. Core reads the first from `--callout-color` and the other two
+ * from `--callout-title-color` and `--callout-icon-color`; a theme that
+ * paints them from its own variables (Lumines: `--primary-blue`) leaves them
+ * in its colour unless they are pointed at the accent here. One class heavier
+ * than the colour block, so it wins wherever the theme's rule would.
+ *
+ * A transparent palette keeps the frame it cleared above.
+ */
+function themeDrawnRules(
+	def: CalloutDefinition,
+	words: string,
+	ids: readonly string[],
+	ctx: MetadataColorCssContext,
+): string {
+	const imp = ctx.important;
+	const named = `:is(${ids.map((id) => `[data-callout="${cssAttrValue(id)}"]`).join(", ")})`;
+	const props = [
+		`  --callout-title-color: var(--cs-accent)${imp};`,
+		`  --callout-icon-color: var(--cs-accent)${imp};`,
+	];
+	if (!def.transparentBg) {
+		props.unshift(
+			`  border-color: color-mix(in oklch, var(--cs-accent) calc(var(--callout-border-opacity, 0.25) * 100%), transparent)${imp};`,
+		);
+	}
+	return nest(
+		`${".callout".repeat(Math.max(1, ctx.weight))}[data-callout]${named}${words}`,
+		[rule(inMode(""), props)],
+	);
 }
 
 /**

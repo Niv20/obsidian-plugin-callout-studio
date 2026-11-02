@@ -7,14 +7,31 @@
  * Paging is per group: a large source in "All sources" cannot hide later
  * groups behind its "Load more" button. Collapsing a group hides its own
  * cells and button. A single-source panel has one segment.
+ *
+ * The grid is one Tab stop, as Obsidian's own pick lists are (finding S8-V1):
+ * Tab lands on one cell — the chosen icon, or else the first one on screen —
+ * the arrow keys move inside the grid, and the next Tab goes on to Load more,
+ * Cancel and Confirm instead of crawling through every icon. That cell alone
+ * has `tabindex="0"`; every other is `-1`, which the arrows and a click can
+ * still focus but Tab skips. The 0 moves with the focus (a "roving tabindex").
  */
 import { setIcon } from "obsidian";
 import type { IconEntry } from "../../icons/types";
+import { appendFaintCount } from "../../ui/faintCount";
 
 const GRID_PAGE_SIZE = 120;
 
 /** Cap on paging-to-reveal, so a bad index can never spin the UI forever. */
 const MAX_REVEAL_PAGES = 500;
+
+/**
+ * The heading over one group of the grid: a library's name, and how many of
+ * its icons match, drawn as a faint count at the end of the line.
+ */
+export interface GridGroupHeading {
+	name: string;
+	count?: number;
+}
 
 export interface IconGridOptions {
 	/** Draws one icon into its cell. */
@@ -41,7 +58,7 @@ export interface IconGridOptions {
 	 * source, and every other source returns nothing and gets a flat grid (one
 	 * segment, no heading).
 	 */
-	groupLabelFor?(entry: IconEntry, previous: IconEntry | undefined): string | undefined;
+	groupLabelFor?(entry: IconEntry, previous: IconEntry | undefined): GridGroupHeading | undefined;
 	emptyText: string;
 	/** Optional custom empty state for sources with richer guidance. */
 	renderEmpty?(host: HTMLElement): void;
@@ -50,7 +67,7 @@ export interface IconGridOptions {
 
 /** One run of entries from a single group — or, for an ungrouped grid, all of them. */
 interface GridSegment {
-	readonly heading: string | undefined;
+	readonly heading: GridGroupHeading | undefined;
 	readonly entries: IconEntry[];
 	displayed: number;
 	collapsed: boolean;
@@ -63,6 +80,8 @@ interface GridSegment {
 export class IconGrid {
 	private readonly gridEl: HTMLElement;
 	private segments: GridSegment[] = [];
+	/** The one cell Tab lands on (see the module comment); null while there is none. */
+	private tabStop: HTMLElement | null = null;
 
 	constructor(
 		private readonly parent: HTMLElement,
@@ -71,22 +90,28 @@ export class IconGrid {
 		this.gridEl = parent.createDiv("icon-picker-grid");
 		this.gridEl.setAttribute("role", "grid");
 		this.enableKeyNav();
+		// A cell that takes the focus — by an arrow key or a click — becomes
+		// the grid's Tab stop, so Tab later comes back to where the user was.
+		this.gridEl.addEventListener("focusin", (e) => {
+			const target = e.target as HTMLElement | null;
+			if (target?.hasClass("icon-picker-cell")) this.setTabStop(target);
+		});
 	}
 
 	/** Replace the contents, resetting paging and scroll. */
 	setEntries(entries: readonly IconEntry[]): void {
 		this.segments = this.partition(entries);
+		this.tabStop = null;
 		this.gridEl.empty();
 		this.parent.toggleClass("icon-picker-grid-empty", entries.length === 0);
 		this.gridEl.removeClass("has-message");
-		this.gridEl.removeClass("is-loaded");
 		for (const segment of this.segments) this.renderSegment(segment);
-		this.gridEl.addClass("is-loaded");
 		if (entries.length === 0) {
 			const empty = this.gridEl.createDiv("icon-picker-empty");
 			if (this.options.renderEmpty) this.options.renderEmpty(empty);
 			else empty.setText(this.options.emptyText);
 		}
+		this.syncTabStop();
 	}
 
 	/**
@@ -97,10 +122,10 @@ export class IconGrid {
 	 */
 	showMessage(build: (host: HTMLElement) => void): void {
 		this.segments = [];
+		this.tabStop = null;
 		this.gridEl.empty();
 		this.parent.removeClass("icon-picker-grid-empty");
 		this.gridEl.addClass("has-message");
-		this.gridEl.addClass("is-loaded");
 		build(this.gridEl.createDiv("icon-picker-notice"));
 	}
 
@@ -125,12 +150,39 @@ export class IconGrid {
 		});
 	}
 
-	/** Move the highlight without rebuilding the grid. */
+	/** Move the highlight without rebuilding the grid; the chosen cell becomes the Tab stop. */
 	markSelected(cell: HTMLElement): void {
 		this.gridEl
 			.querySelectorAll(".is-selected")
 			.forEach((el) => el.removeClass("is-selected"));
 		cell.addClass("is-selected");
+		this.setTabStop(cell);
+	}
+
+	/** Make `cell` the grid's one Tab stop, and the cell that was it an ordinary one. */
+	private setTabStop(cell: HTMLElement | null): void {
+		if (this.tabStop === cell) return;
+		this.tabStop?.setAttribute("tabindex", "-1");
+		this.tabStop = cell;
+		cell?.setAttribute("tabindex", "0");
+	}
+
+	/** The cells on screen: every rendered cell outside a collapsed group. */
+	private visibleCells(): HTMLElement[] {
+		return Array.from(this.gridEl.querySelectorAll<HTMLElement>(".icon-picker-cell"))
+			.filter((cell) => !cell.hasClass("is-group-collapsed"));
+	}
+
+	/**
+	 * Put the Tab stop where it belongs after the cells on screen changed: it
+	 * stays where it is if that cell is still on screen; otherwise it goes to
+	 * the chosen icon, or else the first cell. A grid with no cell has none.
+	 */
+	private syncTabStop(): void {
+		const visible = this.visibleCells();
+		if (this.tabStop && visible.includes(this.tabStop)) return;
+		const chosen = visible.find((cell) => cell.hasClass("is-selected"));
+		this.setTabStop(chosen ?? visible[0] ?? null);
 	}
 
 	/**
@@ -155,9 +207,9 @@ export class IconGrid {
 			this.appendSegmentPage(segment);
 		}
 		this.syncLoadMore(segment);
-		this.gridEl
-			.querySelector<HTMLElement>(".icon-picker-cell.is-selected")
-			?.scrollIntoView({ block: "center" });
+		const chosen = this.gridEl.querySelector<HTMLElement>(".icon-picker-cell.is-selected");
+		if (chosen) this.setTabStop(chosen);
+		chosen?.scrollIntoView({ block: "center" });
 	}
 
 	/**
@@ -207,14 +259,17 @@ export class IconGrid {
 	 * (and its own "Load more" with them). A source that floods the pool with
 	 * hundreds of hits would otherwise push every other source below the fold.
 	 */
-	private buildHeader(segment: GridSegment, heading: string): HTMLElement {
+	private buildHeader(segment: GridSegment, heading: GridGroupHeading): HTMLElement {
 		const header = this.gridEl.createDiv({
 			cls: "icon-picker-group-header",
 			attr: { role: "button", tabindex: "0", "aria-expanded": "true" },
 		});
-		const chevron = header.createSpan({ cls: "icon-picker-group-chevron" });
-		setIcon(chevron, "chevron-right");
-		header.createSpan({ cls: "icon-picker-group-text", text: heading });
+		// Obsidian's own fold triangle, as the file explorer and search draw it:
+		// its `.collapse-icon` CSS sizes it and turns it by the reading direction.
+		const fold = header.createSpan({ cls: "collapse-icon" });
+		setIcon(fold, "right-triangle");
+		header.createSpan({ cls: "icon-picker-group-text", text: heading.name });
+		if (heading.count !== undefined) appendFaintCount(header, heading.count);
 
 		const toggle = () => this.toggleSegment(segment);
 		header.addEventListener("click", toggle);
@@ -233,6 +288,7 @@ export class IconGrid {
 		btn.addEventListener("click", () => {
 			this.appendSegmentPage(segment);
 			this.syncLoadMore(segment);
+			this.syncTabStop();
 		});
 		return row;
 	}
@@ -252,7 +308,9 @@ export class IconGrid {
 					(segment.collapsed ? " is-group-collapsed" : ""),
 				attr: {
 					"aria-label": this.options.labelFor(entry),
-					tabindex: "0",
+					// -1: reachable by the arrows and a click, skipped by Tab.
+					// `syncTabStop` gives one cell the 0.
+					tabindex: "-1",
 					role: "button",
 				},
 			});
@@ -291,11 +349,14 @@ export class IconGrid {
 	private toggleSegment(segment: GridSegment): void {
 		segment.collapsed = !segment.collapsed;
 		segment.headerEl?.toggleClass("is-collapsed", segment.collapsed);
+		segment.headerEl?.querySelector(".collapse-icon")?.toggleClass("is-collapsed", segment.collapsed);
 		segment.headerEl?.setAttribute("aria-expanded", String(!segment.collapsed));
 		for (const cell of segment.cellEls) {
 			cell.toggleClass("is-group-collapsed", segment.collapsed);
 		}
 		this.syncLoadMore(segment);
+		// A collapsed group takes its cells off screen, the Tab stop with them.
+		this.syncTabStop();
 	}
 
 	/**
@@ -306,22 +367,25 @@ export class IconGrid {
 	private enableKeyNav(): void {
 		this.gridEl.addEventListener("keydown", (e) => {
 			const cells = Array.from(
-				this.gridEl.querySelectorAll<HTMLElement>(
-					".icon-picker-cell:not(.is-group-collapsed)",
-				),
-			);
+				this.gridEl.querySelectorAll<HTMLElement>(".icon-picker-cell"),
+			).filter((cell) => !cell.hasClass("is-group-collapsed"));
 			const current = activeDocument.activeElement as HTMLElement | null;
 			const idx = current ? cells.indexOf(current) : -1;
 			if (idx < 0) return;
 
 			const cols = countColumns(cells);
+			// The cells flow with the reading direction, so under a right-to-left
+			// interface the next cell is to the left: the arrows move the way
+			// they point. Obsidian sets that through `.mod-rtl`, never a `dir`.
+			const view = this.gridEl.ownerDocument.defaultView;
+			const step = view?.getComputedStyle?.(this.gridEl).direction === "rtl" ? -1 : 1;
 			let next = -1;
 			switch (e.key) {
 				case "ArrowRight":
-					next = idx + 1;
+					next = idx + step;
 					break;
 				case "ArrowLeft":
-					next = idx - 1;
+					next = idx - step;
 					break;
 				case "ArrowDown":
 					next = idx + cols;

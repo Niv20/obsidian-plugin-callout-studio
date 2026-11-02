@@ -735,7 +735,7 @@ disabled. The preview listener is removed on plugin unload.
 | Dropped from the saved payload, unconditionally | `discoveredRowPersistence.ts` |
 | Out of `getUserDefined`, so out of exports | `CalloutRegistry.getUserDefined` |
 | Never counted as "known", so a scan still sees the id | `knownCalloutIds.ts` |
-| Never offered as the fallback target - that id **is** persisted | `settings/sections/FallbackSection.ts` |
+| Never offered as the fallback target - that id **is** persisted | `settings/sections/fallbackPicker.ts` |
 | Never a merge base for an import | `utils/importedCallout.ts` |
 | Never fetches artwork | `IconService.initialize`, `IconFetchManager.ensureAll` |
 | Never keeps an `iconSvgCache` entry alive | `CalloutRegistry.cleanupUnusedIconSvgs` |
@@ -825,9 +825,9 @@ fact:
 | Scan, import or another durable create promotes the id | Promotion first retires the overlay; allowing it to be the target would make that maintenance action reset the fallback mid-operation. |
 | The fallback is needed for Heading or Inline | Theme callouts are Block-only, so the theme has no design that can be reproduced on those plugin-owned DOM surfaces. |
 
-This is why `FallbackSection` filters on `source !== "theme"`, rather than
+This is why `fallbackPicker` filters on `source !== "theme"`, rather than
 showing theme rows disabled after selection, and why a theme row carries no
-*Default fallback* badge. `tests/calloutCombobox.test.ts` pins the picker
+*Default* or *Auto* tag. `tests/calloutCombobox.test.ts` pins the picker
 boundary; `tests/themeRowActions.test.ts` pins the missing badge; and
 `tests/syncThemeOverlay.test.ts` pins the stronger cross-device rule that
 changing a theme on one machine never changes the synced settings body.
@@ -1153,8 +1153,9 @@ widget) must invalidate whatever remembers a slot.
 ## Switching the theme's callout styling off
 
 **Use your theme's callout styles** (`settings.themeCalloutStyles.enabled`), the
-first row under *Callouts from your theme* (see
-[16 § The theme section opens with its switch](16-settings-ui-and-modals.md#the-theme-section-opens-with-its-switch)), is on
+top row of the *Callouts from your theme* page, which the row of that name on the main
+settings page opens (see
+[26 § The callout pages](26-declarative-settings.md#the-callout-pages)), is on
 by default, and on, nothing in this section runs: the generated sheet is
 byte-identical to the one before the setting existed, and no stylesheet is
 touched. Off, [`themeCalloutsOff.ts`](../../src/manager/theme/themeCalloutsOff.ts)
@@ -1368,7 +1369,10 @@ a Block-only live preview that **writes nothing at all**. The saved definition
 remains intact while its current theme owns the appearance. This theme-only
 preview visually collapses its terminal blank editor row so the box ends with
 content, while retaining the underlying line as a safe caret target; every
-ordinary preview remains unchanged. Its `⋯` menu
+ordinary preview remains unchanged. The explanation is the window's message, in
+the dialog's own body text, and **Got it** is a bare footer button like every
+other window's (inside a `Setting` row it became a stretched form row on a
+phone). Its `⋮` menu
 ([`themeRowActions.ts`](../../src/settings/sections/themeRowActions.ts)) carries
 usage information, then - only when the callout is actually written somewhere -
 *Replace in vault* and *Convert uses to plain text*, then *Duplicate* for a saved
@@ -1382,7 +1386,7 @@ item is the shared `addConvertUsesItem`, and its confirmation names the theme as
 the reason the type stays.
 
 The use count lives in that menu rather than on the row, and the row carries no
-*Default fallback* tag either: both describe a callout the user cannot act on.
+*Default* or *Auto* tag either: both describe a callout the user cannot act on.
 [`usageMenuItem.ts`](../../src/usage/usageMenuItem.ts) reads the shared
 [`CalloutOccurrenceIndex`](../../src/usage/CalloutOccurrenceIndex.ts), subscribes
 while the menu is open. `prepareUsageMenu` requests freshness only when needed

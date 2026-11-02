@@ -17,7 +17,7 @@ import {
 	handleClearCalloutUsages,
 } from "../src/settings/sections/calloutVaultActions";
 import { addConvertUsesItem, addDeleteItem } from "../src/settings/sections/rowOwnership";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import type { SettingsContext } from "../src/settings/sections/types";
 import { DEFAULT_SETTINGS } from "../src/constants";
 import { en } from "../src/i18n/en";
 import { t } from "../src/i18n";
@@ -25,7 +25,8 @@ import { Notice } from "./support/obsidianStub";
 import { definition } from "./support/discoveryHarness";
 import { savingWriter, stubConfirm } from "./support/importSafetyStubs";
 import { readRepoFile } from "./support/sourceScan";
-import { fakeDom, FakeElement, type FakeDocumentFragment } from "./support/fakeDom";
+import { fakeDom, type FakeDocumentFragment } from "./support/fakeDom";
+import { noticeButton } from "./support/noticeButton";
 
 fakeDom.light();
 
@@ -51,10 +52,10 @@ function vault(notes: Record<string, string>, opts: { unreadable?: string; theme
 	registry.add(def);
 	const writer = savingWriter();
 	let saves = 0, refreshes = 0;
-	const ctx = { app, display: () => {}, plugin: {
+	const ctx = { app, redraw: () => {}, plugin: {
 		registry, settingsWriter: writer, saveSettings: () => { saves++; return Promise.resolve(); },
 		refreshCallouts: () => { refreshes++; },
-	} } as unknown as SettingsSectionContext;
+	} } as unknown as SettingsContext;
 	return { ctx, def, registry, contents, writer, get saves() { return saves; }, get refreshes() { return refreshes; } };
 }
 
@@ -73,12 +74,9 @@ function lastNoticeText(): string {
 	return frag?.childNodes.map(node => node.textContent ?? "").join(" ") ?? "";
 }
 
-/** Press the Undo link in the most recent notice. */
+/** Press the Undo button in the most recent notice. */
 async function undo(): Promise<void> {
-	const message = Notice.last?.message as FakeDocumentFragment | undefined;
-	const link = message?.childNodes.find((node): node is FakeElement => node instanceof FakeElement && node.hasClass("cs-notice-action"));
-	assert.ok(link, "the notice offers no Undo");
-	link.fire("click", { type: "click", preventDefault: () => {} });
+	noticeButton(Notice.last).fire("click", { type: "click", preventDefault: () => {} });
 	for (let i = 0; i < 5; i++) await setImmediate();
 }
 
@@ -102,7 +100,8 @@ describe("Delete removes only the definition", () => {
 		const confirm = stubConfirm(true), seen = collectNotices();
 		try {
 			await handleCalloutDelete(h.ctx, h.def);
-			assert.deepEqual(confirm.asked, [t("deleteModal.title", { name: "Owned" })]);
+			assert.deepEqual(confirm.asked, [t("deleteModal.title")]);
+			assert.deepEqual(confirm.subtitles, [t("confirm.subtitleName", { name: "Owned" })], "the name is in the heading, in quotes");
 			assert.equal(confirm.labels[0], undefined, "the default red Delete");
 			const message = confirm.messages[0] as string;
 			assert.ok(message.includes(t("deleteModal.bodyInUse", { count: "2", files: "2" })));
@@ -142,6 +141,7 @@ describe("Delete removes only the definition", () => {
 		try {
 			await handleCalloutDelete(h.ctx, h.def);
 			assert.equal(confirm.asked.length, 1, "unused, but every unknown callout changes with it");
+			assert.deepEqual(confirm.subtitles, [t("deleteModal.subtitleFallback", { name: "Owned" })], "the heading says it is the fallback");
 			const message = confirm.messages[0] as string;
 			assert.equal(message, t("deleteModal.fallbackTarget", { fallback: "Note" }),
 				"nothing uses it, so only the fallback line");
@@ -196,7 +196,8 @@ describe("Convert uses to plain text says who keeps the type", () => {
 		const confirm = stubConfirm(false);
 		try {
 			await handleClearCalloutUsages(h.ctx, h.def);
-			assert.deepEqual(confirm.asked, [t("convertModal.title", { name: "Owned" })]);
+			assert.deepEqual(confirm.asked, [t("convertModal.title")]);
+			assert.deepEqual(confirm.subtitles, [t("convertModal.subtitle", { name: "Owned" })]);
 			assert.equal(confirm.labels[0], en["convertModal.confirm"]);
 			const message = confirm.messages[0] as string;
 			assert.ok(message.includes(en["convertModal.typeStays"]!));

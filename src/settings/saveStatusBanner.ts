@@ -1,13 +1,28 @@
+/**
+ * settings/saveStatusBanner.ts — the "Saving is paused" notice, with the
+ * buttons that get saving back.
+ *
+ * Who calls it. The settings' notices box (declarative/bannerRows.ts) and the
+ * callout editor (CalloutEditor.ts), each into an element of its own.
+ *
+ * The main idea. The words and the buttons come from the same answers
+ * (saveStatusCopy.ts), so the text never names a button that is not there.
+ * The notice redraws itself when the saving status changes. (The settings keep
+ * the same notice through their own redraws, bannerRows.ts, so it remembers an
+ * action under way.)
+ */
 import { setIcon, type App } from "obsidian";
 import { t } from "../i18n";
-import { en } from "../i18n/en";
 import { reportSettingsSaveFailure } from "../manager/settingsSaveReporter";
 import { settingsSaveMessage } from "../manager/settingsSaveMessage";
 import { confirmFreshStart } from "../manager/settingsNotices";
 import type { SettingsDiagnosis } from "../manager/settingsDiagnosis";
 import type { SettingsWriter } from "../manager/SettingsWriter";
+import { DESTRUCTIVE_BUTTON_CLASSES } from "../ui/destructiveButton";
+import { KeptMascot } from "../ui/mascot/mascotPlaces";
 import { ConfirmModal } from "../utils/ConfirmModal";
 import { diagnosisKey, pausedCopy, type PausedButtons } from "./saveStatusCopy";
+import type { SettingsTabPlugin } from "./sections/types";
 
 interface SaveStatusHost {
 	app: App;
@@ -22,8 +37,8 @@ export interface SaveStatusActions {
 	replaceUnreadable?: () => Promise<boolean>;
 	discardRecoveryCopy?: () => Promise<boolean>;
 	/**
-	 * **Go to backups**: takes the reader to Backup › Earlier setups on the
-	 * same page. It opens and restores nothing itself — restoring an earlier
+	 * **Go to version history**: takes the reader to Version history › Earlier
+	 * versions on the same page. It opens and restores nothing itself — restoring an earlier
 	 * setup waits until saving works again, and the words above say so.
 	 * `fromKeyboard` says the button was pressed with a key, which decides
 	 * whether the row it lands on shows a focus ring.
@@ -33,15 +48,37 @@ export interface SaveStatusActions {
 	pausedNote?: boolean;
 }
 
+/** What the plugin offers for getting saving back; a minimal host may offer none of it. */
+export type RecoveryActionHost = Pick<SettingsTabPlugin, "retrySettingsRecovery" | "startFreshSettings" | "recovery">;
+
+/**
+ * The banner's actions, from what the plugin offers. The settings add their
+ * own way to Go to version history.
+ */
+export function recoveryActionsOf(plugin: RecoveryActionHost): SaveStatusActions {
+	const recovery = plugin.recovery;
+	return {
+		retry: plugin.retrySettingsRecovery ? () => plugin.retrySettingsRecovery!() : undefined,
+		startFresh: plugin.startFreshSettings ? () => plugin.startFreshSettings!() : undefined,
+		diagnose: recovery ? () => recovery.diagnose() : undefined,
+		replaceUnreadable: recovery ? () => recovery.replaceUnreadable() : undefined,
+		discardRecoveryCopy: recovery ? () => recovery.discardRecoveryCopy() : undefined,
+		pausedNote: true,
+	};
+}
+
 /** Causes the file cannot recover from by waiting, so replacing it is offered. */
 const REPLACEABLE: ReadonlySet<SettingsDiagnosis> = new Set(["empty", "merge-markers", "damaged", "combined", "invalid-entries"]);
 
 /**
  * Ask, and run `action` only on a yes. Every one of these replaces something,
- * so the yes is a warning unless `keeps` says the replacement loses nothing.
+ * so the yes is red unless `keeps` says the replacement loses nothing.
  */
-async function confirmed(app: App, title: string, body: string, label: string, action: () => Promise<boolean>, keeps = false): Promise<boolean> {
-	return await new ConfirmModal(app, t(title), t(body), t(label), undefined, keeps ? "mod-cta" : "mod-warning").confirm() ? action() : false;
+async function confirmed(app: App, title: string, body: string, subtitle: string, label: string, action: () => Promise<boolean>, keeps = false): Promise<boolean> {
+	const question = new ConfirmModal(app, t(title), t(body), t(label), undefined, keeps ? "cta" : "destructive");
+	// A red yes is worrying, so the mascot worries with it, as in every other red question.
+	if (!keeps) question.withMascot(t(subtitle));
+	return await question.confirm() ? action() : false;
 }
 
 /** Updates just the banner, preserving the settings page's scroll and form. */
@@ -56,6 +93,12 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 	 */
 	let checkedMissing = false;
 	let diagnosis: SettingsDiagnosis | null = null, diagnosing = false, diagnosed = false;
+	/**
+	 * The brush mascot at the start of the banner's title, in the warning
+	 * triangle's place and orange, kept while the banner is drawn again: standing
+	 * still while saving is paused (calm, nothing is lost), sad when a save failed.
+	 */
+	const mascot = new KeptMascot("notice");
 	const render = () => {
 		if (!active) return;
 		slot.empty();
@@ -76,9 +119,12 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 		// at all, a write failure lost one save — so the title says which rather
 		// than picking one word for both.
 		const header = banner.createDiv({ cls: "cs-readonly-banner-header" });
-		setIcon(header.createSpan({ cls: "cs-readonly-banner-icon" }), "alert-triangle");
+		// The brush stands where the warning triangle would, in the same orange;
+		// where it cannot be drawn the triangle stays.
+		if (!mascot.attach(header, "start")) setIcon(header.createSpan({ cls: "cs-readonly-banner-icon" }), "alert-triangle");
 		const frozen = host.settingsWriter.isFrozen || !!status?.frozenReason;
 		header.createDiv({ cls: "cs-readonly-banner-title", text: t(frozen ? "saveStatus.titlePaused" : "saveStatus.titleFailed") });
+		mascot.setMood(frozen ? "hold" : "sad");
 
 		// Every button this state offers, decided once. The buttons below and the
 		// words above are drawn from the same answers, so the words cannot name a
@@ -119,7 +165,7 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 			if (busy || host.settingsWriter.isDestroyed) return;
 			busy = true; stillMissing = false; render();
 			try {
-				if (!await action() && !host.settingsWriter.status?.reason) reportSettingsSaveFailure(host.settingsWriter, undefined, en["saveStatus.retryFailed"]);
+				if (!await action() && !host.settingsWriter.status?.reason) reportSettingsSaveFailure(host.settingsWriter, undefined, t("saveStatus.retryFailed"));
 			} catch (error) {
 				console.error("[callout-studio] saving recovery action failed", error);
 				reportSettingsSaveFailure(host.settingsWriter, error);
@@ -149,7 +195,7 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 			// replacing it keeps them all: the step to take, not a warning. Every
 			// other cause loses what the file held (an exact copy is kept first).
 			const keeps = diagnosis === "combined";
-			const replace = actionsEl.createEl("button", { text: t("saveStatus.replaceUnreadable"), cls: keeps ? "mod-cta" : "mod-warning" });
+			const replace = actionsEl.createEl("button", { text: t("saveStatus.replaceUnreadable"), cls: keeps ? "mod-cta" : DESTRUCTIVE_BUTTON_CLASSES });
 			replace.disabled = busy;
 			const body = keeps ? "confirm.replaceUnreadableSalvage" : "confirm.replaceUnreadable";
 			// Keeping everything was promised, so look once more after the yes: a
@@ -159,14 +205,14 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 				? async () => ["combined", "readable"].includes(await actions.diagnose!()) && actions.replaceUnreadable!()
 				: actions.replaceUnreadable!;
 			replace.addEventListener("click", () => {
-				void run(() => confirmed(host.app, "confirm.titleReplaceUnreadable", body, "saveStatus.replaceUnreadable", replaceNow, keeps));
+				void run(() => confirmed(host.app, "confirm.titleReplaceUnreadable", body, "confirm.subtitleReplaceUnreadable", "saveStatus.replaceUnreadable", replaceNow, keeps));
 			});
 		}
 		if (buttons.discard) {
-			const discard = actionsEl.createEl("button", { text: t("saveStatus.discardRecoveryCopy"), cls: "mod-warning" });
+			const discard = actionsEl.createEl("button", { text: t("saveStatus.discardRecoveryCopy"), cls: DESTRUCTIVE_BUTTON_CLASSES });
 			discard.disabled = busy;
 			discard.addEventListener("click", () => {
-				void run(() => confirmed(host.app, "confirm.titleDiscardRecoveryCopy", "confirm.discardRecoveryCopy",
+				void run(() => confirmed(host.app, "confirm.titleDiscardRecoveryCopy", "confirm.discardRecoveryCopy", "confirm.subtitleDiscardRecoveryCopy",
 					"saveStatus.discardRecoveryCopy", actions.discardRecoveryCopy!));
 			});
 		}
@@ -188,5 +234,5 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 	};
 	const unsubscribe = host.settingsWriter.status?.subscribe(render);
 	render();
-	return () => { active = false; unsubscribe?.(); };
+	return () => { active = false; mascot.detach(); unsubscribe?.(); };
 }

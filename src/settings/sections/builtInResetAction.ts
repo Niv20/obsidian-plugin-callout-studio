@@ -19,7 +19,6 @@
  * the callout as it was — its other notes still on the added id, for the next
  * Reset to ask about again.
  */
-import { Notice } from "obsidian";
 import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
 import { askNoteChanges } from "../editor/askNoteChanges";
@@ -31,10 +30,11 @@ import {
 	type NoteChangeFormState,
 	type NoteChoices,
 } from "../editor/noteChanges";
-import type { SettingsSectionContext } from "./types";
+import type { SettingsContext } from "./types";
+import { showNotice } from "../../ui/mascot/mascotNotices";
 
 export async function handleBuiltInReset(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 	/** Opens the question; a test answers in its place. */
 	open: (input: NoteChangesModalInput) => Promise<NoteChoices | null> = (input) => new NoteChangesModal(ctx.app, input).ask(),
@@ -82,10 +82,10 @@ export async function handleBuiltInReset(
 			await plan();
 		} catch (error) {
 			console.error("[callout-studio] note updates before a reset failed", error);
-			new Notice(t("vault.resetNotesFailed"), 10000);
+			showNotice("warning", t("vault.resetNotesFailed"));
 			return;
 		}
 	}
 	registry.resetBuiltIn(def.id);
-	ctx.display();
+	ctx.redraw();
 }

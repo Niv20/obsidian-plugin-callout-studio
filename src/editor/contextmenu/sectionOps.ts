@@ -8,9 +8,10 @@
  * transactions, so Ctrl/Cmd+Z restores them — no confirmation modal is used
  * (unlike DEFINITION deletion, which is guarded elsewhere).
  */
-import { Notice, type App, type Editor, type EditorPosition, type MarkdownView } from "obsidian";
+import { type App, type Editor, type EditorPosition, type MarkdownView } from "obsidian";
 import { t } from "../../i18n";
 import { sectionEndLine } from "./sectionBoundary";
+import { showNotice } from "../../ui/mascot/mascotNotices";
 
 export interface HeadingSectionRange {
 	from: EditorPosition;
@@ -49,7 +50,7 @@ export async function copyHeadingSection(range: HeadingSectionRange): Promise<bo
 		await navigator.clipboard.writeText(range.text.replace(/\n$/, ""));
 		return true;
 	} catch {
-		new Notice(t("notice.clipboardWriteFailed"));
+		showNotice("problem", t("notice.clipboardWriteFailed"));
 		return false;
 	}
 }
@@ -75,7 +76,7 @@ export async function cutHeadingSection(
 	const before = editor.getValue();
 	if (!await copyHeadingSection(range)) return false;
 	if (!canDelete() || editor.getValue() !== before) {
-		new Notice(t("notice.sectionChangedAfterCopy"));
+		showNotice("warning", t("notice.sectionChangedAfterCopy"));
 		return false;
 	}
 	editor.replaceRange("", range.from, range.to);

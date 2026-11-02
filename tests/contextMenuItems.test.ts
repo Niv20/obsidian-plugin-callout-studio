@@ -177,3 +177,89 @@ describe("adaptive create/edit context-menu action", () => {
 		assert.equal(harness("unknown", false).items.length, 0);
 	});
 });
+
+/**
+ * S10-15: the menu follows Obsidian's own conventions: Delete is red, as every
+ * Delete in Obsidian's menus is (`MenuItem.setWarning`). The fold state is not
+ * a ✓ list: the callout's current state is simply not offered.
+ */
+describe("the right-click menu speaks Obsidian's menu conventions", () => {
+	/** One menu row as the builders configured it. */
+	interface Row { title: string; checked: boolean; warning: boolean; click: (() => void) | null }
+
+	/** A menu that records rows, including `setChecked` and `setWarning`. */
+	function conventionsMenu(): { menu: Menu; rows: Row[] } {
+		const rows: Row[] = [];
+		const menu = {
+			addItem(configure: (item: unknown) => void) {
+				const row: Row = { title: "", checked: false, warning: false, click: null };
+				const item = {
+					setTitle(value: string) { row.title = value; return this; },
+					setIcon() { return this; },
+					setSection() { return this; },
+					setChecked(value: boolean) { row.checked = value; return this; },
+					setWarning(value: boolean) { row.warning = value; return this; },
+					onClick(value: () => void) { row.click = value; return this; },
+				};
+				configure(item);
+				rows.push(row);
+				return menu;
+			},
+		};
+		return { menu: menu as unknown as Menu, rows };
+	}
+
+	/** A plugin whose menu for `role` holds only the one item `id`. */
+	function pluginWith(role: "regular" | "heading", id: "foldDefaults" | "deleteSection"): CalloutStudioPlugin {
+		const registry = new CalloutRegistry();
+		registry.load(null);
+		registry.settings.contextMenu.items[role] = [{ id, enabled: true }];
+		return { app: {}, registry, settings: registry.settings } as unknown as CalloutStudioPlugin;
+	}
+
+	it("offers only the two fold states the callout is not in, with no ✓", () => {
+		const writes: string[] = [];
+		const editor = {
+			getLine: () => "> [!note]- Title",
+			replaceRange: (text: string) => { writes.push(text); },
+		} as unknown as Editor;
+		const { menu, rows } = conventionsMenu();
+		addItems(pluginWith("regular", "foldDefaults"), menu, {
+			role: "regular", id: "note", editor, view: null, surface: "source",
+			targetEl: {} as Element,
+			callout: { id: "note", headerLine: 0, prefix: "> ", quoteDepth: 1 },
+		});
+		assert.deepEqual(rows.map((row) => row.title), [
+			t("contextMenu.setFoldOpen"), t("contextMenu.setFoldNone"),
+		], "the callout is folded closed now, so closed is not offered");
+		assert.deepEqual(rows.map((row) => row.checked), [false, false], "no row carries a ✓");
+		rows[0]!.click?.();
+		assert.deepEqual(writes, ["> [!note]+ Title"]);
+		rows[1]!.click?.();
+		assert.deepEqual(writes, ["> [!note]+ Title", "> [!note] Title"]);
+	});
+
+	it("leaves out whichever fold state the callout is in, for each of the three", () => {
+		const offeredWhen = (header: string): string[] => {
+			const editor = { getLine: () => header, replaceRange: () => undefined } as unknown as Editor;
+			const { menu, rows } = conventionsMenu();
+			addItems(pluginWith("regular", "foldDefaults"), menu, {
+				role: "regular", id: "note", editor, view: null, surface: "source",
+				targetEl: {} as Element,
+				callout: { id: "note", headerLine: 0, prefix: "> ", quoteDepth: 1 },
+			});
+			return rows.map((row) => row.title);
+		};
+		assert.deepEqual(offeredWhen("> [!note]+ Title"), [t("contextMenu.setFoldClosed"), t("contextMenu.setFoldNone")]);
+		assert.deepEqual(offeredWhen("> [!note] Title"), [t("contextMenu.setFoldClosed"), t("contextMenu.setFoldOpen")]);
+	});
+
+	it("paints Delete section red, and nothing else", () => {
+		const { menu, rows } = conventionsMenu();
+		addItems(pluginWith("heading", "deleteSection"), menu, {
+			role: "heading", id: "note", editor: {} as Editor, view: null, surface: "source",
+			targetEl: {} as Element, headingLine: 0, headingLevel: 2,
+		});
+		assert.deepEqual(rows.map((row) => [row.title, row.warning]), [[t("contextMenu.deleteSection"), true]]);
+	});
+});

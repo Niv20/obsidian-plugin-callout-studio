@@ -9,7 +9,7 @@
  * Used by the fixed commands (through smartCallout.ts and unwrapAnyCallout.ts,
  * which pick the format), the Quick insert window and user-built commands.
  */
-import { Editor, Notice } from "obsidian";
+import { Editor } from "obsidian";
 import type { EditorPosition } from "obsidian";
 import { t } from "../i18n";
 import type { CalloutDefinition } from "../types";
@@ -35,6 +35,7 @@ import {
 } from "./quotePrefix";
 import { appendAfterFrontmatter, findFrontmatterEnd } from "./frontmatter";
 import { planWrap } from "./wrapRange";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 interface CalloutBlockInfo {
 	headerLine: number;
@@ -155,8 +156,11 @@ const getOrderedCursorLines = (
  * autocomplete. A user-built command already knows its type, so it gets the
  * finished header and no popover.
  */
-const openingHeaderToken = (def?: CalloutDefinition, foldMark?: "" | "+" | "-"): string =>
-	def ? buildBlockHeaderToken(def, { foldMark }) : "[!";
+const openingHeaderToken = (
+	def?: CalloutDefinition,
+	foldMark?: "" | "+" | "-",
+	matchedId?: string,
+): string => (def ? buildBlockHeaderToken(def, { foldMark, matchedId }) : "[!");
 
 /**
  * The blank quoted line a finished, empty block callout opens with — `> ` at
@@ -192,10 +196,16 @@ const requoteLine = (line: string, level: number): string => {
  */
 export const wrapSelectionInCallout = (
 	editor: Editor,
-	options?: { requireSelection?: boolean; def?: CalloutDefinition; foldMark?: "" | "+" | "-" },
+	options?: {
+		requireSelection?: boolean;
+		def?: CalloutDefinition;
+		foldMark?: "" | "+" | "-";
+		/** The id or alias of `def` to write instead of its primary id (see {@link buildBlockHeaderToken}). */
+		matchedId?: string;
+	},
 ): boolean => {
 	if (editor.lineCount() === 0) {
-		new Notice(t("notice.nothingToWrap"));
+		showNotice("notFound", t("notice.nothingToWrap"));
 		return false;
 	}
 
@@ -216,12 +226,12 @@ export const wrapSelectionInCallout = (
 		selectionPresent,
 	);
 	if (!plan) {
-		new Notice(t("notice.nothingToWrap"));
+		showNotice("notFound", t("notice.nothingToWrap"));
 		return false;
 	}
 
 	const prefix = buildPrefix(plan.level);
-	const headerLine = `${prefix}> ${openingHeaderToken(options?.def, options?.foldMark)}`;
+	const headerLine = `${prefix}> ${openingHeaderToken(options?.def, options?.foldMark, options?.matchedId)}`;
 	// Nothing was found to wrap, so the callout is born empty and its body is
 	// the one line the user is about to type into rather than a requoting of
 	// what was there. Every other case keeps the cursor on the header, where
@@ -543,7 +553,7 @@ export const unwrapCalloutAtSelection = (editor: Editor): boolean => {
 	const fences = collectFenceBlocks(editor);
 	const block = findContainingCallout(editor, fences, currentLine);
 	if (!block) {
-		new Notice(t("notice.cursorNotInsideCallout"));
+		showNotice("notFound", t("notice.cursorNotInsideCallout"));
 		return false;
 	}
 

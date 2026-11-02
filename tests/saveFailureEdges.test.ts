@@ -66,7 +66,7 @@ describe("save failures remain retryable and accurately reported", () => {
 		assert.doesNotThrow(() => status.fail("write"));
 		assert.doesNotThrow(() => status.clear()); assert.equal(updates, 2);
 	});
-	it("reports only one English error for the background write and awaiting editor", async () => {
+	it("reports only one error, in the user's language, for the background write and awaiting editor", async () => {
 		const h = recoveryActionHarness(); await h.boot();
 		const messages: string[] = []; notices.__CS_NOTICES__ = messages;
 		registerLocale("test-save", { "saveStatus.write": "שגיאה", "editor.saveFailed": "שגיאה" }); setLocale("test-save");
@@ -75,7 +75,7 @@ describe("save failures remain retryable and accurately reported", () => {
 			h.state.failWrite = true;
 			const draft = definition({ id: "personal" }); const session = new EditorSaveSession();
 			assert.equal(await session.run(h.editor, async () => { h.host.registry.add(draft); return draft; }, () => {}), null);
-			assert.equal(messages.length, 1); assert.match(messages[0]!, /settings file could not be saved/);
+			assert.equal(messages.length, 1); assert.equal(messages[0], "שגיאה");
 			reportSettingsSaveFailure(h.host.settingsWriter); assert.equal(messages.length, 1);
 			h.state.failWrite = false;
 			assert.ok(await session.run(h.editor, async () => draft, () => {}));
@@ -83,6 +83,20 @@ describe("save failures remain retryable and accurately reported", () => {
 			assert.equal(await session.run(h.editor, async () => draft, () => {}), null);
 			assert.equal(messages.length, 2, "a later independent failure is reported again");
 		} finally { setLocale("en"); delete notices.__CS_NOTICES__; h.host.settingsWriter.destroy(); }
+	});
+	it("says every reason in the active language, never the English table", () => {
+		const reasons = ["missing", "unreadable", "newer-version", "recovery-read", "recovery-write", "backup",
+			"write-permission", "write-space", "write", "changed", "sync-conflict", "other"] as const;
+		const keys = ["saveStatus.missing", "saveStatus.unreadable", "notice.settingsNewerVersion", "saveStatus.recoveryRead",
+			"saveStatus.recoveryWrite", "notice.settingsBackupFailed", "saveStatus.writePermission", "saveStatus.writeSpace",
+			"saveStatus.write", "saveStatus.changed", "saveStatus.syncConflict", "editor.saveFailed"];
+		registerLocale("test-reasons", Object.fromEntries(keys.map((key) => [key, `[${key}]`])));
+		setLocale("test-reasons");
+		try {
+			reasons.forEach((reason, at) => {
+				assert.equal(settingsSaveMessage(reason === "other" ? null : reason), `[${keys[at]}]`, reason);
+			});
+		} finally { setLocale("en"); }
 	});
 });
 

@@ -10,83 +10,87 @@ and the two foreign-plugin importers (Callout Manager, Admonition).
 opening a chooser - one picks a source, the other picks a format - rather
 than one top-level row per option, per the project's own stated design
 rationale ("a second top-level row for a new format would leave the two
-halves of one section shaped differently"). Both choosers show the backup
-with the same Lucide `paintbrush` icon. Import's chooser sets its two other
-plugins under a **From another plugin** caption (`renderOptionGroupLabel`, a
-plain `div.cs-option-group-label` inside the same list, in the small capitals
-a combobox group wears), so the window reads as "your own backup, or somebody
-else's data" rather than as three equal rows. Export
-marks its backup with the shared grey **Recommended** pill (`settings/recommendedBadge.ts`) on its title line rather
-than a "(recommended)" written into the title. The pill's word
-(`.cs-recommended-badge-text`) is centred on its capitals, not on the font's
-line box: inside `@supports (text-box: trim-both cap alphabetic)` the word is
-trimmed to cap height and baseline, so the pill's 4px block padding and its
-10px icon, not the font's line box, set the space above and below it. A UI font whose line box runs deep below the baseline
-(most Hebrew faces, which keep room there for vowel points) otherwise set the
-word visibly high. An installer without `text-box` keeps the line box.
+halves of one section shaped differently").
+
+**Each choice is a row with its own button** (`settings/choiceRow.ts`,
+`addChoiceRow`, finding S9-09), in Obsidian's setting groups, so a chooser
+looks like a page of Obsidian settings: the option's icon
+(`setting-item-icon`, which `Setting.setIcon` builds but the typings do not
+declare), its name, a line about it, and a button at the end of the row. Only
+the button acts; the row takes no click, hover or focus. Import's window is two
+groups: the Callout Studio backup (**Upload…**), then **Callout Manager** and
+**Admonition** (**Import…** each) under the group heading **From another
+plugin**, so it reads as "your own backup, or somebody else's data" rather than
+as three equal rows. Export's is one group: the backup (**Export…**, since the
+save dialog asks where) and the CSS snapshot (**Export**, written at once).
+Both show the backup with the same Lucide `paintbrush` icon. Each button is
+named by its words and its row's name (`aria-labelledby`, never an
+`aria-label`, which Obsidian would pop up as a tooltip), so two **Import…**
+buttons differ for a screen reader. Only a double-click's first click acts, so
+one gesture cannot open the file picker twice or start a second export. On a
+phone Obsidian stacks each row (name, description, full-width button), and the
+icon is hidden there rather than left alone on a line. Until 2026-10-24 each
+choice was a raised grey card with an icon tile and a chevron, the whole card
+one button.
+
+Export marks its backup with the shared grey **Recommended** tag
+(`settings/recommendedBadge.ts`) after its name rather than a "(recommended)"
+written into the title. The tag is Obsidian's own flat flair
+(`.flair.mod-flat`), the tag Obsidian prints after "Regex", so Obsidian paints
+it. It is not core's green onboarding variant, because nothing in these
+windows is green.
 
 `assets/ui-icons/braces.svg` is retained as an unused repository asset for
 possible future UI use; it is not bundled or shown in these choosers.
 
-Both choosers and the plugin import window use `settings/optionBox.ts`:
-`renderOptionList()` provides the column and `renderOptionBox()` provides the
-icon, title, description and badge. A box comes in two forms, told apart by
-whether it is given an `onActivate`:
-
-- **A choice** - a chooser's box. The whole box is the control
-  (`role="button"`, `tabindex="0"`, a chevron at its trailing edge) with click,
-  Enter, and Space handling. Only the first click of a double-click and the
-  first keydown of a held key activate it, so one gesture cannot open the file
-  picker twice or start a second export.
-- **A card** - no `onActivate`: the box alone, with no role, no focus stop,
-  no chevron and no listeners. The plugin import window builds its two
-  options on it and adds what is its own to say - a radio dot, a button, a
-  text box (see [the plugin import window](#the-plugin-import-window)).
-  `renderOptionBox()` returns the card's `titleEl` and `descEl` so that window
-  can rewrite them in place.
+The plugin import window and the "Update your notes?" questions use
+`settings/optionBox.ts`: `renderOptionList()` provides the column and
+`renderOptionBox()` a card with the icon, title, description and badge. The
+card alone has no role, no focus stop and no listeners. The plugin import
+window builds its two options on it and adds what is its own to say - a radio
+dot, a button, a text box (see [the plugin import window](#the-plugin-import-window)).
+`renderOptionBox()` returns the card's `titleEl` and `descEl` so that window
+can rewrite them in place.
 
 ### How an option box is drawn
 
-A box is drawn as the settings lists draw a callout row
-(`.callout-studio-row`), so the three windows read as part of the same plugin
-rather than as dialogs of their own:
+A card is drawn as Obsidian draws the radio cards it asks with when you set up
+a vault on a phone (`.mobile-onboarding-radio-option`, finding S9-10), so the
+plugin import window and "Update your notes?" ask the way Obsidian asks:
 
-- **A borderless pill on the raised surface.** `border-radius: 8px`, no border,
-  and `var(--cs-surface-raised, var(--background-secondary))` as its fill. The
-  icon sits on a 36px tile painted `var(--cs-surface, var(--background-primary))`
- - the window's own colour, as a row's syntax chip is - and so does the
-  **Recommended** pill. Those two tokens are the pair
-  [Settings UI and modals](16-settings-ui-and-modals.md) describes, and nothing
-  else may be used here: on mobile dark `--background-secondary` *is* the
-  window, and a box painted with it directly disappears.
+- **An outline, no fill.** `border: 2px solid var(--background-modifier-border)`,
+  `border-radius: var(--radius-m)` with `corner-shape: var(--corner-shape)`,
+  padding `--size-4-3`, cards `--size-4-4` apart. Nothing under the pointer:
+  only a card's own controls answer it, as in Obsidian.
+- **The chosen card** (`is-selected`) changes only its outline, to
+  `--interactive-accent`. No ring, no wash.
+- **The radio is Obsidian's own,** an `input[type=radio]` at the card's leading
+  edge (`addOptionRadio`), drawn by app.css: an accent disc with a centre dot
+  when checked, Obsidian's focus ring with a keyboard. The radios of a window
+  share a `name`, so the group is one Tab stop and the arrow keys move the
+  choice, as in any radio group. Only its margin is the plugin's (the card's
+  gap spaces it), and a disabled one fades and takes no pointer, so a click on
+  it reaches its card.
 - **Chrome stays grey-lit.** The icon is `--text-muted`, Obsidian's own icon
-  grey, not `--text-accent`, and it stays that grey whatever the box comes to
-  hold: nothing on a box turns green. The accent is spent on exactly one thing,
-  the active card of the plugin import window (and the dashed outline a dragged
-  file lands in, `is-drop-target`). `tests/importBoxStyles.test.ts` fails on
-  any other option-box or import-card rule that names the accent, and on any
-  `.cs-option-*` or `.cs-import-*` rule that names a success colour.
-- **The mark at the trailing edge says what a click does.**
-  `.cs-option-box-mark` is `aria-hidden` decoration with no role and no focus
-  stop: a `chevron-right` in `--text-faint` (Obsidian mirrors it under
-  `.mod-rtl`), drawn on a choice only, because the click opens something. A
-  plugin import card ends in a radio dot instead, because a click there only
-  chooses.
-- **Hover.** A choice steps its own fill 7% toward `--text-normal` - darker
-  over a light window, lighter over a dark one - and its chevron goes from
-  `--text-faint` to `--text-muted`. (A callout row hovers to
-  `--background-secondary-alt` instead, which on a light desktop is nearly the
-  window's white: fine for a row whose buttons carry the feedback, too faint
-  for a box that is itself the button.) A plugin import card takes the same
-  step only while a click would change something (`is-choosable`: it holds
-  something and is not the active one). All hover rules sit inside
-  `@media (hover: hover)`, as Obsidian guards its own button hovers, so a
-  tapped box on a phone doesn't stay lit.
+  grey, with no tile, and it stays that grey whatever the card comes to hold:
+  nothing on a card turns green. The accent is spent on the chosen card's
+  outline and on the card a dragged file lands on (`is-drop-target`, which takes
+  Obsidian's drop target: a 10% accent tint laid over the card in a `::after`,
+  so it shows on the chosen card too). `tests/importBoxStyles.test.ts` fails on
+  any other option-box or import-card rule that names the accent, on any
+  `.cs-option-*` or `.cs-import-*` rule that names a success colour, and on any
+  hover rule for a card.
 - **Type.** The title is `--font-ui-medium` semibold; the status line is
   `--font-ui-smaller` in `--text-muted`, the size of a settings description.
 
-The three windows share one `max-width` (520px), so stepping from Import's
-chooser into a plugin import window doesn't resize the window under the pointer.
+Until 2026-10-24 a card was a raised grey pill (the callout row's fill) with
+its icon on a tile, a hand-made round "radio" with a check mark at its far end,
+a hover step, and a 2px accent ring with an 8% accent wash when chosen.
+
+The three windows open at Obsidian's own dialog width (`--dialog-width`, 560px),
+so stepping from Import's chooser into a plugin import window doesn't resize the
+window under the pointer. (They shared a 520px cap until 2026-10-23, 40px
+narrower than Obsidian's dialogs.)
 
 ### Two export formats
 
@@ -140,6 +144,17 @@ registry)` accepts **both** the legacy flat-array shape and the v2 envelope,
 never bails early on one bad entry, and collects **every** issue across the
 whole file in one pass - so `ImportReportModal` can show the complete
 picture at once rather than one error at a time across repeated attempts.
+
+`ImportReportModal` draws that picture as Obsidian settings (finding S9-08):
+problems with the file as a whole first, in a `SettingGroup` with no heading,
+then one group per entry headed **Entry 3 — idea**, all with `mod-list`. Each
+problem is a row (`cs-import-issue cs-import-issue-<level>`): the message as the
+row's name, coloured through Obsidian's `--setting-item-name-color` (error red
+for an error, which skips the entry; warning orange for a warning, which drops
+one value), and the field it concerns as `code` in the description, which
+app.css draws in small monospace. The window body is the only scroller. Until
+2026-10-24 the list was a grey box with a 50vh scrollbar of its own inside the
+scrolling window, with dashed lines between entries and a bold lead line.
 
 ### Resource limits and hostile input
 
@@ -420,7 +435,7 @@ rather than merely not drawn:
 still holds something; otherwise the vault once found, as the recommended
 default; and otherwise whatever the fallback holds, being the only thing on
 screen. Filling the fallback - a file staged, text typed or pasted - chooses
-it; a click on the vault card, or on its radio dot, chooses the vault. Each
+it; a click on the vault card, or on its radio, chooses the vault. Each
 option keeps what it was given while the other is active, and Import only ever
 reads the active one.
 
@@ -428,38 +443,40 @@ reads the active one.
   [`pluginImportViews.ts`](../../src/settings/pluginImport/pluginImportViews.ts))
   are option boxes drawn as cards (`.cs-import-vault`, `.cs-import-manual`),
   built **once** per open. `update()` writes everything that changes in place -
-  the count, the Recommended pill, a staged file's name, which card is active -
+  the count, the Recommended tag, a staged file's name, which card is active -
   so nothing the user is in is ever replaced: the Upload button that becomes
   Replace is the same button, typing never moves the caret, and the probe
   settling touches neither the text box nor focus.
 - **Choosing.** While both cards are there, the list is a
   `role="radiogroup"` named by the window's title (`aria-labelledby`, never an
   `aria-label`, which Obsidian would pop up as a tooltip over every card), and
-  each card ends in a radio dot, `.cs-option-radio`: `role="radio"`,
-  `aria-checked`, `aria-labelledby` its card's title line, `aria-describedby`
-  its status line. The dot, not the card, is the radio, because a radio may
-  hold no control and the fallback's card holds a button and, for a paste, a
-  text box. The whole card is still one pointer target for the same thing: a
-  click anywhere on it chooses it - except on its own button or text box
-  (`closest("button, textarea")`), which does what it says instead. Enter and
-  Space on a dot choose it; a held key is claimed but counted once. A dot is a
-  focus stop only while its card holds something; an empty fallback's dot is
-  `aria-disabled` and faded, and a click on the empty card or its dot chooses
-  nothing - it waits to be filled by its own button or box, and a notice says
-  which: `import.uploadFirst` (Admonition) or `import.pasteFirst` (Callout
-  Manager), picked by `source.manual.kind`. Going back into a text box that
+  each card starts with Obsidian's radio, `input.cs-option-radio`: one `name`
+  per window (the title's id), `aria-labelledby` its card's title line,
+  `aria-describedby` its status line. The radio, not the card, is the
+  control, because a radio may hold no control and the fallback's card holds
+  a button and, for a paste, a text box. The whole card is still one pointer
+  target for the same thing: a click anywhere on it chooses it - except on its
+  own button or text box (`closest("button, textarea")`), which does what it
+  says instead. Space on a radio, or the arrow keys moving the check onto it,
+  choose it (`change`). A radio is enabled only while its card holds
+  something, so the arrow keys pass over an empty fallback; a click on the
+  empty card (its disabled radio lets the click through) chooses nothing - it
+  waits to be filled by its own button or box, and a notice says which:
+  `import.uploadFirst` (Admonition) or `import.pasteFirst` (Callout Manager),
+  picked by `source.manual.kind`. The browser checks a radio before the window
+  hears of it, so after every choice `addOptionRadio` puts each radio of the
+  group back to what `paintOptionRadio` last painted: a choice the window
+  takes has just been repainted, one it refuses (an empty card, an import
+  already running) leaves the check where it was. Going back into a text box that
   holds text (`focus`) chooses it; focus entering an *empty* box is silent,
   since the user is about to paste (`onPasteFocus` rather than `onChoose`). Choosing flips `is-selected` and
-  `aria-checked` in place.
-- **The active card** wears `is-selected`: a 2px `--interactive-accent` ring
-  (an inset `box-shadow`, so nothing shifts) over an 8% accent tint of the
-  card's own fill, and its radio dot fills with `--checkbox-color` and shows
-  its check. A card a click would change wears `is-choosable` and steps its
-  fill on hover, like a chooser's box.
+  `checked` in place.
+- **The active card** wears `is-selected`: its outline turns
+  `--interactive-accent`, and its radio is checked.
 - **Nothing in the vault.** When the probe settles on `notInstalled`, `empty`,
   or `unreadable`, the vault card is removed, and with it the radiogroup role
-  and the fallback's radio dot: alone, it has nothing to be chosen against, and
-  wears no ring, and a click on its card says nothing. **Nothing says why** -
+  and the fallback's radio: alone, it has nothing to be chosen against, and
+  wears no accent outline, and a click on its card says nothing. **Nothing says why** -
   no greyed-out card, no line saying the plugin isn't installed, and nothing
   announced. The three probe results stay
   distinct in `probeVault` and the flow; the window simply treats them alike.
@@ -473,10 +490,10 @@ reads the active one.
   folder is `notInstalled`; a folder without a settings file is `empty`.
   A file with no custom entries and an empty `{}` are also `empty`.
   A file that can't be read, parsed, or recognized is `unreadable`. Once
-  found, the vault card carries the shared grey **Recommended** pill
-  (`settings/recommendedBadge.ts`, also used by `ExportFormatModal`'s backup
+  found, the vault card carries the shared grey **Recommended** flair
+  (Obsidian's `flair mod-flat`, `settings/recommendedBadge.ts`, also used by `ExportFormatModal`'s backup
   row) on its title line. While the probe is still checking, the vault card
-  says "Looking for…", its dot takes no focus, and the card
+  says "Looking for…", its radio is disabled, and the card
   (`.cs-import-vault.is-checking`) is held back 250ms, so a fast probe never
   flashes it before it goes or before the count replaces it. The fallback is
   usable from the start, so a probe that never settles cannot lock the window;
@@ -489,9 +506,9 @@ reads the active one.
   `<textarea>` on a line of its own under the card's head (the card is
   `flex-wrap: wrap`; the box is `flex: 0 0 100%`), named and described by the
   card's own title and status lines (`aria-labelledby`/`aria-describedby`),
-  with the source's `manual.placeholder`. It opts into `.cs-text-control` for
-  the shared field face, and `.cs-import-paste-input` gives it **one fixed
-  height** (132px) with `resize: none` and `overflow: auto`: it scrolls
+  with the source's `manual.placeholder`. It is Obsidian's own `textarea` (the
+  `.cs-text-control` hook adds no face of its own), and `.cs-import-paste-input`
+  gives it **one fixed height** (132px) with `resize: none` and `overflow: auto`: it scrolls
   instead of growing with what is pasted, so the footer stays where it was. It
   is monospace and `direction: ltr`, since what goes in is CSS or JSON (in a
   right-to-left window a rule would otherwise read `} selector.`); only while
@@ -517,7 +534,7 @@ reads the active one.
   older translation would keep giving.) A read that answers after the
   window was asked to close does nothing.
 - **Uploading a file** (Admonition's window). The file card carries a
-  standard `<button class="cs-import-action">` before its radio dot that reads
+  standard `<button class="cs-import-action">` at its trailing edge that reads
   **Upload**, `aria-describedby` the card's two lines. Picking a file, or
   dropping one onto the card, only stages it (`stageFile()`): the card is
   rewritten in place - its title becomes the file's name
@@ -569,7 +586,7 @@ reads the active one.
 
 Every route then ends in the same sequence: plan, then `ImportReportModal`
 when there are issues or no entries at all, then apply, then
-`markCompetitorImportBannerHandled`, then a notice, then `ctx.display()`, then
+`markCompetitorImportBannerHandled`, then a notice, then `ctx.redraw()`, then
 close. The source's `afterApply` runs last; Admonition uses it for
 `ensureIconArtworkFor`.
 

@@ -2,19 +2,29 @@
  * settings/iconpicker/IconLibrariesModal.ts — the **Manage icon libraries**
  * window.
  *
- * Opened from the button beside Pick an icon's library menu. One list, in two
- * bands (ui/bandedSortList.ts, the list behind Customize menu items): above the
- * line, the libraries the picker offers, in the order it offers them, and
- * dragging there reorders the menu; below it, the libraries it does not, in
- * catalog order and with no handle.
+ * One window with two doors, both opened through openIconLibraries.ts: the
+ * **Manage libraries** button beside Pick an icon's library menu, and the
+ * **Icon libraries** row of the settings (Colors and icons box,
+ * declarative/iconLibrariesRow.ts). It is a window, never a page, so the two
+ * doors cannot show two copies of one list. (A page of the settings was tried;
+ * it could only be reached from the picker, whose window covers the settings,
+ * and closing that window would lose the icon being chosen.)
  *
- * The bands carry the headings of the Choose source menu. **Available
- * libraries** heads the first band, and the reset arrow sits on that heading's
- * row; **Libraries to download** heads the libraries this device lacks (the
- * menu lists those too, so a library can be fetched from there as well). A
- * third caption, **Hidden libraries**, names the built-in libraries the person
- * took out of the picker — the menu does not list those at all, and calling
- * them "to download" would be wrong, since there is nothing to fetch.
+ * Three Obsidian setting groups (`SettingGroup`: a heading over one rounded
+ * box of rows, thin lines between the rows, 24px between the groups;
+ * finding S4-13), the way Obsidian's own settings show a list:
+ *
+ * - **Available libraries** — the libraries the picker offers, in the order it
+ *   offers them. Dragging a row's handle (or ↑/↓ on it) reorders the menu, and
+ *   the reset arrow sits at the end of the heading.
+ * - **Libraries to download** — the ones this device lacks, in catalog order
+ *   (the menu only counts those, so this is where a library is fetched).
+ * - **Hidden libraries** — the built-in libraries the person took out of the
+ *   picker. The menu does not list those at all, and calling them "to
+ *   download" would be wrong, since there is nothing to fetch. The group shows
+ *   only while it has a row, like Libraries to download.
+ *
+ * The first two headings are the Choose source menu's, from the same keys.
  *
  * Each row carries one button, and which one says what kind of library it is:
  *
@@ -30,18 +40,22 @@
  * they keep their icons (IconService.deleteLibrary keeps a copy of every
  * drawing they need). The last library left in the picker cannot be taken out.
  *
- * The window scrolls in exactly one case: a library whose button was pressed
- * changes band — it drops below the line when it is deleted or hidden, rises
- * above it once its download has finished or it is shown — and lands out of
- * view. Then the list scrolls with the row, just far enough to show where it
- * went. Every other change — a drag, a key, the reset arrow, a download still
+ * A row that changes group moves there at once, as a row does between two of
+ * Obsidian's lists; the rows left behind in Available libraries slide together.
+ * The window scrolls by itself in exactly one case: a library whose button was
+ * pressed changes group — it leaves Available libraries when it is deleted or
+ * hidden, joins it once its download has finished or it is shown — and lands
+ * out of view. Then the window scrolls just far enough to show where it went.
+ * Every other change — a drag, a key, the reset arrow, a download still
  * running, a press that was refused or declined — leaves the scroll alone.
+ * (A drag scrolls the window too, when the row is held near its edge: that is
+ * the drag's own doing, see ui/DragSortList.ts.)
  *
  * The reset arrow puts everything back the way the plugin came: the catalog
  * order, nothing hidden, and no downloaded library — those are deleted, after
  * one question naming them, since only a download brings them back.
  */
-import { Modal, Notice, Setting, setIcon } from "obsidian";
+import { Modal, Setting, SettingGroup, setIcon } from "obsidian";
 import type { App } from "obsidian";
 import type {
 	CalloutDefinition,
@@ -68,15 +82,23 @@ import {
 } from "../../icons/iconLibraries";
 import type { SettingsWriter } from "../../manager/SettingsWriter";
 import { getLocale, t, type LocaleKey } from "../../i18n";
-import { ConfirmModal } from "../../utils/ConfirmModal";
-import { attachBandedSortList, type BandedSortList } from "../../ui/bandedSortList";
+import { makeDragSortable } from "../../ui/DragSortList";
+import { animateReorder } from "../../ui/flip";
+import { paintResetIdle } from "../../ui/resetArrow";
+import { scrollToReveal } from "../../ui/scrollToReveal";
+import { settingGroupEl } from "../../ui/settingGroupEl";
+import { appendLines } from "../../ui/textLines";
 import { explainIfBlocked, paintBlocked } from "../../ui/blockedButton";
 import { blockedWhilePaused } from "../pausedGuard";
-import { addFieldResetButton } from "../editor/fieldResetButton";
 import { applyModalChrome, removeModalChrome } from "../modalChrome";
 import { formatIconCount } from "./sourceMenuPresentation";
+import { askDeleteLibrary, askResetLibraries } from "./iconLibraryQuestions";
+import { showNotice } from "../../ui/mascot/mascotNotices";
 
-/** What the window needs from the plugin; the icon picker hands it over. */
+/**
+ * What the window needs from the plugin; its two doors hand it over
+ * (openIconLibraries.ts).
+ */
 export interface IconLibrariesHost {
 	app: App;
 	settings: PluginSettings;
@@ -89,18 +111,20 @@ export interface IconLibrariesHost {
 		getUserImages(): readonly UserImageIcon[];
 	};
 	icons: Pick<IconService, "packs" | "deleteLibrary">;
-	/** How many icons a library offers, once the picker has counted. */
+	/** How many icons a library offers, once they have been counted (sourceCounts.ts). */
 	countFor(id: IconSourceId): number | undefined;
 	/**
 	 * The callout the picker is choosing an icon for, whose icon the editor
 	 * holds unsaved. The registry cannot know it, yet deleting a library it
 	 * uses has to ask, and its drawings have to be kept, like any saved
-	 * callout's. Absent when the picker is not opened for a callout.
+	 * callout's. Absent when the picker is not opened for a callout, and when
+	 * the window is opened from the settings, whose row refuses while an editor
+	 * is open (declarative/iconLibrariesRow.ts).
 	 */
 	editing?: EditedCallout;
 }
 
-/** One row: a library, and whether it sits above the line. */
+/** One row: a library, and whether the picker offers it. */
 interface LibraryRow {
 	id: IconSourceId;
 	shown: boolean;
@@ -109,11 +133,24 @@ interface LibraryRow {
 /** Which group of the window a row is in. */
 type LibraryGroup = "available" | "download" | "hidden";
 
-/** The caption over each group below the line; the first group's is the fixed heading. */
-const GROUP_CAPTION: Record<Exclude<LibraryGroup, "available">, LocaleKey> = {
+/** The groups, top to bottom. */
+const GROUP_ORDER: readonly LibraryGroup[] = ["available", "download", "hidden"];
+
+/** Each group's heading. */
+const GROUP_HEADING: Record<LibraryGroup, LocaleKey> = {
+	available: "iconPicker.librariesAvailable",
 	download: "iconPicker.librariesToDownload",
 	hidden: "iconLibraries.librariesHidden",
 };
+
+/** One group as the window keeps it: its outer element, and its box of rows. */
+interface GroupBox {
+	groupEl: HTMLElement;
+	listEl: HTMLElement;
+}
+
+/** A row's FLIP identity (ui/flip.ts): its library, which a rebuild keeps. */
+const ROW_KEY = (el: HTMLElement): unknown => el.dataset.csItemId;
 
 /** The one button a row carries. */
 type LibraryAction = "delete" | "download" | "hide" | "show";
@@ -132,19 +169,8 @@ const ACTION_LABEL: Record<LibraryAction, string> = {
 	show: "iconLibraries.show",
 };
 
-/** Names listed in the delete dialog before the rest are summed up as "and N more". */
-const MAX_LISTED_CALLOUTS = 10;
-
 /** The pointer events that end a drag in ui/DragSortList.ts. */
 const DRAG_END_EVENTS = ["pointerup", "pointercancel", "lostpointercapture"] as const;
-
-/** Each `\n` of a translated description starts a new line of it. */
-function writeLines(el: HTMLElement, text: string): void {
-	text.split("\n").forEach((line, i) => {
-		if (i > 0) el.createEl("br");
-		el.appendText(line);
-	});
-}
 
 /**
  * A library the picker does not offer is either still to download or, when it
@@ -166,9 +192,12 @@ export class IconLibrariesModal extends Modal {
 	private changed = false;
 	/** Invalidates the disk load when the window closes or reopens. */
 	private generation = 0;
+	/** Every library, in display order: Available, then To download, then Hidden. */
 	private rows: LibraryRow[] = [];
-	private listEl: HTMLElement | null = null;
-	private list: BandedSortList | null = null;
+	/** The three groups, while the window is open. */
+	private boxes: Record<LibraryGroup, GroupBox> | null = null;
+	/** Takes the drag listeners off the Available box. */
+	private detachDrag: (() => void) | null = null;
 	private syncReset: (() => void) | null = null;
 	private stopWatchingPacks: (() => void) | null = null;
 	/** Libraries whose Delete is running, so their button shows progress. */
@@ -215,41 +244,56 @@ export class IconLibrariesModal extends Modal {
 		// A plain description paragraph, as Commands and shortcuts has, so the
 		// heading under it is spaced from it the same way in every layout.
 		const intro = this.contentEl.createEl("p", { cls: "setting-item-description" });
-		writeLines(intro, t("iconLibraries.desc"));
+		appendLines(intro, t("iconLibraries.desc"));
 
-		// The heading of the first group, with the reset arrow level with it. It
-		// is a row of its own above the list — not inside it — because the list
-		// is rebuilt on every change, and a button rebuilt with it would leave
-		// `syncReset` holding a detached one.
-		const heading = new Setting(this.contentEl).setName(t("iconPicker.librariesAvailable"));
-		heading.settingEl.addClass("cs-icon-library-heading");
-		this.syncReset = addFieldResetButton(
-			heading,
-			t("iconLibraries.reset"),
-			() => this.isDefault(),
-			() => void this.reset(),
-		);
+		// The three groups, in one wrapper that sets them off from the
+		// description above. `mod-list` is Obsidian's list layout: rows a little
+		// tighter, and kept on one line on a phone.
+		const wrapper = this.contentEl.createDiv({ cls: "cs-icon-library-list" });
+		const makeGroup = (group: LibraryGroup): { settingGroup: SettingGroup; box: GroupBox } => {
+			const settingGroup = new SettingGroup(wrapper)
+				.setHeading(t(GROUP_HEADING[group]))
+				.addClass("mod-list", "cs-icon-library-group");
+			const groupEl = settingGroupEl(settingGroup);
+			// Which group this is, for tests and the screenshot scripts.
+			groupEl.dataset.csGroup = group;
+			return { settingGroup, box: { groupEl, listEl: settingGroup.listEl } };
+		};
+		const available = makeGroup("available");
+		// The one group a drag happens in (styles.css lays its placeholder out).
+		available.box.groupEl.addClass("cs-icon-library-available");
 
-		this.listEl = this.contentEl.createDiv({
-			cls: "cs-menu-customize-list cs-icon-library-list",
+		// The reset arrow, at the end of the Available heading, as Obsidian puts
+		// a group's extra button. It is built once with the group, and only the
+		// rows are rebuilt, so `syncReset` always holds the arrow on screen.
+		// Invisible (`cs-reset-idle`) while there is nothing to reset.
+		let resetEl: HTMLElement | null = null;
+		available.settingGroup.addExtraButton((button) => {
+			button
+				.setIcon("rotate-ccw")
+				.setTooltip(t("iconLibraries.reset"))
+				.onClick(() => void this.reset());
+			resetEl = button.extraSettingsEl;
+			resetEl.addClass("cs-icon-library-reset");
 		});
-		this.list = attachBandedSortList<LibraryRow>(this.listEl, {
-			items: () => this.rows,
-			keyOf: (row) => row.id,
-			inLowerBand: (row) => !row.shown,
-			captionOf: (row, previous) => {
-				const group = groupOf(row);
-				if (group === "available" || (previous && groupOf(previous) === group)) return null;
-				return t(GROUP_CAPTION[group]);
-			},
-			// The body of the window is its one scroll container (modalChrome.ts).
+		this.syncReset = () => {
+			if (resetEl) paintResetIdle(resetEl, this.isDefault());
+		};
+
+		this.boxes = {
+			available: available.box,
+			download: makeGroup("download").box,
+			hidden: makeGroup("hidden").box,
+		};
+		// Only Available libraries is in an order of the person's; the other
+		// two follow the catalog, and moving a row there would change nothing.
+		this.detachDrag = makeDragSortable(available.box.listEl, {
+			rowSelector: ".cs-icon-library-row",
+			handleSelector: ".cs-drag-handle",
+			// The body of the window is its one scroll container (modalChrome.ts):
+			// a row held near its edge scrolls it (finding S4-12).
 			scroller: () => this.contentEl,
-			// Below the line the order is the catalog's, and moving a row there
-			// would change nothing anywhere.
-			canMove: (row) => row.shown,
-			handleLabel: t("menuCustomize.dragHandle"),
-			renderRow: (el, row) => this.renderRow(el, row),
-			onReorder: () => this.saveOrder(),
+			onReorder: (from, to) => this.moveAvailable(from, to),
 		});
 		this.refresh(false);
 		void this.watchPacks(generation);
@@ -257,9 +301,9 @@ export class IconLibrariesModal extends Modal {
 
 	onClose(): void {
 		this.generation++;
-		this.list?.destroy();
-		this.list = null;
-		this.listEl = null;
+		this.detachDrag?.();
+		this.detachDrag = null;
+		this.boxes = null;
 		this.stopWatchingPacks?.();
 		this.stopWatchingPacks = null;
 		this.syncReset = null;
@@ -290,7 +334,8 @@ export class IconLibrariesModal extends Modal {
 	/**
 	 * The libraries the picker offers, in the user's order; then, in catalog
 	 * order, those still to download (the order of the menu's own group); then
-	 * the hidden ones, likewise.
+	 * the hidden ones, likewise. The Available rows therefore come first, and a
+	 * drag's indexes in that box are indexes in this list too.
 	 */
 	private computeRows(): LibraryRow[] {
 		const prefs = this.host.settings.iconLibraries;
@@ -304,30 +349,94 @@ export class IconLibrariesModal extends Modal {
 		];
 	}
 
-	/** Recompute both bands and redraw, sliding every row that moved. */
+	/**
+	 * Recompute which group every library is in, and redraw. `animated` slides
+	 * the Available rows that moved, and scrolls to a pressed library that
+	 * changed group; the first draw, and the one after reading the disk, are
+	 * not anyone's move and do neither.
+	 */
 	private refresh(animated = true): void {
-		const list = this.list;
-		const listEl = this.listEl;
-		if (!list || !listEl) return;
+		const boxes = this.boxes;
+		if (!boxes) return;
 		// Rebuilding under the pointer would leave the dragged row detached.
-		if (listEl.hasClass("cs-dragging")) {
-			this.refreshWhenDragEnds(listEl);
+		const dragBox = boxes.available.listEl;
+		if (dragBox.hasClass("cs-dragging")) {
+			this.refreshWhenDragEnds(dragBox);
 			return;
 		}
 		let followed: IconSourceId | undefined;
 		const recompute = (): void => {
 			const before = this.rows;
 			this.rows = this.computeRows();
-			// Only a redraw that slides the rows can scroll to one: the first
-			// draw, and the one after reading the disk, are not anyone's move.
 			if (animated) followed = this.takeMovedFollowed(before, this.rows);
 		};
-		if (animated) list.animate(recompute, () => followed);
+		if (animated) this.animateAvailable(recompute, () => followed);
 		else {
 			recompute();
-			list.render();
+			this.render();
 		}
 		this.syncReset?.();
+	}
+
+	/**
+	 * Run `change`, redraw, and slide the Available rows that changed place.
+	 * Only that box slides: a row that changes group moves there at once, as a
+	 * row does between two of Obsidian's lists.
+	 *
+	 * `follow`, asked once the redraw is done, names a library to keep in view:
+	 * if its row landed outside the window's view, the window scrolls just far
+	 * enough to show it — before the slide is measured, so the rows slide from
+	 * where they were on screen to where they are now.
+	 */
+	private animateAvailable(change: () => void, follow?: () => IconSourceId | undefined): void {
+		const boxes = this.boxes;
+		if (!boxes) return;
+		animateReorder(
+			boxes.available.listEl,
+			() => {
+				change();
+				this.render();
+				const id = follow?.();
+				if (id !== undefined) this.reveal(id);
+			},
+			{ keyOf: ROW_KEY },
+		);
+	}
+
+	/** Scroll the window to the row of `id`, if it is out of view. */
+	private reveal(id: IconSourceId): void {
+		const rowEl = this.rowEl(id);
+		if (rowEl) scrollToReveal(this.contentEl, rowEl);
+	}
+
+	/** The row element of `id`, in whichever group it is. */
+	private rowEl(id: IconSourceId): HTMLElement | undefined {
+		return Array.from(this.contentEl.querySelectorAll<HTMLElement>(".cs-icon-library-row"))
+			.find((el) => el.dataset.csItemId === id);
+	}
+
+	/**
+	 * Draw every group from `this.rows`. Each box is built apart and swapped in
+	 * whole (`replaceChildren`), never emptied and then filled: the row whose
+	 * button was just pressed has focus, a browser taking focus off a node
+	 * being removed lays the page out on the spot, and with the box's rows
+	 * already gone the window would clamp its scroll and throw the list to the
+	 * top. Removing and inserting in one step keeps the full list in that layout.
+	 */
+	private render(): void {
+		const boxes = this.boxes;
+		if (!boxes) return;
+		for (const group of GROUP_ORDER) {
+			const { groupEl, listEl } = boxes[group];
+			const members = this.rows.filter((row) => groupOf(row) === group);
+			const fresh = createDiv();
+			for (const row of members) this.renderRow(fresh, row);
+			listEl.replaceChildren(...Array.from(fresh.childNodes));
+			// An empty group is not shown at all — except Available, whose heading
+			// holds the reset arrow (and which never empties: the last library
+			// cannot leave the picker).
+			groupEl.toggleClass("cs-hidden", members.length === 0 && group !== "available");
+		}
 	}
 
 	/**
@@ -365,15 +474,70 @@ export class IconLibrariesModal extends Modal {
 		for (const type of DRAG_END_EVENTS) listEl.addEventListener(type, flush);
 	}
 
-	private renderRow(rowEl: HTMLElement, row: LibraryRow): void {
+	/**
+	 * One library as an Obsidian setting row: its emblem, its name, the line
+	 * of facts under it, then its one button and — in Available libraries only
+	 * — the drag handle at the very end, as Obsidian's reorderable lists have it.
+	 */
+	private renderRow(parent: HTMLElement, row: LibraryRow): void {
 		const pack = getSource(row.id);
+		const setting = new Setting(parent)
+			.setName(t(pack.labelKey))
+			.setDesc(this.metaFor(row));
+		const rowEl = setting.settingEl;
 		rowEl.addClass("cs-icon-library-row");
-		const emblem = rowEl.createSpan({ cls: "cs-icon-library-emblem" });
-		setIcon(emblem, pack.emblemIcon);
-		const info = rowEl.createDiv({ cls: "callout-studio-row-info" });
-		info.createSpan({ cls: "callout-studio-row-name", text: t(pack.labelKey) });
-		info.createSpan({ cls: "cs-icon-library-meta", text: this.metaFor(row) });
-		this.renderAction(rowEl, row);
+		rowEl.dataset.csItemId = row.id;
+		// The emblem in front, in Obsidian's `setting-item-icon` (what
+		// `Setting.setIcon` builds; that method is not in Obsidian's typings).
+		const iconEl = createDiv({ cls: "setting-item-icon" });
+		setIcon(iconEl, pack.emblemIcon);
+		rowEl.insertBefore(iconEl, rowEl.firstChild);
+		this.renderAction(setting, row);
+		if (row.shown) this.addHandle(rowEl, row);
+	}
+
+	/**
+	 * The drag handle that ends an Available row: Obsidian's three-bar icon,
+	 * reachable with Tab, and ↑/↓ on it moves the library one place (Alt+↑/↓,
+	 * Obsidian's key for it, works the same, as no modifier is checked).
+	 */
+	private addHandle(rowEl: HTMLElement, row: LibraryRow): void {
+		const handle = rowEl.createDiv({
+			cls: "cs-drag-handle mod-drag-handle clickable-icon",
+			attr: { role: "button", tabindex: "0", "aria-label": t("menuCustomize.dragHandle") },
+		});
+		setIcon(handle, "menu");
+		handle.addEventListener("keydown", (e) => {
+			const step = e.key === "ArrowUp" ? -1 : e.key === "ArrowDown" ? 1 : 0;
+			if (step === 0) return;
+			// Looked up afresh: the rows may have been recomputed since this
+			// one was drawn.
+			const index = this.rows.findIndex((entry) => entry.id === row.id);
+			const item = this.rows[index];
+			const neighbour = this.rows[index + step];
+			// Only within Available libraries, as the drag is.
+			if (item === undefined || neighbour === undefined || !neighbour.shown) return;
+			e.preventDefault();
+			this.animateAvailable(() => {
+				this.rows[index] = neighbour;
+				this.rows[index + step] = item;
+			});
+			this.saveOrder();
+			this.rowEl(row.id)?.querySelector<HTMLElement>(".cs-drag-handle")?.focus();
+		});
+	}
+
+	/**
+	 * A drag moved the Available row at `from` to `to`. The drag has already
+	 * moved the row on screen; this moves the library in `this.rows` to match
+	 * (the Available rows come first there, so the indexes are the same) and
+	 * saves the new order.
+	 */
+	private moveAvailable(from: number, to: number): void {
+		const [moved] = this.rows.splice(from, 1);
+		if (moved === undefined) return;
+		this.rows.splice(to, 0, moved);
+		this.saveOrder();
 	}
 
 	/**
@@ -410,30 +574,43 @@ export class IconLibrariesModal extends Modal {
 		return parts.join(" · ");
 	}
 
-	private renderAction(rowEl: HTMLElement, row: LibraryRow): void {
-		const button = rowEl.createEl("button", {
-			cls: "cs-icon-library-action clickable-icon",
-			attr: { type: "button" },
-		});
-		if (this.isBusy(row.id)) {
-			// Busy, not blocked: the spinner and the line beside it already say
-			// why, so pressing it would teach nothing.
-			button.disabled = true;
-			button.setAttribute("aria-label", this.metaFor(row));
-			const spinner = button.createSpan({ cls: "callout-studio-spinner" });
-			setIcon(spinner, "loader-2");
-			return;
-		}
-		const action = actionFor(row);
-		setIcon(button, ACTION_ICON[action]);
-		button.setAttribute("aria-label", t(ACTION_LABEL[action], { name: t(getSource(row.id).labelKey) }));
-		if (action === "delete") button.addClass("cs-icon-library-delete");
-		const blocked = (): string | null =>
-			action === "delete" || action === "hide" ? this.keepOneReason() : null;
-		paintBlocked(button, blocked());
-		button.addEventListener("click", () => {
-			if (explainIfBlocked(blocked())) return;
-			void this.run(action, row.id);
+	/**
+	 * A row's one button — delete, download, hide or show — as an Obsidian
+	 * extra button (a `div.clickable-icon` reachable with Tab), the same size
+	 * as the handle beside it on every device. A `<button>` there would be
+	 * padded by Obsidian's phone rule for buttons in a row's control and come
+	 * out bigger than the handle.
+	 */
+	private renderAction(setting: Setting, row: LibraryRow): void {
+		setting.addExtraButton((button) => {
+			const el = button.extraSettingsEl;
+			el.addClass("cs-icon-library-action");
+			if (this.isBusy(row.id)) {
+				// Busy, not blocked: the spinner and the line beside it already
+				// say why, so pressing it would teach nothing.
+				button.setDisabled(true);
+				el.empty();
+				el.setAttribute("aria-label", this.metaFor(row));
+				const spinner = el.createSpan({ cls: "callout-studio-spinner" });
+				setIcon(spinner, "loader-2");
+				return;
+			}
+			const action = actionFor(row);
+			const label = t(ACTION_LABEL[action], { name: t(getSource(row.id).labelKey) });
+			button.setIcon(ACTION_ICON[action]).setTooltip(label);
+			// `setTooltip` names the button for screen readers in Obsidian; said
+			// here as well, so the name does not depend on what draws tooltips.
+			el.setAttribute("aria-label", label);
+			if (action === "delete") el.addClass("cs-icon-library-delete");
+			const blocked = (): string | null =>
+				action === "delete" || action === "hide" ? this.keepOneReason() : null;
+			// Dimmed (Obsidian's `.clickable-icon[aria-disabled]`), yet pressable:
+			// a press says why it cannot act.
+			paintBlocked(el, blocked());
+			button.onClick(() => {
+				if (explainIfBlocked(blocked())) return;
+				void this.run(action, row.id);
+			});
 		});
 	}
 
@@ -501,7 +678,7 @@ export class IconLibrariesModal extends Modal {
 		for (const file of libraryFiles(id)) {
 			if (packs.state(file) === "ready") continue;
 			if (!(await packs.download(file))) {
-				new Notice(t("iconPack.downloadFailed", { name: getSource(id).attribution.title }));
+				showNotice("problem", t("iconPack.downloadFailed", { name: getSource(id).attribution.title }));
 				return;
 			}
 		}
@@ -512,7 +689,7 @@ export class IconLibrariesModal extends Modal {
 		if (users.length > 0) {
 			// The copy of their icons has to reach the disk before the files go.
 			if (blockedWhilePaused(this.host.settingsWriter)) return;
-			if (!(await this.confirmDelete(id, users))) return;
+			if (!(await askDeleteLibrary(this.host.app, id, users))) return;
 		}
 		await this.deleteFiles(id);
 	}
@@ -545,7 +722,7 @@ export class IconLibrariesModal extends Modal {
 			this.refresh();
 			const removed = await this.host.icons.deleteLibrary(id, this.unsavedIconsOf(id));
 			this.deleting.delete(id);
-			if (!removed) new Notice(t("iconLibraries.deleteFailed", { name: t(getSource(id).labelKey) }));
+			if (!removed) showNotice("problem", t("iconLibraries.deleteFailed", { name: t(getSource(id).labelKey) }));
 			this.refresh();
 		})());
 	}
@@ -558,32 +735,6 @@ export class IconLibrariesModal extends Modal {
 		} finally {
 			this.deletions.delete(work);
 		}
-	}
-
-	/**
-	 * Say who uses the library before it goes, and what happens to them:
-	 * nothing — they keep their icons. Only picking *new* icons from it needs
-	 * the library downloaded again.
-	 */
-	private confirmDelete(id: IconSourceId, users: readonly string[]): Promise<boolean> {
-		const name = t(getSource(id).labelKey);
-		const message = createFragment();
-		message.createEl("p", {
-			text: users.length === 1
-				? t("iconLibraries.inUseOne", { name })
-				: t("iconLibraries.inUse", { name, count: String(users.length) }),
-		});
-		const list = message.createEl("ul", { cls: "cs-icon-library-users" });
-		for (const callout of users.slice(0, MAX_LISTED_CALLOUTS)) {
-			list.createEl("li", { text: callout });
-		}
-		if (users.length > MAX_LISTED_CALLOUTS) {
-			list.createEl("li", {
-				text: t("iconLibraries.inUseMore", { count: String(users.length - MAX_LISTED_CALLOUTS) }),
-			});
-		}
-		message.createEl("p", { text: t("iconLibraries.inUseKeeps", { name }) });
-		return new ConfirmModal(this.host.app, t("confirm.titleDeleteLibrary"), message).confirm();
 	}
 
 	// ── Order ───────────────────────────────────────────────────────────
@@ -633,7 +784,7 @@ export class IconLibrariesModal extends Modal {
 			// The copy of their icons has to reach the disk before the files go.
 			if (doomed.some((id) => this.usersOf(id).length > 0) &&
 				blockedWhilePaused(this.host.settingsWriter)) return;
-			if (!(await this.confirmReset(doomed))) return;
+			if (!(await askResetLibraries(this.host.app, doomed))) return;
 		}
 		this.resetting = true;
 		this.host.settings.iconLibraries = { order: [], hidden: [] };
@@ -650,23 +801,5 @@ export class IconLibrariesModal extends Modal {
 		} finally {
 			this.resetting = false;
 		}
-	}
-
-	/**
-	 * Name the libraries a reset deletes, and say what it leaves alone: the
-	 * callouts using them keep their icons.
-	 */
-	private confirmReset(doomed: readonly IconSourceId[]): Promise<boolean> {
-		const message = createFragment();
-		message.createEl("p", { text: t("iconLibraries.resetConfirm") });
-		const list = message.createEl("ul", { cls: "cs-icon-library-users" });
-		for (const id of doomed) list.createEl("li", { text: t(getSource(id).labelKey) });
-		message.createEl("p", { text: t("iconLibraries.resetKeeps") });
-		return new ConfirmModal(
-			this.host.app,
-			t("confirm.titleResetLibraries"),
-			message,
-			t("iconLibraries.resetButton"),
-		).confirm();
 	}
 }

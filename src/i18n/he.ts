@@ -30,6 +30,7 @@ export const he: Record<string, string> = {
 	"autocomplete.createNew": 'יצירת „{{name}}”',
 	"metadataSuggest.finish": "סיום",
 	"metadataSuggest.colors": "צבעים",
+	"metadataSuggest.yourWords": "המילים שלכם",
 	"metadataSuggest.useTyped": "שימוש ב„{{text}}”",
 	"metadataSuggest.replaces": "מחליף את {{word}}",
 	"metadataSuggest.themeAlso": "ערכת הנושא שלך מעצבת גם את המילה הזאת",
@@ -47,12 +48,12 @@ export const he: Record<string, string> = {
 	"replaceModal.searchPlaceholder": "חיפוש תיבות־הבלטה",
 	"replaceModal.chooseFirstReplace": "יש לבחור קודם את תיבת־ההבלטה שתחליף אותה.",
 	"settings.fallbackTag": "ברירת־מחדל",
-	"settings.fallbackTagAuto": "ברירת־מחדל אוטומטית",
-	"settings.rescanVaultDesc": "מוסיף סוגי תיבות־הבלטה שבשימוש בפתקים שלכם ועדיין אינם ברשימה הזו. תיבות־ההבלטה והפתקים הקיימים שלכם לא משתנים.",
+	"settings.fallbackTagAuto": "אוטומטי",
+	"settings.rescanVaultDesc": "מוסיף את סוגי תיבות־ההבלטה שבשימוש בפתקים שלכם ועדיין אינם ברשימה הזו.",
 	"settings.rescanVaultHintAction": "סריקת תיבות־הבלטה",
 	"manualDiscovery.failed": "תוצאות הסריקה לא נשמרו. יש לוודא שאפשר לכתוב לקובץ ההגדרות ושהסנכרון הסתיים, ואז לנסות שוב דרך הגדרות ← סוגי תיבות־ההבלטה שלי ← סריקת תיבות־הבלטה. תיבות־ההבלטה הקיימות לא הוחלפו.",
 	"notice.settingsBackupFailed": "שחזור ההגדרות לא יכול להמשיך מפני שלא ניתן היה לשמור גיבוי בטיחותי. יש לבדוק את מקום האחסון הפנוי ואת הרשאות הכתיבה, ולנסות שוב.",
-	"commandBuilder.missingCallout": "מושהית: תיבת־ההבלטה חסרה. יש לאתר או ליצור אותה כדי להפעיל מחדש את הפקודה, או לערוך את הפקודה ולבחור סוג אחר.",
+	"commandBuilder.missingCallout": "מושהית עד שתיצרו מחדש את תיבת־ההבלטה החסרה או תבחרו אחרת.",
 	"manualDiscovery.scanning": "סורק…",
 	"settings.rescanComplete": "הסריקה הסתיימה: נוספו {{count}} סוגי תיבות־הבלטה חדשים.",
 	"replaceModal.titleReplace": "החלפה בכספת",
@@ -60,7 +61,6 @@ export const he: Record<string, string> = {
 	// פופאפ סריקה ראשונית (מוצג פעם אחת בהתקנה ראשונה ל-Vault גדול)
 
 	// Welcome / splash screen (shown once on first load; reopen via header icon)
-	"welcome.tooltip": "אודות Callout Studio",
 	"welcome.title": "ברוכים הבאים ל־Callout Studio!",
 	"welcome.tagline":
 		"הפתרון המלא שלכם ליצירה, לעיצוב ולניהול של תיבות־הבלטה ב־Obsidian.",
@@ -68,7 +68,6 @@ export const he: Record<string, string> = {
 		"שמנו לב שאתם משתמשים ב־{{plugins}}. האם תרצו לייבא את תיבות־ההבלטה שלכם?",
 	"importBanner.action": "ייבוא",
 	"importBanner.dismiss": "ביטול",
-	"welcome.previewTitle": "לראות איך זה עובד",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio מאפשר לכם ליצור תיבות־הבלטה עם אייקון, צבעים ושם מותאמים אישית.\n\n" +
@@ -79,18 +78,20 @@ export const he: Record<string, string> = {
 		"> [!{{id}}] תיבת־הבלטה כבלוק\n" +
 		"> תיבת־ההבלטה הקלאסית פועלת לפי אותו תחביר בדיוק שאתם כבר מכירים: `> [!type]`.\n\n" +
 		"ל־Callout Studio יש עוד הרבה מה להציע! [למידע נוסף]({{repoUrl}}).\n",
+	"deleteModal.title": "מחיקת תיבת־הבלטה",
 
 	// Delete-callout confirmation. Delete only ever removes the definition;
 	// turning the notes into plain text is the separate convert action below.
-	"deleteModal.title": 'למחוק את תיבת־ההבלטה "{{name}}"?',
 	"deleteModal.bodyInUse":
 		"תיבת־הבלטה זו מופיעה {{count}} פעמים ב־{{files}} קבצים.",
 	"deleteModal.notesUntouched":
 		"פעולה זו מוחקת רק את ההגדרה של תיבת־ההבלטה. הפתקים שלכם לא משתנים, כך שתיבות־ההבלטה הקיימות פשוט יחזרו לעיצוב ברירת־המחדל.",
 	"deleteModal.fallbackTarget":
 		"זוהי גם תיבת־ההבלטה המשמשת כברירת־מחדל, כך שתיבות־הבלטה ללא עיצוב משלהן יעברו ל־{{fallback}}.",
+	"deleteModal.subtitleFallback": "״{{name}}״ · סגנון ברירת המחדל שלכם",
+	"convertModal.title": "המרה לטקסט רגיל",
+	"convertModal.subtitle": "כל מופע של ״{{name}}״ בכספת שלכם",
 	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
-	"convertModal.title": 'להמיר את "{{name}}" לטקסט רגיל?',
 	"convertModal.explain":
 		"כל אחת מהן תהפוך לטקסט רגיל: הכותרת והתוכן נשארים, ורק העיצוב של תיבת־ההבלטה יורד.",
 	"convertModal.typeStays": "סוג תיבת־ההבלטה עצמו נשאר ברשימה שלכם.",
@@ -103,14 +104,10 @@ export const he: Record<string, string> = {
 		"{{theme}} מגדירה את סוג תיבת־ההבלטה הזה, ולכן הוא נשאר זמין ושומר על המראה שלו. Callout Studio משנה רק פתקים בתוך הכספת שלכם — שום דבר ששייך לערכת הנושא שלכם לא נפגע.",
 
 	// Settings — Section headings
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "סוגי תיבות־ההבלטה שלי",
 	"settings.builtInCallouts": "תיבות־הבלטה מובנות",
 	"settings.contextMenu": "תפריט ההקשר",
-	"settings.keyboardShortcuts": "פקודות",
 	"settings.language": "שפה",
-	"settings.languageDesc":
-		"שפת התצוגה של Callout Studio. ברירת־המחדל היא שפת הממשק של Obsidian.",
 	"settings.importExport": "יבוא ויצוא",
 	"settings.import": "ייבוא…",
 	"settings.export": "ייצוא…",
@@ -128,6 +125,9 @@ export const he: Record<string, string> = {
 
 	// Settings — Empty states
 	"settings.noCalloutsNow": "כרגע אין תיבות־הבלטה מותאמות־אישית.",
+	"settings.calloutCount": "{{count}} תיבות־הבלטה",
+	"settings.calloutCountOne": "תיבת־הבלטה אחת",
+	"settings.searchCallouts": "חיפוש תיבות־הבלטה…",
 
 	// Settings — Row actions
 	"settings.editAria": "עריכת {{name}}",
@@ -147,23 +147,18 @@ export const he: Record<string, string> = {
 	"settings.colorSwatchAria": "הדגשה: {{accent}} · רקע: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "תיבות־הבלטה של ערכת הנושא שלכם",
-	"settings.themeCalloutsDesc":
-		"{{theme}} מספקת או משנה את העיצוב של אלה, כך ש־Callout Studio משאיר אותן בדיוק כפי שערכת הנושא שלכם מציירת אותן, ומציע אותן כתיבות־הבלטה מסוג בלוק בלבד. שני הסוגים מופיעים כאן: סוגי תיבות־הבלטה שערכת הנושא שלכם מוסיפה, ותיבות־הבלטה מובנות שהמראה שלהן הוחלף. סוגי תיבות־הבלטה שערכת הנושא מוסיפה מופיעים ברשימה רק כל עוד היא פעילה.",
 	"settings.themeCalloutsDefaultTheme": "ערכת הנושא שלכם",
+	"settings.themeCalloutsEmpty": "{{theme}} לא מעצבת כרגע אף תיבת־הבלטה.",
 	"settings.themePreviewAria":
 		'תצוגה מקדימה של "{{name}}" — לראות איך ערכת הנושא שלכם מציירת אותה',
 	"settings.builtInAllThemeStyled":
-		"{{theme}} משנה את העיצוב של כל תיבות־ההבלטה המובנות, כך שכולן מופיעות למעלה ו־Callout Studio לא נוגע בהן. כדי לעצב תיבת־הבלטה משלכם, הוסיפו תיבת־הבלטה עם מזהה אחר.",
+		"{{theme}} מעצבת את כל תיבות־ההבלטה המובנות, ולכן Callout Studio משאיר את כולן כפי שהן. כדי לעצב תיבת־הבלטה משלכם, הוסיפו תיבת־הבלטה עם מזהה אחר.",
 	"settings.fallbackCallout": "ברירת־מחדל לתיבות־הבלטה",
 	"settings.fallbackCalloutDesc":
-		"סוגי תיבות־הבלטה לא מוכרות יקבלו את העיצוב של תיבת־הבלטה זו.",
+		"סוגי תיבות־הבלטה לא מוכרים יורשים עיצוב זה.",
 
 	// Settings — Global style
-	"settings.globalStyleRegularTitle": "עיצוב גלובלי לתיבות־הבלטה מסוג בלוק",
-	"settings.globalStyleHeadingTitle": "עיצוב גלובלי לתיבות־הבלטה ככותרת",
-	"settings.globalStyleInlineTitle": "עיצוב גלובלי לתיבות־הבלטה מוטבעות",
 	"settings.border": "מסגרות",
-	"settings.borderAll": "הכול",
 	"settings.borderTop": "עליונה",
 	"settings.borderRight": "ימנית",
 	"settings.borderBottom": "תחתונה",
@@ -173,14 +168,11 @@ export const he: Record<string, string> = {
 	"settings.titleScale": "כותרת",
 	"settings.contentScale": "תוכן",
 	"settings.inlineTextScale": "טקסט",
-	"settings.shapeGroup": "צורה",
 	"settings.borderRadius": "עיגול הפינות",
-	"settings.alignGroup": "יישור",
 	"settings.alignContent": "יישור התוכן לכותרת",
 	"settings.headingSpacingGroup": "ריווח הכותרת",
 	"settings.headingPadVertical": "ריווח אנכי",
 	"settings.headingGap": "מרווח בין כותרות",
-	"settings.headingFoldGroup": "קיפול",
 	"settings.headingFoldArrow": "הצגת חץ הקיפול",
 	"settings.styleDemoName": "דוגמה",
 	"settings.styleDemoInlineName": "דוגמה",
@@ -192,23 +184,21 @@ export const he: Record<string, string> = {
 	"settings.customPalettes": "פלטות צבעים שמורות",
 	"settings.newPalette": "פלטה חדשה",
 	"settings.customPalettesEmpty": "כרגע אין פלטות צבעים שמורות.",
+	"settings.paletteCount": "{{count}} פלטות",
+	"settings.paletteCountOne": "פלטה אחת",
 	"settings.editPaletteAria": "עריכת פלטה {{name}}",
-	"settings.deletePaletteAria": "מחיקת פלטה {{name}}",
-	"settings.deletePaletteConfirm":
-		'למחוק את הפלטה "{{name}}"?\nתיבות־הבלטה שמשתמשות בצבעים שלה לא יושפעו.',
+	"settings.deletePaletteTitle": "מחיקת פלטה",
+	"settings.deletePaletteBody":
+		'תיבות־הבלטה שמשתמשות בצבעים שלה לא יושפעו.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		"תיבות־הבלטה שמציינות אותה במטא־נתונים שלהן („{{key}}”) מקבלות במקומה את הצבע המובנה בשם הזה. הפתקים שלך לא משתנים.",
 
 	// Settings — Keyboard shortcuts
 	"settings.customCommands": "פקודות ומקשי קיצור",
-	"settings.customCommandsDesc":
-		"צפו בכל פקודה של Callout Studio ובקיצור המקלדת המשויך לה, וצרו פקודות משלכם לתיבות־ההבלטה שבהן אתם משתמשים הכי הרבה. כברירת־מחדל, לא מוגדרים קיצורי מקלדת.",
-	"settings.customCommandsButton": "ניהול פקודות",
+	"settings.customCommandsDesc": "כל הפקודות של Callout Studio, הקיצורים שלהן ופקודות משלכם.",
 
 	// Command builder
 	"commandBuilder.title": "פקודות וקיצורי מקלדת",
-	"commandBuilder.desc":
-		"השתמשו בכפתור + כדי להגדיר או לשנות קיצור מקלדת בהגדרות קיצורי המקלדת של Obsidian.",
 	"commandBuilder.builtIn": "פקודות מובנות",
 	"commandBuilder.toggleAria": "הפעלה או כיבוי של {{name}}",
 	"commandBuilder.hotkeyBlank": "ריק",
@@ -218,9 +208,7 @@ export const he: Record<string, string> = {
 	"commandBuilder.empty": "אין עדיין פקודות מותאמות־אישית.",
 	"commandBuilder.unknownCommand": "הפקודה הזו",
 	"commandBuilder.editAria": "עריכת {{name}}",
-	"commandBuilder.deleteAria": "מחיקת {{name}}",
-	"commandBuilder.deleteConfirm":
-		"למחוק את הפקודה {{name}}? כל קיצור מקלדת שהוגדר עבורה יפסיק לפעול.",
+	"commandBuilder.deleteConfirm": "כל קיצור שהוקצה לה יפסיק לעבוד.",
 	"commandBuilder.newTitle": "פקודה חדשה",
 	"commandBuilder.editTitle": "עריכת פקודה",
 	"commandBuilder.format": "פורמט תיבת־הבלטה",
@@ -232,8 +220,9 @@ export const he: Record<string, string> = {
 		"הפורמט הזה כבוי, כך שהפקודה תוסיף טקסט רגיל עד שתפעילו אותו מחדש.",
 	"commandBuilder.roleThemeOwned":
 		"ערכת הנושא שלכם מספקת את תיבת־ההבלטה הזו, ולכן יש לה רק פורמט בלוק.",
-	"commandBuilder.commandSuspended":
-		"מושהה: ערכת הנושא שלכם מספקת את תיבת־ההבלטה הזו, ולכן יש לה רק פורמט בלוק. הפקודה הזו תחזור לפעול כשערכת הנושא תפסיק לספק אותה.",
+	"commandBuilder.commandSuspended": "מושהית כל עוד ערכת העיצוב מספקת את תיבת־ההבלטה הזו, שיש לה אז רק פורמט בלוק.",
+	"commandBuilder.pausedTag": "מושהית בגלל ערכת העיצוב",
+	"commandBuilder.missingTag": "תיבת־ההבלטה חסרה",
 	"commandBuilder.callout": "סוג תיבת־הבלטה",
 	"commandBuilder.calloutDesc": "תיבת־ההבלטה שהפקודה הזו מוסיפה.",
 	"commandBuilder.headingLevel": "רמת כותרת",
@@ -264,7 +253,6 @@ export const he: Record<string, string> = {
 	"portable.reviewTitle": "סקירת ההמרה",
 	"portable.helpIntro": "בחרו את ההחלפות להחלה. לחצו על העיפרון או על טקסט ההחלפה כדי לערוך אותו, ואז הקישו Enter או לחצו מחוץ לשדה כדי לשמור. השתמשו בסמל האיפוס כדי לבטל טיוטה או לשחזר את ההחלפה כברירת מחדל. הפתקים ישתנו רק אחרי בחירה ב״המרת הפריטים שנבחרו״ ואישור. קישורים לכותרות מתעדכנים יחד עם הכותרות שנבחרו.",
 	"portable.help": "על ההמרה",
-	"portable.subtitle": "בחרו אילו כותרות ואינליינים להמיר ל־Markdown רגיל לפני הפסקת השימוש ב־Callout Studio.",
 	"portable.customize": "החלפה מותאמת אישית…",
 	"portable.editCustom": "עריכת ההחלפה המותאמת…",
 	"portable.restoreDefault": "שחזור ההחלפה המקורית",
@@ -309,8 +297,8 @@ export const he: Record<string, string> = {
 	"portable.scanning": "קריאת פתקי Markdown…",
 	"portable.progress": "קריאת פתקים: {{done}} מתוך {{total}}",
 	"portable.empty": "לא נמצאו כותרות מיוחדות או תגיות inline שניתן להמיר. לא יתבצעו שינויים.",
-	"portable.skipped": "{{count}} מופעים לא שלמים או לא נתמכים נשארו ללא שינוי לבדיקה ידנית.",
 	"portable.confirmTitle": "להמיר את הכספת לצמיתות?",
+	"portable.confirmSubtitle": "לא נוצר גיבוי אוטומטי",
 	"portable.confirmBody": "להמיר {{count}} מופעים ולעדכן {{links}} קישורי כותרות ב־{{files}} פתקים?\nהפעולה משנה את הקבצים המקוריים ולא ניתן לבטל אותה דרך Callout Studio. לא נוצר גיבוי אוטומטי. יש לגבות את הכספת, לשמור פתקים פתוחים ולהשהות עריכה וסנכרון עד לסיום ההמרה.\nאם קובץ משתנה או כתיבה נכשלת, ההמרה נעצרת. פתקים שכבר הומרו נשארים לאחר השינוי.",
 	"portable.confirmAction": "המרה לצמיתות",
 	"portable.converting": "המרת השינויים שנבחרו… סגירת הסרגל לא תעצור את ההמרה.",
@@ -328,10 +316,11 @@ export const he: Record<string, string> = {
 	"settings.maintenance": "אזור מסוכן",
 	"settings.resetAll": "איפוס הכול",
 	"settings.resetAllDesc":
-		"מחיקת כל תיבות־ההבלטה המותאמות־אישית, איפוס תיבות מובנות, איפוס סגנונות גלובליים (מסגרות, קנה־מידה, צורה), מחיקת פלטות צבעים שמורות, איפוס התאמת תפריט הקליק־הימני ומחיקת קובצי Material SVG שהורדו.",
+		"שחזור כל ההגדרות וההתאמות לברירות המחדל.",
 	"settings.resetAllButton": "איפוס הכול",
 	"notice.resetAllDone": "הכול אופס לברירות־המחדל.",
 	"settings.resetIntro": "כדאי לעצור רגע ולהעריך כל מה שבניתם עם Callout Studio.",
+	"settings.resetSubtitleDefaults": "ההגדרות שלכם חוזרות לברירות המחדל",
 	"settings.resetDeletes": "כל זה עומד להימחק:",
 	"settings.resetRestores": "הפריטים האלה יחזרו לברירות־המחדל:",
 	"settings.resetItemCallouts": "{{count}} סוגי תיבות־הבלטה מותאמות אישית",
@@ -346,9 +335,10 @@ export const he: Record<string, string> = {
 	"settings.resetItemInline": "הגדרות תיבות־הבלטה בתוך השורה",
 	"settings.resetItemThemeCalloutStyles":
 		"סגנונות תיבות־ההבלטה של ערכת הנושא שלכם",
+	"settings.resetItemAutocomplete": "הגדרות השלמה אוטומטית ומטא־נתונים",
 	"settings.resetItemFallback": "סגנון ברירת־מחדל",
 	"settings.resetItemIconLibraries": "סדר ספריות האייקונים וספריות מוסתרות",
-	"settings.resetAllConfirmAfter": "אל דאגה: לפני האיפוס נשמור גיבוי של התצורה הנוכחית שלכם. אפשר לשחזר אותו בכל עת מהקטע גיבויים בהגדרות.\nאם אתם משתמשים בשירות סנכרון, האיפוס עשוי להגיע גם למכשירים האחרים שלכם.",
+	"settings.resetAllConfirmAfter": "אל דאגה: לפני האיפוס נשמור גיבוי של התצורה הנוכחית שלכם. אפשר להחזיר אותו בכל עת דרך שחזור גרסה קודמת בהגדרות.\nאם אתם משתמשים בשירות סנכרון, האיפוס עשוי להגיע גם למכשירים האחרים שלכם.",
 	"settings.resetNothing": "אין מה לאפס: הכול כבר בברירות־המחדל.",
 
 	"notice.customCommandMissingCallout":
@@ -433,13 +423,13 @@ export const he: Record<string, string> = {
 	"editor.foldClosed": "סגור כברירת־מחדל",
 	"editor.cancel": "ביטול",
 	"editor.saveChanges": "שמירת שינויים",
-	"editor.saving": "שומר…",
 	"editor.saveFailed": "השמירה לא הושלמה. אם העורך עדיין פתוח, השאירו אותו פתוח ונסו שוב אחרי בדיקת המקום הפנוי והסנכרון. ייתכן שחלק מההגדרות או מעדכוני הפתקים כבר נשמרו.",
 	"editor.createCallout": "יצירת תיבת־הבלטה",
 	"editor.nameRequired": "יש להזין שם לתצוגה לפני יצירת תיבת־הבלטה.",
 	"editor.noChangesToSave": "לא בוצעו שינויים.",
-	"editor.downloadingIcon": "מוריד אייקון...",
 	"editor.idEmpty": "נדרש לפחות מזהה אחד",
+	"editor.idAlreadyHere": "המזהה הזה כבר קיים",
+	"editor.idTooLong": "המזהה יכול להכיל עד {{max}} תווים",
 	"editor.idExists": "תיבת־הבלטה עם מזהה זה כבר קיימת",
 	"editor.idConflict": "מזהה זה מתנגש עם תיבת־הבלטה קיימת",
 	"editor.idFromTheme":
@@ -465,7 +455,7 @@ export const he: Record<string, string> = {
 		"רוח קלה נושבת בין העצים. אור שמש חמים מאיר שביל שקט ומפיח חיים בנוף.",
 	"editor.loremIpsumShort":
 		"רוח קלה נושבת בין העצים.",
-	"editor.sampleInlineText": "כאן יש תיבת־הבלטה מוטבעת מסוג [!{id}] בתוך פסקה.",
+	"editor.sampleInlineText": "כאן יש תיבת־הבלטה מוטבעת מסוג [!{id}]{{title}} בתוך פסקה.",
 	"editor.previewReadOnly": "לא ניתן לערוך את התצוגה המקדימה",
 	"noteChanges.title": "לעדכן את הפתקים שלכם?",
 	"noteChanges.leave": "להשאיר אותם כמו שהם",
@@ -500,7 +490,6 @@ export const he: Record<string, string> = {
 	"palette.namePlaceholder": "הפלטה שלי",
 	"palette.nameExists": "כבר קיימת פלטה בשם הזה",
 	"palette.saveBlockedName": "כבר קיימת פלטה בשם הזה. יש לבחור שם אחר כדי לשמור.",
-	"palette.metadataName": "במטא־נתונים של תיבת־ההבלטה: {{key}}",
 	"palette.metadataNameExists":
 		"פלטה אחרת כבר כתובה כ„{{key}}” במטא־נתונים של תיבת־ההבלטה. יש לבחור שם אחר.",
 	"palette.metadataNameShared":
@@ -512,16 +501,15 @@ export const he: Record<string, string> = {
 	"palette.renameNotesFailed":
 		"לא ניתן היה לעדכן חלק מהפתקים. אלה שעודכנו נשמרו; השאר עדיין משתמשים בשם הישן.",
 	"palette.baseColor": "צבע בסיס",
-	"palette.baseColorHint":
-		"נתאים את צבע הרקע לצבע הזה באופן אוטומטי. אם תרצו, אפשר לשלוט בזה בנפרד על ידי {{link}}.",
-	"palette.baseColorHintLink": "לחיצה כאן",
+	"palette.colorViewAdvanced": "הגדרת כל צבע בנפרד",
+	"palette.colorViewSimple": "חזרה לצבע בסיס יחיד",
 	"palette.advancedColors": "צבעים",
-	"palette.advancedColorsHint":
-		"עריכת הצבעים למצב {{mode}} — המצב השני מתעדכן אוטומטית. אפשר להחליף את ערכת הנושא של Obsidian כדי לבדוק אותו.",
-	"palette.revertHint": "מעדיפים צבע בסיס אחד? {{link}}.",
-	"palette.revertHintLink": "חזרה",
-	"palette.lightMode": "בהיר",
-	"palette.darkMode": "כהה",
+	"palette.lightModeColors": "צבעי המצב הבהיר",
+	"palette.darkModeColors": "צבעי המצב הכהה",
+	"palette.modeColorsHintLight": "השינויים האלה חלים על המצב הבהיר בלבד. במצב הכהה נשארים הצבעים שלו.\nכדי לערוך אותם, לחצו על כפתור הירח למעלה.",
+	"palette.modeColorsHintDark": "השינויים האלה חלים על המצב הכהה בלבד. במצב הבהיר נשארים הצבעים שלו.\nכדי לערוך אותם, לחצו על כפתור השמש למעלה.",
+	"palette.showLightMode": "הצגת המצב הבהיר",
+	"palette.showDarkMode": "הצגת המצב הכהה",
 	"palette.accentColor": "צבע הדגשה",
 	"palette.backgroundColorChannel": "צבע רקע",
 	"palette.textColorChannel": "צבע טקסט",
@@ -592,6 +580,7 @@ export const he: Record<string, string> = {
 	"iconPicker.searchMaterial": "חיפוש אייקוני Material",
 	"iconPicker.searchEmoji": "חיפוש אימוג'י",
 	"iconPicker.skinTone": "גוון עור",
+	"iconPicker.skinToneDefault": "ברירת־מחדל",
 	"iconPicker.allCategories": "כל הקטגוריות",
 	"iconPicker.noIconSelected": "לא נבחר אייקון",
 	"iconPicker.chooseFirst": "יש לבחור קודם אייקון.",
@@ -632,7 +621,6 @@ export const he: Record<string, string> = {
 	"iconPicker.allSources": "כל המקורות",
 	"iconPicker.searchAllSources": "חיפוש בכל מקורות האייקונים",
 	"iconPicker.chooseSource": "בחירת מקור",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "ספריות זמינות",
 	"iconPicker.librariesToDownload": "ספריות להורדה",
 	"iconPicker.groupCurrent": "האייקון הנוכחי",
@@ -784,6 +772,10 @@ export const he: Record<string, string> = {
 	"iconPack.artworkRestored": "האייקונים של {{names}} הורדו.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio לא הצליח לשמור את חבילת האייקונים לדיסק, ולכן היא תידרש להורדה מחדש בפעם הבאה. האייקונים שבחרתם עדיין נשמרים יחד עם ההגדרות.",
+	"settings.colorsAndIcons": "צבעים ואייקונים",
+	"settings.iconLibrariesDesc": "סידור מחדש והורדה של ספריות אייקונים נוספות.",
+	"settings.iconLibrariesEditorOpen":
+		"סיימו קודם את העבודה בעורך תיבת־ההבלטה. ייתכן שהאייקון שעדיין לא נשמר בו מגיע מספרייה שתמחקו כאן.",
 	"iconLibraries.manage": "ניהול ספריות אייקונים",
 	"iconLibraries.title": "ספריות אייקונים",
 	"iconLibraries.desc":
@@ -807,6 +799,7 @@ export const he: Record<string, string> = {
 	"iconLibraries.inUseMore": "ועוד {{count}}",
 	"iconLibraries.inUseKeeps":
 		"האייקונים שלהן נשארים — עותק של כל אחד נשמר עם ההגדרות שלכם. כדי לבחור אייקונים חדשים מ־{{name}} בהמשך, הורידו אותה שוב.",
+	"iconLibraries.resetSubtitle": "חזרה לספריות המקוריות של התוסף",
 	"iconLibraries.resetConfirm":
 		"הפעולה מחזירה את הספריות למצב שבו התוסף הגיע: סדר ברירת המחדל, בלי ספריות מוסתרות ובלי אף אחת מהספריות שהורדו. הספריות האלה יימחקו:",
 	"iconLibraries.resetKeeps":
@@ -814,6 +807,9 @@ export const he: Record<string, string> = {
 	"iconLibraries.resetButton": "איפוס",
 
 	// Icon licences & credits
+	"license.title": "רישיון",
+	"license.openSourceBeforeLink": "Callout Studio הוא קוד פתוח, וכך יישאר. הרישיון שלו נמצא ",
+	"license.openSourceLink": "כאן",
 	"credits.title": "רישיונות וקרדיטים לאייקונים",
 	"credits.introBeforeNotices":
 		"Callout Studio משתמש בספריות אייקונים בקוד פתוח; אפשר לראות למטה את הרישיון, הייחוס והשינויים של כל ספרייה, או לקרוא את ",
@@ -838,35 +834,56 @@ export const he: Record<string, string> = {
 
 	// Global settings section (per-role style popups)
 	"settings.globalSettings": "אפשרויות העיצוב הגלובליות של Callout Studio",
+	"settings.calloutStyle": "עיצוב גלובלי",
+	"settings.menusAndCommands": "תפריטים ופקודות",
+	"settings.editorBox": "עורך",
+	"settings.autocompleteAndMetadata": "השלמה אוטומטית ומטא־נתונים",
+	"settings.autocompleteAndMetadataDesc": "רשימות שנפתחות בזמן הקלדת תיבת־הבלטה, ומטא־נתונים אחרי |.",
+	"settings.calloutAutocomplete": "השלמה אוטומטית של תיבות־הבלטה",
+	"settings.calloutAutocompleteDesc": "הצגת רשימת תיבות־הבלטה בהקלדת [!.",
+	"settings.suggestThemeCallouts": "לכלול את תיבות־ההבלטה של ערכת הנושא",
+	"settings.suggestThemeCalloutsDesc": "הצגת תיבות־ההבלטה שערכת הנושא שלכם מוסיפה.",
+	"settings.metadataPage": "מטא־נתונים",
+	"settings.metadataPageDesc": "צבעים ומילים אחרי | בתיבת־הבלטה.",
+	"settings.metadataColors": "צבעי מטא־נתונים",
+	"settings.metadataColorsDesc": "צבע אחרי | צובע את תיבת־ההבלטה הזאת בלבד, כמו ב־[!note|red].",
+	"settings.metadataAutocomplete": "השלמה אוטומטית של מטא־נתונים",
+	"settings.metadataAutocompleteDesc": "הצגת רשימת צבעים ומילים בהקלדת | בתיבת־הבלטה.",
+	"settings.suggestThemeMetadata": "לכלול את המילים של ערכת הנושא",
+	"settings.suggestThemeMetadataDesc": "הצגת המילים שערכת הנושא שלכם מגיבה אליהן.",
+	"settings.metadataWords": "המילים שלכם",
+	"settings.metadataWordsDesc": "מילים להצעה אחרי |, כמו מילים שתוסף אחר קורא.",
+	"settings.metadataWordsPlaceholder": "הוספת מילה",
+	"settings.addMetadataWord": "הוספת מילה",
+	"settings.metadataWordAlreadyHere": "המילה הזאת כבר ברשימה",
+	"settings.metadataWordTooLong": "מילה יכולה להכיל עד {{max}} תווים",
+	"settings.maxMetadataWords": "עד {{max}} מילים. מחקו אחת כדי להוסיף אחרת.",
+	"settings.buildFailed": "Callout Studio לא הצליח לצייר את ההגדרות שלו. הפעילו מחדש את Obsidian, ואם זה קורה שוב, דווחו על כך.",
 	"settings.globalSettingsRegularDesc":
-		"התאמת המסגרת, עיגול הפינות, קנה־המידה של הגופן והיישור של כל תיבת־הבלטה מסוג בלוק בכספת שלכם.",
+		"מסגרת, עיגול פינות, קנה־מידה של הגופן ויישור.",
 	"settings.globalSettingsHeadingDesc":
-		"התאמת המסגרת, הצורה והריווח האנכי של כל תיבת־הבלטה מסוג כותרת בכספת שלכם.",
+		"מסגרת, צורה וריווח אנכי.",
 	"settings.globalSettingsInlineDesc":
-		"התאמת המסגרת והצורה של כל תיבת־הבלטה מוטבעת בכספת שלכם.",
-	"settings.globalSettingsCustomize": "התאמה אישית",
+		"מסגרת וצורה.",
 	"settings.themeCalloutStyles":
 		"שימוש בסגנונות תיבות־ההבלטה של ערכת הנושא שלכם",
-	"settings.themeCalloutStylesDesc":
-		"מופעל: תיבות־ההבלטה שערכת הנושא שלכם מעצבת שומרות על המראה של ערכת הנושא.\nכבוי: Callout Studio מצייר כל תיבת־הבלטה בעצמו, וסגנונות תיבות־ההבלטה של ערכת הנושא מושבתים.",
+	"settings.themeCalloutStylesDesc": "כשהאפשרות פעילה, תיבות־ההבלטה שהערכה שלכם מעצבת שומרות על המראה שלה ומופיעות רק כתיבות־הבלטה מסוג בלוק. כשהיא כבויה, Callout Studio מצייר את כולן.",
 
 	// Callout types section
-	"settings.calloutTypeRegular": "תיבת־הבלטה מסוג בלוק",
-	"settings.calloutTypeHeading": "תיבת־הבלטה ככותרת",
-	"settings.calloutTypeInline": "תיבת־הבלטה מוטבעת",
+	"settings.calloutTypeRegular": "עיצוב תיבת־הבלטה מסוג בלוק",
+	"settings.calloutTypeHeading": "עיצוב תיבת־הבלטה ככותרת",
+	"settings.calloutTypeInline": "עיצוב תיבת־הבלטה מוטבעת",
 
 	// Context menu customization
-	"settings.customizeMenu": "התאמת פריטי התפריט",
-	"settings.customizeMenuDesc":
-		"בחירה אילו פעולות קליק־ימני יופיעו לכל סוג תיבת־הבלטה ושינוי סדרן. פועל במצב מקור ובתצוגה מקדימה בזמן אמת.",
-	"settings.customizeMenuButton": "התאמת פריטי התפריט",
+	"settings.customizeMenuDesc": "בחרו וסדרו את הפעולות בלחיצה ימנית לכל סוג תיבת־הבלטה.",
 	"menuCustomize.title": "התאמת תפריט הקליק־הימני",
-	"menuCustomize.desc":
-		"הפעלה או כיבוי של פעולות וגרירת הידית כדי לשנות את סדרן. השינויים נשמרים אוטומטית.",
 	"menuCustomize.regular": "תיבת־הבלטה מסוג בלוק",
 	"menuCustomize.heading": "תיבת־הבלטה ככותרת",
 	"menuCustomize.inline": "תיבת־הבלטה מוטבעת",
 	"menuCustomize.dragHandle": "גררו כדי לשנות סדר",
+	"menuCustomize.hiddenHeading": "מוסתרות מתפריט תיבות־ההבלטה של כותרת",
+	"menuCustomize.hiddenInline": "מוסתרות מתפריט תיבות־ההבלטה בתוך השורה",
+	"menuCustomize.hiddenRegular": "מוסתרות מתפריט תיבות־ההבלטה מסוג בלוק",
 	"menuItem.createOrEdit": "יצירה או עריכה של תיבת־הבלטה",
 	"menuItem.openSettings": "פתיחת ההגדרות",
 	"menuItem.copyMarkdown": "העתקת Markdown",
@@ -879,10 +896,10 @@ export const he: Record<string, string> = {
 	"confirm.ok": "מחיקה",
 	"confirm.cancel": "ביטול",
 	"confirm.acknowledge": "קראתי והבנתי",
+	"confirm.subtitleName": "״{{name}}״",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "מחיקת פקודה",
-	"confirm.titleDeletePalette": "מחיקת פלטה",
 	"confirm.titleDeleteImage": "מחיקת תמונה",
 	"confirm.titleDeleteLibrary": "מחיקת ספריית אייקונים",
 	"confirm.titleResetLibraries": "איפוס ספריות האייקונים",
@@ -899,7 +916,6 @@ export const he: Record<string, string> = {
 		"עודכנו {{count}} כותרות של תיבות־הבלטה בקובצי הכספת: {{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated":
 		"סימן הקיפול של {{count}} תיבות־הבלטה בקובצי הכספת עודכן.",
-	"vault.replaceWith": "החלפה ב:",
 	"vault.confirmReplace": "החלפה",
 	"vault.replacePromptInUse":
 		'"{{name}}" מופיעה {{count}} פעמים ב־{{files}} קבצים. בחרו תיבת־הבלטה חלופית:',
@@ -940,13 +956,13 @@ export const he: Record<string, string> = {
 
 	"usage.title": "מצאו תיבות־הבלטה",
 	"usage.command": "מצאו תיבות־הבלטה",
-	"usage.subtitle": "מצאו תיבות־הבלטה בכספת ועברו ישירות למקור שלהן.",
 	"usage.browse": "עיון",
 	"usage.allTypes": "כל הסוגים",
 	"usage.registeredCallouts": "תיבות־הבלטה רשומות",
 	"usage.unregisteredCallouts": "תיבות־הבלטה שאינן רשומות",
 	"usage.summary": "{{count}} מופעים ב־{{files}} קבצים",
 	"usage.allRoles": "כל הפורמטים",
+	"usage.filterFormat": "סינון לפי פורמט",
 	"usage.failed": "לא ניתן לעדכן את מופעי תיבות־ההבלטה.",
 	"usage.loading": "סריקת פתקי Markdown…",
 	"usage.partial": "התוצאות אינן מלאות: {{count}} שגיאות קריאה.",
@@ -959,7 +975,6 @@ export const he: Record<string, string> = {
 	"usage.missing": "הפתק הזה כבר אינו קיים. התוצאות מתעדכנות…",
 	"usage.changed": "המופע הזה השתנה או הועבר למיקום שאינו חד־משמעי. התוצאות מתעדכנות…",
 	"usage.openFailed": "לא ניתן לפתוח את המופע הזה של תיבת־ההבלטה.",
-	"usage.menuCount": "מצאו תיבות־הבלטה ({{count}})",
 	"usage.menuIncomplete": "מצאו תיבות־הבלטה — הסריקה לא הושלמה",
 	"usage.menu": "מצאו תיבות־הבלטה",
 	"usage.closeSettings": "יש לסגור את ההגדרות כדי לראות את תוצאות תיבות־ההבלטה בסרגל הצד.",
@@ -1044,14 +1059,10 @@ export const he: Record<string, string> = {
 	"import.err.aliasConflict":
 		'הכינוי "{{value}}" כבר נמצא בשימוש בתיבת־הבלטה אחרת ("{{other}}") בכספת שלכם.',
 	// Footer
-	"footer.prompt":
-		"שאלות, באגים או רעיונות? אשמח לשמוע!{{break}} {{issue}} או {{email}}.",
-	"footer.openIssue": "דיווח על בעיה ב־GitHub",
-	"footer.sendEmail": "שלחו לי אימייל",
+	"footer.openIssue": "דיווח על בעיה",
 	"footer.sourceCode": "קוד מקור",
-	"footer.contribute": "תרומה",
-	"footer.license": "רישיון התוסף",
-	"footer.iconCredits": "רישיונות אייקונים",
+	"settings.about": "אודות",
+	"settings.version": "גרסה",
 
 	"import.warn.defaultFoldedAutofix":
 		'"defaultFolded" הוגדר כ־true למרות ש־"foldable" הוגדר כ־false; לכן defaultFolded אופס בחזרה ל־false.',
@@ -1150,10 +1161,10 @@ export const he: Record<string, string> = {
 		"לא הוגדר צבע, ולכן נעשה שימוש בכחול ברירת המחדל.",
 	"import.warn.admTitleTruncated":
 		"הכותרת באורך {{length}} תווים; היא קוצרה ל־{{max}}.",
-	"settings.deletePaletteConfirmLinkedOne":
-		'האם למחוק את הפלטה "{{name}}"?\nתיבת־הבלטה אחת משתמשת בה. הצבעים שלה נשמרים, ואפשר לחבר אותה שוב אחר כך משורת הצבע בעורך שלה.',
-	"settings.deletePaletteConfirmLinked":
-		'האם למחוק את הפלטה "{{name}}"?\n{{count}} תיבות־הבלטה משתמשות בה. הצבעים שלהן נשמרים, ואפשר לחבר אותן שוב אחר כך משורת הצבע בכל אחד מהעורכים שלהן.',
+	"settings.deletePaletteBodyLinkedOne":
+		'תיבת־הבלטה אחת משתמשת בה. הצבעים שלה נשמרים, ואפשר לחבר אותה שוב אחר כך משורת הצבע בעורך שלה.',
+	"settings.deletePaletteBodyLinked":
+		'{{count}} תיבות־הבלטה משתמשות בה. הצבעים שלהן נשמרים, ואפשר לחבר אותן שוב אחר כך משורת הצבע בכל אחד מהעורכים שלהן.',
 	"notice.palettesMerged":
 		"מוזגו {{count}} צבעים שמורים שהיו עם צבעים זהים: {{names}}. תיבות־ההבלטה שמשתמשות בהם שומרות על הצבעים שלהן וכעת מקושרות לצבע שנשאר.",
 	"editor.colorsDescDeleted":
@@ -1165,9 +1176,8 @@ export const he: Record<string, string> = {
 		'הצבעים האלה זהים ל־"{{name}}". שני צבעים שמורים לא יכולים להיות זהים — שנו צבע, או {{link}}.',
 	"palette.colorExistsUseLink": "להשתמש בקיים",
 	"locale.downloading": "מוריד את התרגום…",
+	"locale.downloaded": "התרגום הורד.",
 	"locale.notDownloaded": "התרגום ל־{{name}} עדיין לא הורד",
-	"locale.notDownloadedDesc":
-		"Callout Studio מציג באנגלית עד שניתן יהיה להוריד את התרגום. הניסיון יחזור בהפעלה הבאה של Obsidian.",
 	"locale.retry": "ניסיון חוזר",
 	"locale.diskWriteFailed":
 		"Callout Studio לא הצליח לשמור את התרגום בדיסק, ולכן יהיה צורך להוריד אותו שוב בפעם הבאה.",
@@ -1180,6 +1190,7 @@ export const he: Record<string, string> = {
 	"notice.exportCssEnabled":
 		"קטע זה מופעל בכספת הזו. Callout Studio כבר מעצב כאן את תיבות־ההבלטה, והקטע שומר את העיצוב שהיה בעת הייצוא.",
 	"confirm.titleOverwriteSnippet": "שכתוב קטע CSS",
+	"confirm.subtitleOverwriteSnippet": "נערך מאז ש־Callout Studio כתב אותו",
 	"confirm.overwriteSnippet":
 		"קטע ה־CSS בתיקיית הקטעים השתנה מאז ש־Callout Studio כתב אותו. ייצוא נוסף יחליף את כל הקובץ.",
 	"confirm.overwriteSnippetOk": "שכתוב",
@@ -1191,6 +1202,7 @@ export const he: Record<string, string> = {
 	"export.formatCss": "תמונת מצב עצמאית ב־CSS",
 	"export.formatCssDesc":
 		"מיועדת לאתרים או לכספות שבהם Callout Studio אינו פועל. היא כוללת תיבות־הבלטה מסוג בלוק בלבד, ויש לייצא אותה מחדש לאחר שינויים.",
+	"export.formatCssAction": "ייצוא",
 	"quickInsert.readingViewHint": "הפתק הזה פתוח במצב קריאה, ולכן אי אפשר להוסיף דבר.",
 	"quickInsert.readingView": "עברו למצב מקור או לתצוגה מקדימה בזמן אמת כדי להוסיף תיבת־הבלטה.",
 	"quickInsert.noCursorHint": "אין סמן בפתק הזה, ולכן אין היכן להוסיף.",
@@ -1277,9 +1289,11 @@ export const he: Record<string, string> = {
 	"settings.resetNotSaved": "האיפוס מוצג אך טרם ניתן היה לשמור אותו, כך שקובץ ההגדרות שלכם עדיין מכיל את התצורה הקודמת. יש לבדוק את מצב השמירה בהגדרות Callout Studio.",
 	"confirm.titleResetEverything": "איפוס הכול",
 	"confirm.titleReplaceUnreadable": "החלפת קובץ ההגדרות",
+	"confirm.subtitleReplaceUnreadable": "עותק מדויק נשמר קודם",
 	"confirm.replaceUnreadable": "עותק מדויק של הקובץ הנוכחי נשמר קודם בתיקיית הגיבויים של התוסף. לאחר מכן הקובץ מוחלף בתצורה המוצגת כאן, ושירות הסנכרון שלכם שולח אותה למכשירים האחרים שלכם.",
 	"confirm.replaceUnreadableSalvage": "עותק מדויק של הקובץ הנוכחי נשמר קודם בתיקיית הגיבויים של התוסף. ההגדרות שבתוכו משולבות עם התצורה המוצגת כאן, והקובץ נכתב מחדש כך שכל מכשיר יוכל לקרוא אותו שוב.",
 	"confirm.titleDiscardRecoveryCopy": "מחיקת עותק השחזור",
+	"confirm.subtitleDiscardRecoveryCopy": "השמירה מושהית במכשיר זה",
 	"confirm.discardRecoveryCopy": "לא ניתן לקרוא את עותק השחזור של המכשיר הזה, ולכן השמירה מושהית במכשיר הזה. עותק מדויק שלו נשמר קודם בתיקיית הגיבויים של התוסף. לאחר מכן הוא מוחלף בתצורה המוצגת כאן. קובץ ההגדרות שלכם לא משתנה.",
 	"vault.undoRewrite": "ביטול",
 	"vault.undoRestored": "{{count}} פתקים שוחזרו.",
@@ -1476,7 +1490,7 @@ export const he: Record<string, string> = {
 	"recovery.delete": "מחיקה",
 
 	// Version history
-	"saveStatus.guide.versions": "כשהשמירה תחזור לפעול, תוכלו גם לשחזר גרסה קודמת דרך היסטוריית הגרסאות.",
+	"saveStatus.guide.versions": "כשהשמירה תחזור לפעול, תוכלו גם לחזור לגרסה שמורה דרך שחזור גרסה קודמת.",
 	"saveStatus.goToVersions": "מעבר להיסטוריית הגרסאות",
 	"versions.title": "היסטוריית גרסאות",
 	"versions.intro": "Callout Studio שומר גרסאות של התצורה שלכם אוטומטית.\nגרסאות ישנות נמחקות בהדרגה.\nשחזור גרסה מחליף את התצורה הנוכחית בכל מכשיר מסונכרן.",
@@ -1496,13 +1510,14 @@ export const he: Record<string, string> = {
 	"versions.reason.beforeImport": "לפני ייבוא",
 	"versions.reason.beforeRepair": "לפני תיקון קובץ ההגדרות",
 	"versions.restoreTitle": "שחזור הגרסה הזו",
-	"versions.restoreBody": "התצורה הנוכחית שלכם תוחלף ב״{{name}}״ מתאריך {{when}} ({{count}} הבדלים).\nהתצורה הנוכחית נשמרת קודם כגרסה, כדי שתוכלו לחזור אליה.\nלאחר מכן שירות הסנכרון שולח את התצורה המשוחזרת למכשירים האחרים שלכם.",
+	"versions.subtitle": "״{{name}}״ · {{when}}",
+	"versions.restoreBody": "התצורה הנוכחית שלכם תוחלף ({{count}} הבדלים).\nהיא תישמר קודם כגרסה, כדי שתוכלו לחזור אליה.\nשירות הסנכרון ישלח לאחר מכן את התצורה המשוחזרת למכשירים האחרים שלכם.",
 	"versions.restoreSame": "הגרסה הזו זהה לתצורה הנוכחית שלכם, ולכן אין מה לשחזר.",
 	"versions.restored": "״{{name}}״ מתאריך {{when}} שוחזרה.",
 	"versions.backupFailed": "שום דבר לא שוחזר: לא ניתן היה לשמור קודם את התצורה הנוכחית שלכם כגרסה. בדקו מקום אחסון פנוי ונסו שוב.",
 	"versions.restoreFailed": "לא ניתן היה לשחזר את הגרסה. שום דבר לא השתנה.",
 	"versions.deleteTitle": "מחיקת הגרסה הזו",
-	"versions.deleteAvailableBody": "הגרסה ״{{name}}״ מתאריך {{when}} וכל העותקים הזמינים שלה יימחקו לצמיתות.",
+	"versions.deleteAvailableBody": "היא וכל העותקים הזמינים שלה יימחקו לצמיתות.",
 	"versions.deleteSyncedFiles": "מחיקת הקבצים האלה עשויה להסתנכרן למכשירים האחרים שלכם. עותקים מקומיים במכשירים האלה עשויים להישאר.",
 	"versions.deleteFinal": "לא ניתן לבטל פעולה זו. התצורה הנוכחית שלכם לא תושפע.",
 	"versions.deleted": "״{{name}}״ מתאריך {{when}} נמחקה.",
@@ -1511,10 +1526,10 @@ export const he: Record<string, string> = {
 	"versions.details.difference": "הבדל {{count}} לעומת התצורה הנוכחית שלכם",
 	"versions.details.differences": "{{count}} הבדלים לעומת התצורה הנוכחית שלכם",
 	"versions.details.comparisonUnavailable": "ההשוואה אינה זמינה",
-	"notice.unsavedChangesKept": "חלק מהשינויים שנעשו במכשיר הזה טרם נשמרו, והגדרות חדשות יותר ממכשיר אחר החליפו אותם. הגרסה שלכם נשמרה קודם: פתחו את היסטוריית הגרסאות בהגדרות Callout Studio כדי לשחזר אותה.",
-	"settings.versionHistory": "היסטוריית גרסאות",
+	"notice.unsavedChangesKept": "חלק מהשינויים שנעשו במכשיר הזה טרם נשמרו, והגדרות חדשות יותר ממכשיר אחר החליפו אותם. הגרסה שלכם נשמרה קודם: פתחו את שחזור גרסה קודמת בהגדרות Callout Studio כדי להחזיר אותה.",
+	"settings.versionHistory": "שחזור גרסה קודמת",
 	"settings.versions": "גרסאות קודמות",
-	"settings.versionsDesc": "Callout Studio שומר גרסאות של התצורה שלכם אוטומטית.\nהשוו ביניהן או חזרו לאחת מהן.",
+	"settings.versionsDesc": "החליפו את התצורה הנוכחית שלכם בגרסה קודמת שנשמרה.",
 	"settings.versionsButton": "הצגת גרסאות",
 	"noteChanges.callouts": "{{count}} תיבות־הבלטה",
 	"noteChanges.calloutsOne": "תיבת־הבלטה אחת",

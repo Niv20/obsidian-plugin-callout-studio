@@ -1,9 +1,10 @@
 /** Native saved-palette rows with synthetic solid, transparent and gradient colors. */
 import { installDomHelpers } from "obsidian";
 import { setLocale } from "../../src/i18n/index.ts";
-import { renderCustomPalettesSection } from "../../src/settings/sections/CustomPalettesSection.ts";
+import { PALETTES_PAGE } from "../../src/settings/declarative/palettesPage.ts";
 import { derivePaletteFromColor } from "../../src/utils/colorUtils.ts";
-import { makeHost, settingsContext } from "../user-guide/fixture-host.mjs";
+import { makeHost } from "../user-guide/fixture-host.mjs";
+import { mountSettingsPage } from "../user-guide/settingsPage.mjs";
 
 export async function mountSavedPalettes() {
 	installDomHelpers();
@@ -28,8 +29,11 @@ export async function mountSavedPalettes() {
 			},
 		},
 	];
-	const panel = document.body.createDiv({ cls: "callout-studio-settings", attr: { id: "bento-saved-palettes" } });
-	renderCustomPalettesSection(settingsContext(plugin), panel);
+	// The Saved color palettes page as Obsidian draws it; the tile is its list's
+	// rows, the box Obsidian draws them in.
+	mountSettingsPage(plugin, { path: [PALETTES_PAGE.page] });
+	const panel = document.querySelector("#guide-scene .setting-group.mod-list .setting-items");
+	panel.id = "bento-saved-palettes";
 	// The shared vector exporter does not paint CSS conic gradients. Overlay an
 	// equivalent inline checkerboard, using the native swatch's computed tones.
 	const circle = panel.querySelector(".cs-color-circle.is-transparent");
@@ -53,6 +57,6 @@ export async function mountSavedPalettes() {
 	await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 	return {
 		selector: "#bento-saved-palettes", title: "Saved color palettes",
-		description: "The production saved-palettes list shows Coral with a solid tint, Mint glass with a transparent checkerboard, and Twilight with violet-blue gradient stops. Native color circles and pencil/delete actions use installed Obsidian styles. All palette data is synthetic and offline.",
+		description: "The Saved color palettes page's list shows Coral with a solid tint, Mint glass with a transparent checkerboard, and Twilight with violet-blue gradient stops. Native color circles and pencil/delete actions use installed Obsidian styles. All palette data is synthetic and offline.",
 	};
 }

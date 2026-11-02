@@ -4,31 +4,24 @@ Callout Studio can migrate data from other callout plugins, import a Callout Stu
 
 ## Import from another plugin
 
-On first installation, Callout Studio checks whether the vault contains **Callout Manager** or **Admonition**. If it finds either one, a welcome banner appears at the top of the settings with a shortcut to the importer.
+On first installation, Callout Studio checks whether the vault contains **Callout Manager** or **Admonition**. If it finds either one, a welcome banner appears at the top of the settings; its **Import** takes you to the **Import callouts** row.
 
-To open the importer yourself, go to **Settings → Callout Studio → Import and export → Import**. The **Import from** window lists **Callout Studio** first, for your own backups, and then **Callout Manager** and **Admonition** under **From another plugin**.
+To open the importer yourself, go to **Settings → Callout Studio → Import and export** and click **Import…** in the **Import callouts** row. The **Import from** window lists **Callout Studio** first, for your own backups, and then **Callout Manager** and **Admonition** under **From another plugin**.
 
 ![The Import from chooser, offering a Callout Studio backup and imports from Callout Manager or Admonition](../../assets/user-guide/import-source.svg)
 
-The importer brings over the available custom callout names, colors, icons, and uploaded images. The Callout Manager and Admonition importers work the same way. The window has one **Import** button at the bottom, and it always imports the selected option: the one with the purple ring and the filled dot.
+The importer brings over the available custom callout names, colors, icons, and uploaded images. The Callout Manager and Admonition importers work the same way. The window has one **Import** button at the bottom, and it always imports the selected option: the one with the purple outline and the filled round button at its start.
 
 - **This vault** reads the other plugin's data straight from the current vault. If it finds some, it shows how many custom callouts it found, carries a **Recommended** badge, and is already selected. This is the most complete route, and nothing has to be exported from the other plugin first. If the other plugin isn't in this vault, or has nothing to import, this option doesn't appear at all.
 - The second option depends on the plugin you are moving from, and matches what that plugin gives you:
   - **Admonition → A file.** In Admonition's settings, under **Import & export**, use **Download all** in the **Export custom types as JSON** row. Then select **Upload** here and pick that file, or drag the file onto the box. A notice confirms the upload, the box shows the file's name, and the button changes to **Replace**, which you can use to pick a different file. A shared pack in the same format, or a `data.json` taken from another vault, works too.
   - **Callout Manager → Copied styles.** Use Callout Manager's **Copy** button, then select **Paste** here, or paste into the text box yourself. The box keeps one height and scrolls when the text is long. A `data.json` from another vault works too: open it, copy its contents, and paste them. Callout Studio reads your clipboard only when you select **Paste**; if the clipboard is empty or can't be read, a notice says so.
 
-Uploading a file, or pasting or typing text, selects that option. To switch, select the other option's box or its dot. What you uploaded or pasted is kept until you close the window, so you can switch back to it, but nothing is imported until you select **Import**, and only the selected option is imported. If you select **Import**, or the second option's box or dot, before uploading a file or pasting text, a notice tells you to do that first.
+Uploading a file, or pasting or typing text, selects that option. To switch, select the other option's box or its round button, or use the arrow keys. What you uploaded or pasted is kept until you close the window, so you can switch back to it, but nothing is imported until you select **Import**, and only the selected option is imported. If you select **Import**, or the second option's box, before uploading a file or pasting text, a notice tells you to do that first.
 
-The import and export choosers use the same rounded grey boxes as this window:
-an icon, a title, and a line of description. In a chooser, click anywhere on a
-box, or focus it and press **Enter** or **Space**; it ends in a small arrow
-because selecting it opens the next step straight away. In an importer, a box
-ends in a dot instead, because selecting it only chooses what **Import** will
-act on.
-The Callout Studio backup option uses the same paintbrush icon in both
-choosers.
+The **Import from** and **Export as** windows look like a page of Obsidian's settings: each choice is a row with an icon, a name and a line about it, and a button at the end that does it (**Upload…**, **Import…** or **Export…**). On a phone the button is under the text, full width. The Callout Studio backup option uses the same paintbrush icon in both windows.
 
-The importer reports unsupported or invalid entries before applying the valid data.
+The importer reports unsupported or invalid entries before applying the valid data. Each entry with a problem gets a box of its own, with one line per problem: red for a problem that skips the entry, orange for one that only drops a value. The name of the setting it is about is under it in small monospace.
 When no entry is valid, **Import valid only** stays dimmed and a message says there is nothing to import; cancel, fix the problems the report lists, and import again.
 It does not scan, import, enable, disable, or modify existing files in the
 vault's CSS snippets folder.
@@ -60,7 +53,7 @@ size limit, so a small compressed file can still be rejected.
 
 ## Import a Callout Studio backup
 
-Choose the Callout Studio backup format when you want to bring back a setup that was previously exported from Callout Studio. To return to a version saved automatically, [Version history](13-syncing-and-backups.md#version-history) lists those versions on a timeline, newest first and grouped by day, with a small dot for each version. Identical copies form one row. Its **View details** eye button opens directly to **What changed**, comparing your current setup with what would change after restoring that version, including visual previews of affected callouts. Earlier versions are compared and restored there; **Export** in settings saves the setup currently displayed.
+Choose the Callout Studio backup format when you want to bring back a setup that was previously exported from Callout Studio. To return to a version saved automatically, [Restore an earlier version](13-syncing-and-backups.md#version-history) lists those versions newest first, grouped by day. Identical copies form one row. Its **View details** eye button opens directly to **What changed**, comparing your current setup with what would change after restoring that version, including visual previews of affected callouts. Earlier versions are compared and restored there; **Export** in settings saves the setup currently displayed.
 
 Before anything changes, Callout Studio shows what the file will do: how many callout types it adds, how many existing ones it replaces with the file's version, and how many groups of settings it restores. If the file has problems, the report lists them instead. Then a copy of your current setup is saved to the backups folder.
 
@@ -74,7 +67,7 @@ For sync guidance and recovery steps, see [Syncing & backups](13-syncing-and-bac
 
 ## Export a CSS snippet
 
-Choose the CSS option to generate a standalone copy of your Block callout styles. Callout Studio saves the file in the vault's CSS snippets folder.
+In the **Export as** window, select **Export** on the **Standalone CSS snapshot** row to generate a standalone copy of your Block callout styles. Callout Studio saves the file in the vault's CSS snippets folder.
 
 ![The export chooser, offering the recommended Callout Studio backup and a CSS snippet](../../assets/user-guide/export-format.svg)
 

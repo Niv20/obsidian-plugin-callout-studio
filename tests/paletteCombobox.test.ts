@@ -55,19 +55,26 @@ function mount() {
 	box.setSelection("", DELETED_LABEL);
 	box.renderLead(FORM_COLORS);
 	const input = required(host, ".cs-combobox-input");
+	const field = required(host, ".cs-dropdown-field");
+	const popup = required(host, ".cs-combobox-popup");
 	const menu = required(host, ".cs-combobox-menu");
 	return {
 		box,
 		host,
 		input,
+		field,
+		popup,
 		menu,
+		/** The words the field shows. */
+		label: () => field.querySelector(".cs-dropdown-field-label")?.textContent ?? "",
+		isOpen: () => !popup.classList.contains("cs-combobox-popup-hidden"),
 		committed,
 		created,
 		previews,
 		root: required(host, ".cs-combobox"),
-		lead: required(host, ".cs-combobox-lead"),
+		lead: required(host, ".cs-dropdown-field-icon"),
 		rows: () => menu.querySelectorAll(".cs-combobox-option"),
-		open: () => input.fire("focus"),
+		open: () => field.fire("click"),
 		type: (text: string) => {
 			input.value = text;
 			input.fire("input");
@@ -83,8 +90,8 @@ function mount() {
 type Harness = ReturnType<typeof mount>;
 
 function assertDeleted(h: Harness): void {
-	assert.strictEqual(h.input.value, DELETED_LABEL);
-	// The empty-state class hides the lead slot in the shared combobox CSS.
+	assert.strictEqual(h.label(), DELETED_LABEL);
+	// An empty picker shows no circles; a deleted colour still does.
 	assert.ok(!h.root.classList.contains("is-empty"));
 	assert.strictEqual(
 		required(h.lead, ".cs-color-circle-l").style.backgroundColor,
@@ -145,13 +152,13 @@ describe("PaletteCombobox — deleted saved color", () => {
 
 		h.key("Enter");
 		assertDeleted(h);
-		assert.ok(!h.menu.classList.contains("cs-combobox-menu-hidden"));
+		assert.ok(h.isOpen());
 
 		h.key("ArrowDown");
 		h.key("Enter");
 		assert.deepStrictEqual(h.committed, [SAVED.id]);
-		assert.strictEqual(h.input.value, SAVED.name);
-		assert.ok(h.menu.classList.contains("cs-combobox-menu-hidden"));
+		assert.strictEqual(h.label(), SAVED.name);
+		assert.ok(!h.isOpen());
 	});
 
 	it("still previews a saved color while the pointer hovers it", () => {
@@ -198,7 +205,7 @@ describe("PaletteCombobox — deleted saved color", () => {
 			await Promise.resolve();
 
 			assertDeleted(h);
-			assert.ok(h.menu.classList.contains("cs-combobox-menu-hidden"));
+			assert.ok(!h.isOpen());
 		});
 	}
 
@@ -224,17 +231,17 @@ describe("PaletteCombobox — deleted saved color", () => {
 		required(h.menu, ".cs-combobox-option").fire("click");
 
 		assert.deepStrictEqual(h.committed, [SAVED.id]);
-		assert.strictEqual(h.input.value, SAVED.name);
+		assert.strictEqual(h.label(), SAVED.name);
 		assert.strictEqual(
 			required(h.lead, ".cs-color-circle-l").style.backgroundColor,
 			SAVED.palette.colorLight,
 		);
 		assert.ok(!h.root.classList.contains("is-empty"));
-		assert.ok(h.menu.classList.contains("cs-combobox-menu-hidden"));
+		assert.ok(!h.isOpen());
 		h.open();
 		h.type("abandoned search");
 		h.key("Escape");
-		assert.strictEqual(h.input.value, SAVED.name);
+		assert.strictEqual(h.label(), SAVED.name);
 		assert.deepStrictEqual(h.committed, [SAVED.id]);
 		assert.deepStrictEqual(h.created, []);
 	});
@@ -257,13 +264,13 @@ describe("ListboxPopup — an unknown selection without a fallback label", () =>
 		});
 		mounted.push(popup);
 		popup.setSelected("missing");
-		const input = required(host, ".cs-combobox-input");
-		assert.strictEqual(input.value, "");
+		const label = () => required(host, ".cs-dropdown-field-label").textContent;
+		assert.strictEqual(label(), "");
 		assert.strictEqual(popup.value, undefined);
 		assert.ok(required(host, ".cs-combobox").classList.contains("is-empty"));
-		input.fire("focus");
+		required(host, ".cs-dropdown-field").fire("click");
 		popup.close();
-		assert.strictEqual(input.value, "");
+		assert.strictEqual(label(), "");
 		assert.deepStrictEqual(committed, []);
 	});
 });

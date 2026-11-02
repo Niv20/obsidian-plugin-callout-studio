@@ -25,6 +25,8 @@ To install a release manually, download `manifest.json`, `main.js`, and
 `styles.css` from the [latest GitHub release](https://github.com/Niv20/obsidian-plugin-callout-studio/releases/latest).
 Copy the files into `<Vault>/.obsidian/plugins/callout-studio/`, restart
 Obsidian, then enable **Callout Studio** in **Settings → Community plugins**.
+The plugin needs Obsidian 1.13.4 or later (`minAppVersion`; see
+[Raising `minAppVersion`](#raising-minappversion)).
 
 > [!IMPORTANT]
 > **`repo-is-live-plugin-folder`**: this repository *is* the plugin's
@@ -125,6 +127,12 @@ is a gate, not a substitute for that - it covers the pure utilities, the
 registry, the CSS it generates, both editor surfaces, the public API, and
 the repo's own conventions (below).
 
+The declarative settings tree has a test renderer of its own,
+[`tests/support/declarativeRenderer.ts`](../../tests/support/declarativeRenderer.ts):
+Obsidian 1.14.4's renderer rebuilt step for step, so a test can draw the tree,
+redraw it, open its pages and run the settings search
+([26 § Testing the tree](26-declarative-settings.md#testing-the-tree)).
+
 ### Recovery table browser check
 
 `node scripts/test-recovery-table-corners.mjs` renders the real comparison table
@@ -200,15 +208,63 @@ emoji remain Unicode text and follow the viewer's emoji font. The exporter keeps
 each line in logical text order for bidirectional shaping, preserves uppercase
 transforms and letter spacing, and adjusts spacing without stretching glyphs.
 Modern color spaces and gradient stops are converted to portable sRGB values.
+An element that lies wholly behind an opaque `position: sticky` bar in a scrolled
+container is not exported: the browser never shows it (the icon picker opens
+with its chosen icon centred, which tucks a row or two of icons under the search
+bar), and the bar's box starts at the very edge of the container's clip, so at a
+fractional scale the one pixel row both only half cover let a hairline of those
+icons through under the line above. It is an SVG-only artifact; Obsidian draws
+the bar over the grid.
 The context menu and fallback picker use measured bottom margins; the Outline
-preview uses compact, vertically centered rows. The language selector shows only
-its own section, while the localized and paused-saving examples use two separate
-framed crops. The paused-saving history crop omits the first heading's section
-divider and top gap, keeping the heading near the top of its frame.
-Absolutely positioned pseudo-elements are exported relative to
-their parent's padding box, preserving the native checkbox marker alignment.
-File-group headings in the find and conversion illustrations have transparent
-backgrounds. These framing overrides are confined to the documentation fixtures.
+preview uses compact, vertically centered rows.
+
+**Settings scenes** draw the declarative tree the plugin hands Obsidian
+(`settingsTree`), through `scripts/user-guide/settingsPage.mjs`: it builds the
+tree's context as the settings tab does and hands the tree to the test renderer
+(`tests/support/declarativeRenderer.ts`, Obsidian 1.14.4's renderer rebuilt
+step for step), inside a frame shaped like the settings window
+(`.modal.mod-settings`). Every renderer sizes that frame through
+`scripts/user-guide/settingsPageLayout.mjs`, each with its own picture's width
+(the guide 850, the store 780, the phone 430 × 684): left to app.css it would
+be a 560-pixel dialog, narrow enough that a callout row keeps fewer of its ids
+and cuts its name sooner, as it does in a narrow tab. On the phone, Obsidian names a page in the
+window's header, which the frame does not draw, so the store's phone picture
+shows the page's own title bar instead. A scene names a sub-page by its page ids, as
+`openPagePath` does; the paused-saving example keeps only the main page's
+notices box and Version history box (`boxes`), and the language selector opens
+Obsidian's own menu inside the frame. The renderer imports the test stub by its
+path, so `scripts/user-guide/guideRuntime.mjs` (used by every render script)
+points that import at the runtime as well as aliasing `obsidian`; the runtime's
+`Setting`, `SettingGroup`, extra button and slider build the DOM app.js builds
+(icon slot, chevron, `mod-action`, components a disabled row switches off, the
+slider's value, the heading row only while it has something in it). Its Markdown
+host gives a callout the icon its CSS names (`--callout-icon`), as Obsidian
+does, so the theme probe measures real icons. The Version history fixture is
+dated the day the guide is drawn and the day before, so its headings read
+"today" and "yesterday".
+
+**What the exporter draws as the browser does** (each was a picture that came
+out wrong): a pseudo-element's size counts its border and padding (a settings
+row's divider is a 0-high `::before` drawn by its top border); a positioned
+`::before` paints above in-flow children (a search field's magnifier over its
+input); a mask image with a viewBox and no size of its own is drawn as large as
+fits, like `contain`; a mask shape without a fill inherits its parent's (Lucide
+says `fill="none"` once, on the `<svg>`); an element that is not displayed
+lifts nothing in the paint order (a closed picker's list, z-index 1000, once
+buried an open menu); a colour input is a circle of its value; a radio's or
+checkbox's value ("on") is not text on screen; each corner keeps its own radius
+(a list box under its search field rounds only its bottom two, and the field's
+box only its top two). Absolutely positioned
+pseudo-elements are exported relative to their parent's padding box, preserving
+the native checkbox marker alignment. Outlined language labels keep their
+proportions: one scale, from the width, because the outline's font is not the
+page's. File-group headings in the find and conversion illustrations have
+transparent backgrounds. These framing overrides are confined to the
+documentation fixtures.
+
+Three pictures in the folder are not scenes: `metadata-color-scope.svg`,
+`metadata-menu.svg` and `metadata-separators.svg` (user guide chapter 18) were
+made by hand and are not regenerated.
 
 ### README illustrations
 
@@ -236,10 +292,9 @@ assets, offline fixture host, vector exporter, and browser overrides as the
 user-guide renderer. It leaves all store artwork unchanged.
 
 `01-settings.svg` extracts just the settings window from desktop store image
-01, removes the surrounding workspace and promotional heading, and preserves
-the partially clipped bottom row to show that the list continues. Its canvas is
-960 × 681 with transparent outer
-padding. Refresh the store source first with
+01, removing the surrounding workspace and promotional heading. It is 960
+pixels wide with 8 pixels of transparent margin, and as tall as the window
+comes out. Refresh the store source first with
 `node scripts/render-store-screenshots.mjs 01-settings` if its settings content
 changes.
 `02-syntax.svg` is 1080 × 666: a full-width dark syntax reference compares
@@ -260,6 +315,14 @@ three production render formats, exact reference snippets and Markdown
 correspondence, overflow, XML, local paint references, unique IDs, and absence of bitmap or active/external
 content. It blocks network requests. Review the SVGs visually at README width;
 temporary raster previews belong outside the asset directory.
+
+`03-more-features.svg` is the transparent 1200 × 556 feature grid (the bento of
+desktop image 05 without its central tile). `node scripts/render-readme-features.mjs`
+composes it, with no browser, from the fragments image 05 uses: the five captures
+in `assets/store-screenshots/desktop/components/` and the guide's Version history
+picture. Refresh those first (the five `render-store-bento-*.mjs` captures, and
+`node scripts/render-user-guide.mjs version-history`), because the grid embeds
+copies of them.
 
 ### Store screenshots
 
@@ -296,10 +359,14 @@ removed.
 `04B-icons.svg`. Its dedicated scene and composition modules leave the original
 `04-icons.svg` in place. The production icon picker is placed on the left and
 **Manage icon libraries** on the right, with equal displayed heights and a
-narrower management window. The offline fixture marks the downloadable packs
-as locally ready and displays all nine libraries in the requested order; it
-does not download pack files. The renderer asserts the order and that every
-management row fits without scrolling.
+narrower management window. The offline fixture shows the window as someone who
+has used it, so all three of its groups appear: Emoji is hidden, Octicons and
+RPG Awesome are not on the device (the downloadable packs are marked locally
+ready except those two) and are listed under **Libraries to download**, and the
+rest stay under **Available libraries** in the requested order. It does not
+download pack files. The renderer asserts each group's rows, the button each row
+carries (hide, delete, download, show), and that every management row fits
+without scrolling.
 
 The renderer reuses the installed Obsidian assets and vector exporter described
 above, including `PLAYWRIGHT_MODULE`, `BROWSER_EXECUTABLE`, `OBSIDIAN_ASAR`, and
@@ -331,8 +398,9 @@ opens at the top to show its name and IDs before the color and icon controls;
 the live preview can continue below the viewport, above the fixed action
 footer. The icon grid is scrolled to a complete row below its
 native sticky search toolbar, with Lightbulb selected. Settings keep all thirteen
-built-ins in their scroller; the native narrow-row rules hide IDs and color
-swatches at this width. SVG validation also checks horizontal overflow and
+built-ins in their scroller; on a phone a row shows the IDs that fit, whole,
+with a `+N` for the rest, its name on one line, and its color in the icon tile
+and the name (no circles, at any width). SVG validation also checks horizontal overflow and
 local paint references. This is an offline production-component illustration,
 not a capture of the full native mobile app.
 
@@ -344,7 +412,9 @@ source raster for pixel equality; WebP was smaller than PNG in eight of the
 nine comparison exports and smaller across the set overall. The source raster is
 a Chromium screenshot of the SVG at its own size and a device scale of 1 (not
 `rsvg-convert`, whose text differs), encoded with `cwebp -lossless -z 9`.
-Re-export a WebP the same way after re-rendering its SVG. The renderers write
+`node scripts/export-store-webp.mjs` does exactly this for every image that
+already has a WebP (names such as `desktop/01-settings` select a few; it needs
+`cwebp`). Re-export after re-rendering an SVG. The renderers write
 SVG artwork only; open the SVGs directly for review. Temporary raster previews
 for visual QA belong outside the deliverable directory.
 
@@ -484,7 +554,7 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 1. Verify manifest.json / package.json / versions.json all agree with the pushed tag exactly
 2. npm ci, npm run build, npm run lint, npm test (all required on the tagged commit)
 3. Re-verify locales/ has no diff (same reasoning as lint.yml, but against the release build)
-4. Check main.js is under the 2 MiB + 236 KiB bundle-size budget (2,338,816 bytes)
+4. Check main.js is under the 2 MiB + 300 KiB bundle-size budget (2,404,352 bytes)
 5. Attest build provenance for main.js and styles.css
 6. Wait (poll, up to 15×2s) for the tag to be visible via the GitHub API
  - the tag-push webhook can fire before the tag itself propagates
@@ -498,7 +568,7 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 > can't correctly resolve as an update.
 
 > [!NOTE]
-> **The bundle-size budget (2 MiB + 236 KiB) is deliberately tight against the current
+> **The bundle-size budget (2 MiB + 300 KiB) is deliberately tight against the current
 > size**, not generously padded - "a careless import trips it here rather
 > than in users' vaults; raise it consciously when a feature earns it." The
 > ceiling's own history is documented right in the workflow file: it moved
@@ -556,6 +626,19 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 > - the form chosen from the cursor's place, the pill-shape check, the shared
 > plain-text conversion for unwrapping - and Wrap or Insert on heading and
 > inline custom commands came to 5.7 KB, and the allowance grew by 7 KiB.
+> Later raises are listed beside the limit in `release.yml`, newest last. The
+> native-look refactor added 8 KiB for its *Native Parts* (Obsidian's own
+> controls in every window). It also raised the limit by 32 KiB at the switch
+> to the declarative settings tab, while the old page still shipped beside the
+> new tree (about 26 KB), and its *Clean Sweep* lowered it by the same 32 KiB
+> once the old page was deleted: the bundle came out at 2,348,600 bytes, about
+> 6.4 KiB under the limit. The brush mascot (the paintbrush icon's face, its
+> twenty animations and the places that show it) came to 21.6 KB, and the
+> allowance grew by 20 KiB: 2,370,199 bytes, about 5.4 KiB under the limit. The
+> pointer playing with it (blink and look, the dent of a press, the ring of
+> paint, `notice`, `ouch` and `angry`), Version history as a page with its
+> restored timeline, and a long menu that scrolls with the wheel came to 6.6 KB,
+> and the allowance grew by 8 KiB: 2,380,334 bytes, about 3.5 KiB under the limit.
 
 > [!NOTE]
 > **The release is created as a `draft`, on purpose.** The `$release` skill
@@ -577,6 +660,36 @@ Bumping `manifest.json`/`package.json`/`versions.json` happens together, via
 > use the `$release` skill, which bumps all four version-bearing files
 > together, tags, pushes, waits for the CI build, writes release notes, and
 > publishes. Tags are bare semver (`1.5.0`), never `v1.5.0`.
+
+### Raising `minAppVersion`
+
+`minAppVersion` changes in its own commit, just before the release that needs
+it, and only after the plugin was checked on a real install of that version.
+`npm version` then writes the matching `versions.json` entry. Three checks
+keep the two files honest in between:
+
+- `tests/repoRelease.test.ts` lets `manifest.json` be *ahead* of the last
+  released entry (a raise waiting for its release), never behind it.
+- `release.yml` refuses a tag whose `versions.json` entry differs from
+  `manifest.json`'s `minAppVersion`, since Obsidian reads the map to decide
+  which app builds may take the update.
+- `obsidianmd/no-unsupported-api` reads the manifest's value, so the lint
+  flags any API newer than the minimum.
+
+Code that needs a newer API before the raise has two choices: guard the call
+(`typeof … === "function"`, with a fallback), or point the lint rule at the
+target version in `scripts/eslint.config.mts` until the raise commit deletes
+that override. The `obsidian` typings in `devDependencies` are pinned to an
+exact version no newer than the minimum, so the compiler cannot offer an API
+the minimum lacks.
+
+The minimum went from 1.7.2 to **1.13.4** for the declarative settings tab
+(`getSettingDefinitions`, `SettingGroup`, `setErrorMessage`,
+`addDisplayValue`, `ConfirmationModal`); 1.13.4 was the first public 1.13
+build. The typings stay at 1.13.1, the version they were written against. One
+API the plugin uses is newer still and is guarded:
+`app.setting.openPagePath` (1.14), which opens a settings sub-page for a
+jump (26 § Jumping to a row).
 
 ## Husky / pre-commit
 

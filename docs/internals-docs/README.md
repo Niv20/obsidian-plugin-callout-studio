@@ -74,10 +74,12 @@ covering whatever you're touching.
 | [13-icons.md](13-icons.md) | The icon-pack model, fetch/cache/verify pipeline, rendering, SVG sanitization, and "Your images." |
 | [14-callout-editor.md](14-callout-editor.md) | The edit/create modal: the concrete-form-vs-optional-field tension, the live preview, validation, and save pipeline. |
 | [15-import-export.md](15-import-export.md) | The JSON backup format and validator, the CSS-snippet export, and the Callout Manager / Admonition importers. |
-| [16-settings-ui-and-modals.md](16-settings-ui-and-modals.md) | The settings tab's composition, the shared modal chrome and autofocus, the light palette and the theme gate it yields to, the individual modals, and how reduced motion is honoured. |
+| [16-settings-ui-and-modals.md](16-settings-ui-and-modals.md) | What the settings tab's rows are made of (the callout row and its menus, the signals that redraw it, the scan), the two vault sidebars, the shared modal chrome and autofocus, how controls take Obsidian's colours, the individual modals, and how reduced motion is honoured. |
 | [17-i18n.md](17-i18n.md) | How `t()` resolves strings, the locale download/verification pipeline, and the contribution workflow. |
 | [18-theme-callout-discovery.md](18-theme-callout-discovery.md) | How the active theme's callout types are found, read back and represented - and the compatibility guide for **theme authors**. |
 | [19-upgrading-manual-discovery.md](19-upgrading-manual-discovery.md) | Released 2.12.x compatibility, verified one-time recovery archives, and safe removal of legacy local discovery state. |
+| [26-declarative-settings.md](26-declarative-settings.md) | The settings tab as a tree Obsidian 1.13+ draws and indexes for search: the renderer's rules, the plugin's types, saving a control without `saveData`, keeping the tree current (signals, signature, the visit), every page part by part, never throwing, and the test renderer. |
+| [27-brush-mascot.md](27-brush-mascot.md) | The paintbrush icon with a face: a frame as numbers, animations as data, holds that stack and hand over, drawing frame by frame in the right window, the theme's grey and accent, reduced motion, every place it appears, and how the settings' empty lists get a live one. |
 
 ## Shipping a change
 

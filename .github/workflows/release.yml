@@ -41,6 +41,15 @@ jobs:
                       exit 1
                   fi
 
+                  # Obsidian reads this map to decide which app builds may
+                  # take the update, so it must carry the manifest's minimum.
+                  min=$(jq -r .minAppVersion manifest.json)
+                  mapped=$(jq -r --arg v "$tag" '.[$v]' versions.json)
+                  if [ "$mapped" != "$min" ]; then
+                      echo "::error::versions.json maps '$tag' to '$mapped' but manifest.json's minAppVersion is '$min'."
+                      exit 1
+                  fi
+
                   echo "Version files agree on $tag."
 
             - uses: actions/setup-node@v4
@@ -170,9 +179,41 @@ jobs:
             # that takes them out of the parsed theme in every window and puts
             # them back, the gates on the theme's facts, and the setting -
             # 7.9 KB, which leaves the headroom about where it was.
+            # Raised by 8 KiB for the native-look refactor's Native Parts:
+            # Obsidian's own Menu for every plain choice, SettingGroup boxes
+            # and headings in the callout editor, the Properties pills for
+            # IDs with their keys, and errors under the field through
+            # setErrorMessage. What it deleted (the light palette, the
+            # plugin's modal shell, the old chips and timers) paid for most
+            # of it: 2.0 KB over the build before the stage, and the rest of
+            # the stage landed inside the headroom.
+            # Raised by 32 KiB at the switch to the declarative settings tab,
+            # while the old page (display() and its sections) still shipped
+            # beside the new tree (src/settings/declarative/, about 26 KB),
+            # and lowered by the same 32 KiB in the Clean Sweep that deleted
+            # the old page: the settings Obsidian draws ship at 2,348,600
+            # bytes, which leaves about 6.4 KiB of headroom.
+            # Raised by 20 KiB for the brush mascot (src/ui/mascot/): the
+            # engine that draws the paintbrush icon's face frame by frame, its
+            # twenty animations as data, and the places that show it (empty
+            # lists, searches, confirmations, notices) - 21.6 KB, which puts
+            # the build at 2,370,199 bytes and leaves about 5.4 KiB of headroom.
+            # Raised by 8 KiB for the pointer playing with the brush (blink and
+            # look when it comes near, a spring-and-matrix dent where it is
+            # pressed, a ring of paint, three more animations: ouch, angry and
+            # notice), Version history as a page of the settings with its
+            # restored timeline, and a long menu that scrolls with the wheel
+            # instead of by the mouse's position - 6.6 KB over the build before
+            # them, which puts it at 2,380,334 bytes with about 3.5 KiB of
+            # headroom.
+            # Raised by 20 KiB for the Autocomplete and metadata page (the two
+            # suggestion lists, the metadata colours and the metadata words,
+            # with the tag input they are typed into), the palette editor's
+            # light and dark colour views and the license box - the build
+            # was 2,399,025 bytes, which leaves about 5.2 KiB of headroom.
             - name: Check bundle size
               run: |
-                  limit=2347008  # 2 MiB + 244 KiB
+                  limit=2404352  # 2 MiB + 300 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

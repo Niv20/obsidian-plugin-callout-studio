@@ -8,8 +8,9 @@ export async function verifyScene(page, name, selector) {
 		require(color && color.slice(0, 3).every(channel => channel < 80), "expected a dark scene surface");
 		if (name === "create-settings") {
 			const labels = root.innerText;
-			for (const label of ["My callout types", "Add new callout", "Built-in callouts", "No custom callouts for now."]) require(labels.includes(label), `missing ${label}`);
-			require(root.querySelector(".cs-discover-callouts-btn"), "missing actual discovery control");
+			for (const label of ["My callout types", "Built-in callouts", "Default fallback callout"]) require(labels.includes(label), `missing ${label}`);
+			// Drawn by Obsidian's renderer: rows that open a page. The list and its + button are on My callout types' own page.
+			require(root.querySelector(".setting-item.mod-navigable .setting-item-chevron svg"), "missing a page row's chevron");
 		} else if (name === "create-editor") {
 			require(root.querySelector('input[type="text"]').value === "Project note", "wrong example name");
 			require(root.querySelectorAll('input[type="range"]').length === 9, "expected independent adjustment controls for all three roles");
@@ -43,7 +44,7 @@ export async function verifyScene(page, name, selector) {
 					if (name === "palette-gradient") require(getComputedStyle(role).backgroundImage.startsWith("linear-gradient("), "missing source gradient");
 				}
 			}
-			if (name.startsWith("icon-") && name !== "icon-libraries") require(root.querySelector(".icon-picker-grid.is-loaded .icon-picker-cell.is-selected"), "missing selected production icon");
+			if (name.startsWith("icon-") && name !== "icon-libraries") require(root.querySelector(".icon-picker-grid .icon-picker-cell.is-selected"), "missing selected production icon");
 			if (name === "theme-callouts") require(root.querySelectorAll("svg").length > 8 && root.innerText.includes("Callouts from your theme"), "missing measured theme rows");
 			if (name === "context-menu") require(root.querySelectorAll(".menu-item").length >= 4, "missing production context actions");
 		}
@@ -63,7 +64,7 @@ export async function verifySvg(page, svg, name) {
 				if (/^on/i.test(attribute.name) || /href$/i.test(attribute.name) && !attribute.value.startsWith("#") || /url\(\s*["']?(?!#)/i.test(attribute.value)) throw new Error(`${name}: active or external SVG content`);
 			}
 		}
-		if (name === "create-settings" && !doc.documentElement.textContent.includes("Add new callout")) throw new Error("Settings action disappeared during vector export");
+		if (name === "create-settings" && !doc.documentElement.textContent.includes("My callout types")) throw new Error("Settings list heading disappeared during vector export");
 		if (name === "palette-gradient" && doc.querySelectorAll("linearGradient").length < 3) throw new Error("Palette gradients disappeared during vector export");
 	}, { svg, name });
 }

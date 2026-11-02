@@ -136,11 +136,18 @@ function imposedValue(
 }
 
 /**
- * True when `def` needs a `.theme-dark` override block for its accent — any of
- * its mode-dependent colours differ, **or** the theme variable it defers to is
+ * True when `def` needs a `.theme-dark` override block — its accents differ,
+ * it has a background at all, **or** the theme variable it defers to is
  * spelled differently in the two modes.
  *
- * That second clause is the whole reason this moved out of `CSSInjector`: the
+ * A background needs the block even when its light and dark hexes are equal.
+ * It is painted as a tint solved against each mode's own page (see
+ * `manager/css/backgroundProps.ts`), so the light rule's tint, which matches in
+ * both themes, paints a different colour on the dark page: `#8899aa` asked for
+ * in both modes came out `#182333` in dark mode. The same goes for a gradient,
+ * which never paints without a background under it.
+ *
+ * The spelling clause is the whole reason this moved out of `CSSInjector`: the
  * colours can be identical in both modes and the *spelling* still not be, so
  * "does anything mode-dependent differ" stopped being a question about the
  * definition alone. Nier declares all thirteen accent variables under
@@ -150,18 +157,13 @@ function imposedValue(
  * `manager/theme/accentDialect.ts`.
  */
 export function needsDarkBlock(
-	def: Pick<
-		CalloutDefinition,
-		"colorLight" | "colorDark" | "bgColorLight" | "bgColorDark" | "bgGradient"
-	>,
+	def: Pick<CalloutDefinition, "colorLight" | "colorDark" | "bgColorLight" | "bgColorDark">,
 	themeVar: string | undefined,
 	dialect: AccentDialect,
 ): boolean {
 	return (
 		def.colorLight !== def.colorDark ||
-		def.bgColorLight !== def.bgColorDark ||
-		(!!def.bgGradient &&
-			def.bgGradient.toColorLight !== def.bgGradient.toColorDark) ||
+		!!(def.bgColorLight || def.bgColorDark) ||
 		(themeVar !== undefined &&
 			accentVarSpelling(themeVar, dialect, "light") !==
 				accentVarSpelling(themeVar, dialect, "dark"))

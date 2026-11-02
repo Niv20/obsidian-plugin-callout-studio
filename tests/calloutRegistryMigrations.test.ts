@@ -717,7 +717,7 @@ describe("needsSaveAfterLoad()", () => {
 	});
 
 	it("is not raised by the settings caller, which saves for itself", () => {
-		// CustomPalettesSection calls the pass directly after a palette edit and
+		// paletteFlows calls the pass directly after a palette edit and
 		// then saves; raising a load-time flag there would leave it standing
 		// until some unrelated startup happened to read it.
 		const registry = load(current([def({ id: "orphan", ...paletteColors() })]));

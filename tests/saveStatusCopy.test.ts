@@ -116,7 +116,7 @@ describe("the paused saving banner's words", () => {
 		assert.deepEqual(paragraphs, [
 			"First of all, take a deep breath — everything is going to be okay. Your notes are safe, and your callouts are still here on this device. Callout Studio has only paused saving to protect your setup, so this page is read-only for now.",
 			"Callout Studio can't find its settings file. This usually happens while your sync app is still downloading it, or after Callout Studio was removed on another device.",
-			"Callout Studio checks again every minute while Obsidian is open, so this often fixes itself — or choose Check again to look right now. If your settings don't come back, choose Restore these settings to keep the callouts you see here. Once saving works again, you can also bring back an earlier version from Version history.",
+			"Callout Studio checks again every minute while Obsidian is open, so this often fixes itself — or choose Check again to look right now. If your settings don't come back, choose Restore these settings to keep the callouts you see here. Once saving works again, you can also go back to a saved version with Restore an earlier version.",
 		]);
 		assert.deepEqual(buttons, ["Check again", "Restore these settings", "Go to version history"]);
 	});

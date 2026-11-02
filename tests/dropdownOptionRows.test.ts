@@ -7,9 +7,10 @@
  * - **Option padding.** The command editor's and the palette editor's selects
  *   gave their option *row* `padding: 8px 12px` while the label inside it
  *   already carried `padding: 6px 12px`. The text then started 25px inside the
- *   popup (the field's own text starts at 11px, every other list's at 13px) and
- *   the rows were 45px tall instead of 29px. The label is the one place option
- *   padding lives.
+ *   popup and the rows were 45px tall instead of 29px. Since 2026-10-23 the
+ *   padding lives on the row, as on Obsidian's `.menu-item`, and only there,
+ *   and nothing pads a row a second time. (The plain choices whose labels
+ *   carried it open Obsidian's own menu now.)
  * - **The id line's ellipsis.** Code counted the ids that would fit and drew
  *   `...`, while `text-overflow: ellipsis` drew a `…` of its own on top, so one
  *   list showed clean dots, a glued `…` and the two overlapping. The cut is now
@@ -49,16 +50,31 @@ function ruleFor(selector: string): Rule {
 }
 
 describe("a select's option rows are padded once", () => {
-	it("keeps the option padding on the label, and puts none on the row beside it", () => {
-		assert.strictEqual(ruleFor(".cs-dropdown-option-label").decls.get("padding"), "6px 12px");
+	/** True when a rule sets `padding` or any `padding-*` longhand. */
+	const pads = (rule: Rule): boolean =>
+		[...rule.decls.keys()].some((p) => p === "padding" || p.startsWith("padding-"));
+
+	it("leaves plain choices' rows to Obsidian's menu, with no row rules of their own", () => {
+		// A plain choice (`SelectDropdown`, the language picker) opens Obsidian's
+		// own menu since 2026-10-23, so the labels it used to draw are gone.
+		for (const gone of [".cs-dropdown-option-label", ".cs-language-option-label"]) {
+			assert.ok(!rules.some((rule) => rule.selectors.includes(gone)), `${gone} has no rule left`);
+		}
+	});
+
+	it("never pads a row a second time from a narrower context", () => {
+		// Only the shared row rules (`.cs-combobox-option` on its own, with the
+		// Fold menu's row beside it) may pad a row. A rule that reaches a row
+		// through some other class — a toolbar, a field, a picker — would push
+		// the words in and make that list's rows taller than every other list's.
 		const rowPadders = rules.filter(
-			(rule) => rule.selectors.some((s) => /(^|\s)\.cs-combobox-option(\s|$|\.)/.test(s) && /cs-command-field|cs-palette-bgstyle-setting|cs-select-dropdown/.test(s))
-				&& [...rule.decls.keys()].some((p) => p === "padding" || p.startsWith("padding-")),
+			(rule) => rule.selectors.some((s) => /\.cs-combobox-option\b/.test(s) && s !== ".cs-combobox-option")
+				&& pads(rule),
 		);
 		assert.deepStrictEqual(
 			rowPadders.map((rule) => rule.selectors),
 			[],
-			"a second layer of padding on the row pushes the text in and doubles the row height",
+			"a second layer of padding on the row pushes the text in and changes the row height",
 		);
 	});
 });

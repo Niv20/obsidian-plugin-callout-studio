@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import type { App, Menu } from "obsidian";
-import { openCalloutRowMenu } from "../../src/settings/sections/calloutRowMenu";
+import { openCalloutRowMenu, type RowMenuTrigger } from "../../src/settings/sections/calloutRowMenu";
 import { getCalloutOccurrenceIndex } from "../../src/usage/occurrenceService";
 import { addUsageMenuItem } from "../../src/usage/usageMenuItem";
 import { FakeDocument, FakeElement, FakeMutationObserver, FakeWindow, fakeDom } from "./fakeDom";
@@ -43,10 +43,12 @@ export function rowMenuHarness() {
 	const scroller = outer.createDiv();
 	const row = scroller.createDiv();
 	const anchor = row.createEl("button");
-	const target = anchor.createSpan();
+	// A second row's ⋮ button, for "another row's menu replaces this one".
+	const otherRow = scroller.createDiv();
+	const otherAnchor = otherRow.createEl("button");
 	const elementListeners: Array<Set<(event: unknown) => void>> = [];
-	anchor.isConnected = true;
-	for (const element of [document.documentElement, document.body, outer, scroller, row, anchor]) {
+	for (const element of [anchor, otherAnchor, row]) element.isConnected = true;
+	for (const element of [document.documentElement, document.body, outer, scroller, row, anchor, otherRow, otherAnchor]) {
 		Object.assign(element, { scrollLeft: 0 });
 		const listeners = new Set<(event: unknown) => void>();
 		const add = element.addEventListener.bind(element);
@@ -56,7 +58,9 @@ export function rowMenuHarness() {
 		elementListeners.push(listeners);
 	}
 	Object.assign(document, { scrollingElement: document.documentElement });
-	const event = { currentTarget: anchor, target, view, clientX: 110, clientY: 75 } as unknown as MouseEvent;
+	// A press on the row's ⋮ button (`anchor`), the usual way a menu opens.
+	const trigger: RowMenuTrigger = { kind: "button", button: anchor as unknown as HTMLElement };
+	const otherTrigger: RowMenuTrigger = { kind: "button", button: otherAnchor as unknown as HTMLElement };
 	const disposers: Array<() => void> = [];
 	let reads = 0;
 	let release!: (text: string) => void;
@@ -78,11 +82,14 @@ export function rowMenuHarness() {
 	const ctx = { app, registerDisposer: (dispose: () => void): void => { disposers.push(dispose); } };
 	const initialMenus = createdMenus.length;
 	let builds = 0;
-	const open = (build: (menu: Menu) => void = (menu) => { addUsageMenuItem(menu, app, ["note"]); }): Promise<void> =>
-		openCalloutRowMenu(ctx, event, (menu) => { builds++; build(menu); });
+	const open = (
+		build: (menu: Menu) => void = (menu) => { addUsageMenuItem(menu, app, ["note"]); },
+		how: RowMenuTrigger = trigger,
+	): Promise<void> =>
+		openCalloutRowMenu(ctx, how, (menu) => { builds++; build(menu); });
 	const dispose = (): void => { disposers.forEach((callback) => callback()); };
 	return {
-		app, index, view, document, outer, scroller, row, anchor, event, ctx, open, dispose,
+		app, index, view, document, outer, scroller, row, anchor, trigger, otherTrigger, ctx, open, dispose,
 		reads: () => reads, builds: () => builds, subscriptions: () => subscriptions,
 		menus: () => createdMenus.slice(initialMenus),
 		menu: () => { const menu = createdMenus.at(-1); assert.ok(menu); return menu; },

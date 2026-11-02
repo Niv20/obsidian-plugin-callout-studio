@@ -21,7 +21,9 @@ import { Notice, Platform, setIcon } from "obsidian";
 import type { Plugin } from "obsidian";
 import { t } from "../i18n";
 import { openPluginSettings } from "../manager/settingsNotices";
+import { showActionNotice } from "../ui/noticeAction";
 import type { SettingsWriter } from "../manager/SettingsWriter";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 export interface PausedIndicatorHost extends Pick<Plugin, "app" | "manifest" | "addStatusBarItem" | "register"> {
 	settingsWriter: Pick<SettingsWriter, "isVisiblyPaused" | "isDestroyed" | "status">;
@@ -55,7 +57,7 @@ export function registerPausedIndicator(host: PausedIndicatorHost, mobile: boole
 			if (writer.isDestroyed || writer.isVisiblyPaused || pausedSince === null) return;
 			const noticeable = Date.now() - pausedSince >= RESUME_NOTICE_AFTER_MS;
 			pausedSince = null;
-			if (noticeable) new Notice(t("saveStatus.resumed"));
+			if (noticeable) showNotice("restored", t("saveStatus.resumed"));
 		});
 	};
 	const update = () => {
@@ -68,7 +70,9 @@ export function registerPausedIndicator(host: PausedIndicatorHost, mobile: boole
 				item.addClass("cs-paused-status", "mod-clickable");
 				item.setAttribute("aria-label", t("statusBar.pausedTooltip"));
 				item.setAttribute("data-tooltip-position", "top");
-				setIcon(item.createSpan({ cls: "cs-paused-status-icon" }), "alert-triangle");
+				// Obsidian's status-bar icon, as Sync's and the editor mode's are:
+				// its size and stroke come from core.
+				setIcon(item.createSpan({ cls: "status-bar-item-icon" }), "alert-triangle");
 				item.createSpan({ text: t("statusBar.paused") });
 				item.addEventListener("click", open);
 			}
@@ -84,14 +88,11 @@ export function registerPausedIndicator(host: PausedIndicatorHost, mobile: boole
 		}
 		if (announced) return;
 		announced = true;
-		const frag = createFragment();
-		frag.createEl("p", { text: t("statusBar.pausedNotice") });
-		const link = frag.createEl("a", { text: t("saveStatus.openSettings"), cls: "cs-notice-action" });
-		notice = new Notice(frag, 0);
-		link.addEventListener("click", (event) => {
-			event.preventDefault();
-			if (openPluginSettings(host.app, host.manifest.id)) notice?.hide();
-		});
+		// Stays up (0) until it is clicked, or saving resumes.
+		notice = showActionNotice("paused", t("statusBar.pausedNotice"), {
+			label: t("saveStatus.openSettings"),
+			run: () => { openPluginSettings(host.app, host.manifest.id); },
+		}, 0).notice;
 	};
 	host.register(writer.status.subscribe(update));
 	host.register(() => { item?.remove(); notice?.hide(); });

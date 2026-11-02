@@ -130,10 +130,16 @@ describe("version files agree", () => {
 			manifest.version,
 			"the newest versions.json entry is not the version being shipped",
 		);
-		assert.strictEqual(
-			versions[manifest.version],
-			manifest.minAppVersion,
-			"versions.json maps this release to a different minAppVersion than manifest.json declares — Obsidian reads the map, so this is the one that would win",
+		// A raised minAppVersion lands in its own commit before the release
+		// that needs it, and `npm version` copies it into the map only when it
+		// adds that release's entry. Between the two commits the manifest may
+		// be ahead of the last released entry, never behind it.
+		const mapped = versions[manifest.version];
+		assert.ok(mapped, `versions.json has no entry for ${manifest.version}`);
+		const raisePending = compareSemver(manifest.minAppVersion, mapped) > 0;
+		assert.ok(
+			mapped === manifest.minAppVersion || raisePending,
+			`versions.json maps ${manifest.version} to ${mapped}, but manifest.json declares ${manifest.minAppVersion} — Obsidian reads the map, so this is the one that would win`,
 		);
 	});
 
@@ -249,15 +255,10 @@ describe("manifest.json passes the community-plugin entry rules", () => {
 		assert.match(manifest.authorUrl, /^https:\/\//, "authorUrl must be https");
 	});
 
-	it("minAppVersion is a real version and not ahead of what has shipped", () => {
+	it("minAppVersion is a real version number", () => {
+		// How it relates to versions.json is the version-files suite's job; the
+		// tag workflow (release.yml) refuses a release whose entry differs.
 		assert.match(manifest.minAppVersion, SEMVER);
-		// A minAppVersion raised without a matching versions.json entry means
-		// older apps keep being offered an update they cannot run.
-		const mapped = Object.values(versions);
-		assert.ok(
-			mapped.includes(manifest.minAppVersion),
-			`minAppVersion ${manifest.minAppVersion} appears nowhere in versions.json`,
-		);
 	});
 
 	it("isDesktopOnly is false", () => {

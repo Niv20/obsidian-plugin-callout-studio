@@ -62,9 +62,20 @@ function order(source: RecoverySource) {
 	return { time: source.time, kind: source.kind, tie: source.path ?? source.historyHash ?? "" };
 }
 
+/**
+ * Each setup's content key, kept with the setup. The recovery service hands
+ * back the same object for a copy that has not changed since the last listing
+ * (settingsRecoveryService.ts), so the key is worked out once.
+ */
+const contentKeys = new WeakMap<Partial<PluginData>, string>();
+
 /** The key copies of one version share. */
 function keyOf(source: RecoverySource, index: number): string {
-	if (source.data) return `content:${hash64(canonical(source.data))}`;
+	if (source.data) {
+		let key = contentKeys.get(source.data);
+		if (key === undefined) contentKeys.set(source.data, key = `content:${hash64(canonical(source.data))}`);
+		return key;
+	}
 	return `unreadable:${source.kind}:${source.path ?? source.historyHash ?? index}`;
 }
 

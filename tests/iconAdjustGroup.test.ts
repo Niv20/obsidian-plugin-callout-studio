@@ -1,7 +1,11 @@
 /**
- * The built-in editor's role-level icon-adjust reset. One action owns the
- * three sliders in its card: it appears only after that role diverges, restores
- * both form state and slider thumbs, and reports one change to the preview.
+ * tests/iconAdjustGroup.test.ts — one render role's icon-adjustment group in
+ * the callout editor (`settings/editor/iconAdjustGroup.ts`).
+ *
+ * The group is an Obsidian `SettingGroup` (finding S5-14): a heading, one box,
+ * a stacked row per slider. For a built-in its heading holds one ↺ that owns
+ * all three sliders: invisible until the role diverges, it restores both the
+ * form state and the slider thumbs, and reports one change to the preview.
  */
 import { asEl, fakeDom, type FakeElement } from "./support/fakeDom";
 import assert from "node:assert";
@@ -61,43 +65,34 @@ function sliders(): SliderComponent[] {
 	return createdSliders as unknown as SliderComponent[];
 }
 
-describe("renderIconAdjustGroup — reset affordance", () => {
-	it("preserves the original header height with a visible or hidden reset", () => {
-		const preview = cssRule(".callout-studio-preview-header");
-		const adjustment = cssRule(".callout-studio-adjust-header");
-		const iconAdjustment = cssRule(".cs-icon-adjust-header");
-
-		for (const property of ["padding", "font-size", "font-weight"]) {
-			assert.strictEqual(
-				cssValue(adjustment, property),
-				cssValue(preview, property),
-				`${property} must keep both idle header strips the same height`,
-			);
+describe("renderIconAdjustGroup — an Obsidian group", () => {
+	it("is a SettingGroup with the role's heading and a row per slider", () => {
+		const { box } = build({ ...DEFAULT_ICON_ADJUST });
+		assert.ok(box.hasClass("setting-group"));
+		assert.ok(box.hasClass("cs-editor-group"), "rows share the editor's 16px inset");
+		const heading = box.querySelector(".setting-item-heading .setting-item-name");
+		assert.strictEqual(heading?.textContent, t("editor.headingIconAdjustments"));
+		const rows = Array.from(box.querySelectorAll(".setting-item")).filter(
+			(row) => !row.hasClass("setting-item-heading"),
+		);
+		assert.strictEqual(rows.length, 3);
+		for (const row of rows) {
+			assert.ok(!row.hasClass("cs-stacked-slider"));
+			assert.ok(row.closest(".setting-items"), "each slider is a row in the group's box");
 		}
-		for (const property of [
-			"height",
-			"min-height",
-			"padding",
-			"padding-block",
-			"padding-top",
-			"padding-bottom",
-		]) {
-			assert.strictEqual(
-				cssValue(iconAdjustment, property),
-				undefined,
-				`${property} makes the icon-adjustment header taller while reset is hidden`,
-			);
-		}
-
-		assert.strictEqual(cssValue(cssRule(".cs-hidden"), "display"), "none");
-		const button = cssRule(".cs-icon-adjust-header > .cs-icon-adjust-reset");
-		assert.strictEqual(cssValue(button, "position"), "absolute",
-			"reset must not participate in the header's line height");
-		assert.strictEqual(cssValue(button, "height"), "20px");
-		assert.strictEqual(cssValue(cssRule(".cs-icon-adjust-reset.cs-hidden"), "display"), "none");
-		assert.strictEqual(cssValue(cssRule(".cs-header-reset.cs-hidden"), "display"), "none");
 	});
 
+	it("keeps the heading one height whether the reset shows or not", () => {
+		// Invisible, not `display: none`: the button keeps its room.
+		assert.strictEqual(cssValue(cssRule(".cs-reset-idle"), "visibility"), "hidden");
+		assert.strictEqual(cssValue(cssRule(".cs-reset-idle"), "display"), undefined);
+		// The old grey header strips are gone with the boxes they topped.
+		assert.ok(!css.includes(".cs-icon-adjust-header"));
+		assert.ok(!css.includes(".callout-studio-preview-header"));
+	});
+});
+
+describe("renderIconAdjustGroup — reset affordance", () => {
 	it("does not offer reset when the caller has no built-in defaults", () => {
 		const { box } = build({ ...DEFAULT_ICON_ADJUST });
 		assert.strictEqual(box.querySelector(".cs-icon-adjust-reset"), null);
@@ -109,7 +104,8 @@ describe("renderIconAdjustGroup — reset affordance", () => {
 			{ ...DEFAULT_ICON_ADJUST },
 		);
 		const button = resetButton(box);
-		assert.ok(button.hasClass("cs-hidden"));
+		assert.ok(button.hasClass("cs-reset-idle"));
+		assert.ok(button.closest(".setting-item-heading"), "the reset sits in the group's heading");
 		assert.strictEqual(
 			button.getAttribute("aria-label") ?? "",
 			`${t("settings.resetAction")}: ${t("editor.headingIconAdjustments")}`,
@@ -126,7 +122,7 @@ describe("renderIconAdjustGroup — reset affordance", () => {
 		sizeSlider.commit(125);
 		xSlider.commit(4);
 		assert.deepStrictEqual(adjust, { size: 1.25, offsetX: 4, offsetY: 0 });
-		assert.ok(!resetButton(box).hasClass("cs-hidden"));
+		assert.ok(!resetButton(box).hasClass("cs-reset-idle"));
 		assert.strictEqual(changes(), 2);
 
 		resetButton(box).fire("click");
@@ -135,7 +131,7 @@ describe("renderIconAdjustGroup — reset affordance", () => {
 			sliders().map((slider) => slider.getValue()),
 			[100, 0, 0],
 		);
-		assert.ok(resetButton(box).hasClass("cs-hidden"));
+		assert.ok(resetButton(box).hasClass("cs-reset-idle"));
 		assert.strictEqual(changes(), 3);
 	});
 

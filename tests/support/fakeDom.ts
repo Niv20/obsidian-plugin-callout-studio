@@ -204,6 +204,11 @@ export class FakeDocumentFragment {
 		return this.make("span", options);
 	}
 
+	/** As Obsidian's fragments have it: a description built of several lines. */
+	createDiv(options?: ElOptions): FakeElement {
+		return this.make("div", options);
+	}
+
 	appendText(text: string): void {
 		this.appendChild(new FakeText(text));
 	}
@@ -228,6 +233,23 @@ export class FakeDocumentFragment {
 	/** Hand over every child and empty out — what an insertion does to it. */
 	drain(): FakeNode[] {
 		return this.childNodes.splice(0, this.childNodes.length);
+	}
+
+	/**
+	 * A detached copy, the whole subtree when `deep`. Obsidian's settings
+	 * renderer copies a description fragment before every draw, so the same
+	 * definition can be drawn again (`cM` in app.js).
+	 */
+	cloneNode(deep = false): FakeDocumentFragment {
+		const copy = new FakeDocumentFragment();
+		if (deep) {
+			for (const child of this.childNodes) {
+				copy.appendChild(
+					child.nodeType === NODE_TEXT ? new FakeText(child.nodeValue) : child.cloneNode(true),
+				);
+			}
+		}
+		return copy;
 	}
 }
 
@@ -308,6 +330,8 @@ export class FakeElement {
 	readonly childNodes: FakeNode[] = [];
 	parentElement: FakeElement | null = null;
 	clientWidth = 240;
+	/** The width of the content, which is more than `clientWidth` where the box shortens it. */
+	scrollWidth = 240;
 	clientHeight = 36;
 	/**
 	 * Plain field, not derived from the tree: suites build detached trees and say
@@ -503,6 +527,13 @@ export class FakeElement {
 		return siblingOf(this, -1);
 	}
 
+	/** The element just before this one under the same parent, text skipped, like the real DOM. */
+	get previousElementSibling(): FakeElement | null {
+		const siblings = this.parentElement?.children ?? [];
+		const at = siblings.indexOf(this);
+		return at > 0 ? (siblings[at - 1] ?? null) : null;
+	}
+
 	appendChild<T extends FakeNode>(node: T): T {
 		node.parentElement?.removeChild(node);
 		node.parentElement = this;
@@ -679,6 +710,20 @@ export class FakeElement {
 		return this.querySelectorAll(selector);
 	}
 
+	/**
+	 * Obsidian's `onWindowMigrated`: the listeners are kept, so a suite can say
+	 * the element has moved to another window (see {@link migrateElement}).
+	 */
+	readonly migrationListeners: Array<(win: FakeWindow) => void> = [];
+
+	onWindowMigrated(listener: (win: FakeWindow) => void): () => void {
+		this.migrationListeners.push(listener);
+		return () => {
+			const at = this.migrationListeners.indexOf(listener);
+			if (at >= 0) this.migrationListeners.splice(at, 1);
+		};
+	}
+
 	toggleClass(classes: string | string[], value: boolean): void {
 		for (const cls of Array.isArray(classes) ? classes : [classes]) {
 			this.classList.toggle(cls, value);
@@ -723,6 +768,27 @@ export class FakeElement {
 	/** Obsidian's convenience visibility methods used by paged picker rows. */
 	show(): void { this.setCssProps({ display: "" }); }
 	hide(): void { this.setCssProps({ display: "none" }); }
+
+	/** Obsidian's `toggle(show)`: `show()` when true, `hide()` when false. */
+	toggle(show: boolean): void {
+		if (show) this.show();
+		else this.hide();
+	}
+
+	/**
+	 * Obsidian's `isShown()`: neither this element nor any ancestor is hidden.
+	 * (The real one asks the layout; here, with no layout, `display: none` is
+	 * the only way to be hidden.)
+	 */
+	isShown(): boolean {
+		if (this.cssProps.get("display") === "none") return false;
+		return this.parentElement ? this.parentElement.isShown() : true;
+	}
+
+	/** A click on this element, heard by it and its ancestors, as `HTMLElement.click()`. */
+	click(): void {
+		this.dispatchEvent({ type: "click", bubbles: true });
+	}
 
 	/**
 	 * Set a CSS custom property the way Obsidian sets `--font-text-size` on
@@ -769,6 +835,8 @@ export class FakeElement {
 	value = "";
 	disabled = false;
 	readOnly = false;
+	/** A checkbox's or radio's state; the browser sets it on a click, Space or an arrow key. */
+	checked = false;
 	/** How many client rects {@link getClientRects} reports. 0 = not rendered. */
 	rects = 1;
 	/** Bumped by {@link focus} / {@link select}, which have nothing else to do. */

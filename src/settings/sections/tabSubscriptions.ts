@@ -2,16 +2,15 @@
  * settings/sections/tabSubscriptions.ts — keeping the settings tab in step with
  * the rest of the plugin.
  *
- * Four signals can make the three callout lists wrong while the tab is open, and
- * all four converge on one coalesced repaint. What each one is *for* is written
- * beside it below; what they have in common is worth stating once here.
+ * Who calls it. The settings tab (declarative/declarativeSettings.ts), once,
+ * for the plugin's whole life; and a Built-in or theme callouts page
+ * (declarative/calloutListPage.ts) while it is open.
  *
- * They are subscribed on the first `display()` and dropped in `hide()` — a visit,
- * not a render, because `display()` re-runs for things nobody asked for (another
- * device's settings file landing, a locale finishing its download) and
- * re-subscribing on each of those would stack duplicate listeners for the life of
- * the session. One `dispose` undoes all four, so the pairing cannot come apart
- * the way four separate fields and four separate teardown blocks could.
+ * Four signals can make the callout lists wrong, and all four converge on one
+ * coalesced redraw. What each one is *for* is written beside it below; what
+ * they have in common is worth stating once here. One `dispose` undoes all
+ * four, so the pairing cannot come apart the way four separate fields and four
+ * separate teardown blocks could.
  *
  * ## `force`, and why only two of them carry it
  *
@@ -56,8 +55,8 @@ export function subscribeSettingsTab(
 	const dropIconCache = plugin.onIconCacheChange(() => refresh(true));
 
 	// Row swatches show the CURRENT theme mode's accent/background, so a live
-	// theme flip must re-render them. Refresh only, never a full display():
-	// CSSInjector fires "css-change" after every inject. Not forced — the flip
+	// theme flip must redraw them. CSSInjector fires "css-change" after every
+	// inject, so this is the busiest of the four. Not forced — the flip
 	// moves the colour scheme and the theme's measured appearances, and the
 	// signature reads both.
 	const cssRef: EventRef = app.workspace.on("css-change", () => refresh(false));

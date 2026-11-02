@@ -6,9 +6,6 @@ import { CalloutRegistry } from "../../src/manager/CalloutRegistry.ts";
 import { CSSInjector } from "../../src/manager/CSSInjector.ts";
 import { CalloutEditor } from "../../src/settings/CalloutEditor.ts";
 import { CalloutAutoComplete } from "../../src/editor/AutoComplete.ts";
-import { createCalloutListsController } from "../../src/settings/sections/CalloutListsSection.ts";
-import { renderCalloutRow } from "../../src/settings/sections/CalloutRowRenderer.ts";
-import { freshPaging } from "../../src/settings/sections/calloutListsSignature.ts";
 import { createCalloutReadingPostProcessor } from "../../src/reading/calloutPostProcessor.ts";
 import { setLocale } from "../../src/i18n/index.ts";
 import { scenes as designScenes } from "./scenes-design.mjs";
@@ -17,6 +14,7 @@ import { scenes as sidebarScenes } from "./scenes-sidebars.mjs";
 import { scenes as formatScenes } from "./scenes-formats.mjs";
 import { scenes as integrationScenes } from "./scenes-integration.mjs";
 import { makeHost as sharedHost } from "./fixture-host.mjs";
+import { mountSettingsPage } from "./settingsPage.mjs";
 
 const mounts = { "create-settings": mountSettings, "create-editor": mountEditor, "create-autocomplete": mountAutocomplete, ...designScenes, ...managementScenes, ...sidebarScenes, ...formatScenes, ...integrationScenes };
 export const sceneNames = Object.keys(mounts);
@@ -39,7 +37,6 @@ function makeHost() {
 	const plugin = {
 		app, registry, cssInjector, settings: registry.settings, settingsEditOpen: false,
 		settingsWriter: { isFrozen: false, isDestroyed: false, matchesLastWrite: () => true },
-		localState: { isExpanded: kind => kind !== "builtin", setExpanded() {} },
 		icons: { packs: {}, deleteLibrary: async () => {} },
 		customCommands: { migrateCalloutId() {} },
 		saveSettings: async () => {}, ensureIconArtwork: async () => {},
@@ -55,21 +52,12 @@ function makeHost() {
 	return plugin;
 }
 
+/** The settings' main page, whose first box holds My callout types (its + adds a callout). */
 function mountSettings(plugin) {
-	const panel = document.body.createDiv({ cls: "callout-studio-settings guide-settings", attr: { id: "guide-scene" } });
-	const ctx = { app: plugin.app, plugin, display() {}, registerDisposer() {} };
-	const controller = createCalloutListsController(ctx, {
-		paging: freshPaging(),
-		onAddNewCallout: async () => new CalloutEditor(plugin).open(),
-		renderRow: (container, def, kind) => renderCalloutRow(ctx, container, def, kind, {
-			onEdit() {}, onOpenBuiltInMenu() {}, onOpenUserMenu() {},
-		}),
+	return mountSettingsPage(plugin, {
+		title: "Add a callout in settings",
+		description: "Callout Studio's settings as Obsidian draws them, on a fresh setup in the default dark theme. Open My callout types and its + opens the editor.",
 	});
-	controller.render(panel);
-	return {
-		selector: "#guide-scene", title: "Add a callout in settings",
-		description: "Callout Studio's actual settings list, on a fresh setup in the default dark theme. Add new callout opens the editor.",
-	};
 }
 
 function mountEditor(plugin) {
@@ -105,14 +93,17 @@ function mountAutocomplete(plugin) {
 	};
 }
 
-export async function mountScene(name) {
+/** `options` is for a scene another picture reuses with a change (the website's Version history); the guide passes none. */
+export async function mountScene(name, options) {
 	installDomHelpers();
 	setLocale("en");
 	document.body.className = "theme-dark is-desktop";
-	const plugin = name.startsWith("create-") ? makeHost() : sharedHost();
+	// The settings need the full shared host; the other first-steps scenes keep
+	// the minimal one they were approved with.
+	const plugin = name.startsWith("create-") && name !== "create-settings" ? makeHost() : sharedHost();
 	const mount = mounts[name];
 	if (!mount) throw new Error(`Unknown user-guide scene: ${name}`);
-	const metadata = await mount(plugin);
+	const metadata = await mount(plugin, options);
 	await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 	await document.fonts.ready;
 	return metadata;

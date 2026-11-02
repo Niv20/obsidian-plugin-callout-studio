@@ -23,9 +23,9 @@
  * flag, not a claim on colour) — pinned in tests/hideIcon.test.ts, and restated
  * from this side here because the two answers come out of one comparison.
  *
- * Note on drift, which is now TWO kinds. The `obsidian` stub's
- * `requireApiVersion` returns true, so *core's* spelling here is always the
- * 1.13+ one — a full colour and a bare `var(--callout-…)` reference. But the
+ * Note on drift, which is now TWO kinds. *Core's* spelling is always the
+ * 1.13+ one (`CORE_ACCENT_SPELLING`, since 1.13.4 is the minimum) — a full
+ * colour and a bare `var(--callout-…)` reference. But the
  * spelling actually emitted is the **active theme's**, not core's: a theme that
  * never updated its `rgba(var(--callout-color), …)` gets a triplet on the same
  * Obsidian. `harness()` reports no theme at all, which is the 196-of-257 case
@@ -321,7 +321,27 @@ describe("needsDarkBlock — when a .theme-dark override is worth emitting", () 
 		);
 	});
 
-	it("is false for a gradient whose ends match in both modes", () => {
+	it("is true for a background that is the same in both modes", () => {
+		// The tint is solved against each mode's own page, so the light rule's
+		// tint, which matches in both themes, painted #8899aa as #182333 on the
+		// dark page. The palette editor lets each mode keep its own colors, and
+		// the same background in both is an ordinary choice.
+		const { css } = harness();
+		const same = definition({
+			colorLight: "#336699",
+			colorDark: "#336699",
+			bgColorLight: "#8899aa",
+			bgColorDark: "#8899aa",
+		});
+		assert.strictEqual(css.needsDarkBlock(same), true);
+		assert.notDeepStrictEqual(
+			css.bgProps(same, "dark"),
+			css.bgProps(same, "light"),
+			"the dark block carries a tint of its own",
+		);
+	});
+
+	it("is true for a gradient whose ends match in both modes", () => {
 		const { css } = harness();
 		assert.strictEqual(
 			css.needsDarkBlock(
@@ -337,7 +357,7 @@ describe("needsDarkBlock — when a .theme-dark override is worth emitting", () 
 					},
 				}),
 			),
-			false,
+			true,
 		);
 	});
 

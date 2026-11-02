@@ -46,8 +46,17 @@ Obsidian's shipped `app.css`, not guessed; an earlier `#1e1e1e` guess put
 every derived dark tint a uniform +1.64/255 off). The identity holds exactly
 in both themes despite the blend-mode difference: over white, `darken` gives
 `min(255, S) = S`; over `#1c1c1c`, `lighten` gives `max(B, S) = S` for any
-tint at least as light as the page - which a callout background always is,
-since `lighten` forbids painting darker than the page.
+tint at least as light as the page.
+
+**A dark-mode background darker than the page** is the one place that last
+clause fails: `lighten` keeps the page wherever the callout is darker, so black
+came out as `#1c1c1c` in Reading view (Live Preview showed black, having
+nothing under the callout to blend with). `bgProps` gives such a background
+`mix-blend-mode: normal` in the dark block, so it is drawn as it is.
+"Darker" is judged by luminance, not channel by channel: an ordinary dark tint
+of a saturated colour (`#16202b`) has one channel a few levels under the page
+and keeps core's blend and the look it always had. On the three vaults
+checked when this landed (2026-11-01), no callout's CSS changed.
 
 `minTintAlpha` is the **smallest** alpha that keeps every solved channel
 inside `[0, 255]` (plus 2% headroom for hex-rounding), clamped to
@@ -228,8 +237,19 @@ never moved: its colours are authoritative.
 The correction itself stays **silent**, and that is a deliberate call rather
 than an oversight. Simple mode is the "pick one colour and let us handle it"
 route, so it auto-fixes and says nothing; the advanced per-channel grid - one
-link away, from the hint already on this row - stores what you pick verbatim
-and shows a warning badge instead. The way to see and override the correction
+button away, at the end of the Colors heading - stores what you pick verbatim
+and warns instead (`paletteContrastLine.ts`; finding S6-12): a warning triangle
+beside the Accent and/or Text swatch that is below its limit (Accent 3:1, Text
+4.5:1), saying which colour, and one full-width line under the three colours
+(Accent, Background, Text), "Low contrast against the background", saying why,
+with a divider of its own so it is not read as the caption of the Text row. The
+triangle alone was the first design, a small badge on the swatch's corner that
+only a hovering mouse could read, until 2026-10-23; then a line under each failing
+row by way of the row's `setErrorMessage`, which left the sentence half a row
+beside the swatch and, once it was one line under the last row, read as if it
+were always about the Text colour. Both are back, each doing what the other
+cannot. The Text row itself sat behind a `SHOW_TEXT_COLOR_CHANNEL` flag, off,
+until 2026-10-29; the channel was stored, derived and painted all along. The way to see and override the correction
 therefore exists and is reachable; it just isn't volunteered.
 
 A version that announced it in the row was built and then withdrawn. It is
@@ -543,9 +563,10 @@ with `.theme-light`'s on top, the dark view the same with `.theme-dark`'s, and a
 identical - that is the one caller that has to know the spelling can split
 without the colour splitting.
 
-`coreAccentDialect()` - still the cached `requireApiVersion` check - is what the
-running Obsidian expects, and is the fallback wherever the active styling has no
-opinion. That is 196 of the 257 themes in the dev vault, and it is what keeps
+`CORE_ACCENT_SPELLING` is what the running Obsidian expects, and is the
+fallback wherever the active styling has no opinion. It is the constant
+`"color"`: the plugin needs Obsidian 1.13.4, so core never wants a triplet, and
+the version check that used to answer this is gone. That is 196 of the 257 themes in the dev vault, and it is what keeps
 this machinery invisible in those vaults: their generated CSS is byte-identical
 to what it was before any of it existed.
 

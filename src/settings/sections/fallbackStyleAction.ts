@@ -12,10 +12,10 @@ import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
 import { blockedWhilePaused } from "../pausedGuard";
 import { noticeWithUndoAction } from "../rewriteUndoNotice";
-import type { SettingsSectionContext } from "./types";
+import type { SettingsContext } from "./types";
 
 export async function applyDefaultFallbackStyle(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): Promise<void> {
 	const { registry } = ctx.plugin;
@@ -27,7 +27,7 @@ export async function applyDefaultFallbackStyle(
 	if (!registry.convertToFallback(def.id)) return;
 	await ctx.plugin.saveSettings();
 	ctx.plugin.refreshCallouts();
-	ctx.display();
+	ctx.redraw();
 	noticeWithUndoAction(t("notice.fallbackStyleApplied", { name: previous.displayName }), () => {
 		void restoreOwnStyle(ctx, previous);
 	});
@@ -35,7 +35,7 @@ export async function applyDefaultFallbackStyle(
 
 /** Undo: the callout's own look back, unless the row has moved on since. */
 export async function restoreOwnStyle(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	previous: CalloutDefinition,
 ): Promise<void> {
 	if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
@@ -58,5 +58,5 @@ export async function restoreOwnStyle(
 	if (!registry.update(previous.id, restored)) return;
 	await ctx.plugin.saveSettings();
 	ctx.plugin.refreshCallouts();
-	ctx.display();
+	ctx.redraw();
 }

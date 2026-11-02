@@ -6,16 +6,16 @@ import {
 } from "../src/settings/iconpicker/sourceMenuPresentation";
 import { readRepoFile } from "./support/sourceScan";
 import { installFakeDom } from "./support/fakeDom";
-import { en } from "../src/i18n/en";
-import { LOCALE_TABLES } from "./support/localeTables";
 
 installFakeDom();
 
 describe("icon source menu counts", () => {
-	it("puts pooled result counts in parentheses in every language", () => {
-		for (const [locale, table] of Object.entries({ en, ...LOCALE_TABLES })) {
-			assert.equal(table["iconPicker.sourceGroup"], "{{name}} ({{count}})", locale);
-		}
+	it("shows a pooled library's count as a faint count, not a translated \"(N)\"", () => {
+		// The heading is the library's name and a `cs-faint-count` (ui/faintCount.ts),
+		// so no language's word order or brackets are involved any more.
+		const panel = readRepoFile("src/settings/iconpicker/PackPanel.ts");
+		assert.doesNotMatch(panel, /iconPicker\.sourceGroup/);
+		assert.match(readRepoFile("src/settings/iconpicker/IconGrid.ts"), /appendFaintCount\(header, heading\.count\)/);
 	});
 
 	it("keeps small and user-owned collections exact", () => {
@@ -37,7 +37,6 @@ describe("icon source menu rows", () => {
 			count: 1_640,
 			locale: "he",
 			exactCount: false,
-			selected: false,
 		});
 		const text = row.querySelector(".cs-source-text");
 		assert.deepEqual(
@@ -46,19 +45,16 @@ describe("icon source menu rows", () => {
 		);
 		assert.equal(row.querySelector(".cs-source-name")?.textContent, "Lucide");
 		assert.match(row.querySelector(".cs-source-desc")?.textContent ?? "", /⁨.+⁩/u);
-		assert.equal(row.querySelector(".cs-source-check"), null);
+		// The ✓ for the chosen library is the shared dropdown's, added to the
+		// committed row by `renderComboboxRows` (see iconSourceInteraction).
+		assert.equal(row.querySelector(".cs-combobox-check"), null);
 	});
 
-	it("checks the chosen library", () => {
-		const row = createSourceMenuTitle({
-			label: "Tabler Icons",
-			description: "clean and consistent UI icons",
-			count: 5_130,
-			locale: "en-US",
-			exactCount: false,
-			selected: true,
-		});
-		assert.ok(row.querySelector(".cs-source-check"));
+	it("has no check of its own left, in the markup or the stylesheet", () => {
+		// It used to draw a private `.cs-source-check`, a smaller check in the
+		// row's own colour. Every list now marks its choice with one shared ✓.
+		assert.doesNotMatch(readRepoFile("src/settings/iconpicker/sourceMenuPresentation.ts"), /cs-source-check|setIcon/);
+		assert.doesNotMatch(readRepoFile("styles.css"), /cs-source-check/);
 	});
 
 	it("has no download badge left, in the markup or the stylesheet", () => {

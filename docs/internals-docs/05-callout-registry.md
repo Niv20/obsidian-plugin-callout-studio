@@ -495,7 +495,12 @@ renders with in-progress styling. Bookkeeping:
   would trigger `saveSettings()` and force every open note to re-render on
   every keystroke. It fires the separate `onPreviewChange` signal instead (see
   below), and the caller (`CalloutEditor`) explicitly requests a targeted
-  `cssInjector.inject(false)`.
+  `cssInjector.inject(false)`. The palette editor, which repaints on every step
+  of a colour drag, calls `cssInjector.repaintDemoPreview()` instead, which
+  writes only the stand-in's own rules to a small sheet of their own (see
+  [CSS generation § The preview layer](06-css-generation.md#the-preview-layer---a-demos-rules-in-a-sheet-of-their-own)).
+  It asks the registry for `getDemoPreview()`: the preview, but only when it is
+  a demo standing on an id of its own, never one that shadows a real callout.
 
 ### `onPreviewChange` - a second, deliberately separate listener list
 

@@ -4,7 +4,7 @@ import { asEl, el, fakeDom } from "./support/fakeDom";
 import { readRepoFile } from "./support/sourceScan";
 import { buildFormatRow } from "../src/settings/command/commandRoles";
 import { DEFAULT_SETTINGS } from "../src/constants";
-import { dropdownOptions } from "./support/selectDropdown";
+import { dropdownOptions, dropdownValue, pickDropdown } from "./support/selectDropdown";
 import { t } from "../src/i18n";
 import { buildActionRow, buildHeadingLevelRow } from "../src/settings/command/optionRows";
 import { buildFoldStateRow } from "../src/settings/command/foldStateRow";
@@ -51,62 +51,109 @@ describe("command editor field layout", () => {
 		}
 	});
 
-	it("keeps all five command fields the same width", () => {
-		const commandFieldAt = css.indexOf(".cs-command-field {");
-		const phoneOverrideAt = css.indexOf(
-			".is-phone .cs-command-field {",
-			commandFieldAt,
+	it("fits each field to its current choice instead of one shared 180px column (S8-16)", () => {
+		assert.doesNotMatch(css, /--cs-command-control-width/, "no shared column width any more");
+		assert.doesNotMatch(css, /\.cs-command-field\s+\.setting-item-control\s*\{/, "the control column sizes to its content");
+		assert.doesNotMatch(css, /\.cs-command-field[^{]*\.cs-combobox\s*\{/, "the callout picker has no width of its own here");
+		// Obsidian's own caps, in every setting row: 400px for a <select>, 250px
+		// for its combobox. Below them, a field is as wide as its words.
+		assert.match(css, /\.setting-item-control \.cs-dropdown-field\s*\{[^}]*max-width:\s*400px;/);
+		assert.match(css, /\.setting-item-control \.cs-combobox\s*\{[^}]*max-width:\s*250px;/);
+	});
+
+	it("puts the five choices in one grey setting group, like the plugin's other windows", () => {
+		const onOpen = modalSource.slice(
+			modalSource.indexOf("\tonOpen(): void"),
+			modalSource.indexOf("\tonClose(): void"),
 		);
-		const narrowMediaAt = css.indexOf(
-			"@media (max-width: 600px)",
-			commandFieldAt,
-		);
+		assert.match(onOpen, /const form = new SettingGroup\(contentEl\);/);
+		for (const builder of ["buildCalloutRow", "buildFormatRow", "buildHeadingLevelRow", "buildActionRow", "buildFoldStateRow"]) {
+			assert.match(
+				onOpen,
+				new RegExp(`${builder}\\(\\s*form\\.listEl,`),
+				`${builder} builds into the group's box, not onto the bare window`,
+			);
+		}
+		assert.match(onOpen, /form\.addClass\("cs-editor-group"\)/, "the same 16px inset as the other editors' groups");
+	});
+
+	it("shows the command's name in a box of its own, and a duplicate under it (S8-15)", () => {
 		assert.match(
-			css,
-			/\.cs-command-field\s*\{[^}]*--cs-command-control-width:\s*180px;[^}]*\}/,
+			modalSource,
+			/const group = new SettingGroup\(parent\);\s*group\.addClass\("cs-editor-group"\);\s*this\.previewSetting = new Setting\(group\.listEl\)\s*\.setName\(t\("commandBuilder\.preview"\)\)\s*\.setClass\("cs-command-name"\)\s*\.addDisplayValue\(/,
 		);
-		assert.doesNotMatch(css, /\.cs-command-field\.cs-command-callout-setting\s*\{/);
-		assert.match(
-			css,
-			/\.cs-command-field\s+\.setting-item-control\s*\{[^}]*flex:\s*0\s+0\s+auto;[^}]*width:\s*var\(--cs-command-control-width\);[^}]*\}/,
-		);
-		assert.match(
-			css,
-			/\.cs-command-field\s+\.setting-item-control\s*>\s*\.cs-combobox\s*\{[^}]*width:\s*100%;[^}]*min-width:\s*0;[^}]*\}/,
-		);
-		assert.match(css, /\.cs-select-dropdown\s+\.cs-combobox-lead\s*\{[^}]*display:\s*none;[^}]*\}/);
-		assert.match(
-			css,
-			/\.is-phone\s+\.cs-command-field\s*\{[^}]*--cs-command-control-width:\s*100%;[^}]*\}/,
-		);
-		assert.ok(
-			commandFieldAt >= 0 &&
-				phoneOverrideAt > commandFieldAt &&
-				phoneOverrideAt < narrowMediaAt,
-			"the phone width must override the shared desktop width outside a viewport breakpoint",
-		);
+		assert.match(modalSource, /this\.previewSetting\?\.setErrorMessage\(/);
+		assert.doesNotMatch(css, /\.cs-command-preview/, "no card of the plugin's");
+		assert.doesNotMatch(css, /\.cs-command-role-notice/, "the format notice is Obsidian's warning text");
+	});
+
+	it("lets a row's description wrap before its choice does", () => {
+		// Not a width: the choice keeps the width of its words and the row's
+		// description gives way, in the group's box as in a bare window.
+		const rule = css.match(/body:not\(\.is-phone\)\s+\.cs-command-field\s*>\s*\.setting-item-control\s*\{([^}]*)\}/)?.[1] ?? "";
+		assert.match(rule, /flex-shrink:\s*0;/);
+		assert.doesNotMatch(rule, /\bwidth\s*:/);
+	});
+
+	it("stacks the name row, so the name has the box's whole width", () => {
+		// Beside the label the name had half a row at most, and an invalid row
+		// (a duplicate) is held to half by Obsidian itself.
+		const row = css.match(/\.setting-item\.cs-command-name\.cs-command-name\s*\{([^}]*)\}/)?.[1] ?? "";
+		assert.match(row, /flex-direction:\s*column;/);
+		assert.match(row, /align-items:\s*stretch;/);
+		const control = css.match(/\.setting-item\.cs-command-name\.cs-command-name\s+\.setting-item-control\s*\{([^}]*)\}/)?.[1] ?? "";
+		assert.match(control, /max-width:\s*none;/);
+		assert.match(control, /justify-content:\s*flex-start;/);
+		assert.match(css, /\.cs-command-name\s+\.setting-item-error\s*\{[^}]*text-align:\s*start;/);
+	});
+
+	it("draws the command's name in full, never cut with an ellipsis", () => {
+		// Obsidian's own read-only value is one muted line cut with "…"; in a
+		// narrow window that squeezed the row's label down to a letter and hid
+		// the name.
+		const rule = css.match(/\.cs-command-name\s+\.setting-item-value\s*\{([^}]*)\}/)?.[1] ?? "";
+		assert.match(rule, /white-space:\s*normal;/);
+		assert.match(rule, /overflow-wrap:\s*anywhere;/);
+		assert.match(rule, /text-overflow:\s*clip;/);
+		assert.match(rule, /color:\s*var\(--text-normal\);/);
+		assert.match(rule, /font-size:\s*var\(--font-ui-medium\);/, "the size of a row's label, not Obsidian's small note");
+		assert.match(rule, /text-align:\s*start;/);
+	});
+});
+
+describe("dropdown field text", () => {
+	it("sits where Obsidian's own token puts it: the plugin sets neither the token nor text-align", () => {
+		// Obsidian's token is `start` (the left edge in English, the right in
+		// Hebrew) everywhere but its macOS settings window. A field stretched
+		// across a row, such as Find callouts' type field, keeps its icon and
+		// name together at the start; until 2026-11-01 the field set `end` on
+		// itself, and the icon stayed at one edge with the name at the other.
+		for (const rule of css.matchAll(/[^{}]*\.cs-dropdown-field[^{}]*\{([^}]*)\}/g)) {
+			assert.doesNotMatch(rule[1]!, /--dropdown-text-align\s*:/, rule[0].trim().split("{")[0]);
+			assert.doesNotMatch(rule[1]!, /(^|[;\s])text-align\s*:/, "Obsidian's own rule does the aligning");
+		}
+	});
+
+	it("leaves the rows of a list at the start, as Obsidian's menus are", () => {
+		assert.match(css, /\.cs-combobox-popup\s*\{[^}]*text-align:\s*start;/);
 	});
 });
 
 describe("custom dropdown overflow", () => {
-	it("uses one scrollable maximum-height contract", () => {
+	it("caps the popover's height, and scrolls the list inside it", () => {
 		assert.match(
 			css,
-			/\.cs-scrollable-dropdown-menu\s*\{[^}]*max-height:\s*var\(--cs-combobox-menu-max-height,\s*320px\);[^}]*overflow-y:\s*auto;[^}]*\}/,
+			/\.cs-combobox-popup\.suggestion-container\s*\{[^}]*max-height:\s*var\(--cs-combobox-menu-max-height,\s*320px\);[^}]*\}/,
 		);
+		// Obsidian's `.suggestion` scrolls; the list may shrink below its rows for it.
+		assert.match(readRepoFile("src/ui/listboxPopupDom.ts"), /cls: "suggestion cs-combobox-menu"/);
+		assert.match(css, /\.cs-combobox-menu\s*\{[^}]*min-height:\s*0;/);
 	});
 
-	it("applies the contract to every custom dropdown implementation", () => {
-		for (const path of [
-			"src/ui/listboxPopupDom.ts",
-			"src/settings/CalloutEditor.ts",
-		]) {
-			assert.match(
-				readRepoFile(path),
-				/\bcs-scrollable-dropdown-menu\b/,
-				`${path} has a custom dropdown without the shared overflow class`,
-			);
-		}
+	it("leaves no hand-built dropdown: the callout editor's fold state is a plain choice", () => {
+		const editor = readRepoFile("src/settings/CalloutEditor.ts");
+		assert.doesNotMatch(editor, /cs-palette-menu|cs-fold-menu|cs-palette-trigger/);
+		assert.match(editor, /new SelectDropdown\(foldControl,/);
 	});
 
 	it("keeps group headings pinned over a solid menu surface while scrolling", () => {
@@ -148,7 +195,7 @@ describe("command editor choices", () => {
 		assert.deepEqual(available(legacy), ["-", "note", "theme-only"]);
 	});
 
-	it("uses the shared noneditable picker for heading, action, and fold state", () => {
+	it("uses the shared plain choice, opening Obsidian's menu, for heading, action, and fold state", () => {
 		fakeDom.light();
 		const host = el();
 		const before = fakeDom.document.listeners.get("click")?.length ?? 0;
@@ -159,29 +206,24 @@ describe("command editor choices", () => {
 		const action = buildActionRow(asEl(host), "insert", (value) => actionValues.push(value));
 		const fold = buildFoldStateRow(asEl(host), "none", (value) => foldValues.push(value));
 		try {
-			const controls = host.querySelectorAll(".cs-select-dropdown");
+			const controls = host.querySelectorAll(".cs-select-dropdown").map((control) => asEl(control));
 			assert.equal(controls.length, 3);
 			assert.equal(host.querySelectorAll("select").length, 0);
-			assert.ok(controls.every((control) => control.querySelector(".cs-combobox-input")?.readOnly));
+			assert.equal(host.querySelectorAll("input").length, 0, "plain choices are Obsidian's dropdown, not text fields");
 
-			const headingInput = controls[0]?.querySelector(".cs-combobox-input");
-			assert.equal(headingInput?.value, "H3");
-			dropdownOptions(asEl(controls[0]!));
-			const headingOptions = controls[0]?.querySelectorAll(".cs-combobox-option") ?? [];
-			assert.deepEqual(headingOptions.map((option) => option.textContent), ["H1", "H2", "H3", "H4", "H5", "H6"]);
-			headingOptions[1]?.fire("click");
+			assert.equal(dropdownValue(controls[0]!), "H3");
+			assert.deepEqual(dropdownOptions(controls[0]!).map((option) => option.title), ["H1", "H2", "H3", "H4", "H5", "H6"]);
+			pickDropdown(controls[0]!, "H2");
 			assert.deepEqual(headingValues, [2]);
 
-			dropdownOptions(asEl(controls[1]!));
-			controls[1]?.querySelectorAll(".cs-combobox-option")[0]?.fire("click");
+			pickDropdown(controls[1]!, t("commandBuilder.actionWrap"));
 			assert.deepEqual(actionValues, ["wrap"]);
 
 			fold.sync("heading");
 			assert.ok(asEl(host).querySelectorAll(".setting-item")[2]?.hasClass("cs-row-hidden"));
 			fold.sync("regular");
 			assert.ok(!asEl(host).querySelectorAll(".setting-item")[2]?.hasClass("cs-row-hidden"));
-			dropdownOptions(asEl(controls[2]!));
-			controls[2]?.querySelectorAll(".cs-combobox-option")[2]?.fire("click");
+			pickDropdown(controls[2]!, t("commandBuilder.foldCollapsed"));
 			assert.deepEqual(foldValues, ["collapsed"]);
 		} finally {
 			heading.dropdown.destroy();
@@ -237,19 +279,20 @@ describe("command editor choices", () => {
 		const row = buildFormatRow(asEl(host), (value) => picked.push(value));
 		try {
 			assert.equal(row.sync(registry, DEFAULT_SETTINGS, "note", "heading"), "heading");
-			const input = host.querySelector(".cs-combobox-input");
-			assert.equal(input?.value, t("commandBuilder.formatHeading"));
-			dropdownOptions(asEl(host));
+			assert.equal(dropdownValue(asEl(host)), t("commandBuilder.formatHeading"));
+			const openMenu = dropdownOptions(asEl(host));
+			assert.equal(openMenu.length, 3);
 			themeOwned = true;
 			assert.equal(row.sync(registry, DEFAULT_SETTINGS, "note", "heading"), "regular");
-			const options = host.querySelectorAll(".cs-combobox-option");
-			assert.deepEqual(options.map((option) => option.textContent), [t("commandBuilder.formatBlock")]);
-			assert.ok(options[0]?.hasClass("is-selected"));
-			options[0]?.fire("click");
+			// The narrowed options close the open menu; a fresh one offers only Block.
+			const options = dropdownOptions(asEl(host));
+			assert.deepEqual(options.map((option) => option.title), [t("commandBuilder.formatBlock")]);
+			assert.ok(options[0]?.checked);
+			pickDropdown(asEl(host), t("commandBuilder.formatBlock"));
 			assert.deepEqual(picked, [], "a programmatic fallback and same-value click do not synthesize changes");
 			themeOwned = false;
 			row.sync(registry, DEFAULT_SETTINGS, "note", "regular");
-			dropdownOptions(asEl(host))[0]?.fire("click");
+			pickDropdown(asEl(host), t("commandBuilder.formatHeading"));
 			assert.deepEqual(picked, ["heading"]);
 		} finally {
 			row.destroy();

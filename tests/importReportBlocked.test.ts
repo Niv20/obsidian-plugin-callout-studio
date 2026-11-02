@@ -28,7 +28,7 @@ function open(validCount: number, fatal = false) {
 		open: () => modal.onOpen(), close: () => modal.onClose() });
 	let answer: ImportReportChoice | undefined;
 	void modal.prompt().then((choice) => { answer = choice; });
-	const importButton = modalEl.querySelector(".cs-modal-footer button.mod-cta");
+	const importButton = modalEl.querySelector(".modal-button-container button.mod-cta");
 	return { importButton, answer: () => answer, destroy: () => { modal.onClose(); containerEl.remove(); } };
 }
 

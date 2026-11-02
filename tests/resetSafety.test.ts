@@ -10,8 +10,9 @@ import { describe, it } from "node:test";
 import { Setting, TFile, type App, type ButtonComponent } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { content } from "../src/manager/syncTree";
-import { renderResetSection } from "../src/settings/sections/DataManagementSection";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import { dangerZoneGroup } from "../src/settings/declarative/mainPageGroups";
+import type { CsRender, TreeContext } from "../src/settings/declarative/types";
+import type { SettingsContext } from "../src/settings/sections/types";
 import { t } from "../src/i18n";
 import { en } from "../src/i18n/en";
 import { definition } from "./support/discoveryHarness";
@@ -33,14 +34,14 @@ function setup(writer = savingWriter()) {
 			cssInjector: { inject: () => {} },
 			saveSettings: () => { saves++; return Promise.resolve(); },
 		},
-		display: () => {},
-	} as unknown as SettingsSectionContext;
+		redraw: () => {},
+	} as unknown as SettingsContext;
 	const backups = () => [...own.files.entries()].filter(([path]) => /\/backups\/data-/.test(path));
 	return { ctx, registry, notices, writer, own, backups, get saves() { return saves; } };
 }
 
-/** The Reset everything button's click handler, as the section wires it. */
-function resetButton(ctx: SettingsSectionContext): () => Promise<void> {
+/** The Reset everything button's click handler, as the settings page's Danger zone wires it. */
+function resetButton(ctx: SettingsContext): () => Promise<void> {
 	const root = fakeDom.document.body.createDiv();
 	const original = Object.getOwnPropertyDescriptor(Setting.prototype, "addButton")!;
 	let reset: (() => Promise<void>) | undefined;
@@ -50,15 +51,17 @@ function resetButton(ctx: SettingsSectionContext): () => Promise<void> {
 			const button = {
 				buttonEl: root.createEl("button"),
 				setButtonText(text: string) { label = text; return this; },
-				setWarning() { return this; },
+				setDestructive() { return this; },
+				setCta() { return this; },
 				onClick(action: () => Promise<void>) { if (label === t("settings.resetAllButton")) reset = action; return this; },
 			} as unknown as ButtonComponent;
 			callback(button);
 			return this;
 		};
-		renderResetSection(ctx, root as unknown as HTMLElement);
+		const resetRow = dangerZoneGroup(ctx as TreeContext).items?.find((row) => row.id === "reset-everything") as CsRender;
+		resetRow.render(new Setting(root as unknown as HTMLElement), undefined as never);
 	} finally { Object.defineProperty(Setting.prototype, "addButton", original); root.remove(); }
-	assert.ok(reset, "the section draws a Reset everything button");
+	assert.ok(reset, "the row draws a Reset everything button");
 	return reset;
 }
 
@@ -126,15 +129,15 @@ describe("Reset everything", () => {
 		} finally { confirm.restore(); }
 	});
 
-	it("opens with a reminder and a lead-in of their own before the list of what goes", async () => {
+	it("puts the reminder in the heading, and opens the message with the lead-in before the list of what goes", async () => {
 		const confirm = stubConfirm(false);
 		try {
 			const h = setup();
 			await resetButton(h.ctx)();
-			assert.deepEqual(textsOf(confirm.messages[0], "P").slice(0, 2), [
-				en["settings.resetIntro"],
-				en["settings.resetDeletes"],
-			], "the lead-in is not a paragraph of its own");
+			assert.equal(confirm.subtitles[0], en["settings.resetIntro"]);
+			const paragraphs = textsOf(confirm.messages[0], "P");
+			assert.equal(paragraphs[0], en["settings.resetDeletes"], "the list's lead-in opens the message");
+			assert.ok(!paragraphs.includes(en["settings.resetIntro"]!), "the reminder is not said twice");
 		} finally { confirm.restore(); }
 	});
 
@@ -145,6 +148,7 @@ describe("Reset everything", () => {
 			h.registry.remove("mine");
 			h.registry.settings.fallbackCalloutId = "tip";
 			await resetButton(h.ctx)();
+			assert.equal(confirm.subtitles[0], en["settings.resetSubtitleDefaults"], "the heading says what happens instead");
 			const paragraphs = textsOf(confirm.messages[0], "P");
 			assert.ok(!paragraphs.includes(en["settings.resetIntro"]!), "a reminder about what is deleted, with none");
 			assert.ok(paragraphs.includes(en["settings.resetRestores"]!));

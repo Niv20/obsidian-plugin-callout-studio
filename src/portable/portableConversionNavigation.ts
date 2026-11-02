@@ -1,6 +1,7 @@
 import type { App, EventRef, MarkdownView, WorkspaceLeaf } from "obsidian";
 import { SidebarActiveFile } from "../ui/sidebarActiveFile";
 import { SidebarCursorSync } from "../ui/sidebarCursorSync";
+import { SidebarFold } from "../ui/sidebarFold";
 import { navigateToSidebarFile, navigateToSidebarResult, type SidebarSourceRange } from "../ui/sidebarNavigation";
 import { revealSidebarCard } from "../ui/sidebarResults";
 import { iterateContentFingerprint } from "../usage/contentFingerprint";
@@ -48,6 +49,8 @@ export async function resolvePortableSourcePosition(
 export class PortableConversionNavigation {
 	private readonly activeFile: SidebarActiveFile;
 	private readonly cursor: SidebarCursorSync;
+	/** Which notes' groups are folded away; kept here so every redraw of the rows draws them folded again. */
+	private readonly fold = new SidebarFold();
 	private rows: PortableConversionRow[] = [];
 	/** Drawn cards only, by note: what the caret can be matched against. */
 	private drawn = new Map<string, PortableConversionRow[]>();
@@ -75,7 +78,8 @@ export class PortableConversionNavigation {
 	open(): void { this.opened = true; this.activeFile.open(); this.cursor.open(); }
 	close(): void { this.opened = false; this.invalidate(); this.cursor.close(); this.clearCurrent(); this.activeFile.close(); this.root = undefined; }
 	invalidate(): void { this.generation++; }
-	renderRows(root: HTMLElement, plan: PortableCalloutConversionPlan | undefined, limit: number, disabled: boolean, editingId?: string, resetEnabled = false): void {
+	/** Draw the rows; returns the marker the list ends in while more are left (see renderPortableConversionRows). */
+	renderRows(root: HTMLElement, plan: PortableCalloutConversionPlan | undefined, limit: number, disabled: boolean, editingId?: string, resetEnabled = false): HTMLElement | null {
 		this.root = root;
 		this.limit = limit;
 		this.editingId = editingId;
@@ -84,8 +88,8 @@ export class PortableConversionNavigation {
 		for (const row of this.rows.slice(0, limit)) this.drawn.set(row.path, [...this.drawn.get(row.path) ?? [], row]);
 		if (!this.rows.some(row => row.id === this.current)) this.current = undefined;
 		this.activeFile.clearSections();
-		renderPortableConversionRows(root, plan, this.rows, limit, disabled, this.current,
-			(path, section) => this.activeFile.addSection(path, section), editingId, resetEnabled);
+		return renderPortableConversionRows(root, plan, this.rows, limit, disabled, this.current,
+			(path, section) => this.activeFile.addSection(path, section), editingId, resetEnabled, this.fold);
 	}
 	sync(ready: boolean, failed: boolean): void {
 		this.ready = ready; this.failed = failed;
@@ -110,7 +114,12 @@ export class PortableConversionNavigation {
 		this.activeFile.openedResult(row.path);
 		this.current = row.id;
 		if (landedIn) landedIn(); else this.cursor.release();
-		this.render();
+		// The clicked row is marked where it stands. Drawing every row again
+		// would build the row under the pointer anew, and its edit and reset
+		// icons, which show while the pointer is on the row, would vanish and
+		// fade in again. Only when the list was drawn again meanwhile and the
+		// row is no longer on the page is it drawn again here.
+		if (!this.mark(row.id)) this.render();
 	}
 	async navigateFile(path: string | undefined, newTab: boolean): Promise<void> {
 		if (!path || !this.opened || !this.rows.some(row => row.path === path)) return;
@@ -161,7 +170,11 @@ export class PortableConversionNavigation {
 		for (const card of Array.from(this.root?.querySelectorAll<HTMLElement>(".cs-portable-change-body") ?? [])) {
 			const on = id !== undefined && card.dataset.rowId === id;
 			if (on) marked = card;
-			if ((card.getAttribute("aria-current") === "true") !== on) card.setAttribute("aria-current", String(on));
+			if ((card.getAttribute("aria-current") === "true") !== on) {
+				card.setAttribute("aria-current", String(on));
+				// The fill goes on the whole row, its checkbox included (styles.css).
+				card.closest(".cs-portable-row")?.toggleClass("is-active", on);
+			}
 		}
 		return marked;
 	}

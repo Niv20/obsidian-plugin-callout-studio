@@ -16,9 +16,9 @@
  *   paste card with a text box and a Paste button. Always there, and alone
  *   when the vault holds nothing.
  *
- * While both are there, each card ends in a radio dot and the active one wears
- * the ring: that is the one Import acts on. Alone, the fallback has nothing to
- * be chosen against, and so has neither.
+ * While both are there, each card starts with Obsidian's radio and the active
+ * one is outlined in the accent: that is the one Import acts on. Alone, the
+ * fallback has nothing to be chosen against, and so has neither.
  *
  * Nothing is ever redrawn. `update()` writes what changed in place — a count,
  * a file name, which card is active — so the Upload button that becomes
@@ -67,10 +67,10 @@ export interface OptionsView {
 	pasteInput: HTMLTextAreaElement | null;
 }
 
-/** One option's card, and the radio dot at its trailing edge. */
+/** One option's card, and the radio at its start. */
 interface Card {
 	box: OptionBox;
-	radio: HTMLElement;
+	radio: HTMLInputElement;
 }
 
 /**
@@ -89,12 +89,13 @@ export function renderOptions(
 	if (!label.id) label.id = optionBoxId("group");
 	const list = renderOptionList(parent);
 
-	const vault = renderCard(list, "vault", "vault", handlers);
+	// The two radios share the window title's id as their group name.
+	const vault = renderCard(list, label.id, "vault", "vault", handlers);
 	vault.box.titleEl.setText(t(copy.fromVault));
 	let recommended = false;
 
 	const file = manual.kind === "file";
-	const card = renderCard(list, "manual", file ? "file-json" : "clipboard-paste", handlers);
+	const card = renderCard(list, label.id, "manual", file ? "file-json" : "clipboard-paste", handlers);
 	const action = card.box.el.createEl("button", {
 		cls: "cs-import-action",
 		text: file ? "" : t("import.pasteButton"),
@@ -102,8 +103,6 @@ export function renderOptions(
 		attr: { "aria-describedby": card.box.describedBy },
 	});
 	action.addEventListener("click", () => (file ? handlers.onUpload() : handlers.onPaste()));
-	// The dot stays the card's last mark, after its button.
-	card.box.el.appendChild(card.radio);
 	const pasteInput = manual.kind === "paste"
 		? renderPasteInput(card, t(manual.placeholder), handlers)
 		: null;
@@ -144,8 +143,9 @@ export function renderOptions(
 		for (const [option, { box, radio }] of [["vault", vault], ["manual", card]] as const) {
 			const on = two && option === active;
 			const filled = isFilled(flow, option);
-			// A dot is a focus stop only while its card has something to choose.
-			paintOptionRadio(box, radio, { chosen: on, choosable: two && filled && !on, enabled: filled });
+			// A radio is enabled only while its card has something to choose, so
+			// the arrow keys pass over an empty one.
+			paintOptionRadio(box, radio, { chosen: on, enabled: filled });
 		}
 	};
 
@@ -158,14 +158,15 @@ export function renderOptions(
 }
 
 /**
- * A card and its radio dot. The dot is the option's radio — named by the
- * card's title line, described by its status line — and the card around it is
- * one large pointer target for the same thing. The card cannot be the radio
- * itself: a radio may hold no control of its own, and the fallback's card
- * holds a button and, for a paste, a text box.
+ * A card and its radio. The radio is named by the card's title line and
+ * described by its status line, and the card around it is one large pointer
+ * target for the same thing. The card cannot be the radio itself: a radio may
+ * hold no control of its own, and the fallback's card holds a button and, for
+ * a paste, a text box.
  */
 function renderCard(
 	list: HTMLElement,
+	group: string,
 	option: ImportOption,
 	icon: string,
 	handlers: ViewHandlers,
@@ -174,7 +175,7 @@ function renderCard(
 	box.el.addClass(option === "vault" ? "cs-import-vault" : "cs-import-manual");
 	// Anywhere on the card chooses it — except on a control of its own, which
 	// does what it says instead.
-	const radio = addOptionRadio(box, () => handlers.onChoose(option), "button, textarea");
+	const radio = addOptionRadio(box, group, () => handlers.onChoose(option), "button, textarea");
 	return { box, radio };
 }
 

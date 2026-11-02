@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 import { loadObsidianAssets } from "./user-guide/obsidian-assets.mjs";
 import { exportSvg } from "./user-guide/vector-exporter.mjs";
+import { guideRuntimeOptions } from "./user-guide/guideRuntime.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(import.meta.url);
@@ -15,18 +16,14 @@ const { appCss, icons, version } = loadObsidianAssets();
 const { outputFiles } = await build({
 	entryPoints: [path.join(root, "scripts/store-bento/saved-palettes-scene.mjs")],
 	bundle: true, write: false, format: "iife", globalName: "bentoSavedPalettes",
-	alias: { obsidian: path.join(root, "scripts/user-guide/obsidian-runtime.ts") },
+	...guideRuntimeOptions(root),
 });
 const layout = `
 body { margin:0; padding:20px; overflow:hidden; background:transparent; }
 *, *::before, *::after { animation:none!important; transition:none!important; }
-#bento-saved-palettes { width:233px; height:166px; background:transparent; font-size:14px; }
-#bento-saved-palettes .cs-sticky-heading { display:none; }
-#bento-saved-palettes .cs-palettes-section { margin:0; padding:0; border:0; }
-#bento-saved-palettes .callout-studio-callout-list { gap:8px; margin:0; padding:0; }
-#bento-saved-palettes .cs-palette-list-row { height:50px; padding:8px 10px; gap:10px; }
-#bento-saved-palettes .callout-studio-row-buttons { gap:2px; }
-#bento-saved-palettes .callout-studio-row-buttons button { width:24px; height:28px; }
+#bento-saved-palettes { width:233px; height:166px; box-sizing:border-box; font-size:14px; }
+#bento-saved-palettes .setting-item { height:55px; box-sizing:border-box; padding:8px 10px; gap:10px; }
+#bento-saved-palettes .setting-item-control { gap:2px; }
 `;
 const browser = await chromium.launch({ headless: true, executablePath: process.env.BROWSER_EXECUTABLE });
 try {
@@ -44,17 +41,19 @@ try {
 	}, { icons, version });
 	await page.addScriptTag({ content: outputFiles[0].text });
 	const metadata = await page.evaluate(() => bentoSavedPalettes.mountSavedPalettes());
-	assert.deepEqual(await page.locator(".cs-palette-list-name").allTextContents(), ["Coral", "Mint glass", "Twilight"]);
-	assert.deepEqual(await page.locator(".cs-palette-list-row").evaluateAll(rows => rows.map(row => row.querySelectorAll(".cs-color-circle").length)), [2, 2, 3]);
+	const rows = page.locator("#bento-saved-palettes > .setting-item");
+	assert.deepEqual(await rows.locator(".setting-item-name").allTextContents(), ["Coral", "Mint glass", "Twilight"]);
+	assert.deepEqual(await rows.evaluateAll(rows => rows.map(row => row.querySelectorAll(".cs-color-circle").length)), [2, 2, 3]);
 	assert.equal(await page.locator(".is-transparent svg rect").count(), 16);
-	assert.equal(await page.locator(".callout-studio-row-buttons button svg").count(), 6);
+	// ✎ and Obsidian's ✕ on each row.
+	assert.equal(await rows.locator(".setting-item-control .clickable-icon svg").count(), 6);
 	const geometry = await page.locator(metadata.selector).boundingBox();
 	assert.equal(geometry.width, 233);
 	assert.equal(geometry.height, 166);
 	const rowsFit = await page.locator(metadata.selector).evaluate(panel => {
 		const bounds = panel.getBoundingClientRect();
-		return [...panel.querySelectorAll(".cs-palette-list-row")].every(row => {
-			const r = row.getBoundingClientRect(), name = row.querySelector(".cs-palette-list-name");
+		return [...panel.querySelectorAll(":scope > .setting-item")].every(row => {
+			const r = row.getBoundingClientRect(), name = row.querySelector(".setting-item-name");
 			return r.left >= bounds.left && r.right <= bounds.right && r.bottom <= bounds.bottom
 				&& name.scrollWidth <= name.clientWidth;
 		});

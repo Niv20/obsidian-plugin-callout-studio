@@ -23,8 +23,11 @@ export async function mountFind() {
 	const fileCount = Object.keys(sources).length;
 	const index = { dataRevision: 1, query: () => ({ occurrences, fileCount }) };
 	const types = new OccurrenceTypeChoices(plugin.registry, index);
-	const panel = document.body.createDiv({ cls: "view-content cs-occurrences-view", attr: { id: "bento-find" } });
-	const frame = createOccurrencesFrame(panel);
+	// The pane as Obsidian lays it out: the leaf's content, and in it the view's
+	// content (the format filter is the small button at the end of the type
+	// field's row).
+	const leaf = document.body.createDiv({ cls: "workspace-leaf-content", attr: { id: "bento-find" } });
+	const frame = createOccurrencesFrame(leaf.createDiv({ cls: "view-content cs-occurrences-view" }), () => {});
 	new CalloutCombobox(frame.pickerHost, {
 		registry: plugin.registry, choices: () => occurrencePickerChoices(types, ALL_TYPES_ID), value: ALL_TYPES_ID,
 		ariaLabel: t("vaultStats.columnType"), labelOf: def => def.id === ALL_TYPES_ID ? t("usage.allTypes") : def.id,
@@ -37,7 +40,7 @@ export async function mountFind() {
 	await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 	return {
 		selector: "#bento-find", title: "Find callouts across your notes",
-		description: "Production All types and All formats selectors, a plain summary of four occurrences in three files, and actual scanner-generated heading, block, and inline references from three synthetic Markdown notes. Spacing is tailored for the store artwork.",
+		description: "The production All types selector with the format filter button at the end of its row, a plain summary of four occurrences in three files, and actual scanner-generated heading, block, and inline references from three synthetic Markdown notes, drawn as Obsidian's search results. Spacing is tailored for the store artwork.",
 		count: occurrences.length, files: fileCount, summary,
 		locations: [...frame.results.querySelectorAll(".cs-occurrences-location")].map(row => row.textContent),
 	};

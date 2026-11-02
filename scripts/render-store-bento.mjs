@@ -63,19 +63,22 @@ function hero() {
     svg += text(283, 90, "Callout Studio has", 26, "#E3D8FC", `${center} font-weight="500"`);
     return svg + text(283, 151, "so much more to offer...", 44, "#FCF9FF", `${center} font-weight="700" letter-spacing="-1.5"`);
 }
+/**
+ * Today's heading on the timeline and its first two versions, with their times,
+ * dots and buttons, cut from the guide's Version history page picture and scaled
+ * to fit the tile's width.
+ */
 function history() {
     return heading("Version history")
-        + component("version-history", [62, 172, 506, 17], 30, 59, 506, 17)
-        + rect(89, 67.25, 1, 19.75, "#333333")
-        + component("version-history", [62, 206, 506, 150], 30, 85, 506, 150)
-        + rect(89, 235, 1, 9, "#333333");
+        + component("version-history", [100, 176, 700, 195], 20, 62, 526, 160);
 }
 function contextMenu() {
     return heading("Right-click menu")
         // The storefront's real Idea block sits behind its production menu.
         + component("05-context-menu", [57, 57, 280, 101], 74, 53, 280, 101)
         // Clip to the native menu shell, excluding the captured scene behind it.
-        + component("05-context-menu", [405, 150, 215.53, 139.5], 30.5, 79, 215.53, 139.5, 8);
+        // Five rows: the Idea is open, so the fold rows offer only the other two states.
+        + component("05-context-menu", [405, 150, 227.53, 151.5], 30.5, 67, 227.53, 151.5, 8);
 }
 function savedPalettes() {
     return heading("Saved color palettes")
@@ -112,7 +115,7 @@ for (const tile of tiles) {
     body += `<g transform="translate(${tile.x} ${tile.y})">` + rect(0, 0, tile.w, tile.h, fill, 20, `stroke="${tile.id === "hero" ? "#A385DC" : "#484848"}" stroke-opacity=".6"`)
         + `<g clip-path="url(#clip-${tile.id})">${tile.draw()}</g></g>`;
 }
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="title description"><title id="title">Callout Studio has so much more to offer...</title><desc id="description">Seven feature tiles surround a purple-blue central message with two smaller, partially cropped Obsidian-inspired faceted crystals and five sparse geometric shards. Find callouts is a tall left panel with type and format filters, a normal-weight occurrence summary, and grouped heading, block, and inline source results. Custom shortcuts pairs a collapsed Idea command with illustrative user-assigned Command, Shift and C keys. Quick insert shows the real ribbon icon and tooltip beside nearby abstract file rows. Saved color palettes shows Coral, transparent Mint glass, and violet-blue Twilight with native color circles and edit/delete actions. Production autocomplete fills a tall right panel. Version history spans the lower left with a spaced date and a timeline continuing to the tile edge, beside a right-click menu over the edge of a Purple Idea block, raised with extra space below the menu. All feature tiles use Obsidian's default dark settings background. Production components use synthetic data.</desc>${body}</svg>\n`;
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="title description"><title id="title">Callout Studio has so much more to offer...</title><desc id="description">Seven feature tiles surround a purple-blue central message with two smaller, partially cropped Obsidian-inspired faceted crystals and five sparse geometric shards. Find callouts is a tall left panel with type and format filters, a normal-weight occurrence summary, and grouped heading, block, and inline source results. Custom shortcuts pairs a collapsed Idea command with illustrative user-assigned Command, Shift and C keys. Quick insert shows the real ribbon icon and tooltip beside nearby abstract file rows. Saved color palettes shows Coral, transparent Mint glass, and violet-blue Twilight with native color circles and edit/delete actions. Production autocomplete fills a tall right panel. Version history spans the lower left with today's date over its box of saved versions, beside a right-click menu over the edge of a Purple Idea block, raised with extra space below the menu. All feature tiles use Obsidian's default dark settings background. Production components use synthetic data.</desc>${body}</svg>\n`;
 assert.ok(!/<(?:image|script|foreignObject)\b/i.test(svg), "Vector-only artwork required");
 assert.ok(!/\b(?:NaN|Infinity)\b/.test(svg), "Finite geometry required");
 const ids = [...svg.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);

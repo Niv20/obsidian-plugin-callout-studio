@@ -1,9 +1,11 @@
 import { setIcon } from "obsidian";
 import { t } from "../i18n";
+import { SidebarFold } from "../ui/sidebarFold";
 import { createSidebarFileGroup, renderSidebarLocation } from "../ui/sidebarResults";
 import type { PortableCalloutConversionPlan } from "../utils/portableCalloutVault";
 import type { PortableCalloutConversionChange, PortableCalloutLinkChange } from "../utils/portableCalloutPlan";
 import { PORTABLE_PAGE_SIZE } from "./portableConversionFrame";
+import { canLoadOnScroll, LOAD_MORE_SENTINEL } from "../ui/loadOnScroll";
 
 export interface PortableConversionRow {
 	id: string;
@@ -24,40 +26,76 @@ export function portableConversionRows(plan?: PortableCalloutConversionPlan): Po
 	].sort((a, b) => a.path.localeCompare(b.path) || a.change.line - b.change.line || Number(a.linkOnly) - Number(b.linkOnly));
 }
 
+/**
+ * Which boxes each list showed ticked when it was last drawn, by change id.
+ * The rows are drawn again from nothing on every change, so a box that is new
+ * has no memory of how it was a moment ago; this does. (What was *drawn*, not
+ * what the page says now: a click has already turned the old box over before
+ * this runs.)
+ */
+const tickedWhenDrawn = new WeakMap<HTMLElement, Map<string, boolean>>();
+
+/**
+ * Draw the first `limit` rows, grouped by note.
+ *
+ * @param fold Which notes' groups are folded away; the view keeps one across
+ *   its redraws, and each group's fold button writes to it.
+ * A box whose answer changed since the last draw is drawn as it was and then
+ * turned over once the browser has seen it that way, so that styles.css can
+ * animate the tick being drawn or taken back.
+ *
+ * @returns The empty marker the list ends in while more rows are left, for
+ *   the view's `LoadOnScroll` to watch (finding S10-07); null when every row
+ *   is drawn, or when the window cannot watch it (the list then ends in the
+ *   old Show more button).
+ */
 export function renderPortableConversionRows(
 	root: HTMLElement, plan: PortableCalloutConversionPlan | undefined, rows: readonly PortableConversionRow[],
 	limit: number, disabled: boolean, current: string | undefined,
 	onSection: (path: string, section: HTMLElement) => void,
 	editingId?: string,
 	resetEnabled = false,
-): void {
+	fold: SidebarFold = new SidebarFold(),
+): HTMLElement | null {
+	const before = tickedWhenDrawn.get(root);
+	const nowTicked = new Map<string, boolean>();
+	tickedWhenDrawn.set(root, nowTicked);
 	root.empty();
-	if (!plan) return;
-	if (plan.skipped) root.createEl("p", { text: t("portable.skipped", { count: plan.skipped }), cls: "cs-portable-change-note" });
+	if (!plan) return null;
 	const selected = new Set(plan.selectedIds);
 	const blocked = new Map(plan.blockedChanges.map(entry => [entry.id, entry.reason]));
 	const counts = new Map<string, number>();
 	for (const row of rows) counts.set(row.path, (counts.get(row.path) ?? 0) + 1);
 	let path: string | undefined;
-	let grid: HTMLElement | undefined;
+	let box: HTMLElement | undefined;
+	/** The turns-over to do once every box is on the page. */
+	const turnOvers: (() => void)[] = [];
 	for (const row of rows.slice(0, limit)) {
 		const { change, linkOnly } = row;
-		if (!grid || path !== row.path) {
+		if (!box || path !== row.path) {
 			path = row.path;
-			const group = createSidebarFileGroup(root, { path, count: counts.get(path)!, cls: "cs-portable-file" });
-			grid = group.grid;
+			const group = createSidebarFileGroup(root, { path, count: counts.get(path)!, cls: "cs-portable-file", fold });
+			box = group.matches;
 			onSection(path, group.section);
 		}
-		const card = grid.createDiv({ cls: linkOnly ? "cs-portable-link-change" : "cs-portable-change cs-sidebar-selectable" });
+		// A row of the file's box. Not Obsidian's `.search-result-file-match`,
+		// whose hover tint would light up a row that is not itself a control.
+		const card = box.createDiv({ cls: linkOnly ? "cs-portable-link-change cs-portable-row" : "cs-portable-change cs-portable-row cs-sidebar-selectable" });
 		const editing = !linkOnly && change.id === editingId;
 		card.toggleClass("is-editing", editing);
+		// The row the caret is in (see portableConversionNavigation.ts `mark`).
+		card.toggleClass("is-active", current === row.id);
 		card.toggleClass("is-included", selected.has(change.id));
 		if (!linkOnly) {
 			const checkbox = card.createEl("input", { type: "checkbox", attr: {
 				"data-change-id": change.id,
 				"aria-label": t("portable.selectChange", { path: change.path, line: change.line }),
 			} });
-			checkbox.checked = selected.has(change.id);
+			const ticked = selected.has(change.id);
+			const was = before?.get(change.id);
+			nowTicked.set(change.id, ticked);
+			checkbox.checked = was ?? ticked;
+			if (was !== undefined && was !== ticked) turnOvers.push(() => { checkbox.checked = ticked; });
 			checkbox.disabled = disabled;
 		}
 		const body = card.createDiv({ cls: "cs-sidebar-result cs-portable-change-body", attr: {
@@ -67,7 +105,7 @@ export function renderPortableConversionRows(
 			type: "button", "data-action": "result", "data-row-id": row.id,
 		} });
 		const location = renderSidebarLocation(source, { role: rowRole(row), line: change.line, cls: "cs-portable-change-location" });
-		if (!linkOnly && (change as PortableCalloutConversionChange).custom) location.createSpan({ cls: "cs-portable-custom-badge", text: t("portable.customBadge") });
+		if (!linkOnly && (change as PortableCalloutConversionChange).custom) location.createSpan({ cls: "flair mod-flat cs-portable-custom-badge", text: t("portable.customBadge") });
 		for (const which of ["before", "after"] as const) {
 			const line = (which === "before" ? source : body).createSpan({ cls: "cs-portable-diff-line" });
 			line.createSpan({ text: t(`portable.${which}`), cls: "cs-portable-diff-label" });
@@ -93,10 +131,19 @@ export function renderPortableConversionRows(
 		}
 		if (linkOnly) source.setAttribute("aria-description", t("portable.relatedLinksHint"));
 	}
-	if (rows.length > limit) root.createEl("button", {
+	// Reading a measurement makes the browser work out how the boxes look as drawn
+	// (once for all of them); turning them over after that starts their transitions.
+	if (turnOvers.length > 0) void root.offsetWidth;
+	for (const turnOver of turnOvers) turnOver();
+	if (rows.length <= limit) return null;
+	if (canLoadOnScroll(root.ownerDocument)) {
+		return root.createDiv({ cls: LOAD_MORE_SENTINEL, attr: { "aria-hidden": "true" } });
+	}
+	root.createEl("button", {
 		text: t("portable.showMore", { count: Math.min(PORTABLE_PAGE_SIZE, rows.length - limit) }),
 		cls: "cs-portable-more", attr: { "data-action": "more" },
 	});
+	return null;
 }
 
 function rowRole(row: PortableConversionRow): string {

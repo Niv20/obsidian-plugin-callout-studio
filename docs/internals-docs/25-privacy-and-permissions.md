@@ -77,13 +77,13 @@ These pictures live in the plugin's own data file alongside the rest of your set
   It survives unload/uninstall, but clearing app data can remove it. Each entry
   also holds why it was recorded, which supplies its automatic display name. It is never synced or
   sent to a server by this plugin; see
-  [Version history](../user-guide/13-syncing-and-backups.md#version-history).
+  [Restore an earlier version](../user-guide/13-syncing-and-backups.md#version-history).
 - **Recovery backup files** inside the plugin's vault directory. These can sync
   through your chosen provider and can be removed with that directory. They are
   distinct from the device-only checkpoint; see the same chapter for retention.
   Beside them, one small `labels-<device>.json` per device holds why each of that
   device's backups was taken. These reasons supply the automatic names in
-  **Version history**; the file syncs like the backups do.
+  **Restore an earlier version**; the file syncs like the backups do.
 - **The most recent note rewrite**, kept only in memory for **Undo** after
   replacing callouts, converting a type's uses to plain text, or changing notes
   from an **Update your notes?** window. The journal
@@ -95,7 +95,7 @@ These pictures live in the plugin's own data file alongside the rest of your set
   or the plugin interface, including copies received through sync. Unsafe markup
   is removed; a damaged drawing uses the usual missing-icon display.
 
-  **View details** in **Version history** displays a selected version's
+  **View details** in **Restore an earlier version** displays a selected version's
   changed fields and current/after-restoring visual previews entirely within the
   app. Only differences are displayed; there is no full-backup or original-file-text
   view. It does not send data, fetch assets, write a file, or restore the setup.

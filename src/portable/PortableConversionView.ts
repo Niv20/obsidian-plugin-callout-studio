@@ -1,8 +1,9 @@
-import { ItemView, Notice, type WorkspaceLeaf } from "obsidian";
+import { ItemView, type WorkspaceLeaf } from "obsidian";
 import { t } from "../i18n";
 import { PORTABLE_CONVERSION_ICON_ID } from "../icons/uiIcons";
 import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import { ConfirmModal } from "../utils/ConfirmModal";
+import { KeptMascot } from "../ui/mascot/mascotPlaces";
 import {
 	applyPortableCalloutConversion, preparePortableCalloutConversion,
 	PortableCalloutPreviewCache, PortableCalloutVaultError, type PortableCalloutConversionPlan,
@@ -14,6 +15,9 @@ import { PortableCustomReplacementError } from "../utils/portableCalloutCustom";
 import { PortableConversionWatch } from "./portableConversionWatch";
 import { PortableConversionNavigation } from "./portableConversionNavigation";
 import { PortableConversionHelpModal } from "./PortableConversionHelpModal";
+import { LoadOnScroll } from "../ui/loadOnScroll";
+import { SidebarParking } from "../ui/sidebarParking";
+import { showNotice, workNotice } from "../ui/mascot/mascotNotices";
 
 export const PORTABLE_CONVERSION_VIEW = "callout-studio-portable-conversion";
 
@@ -25,6 +29,13 @@ export class PortableConversionView extends ItemView {
 	private readonly busy: PortableConversionBusy;
 	private readonly cache = new PortableCalloutPreviewCache();
 	private frame?: PortableConversionFrame;
+	/** Draws the next 100 rows as the list's end scrolls into reach (finding S10-07). */
+	private readonly loadOnScroll = new LoadOnScroll(() => this.frame?.scroll ?? null, () => {
+		this.limit += PORTABLE_PAGE_SIZE;
+		this.render();
+	});
+	/** Keeps the file groups far from the screen from being drawn, so a long list does not slow the editor. */
+	private readonly parking = new SidebarParking(() => this.frame?.scroll ?? null);
 	private basePlan?: PortableCalloutConversionPlan;
 	private plan?: PortableCalloutConversionPlan;
 	private selected = new Set<string>();
@@ -42,6 +53,12 @@ export class PortableConversionView extends ItemView {
 	private timer?: number;
 	private abort?: AbortController;
 	private status: () => string = () => "";
+	/** The key of what the status line says, so it can be drawn as what it is. */
+	private statusKey = "";
+	/** The mascot over "nothing to convert", kept while the status line is drawn again. */
+	private readonly emptyMascot = new KeptMascot("medium");
+	/** Set when the status turns to "nothing to convert": the mascot nods once, "all good". */
+	private nodWhenEmpty = false;
 
 	constructor(leaf: WorkspaceLeaf, private readonly debounceMs = 350, busyDelayMs = 600) {
 		super(leaf);
@@ -64,6 +81,7 @@ export class PortableConversionView extends ItemView {
 	getIcon(): string { return PORTABLE_CONVERSION_ICON_ID; }
 	refreshLabels(): void {
 		if (!this.opened) return;
+		// A new frame is drawn in the new language, the help button's label included.
 		this.frame = undefined;
 		this.render();
 	}
@@ -80,11 +98,14 @@ export class PortableConversionView extends ItemView {
 	}
 	onClose(): Promise<void> {
 		this.stop();
+		this.emptyMascot.detach();
 		this.contentEl.empty();
 		this.frame = undefined;
 		return Promise.resolve();
 	}
 	private stop(): void {
+		this.loadOnScroll.stop();
+		this.parking.stop();
 		this.opened = false;
 		this.revision++;
 		this.stale = true;
@@ -180,7 +201,6 @@ export class PortableConversionView extends ItemView {
 		const button = (event.target as HTMLElement | null)?.closest<HTMLButtonElement>("button[data-action]");
 		if (!button || button.disabled) return;
 		const action = button.dataset.action;
-		if (action === "help") { new PortableConversionHelpModal(this.app).open(); return; }
 		if (action === "edit" || action === "restore") {
 			const id = button.closest<HTMLElement>("[data-row-id]")?.dataset.rowId?.replace(/^source:/, "");
 			if (action === "edit") this.custom.edit(id, event); else this.custom.restore(id);
@@ -246,7 +266,34 @@ export class PortableConversionView extends ItemView {
 	}
 	private setStatus(key: string, vars: Record<string, string | number> = {}): void {
 		this.status = () => key ? t(key, vars) : "";
-		this.frame?.status.setText(this.status());
+		if (key === "portable.empty" && this.statusKey !== key) this.nodWhenEmpty = true;
+		this.statusKey = key;
+		this.paintStatus();
+	}
+	/**
+	 * Write the status line: nothing to convert reads as Obsidian's quiet
+	 * empty line (`search-empty-state`); anything else it says is a problem or
+	 * a warning, drawn in the warning colour (finding S10-08).
+	 */
+	private paintStatus(): void {
+		const status = this.frame?.status;
+		if (!status) return;
+		status.setText(this.status());
+		const empty = this.statusKey === "portable.empty";
+		status.toggleClass("search-empty-state", empty);
+		// The line goes in the middle of the pane's height (styles.css).
+		this.frame?.scroll.toggleClass("is-empty", empty);
+		// Nothing to convert is good news: the mascot over it nods, once.
+		if (!empty) {
+			this.emptyMascot.detach();
+			status.removeClass("cs-mascot-line");
+			return;
+		}
+		if (this.emptyMascot.attach(status, "start")) status.addClass("cs-mascot-line");
+		if (this.nodWhenEmpty) {
+			this.nodWhenEmpty = false;
+			void this.emptyMascot.play("nod");
+		}
 	}
 	private render(): void {
 		if (!this.opened) return;
@@ -256,16 +303,17 @@ export class PortableConversionView extends ItemView {
 		const focusedId = this.contentEl.contains(focused) ? focused?.dataset.changeId : undefined;
 		const focusedRow = this.contentEl.contains(focused) ? focused?.closest<HTMLElement>("[data-row-id]")?.dataset.rowId : undefined;
 		const focusedAction = focused?.dataset.action;
-		const frame = this.frame ??= createPortableConversionFrame(this.contentEl);
+		// The help button, at the end of the Convert row (finding S10-05).
+		const frame = this.frame ??= createPortableConversionFrame(this.contentEl, () => new PortableConversionHelpModal(this.app).open());
 		const plan = this.plan;
 		updatePortableSelection(frame, plan, this.ready());
 		paintBlocked(frame.convert, this.convertBlockedReason());
-		frame.status.setText(this.status());
+		this.paintStatus();
 		frame.hint.setText(plan?.recovery ? t("portable.recovery") : "");
 		frame.retry.hidden = !this.failed || this.unrecoverable;
 		frame.retry.disabled = this.scanning || this.confirming || this.applying;
 		this.busy.update(frame, this.stale, !this.failed && !this.unrecoverable && (this.stale || this.scanning || this.applying));
-		this.resultNavigation.renderRows(frame.results, plan, this.limit, !this.ready() || Boolean(plan?.recovery), this.custom.editingId, this.custom.resetEnabled);
+		const sentinel = this.resultNavigation.renderRows(frame.results, plan, this.limit, !this.ready() || Boolean(plan?.recovery), this.custom.editingId, this.custom.resetEnabled);
 		this.custom.render(frame.results);
 		if (focusedId) Array.from(frame.results.querySelectorAll<HTMLInputElement>("input[data-change-id]"))
 			.find(input => input.dataset.changeId === focusedId && !input.disabled)?.focus({ preventScroll: true });
@@ -273,6 +321,9 @@ export class PortableConversionView extends ItemView {
 			.find(button => button.dataset.action === focusedAction && !button.disabled
 				&& button.closest<HTMLElement>("[data-row-id]")?.dataset.rowId === focusedRow)?.focus({ preventScroll: true });
 		frame.scroll.scrollTop = scrollTop;
+		this.loadOnScroll.watch(sentinel);
+		// Every row was drawn again: park the groups that are far from the screen.
+		this.parking.watch(frame.results);
 		this.resultNavigation.sync(!this.stale, this.failed);
 	}
 	private async convert(): Promise<void> {
@@ -288,18 +339,20 @@ export class PortableConversionView extends ItemView {
 		this.render();
 		try {
 			const confirmed = await new ConfirmModal(this.app, t("portable.confirmTitle"),
-				t("portable.confirmBody", { count: plan.count, files: plan.files, links: plan.linkCount }), t("portable.confirmAction")).confirm();
+				t("portable.confirmBody", { count: plan.count, files: plan.files, links: plan.linkCount }), t("portable.confirmAction")).withMascot(t("portable.confirmSubtitle")).confirm();
 			if (!confirmed || !this.opened || this.stale || revision !== this.revision) return;
 			this.applying = true;
 			this.stale = true;
 			this.busy.setMessage("portable.converting");
 			this.render();
-			const result = await applyPortableCalloutConversion(this.app, plan);
+			// The mascot paints beside the converting line until the notes are done.
+			const work = workNotice(t("portable.converting"));
+			const result = await applyPortableCalloutConversion(this.app, plan).finally(() => { void work.done(); });
 			const message = result.status === "complete"
 				? t("portable.complete", { count: result.count, files: result.files, links: result.linkCount })
 				: t("portable.stopped", { count: result.count, files: result.files, links: result.linkCount }) + " " + portableConversionErrorText(result.error);
-			const duration = result.status === "complete" ? undefined : 12000;
-			new Notice(message, duration);
+			if (result.status === "complete") showNotice("celebrate", message);
+			else showNotice("warning", message);
 			this.plan = this.basePlan = result.remainingPlan;
 			if (result.status === "complete" || result.files || result.remainingPlan) this.custom.clear();
 			this.pending = !result.remainingPlan;
@@ -314,7 +367,7 @@ export class PortableConversionView extends ItemView {
 		} catch (error) {
 			this.stale = this.failed = true;
 			this.status = () => portableConversionErrorText(error);
-			new Notice(this.status());
+			showNotice("problem", this.status());
 		} finally {
 			this.confirming = this.applying = false;
 			if (this.opened) {

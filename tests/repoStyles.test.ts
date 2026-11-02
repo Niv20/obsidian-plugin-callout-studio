@@ -48,15 +48,6 @@ const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, (m) =>
 );
 const cssRaw = readRepoFile("styles.css");
 
-describe("menu customization layout", () => {
-	it("lets action labels use the available row width", () => {
-		assert.match(
-			cssRaw,
-			/\.cs-menu-row\s+\.callout-studio-row-name\s*\{[\s\S]*?max-width:\s*none;/,
-		);
-	});
-});
-
 /**
  * The two prefixes this plugin owns. Everything else in the file is Obsidian's.
  *
@@ -217,9 +208,6 @@ describe("class names in styles.css and src/ agree", () => {
 	 */
 	const PREFIXES = [
 		"cs-import-issue-",
-		"cs-settings-group",
-		"cs-palette-menu-item",
-		"cs-border-side-btn",
 	];
 
 	/**
@@ -235,6 +223,7 @@ describe("class names in styles.css and src/ agree", () => {
 		"callout-studio-local", // localStorage key for the device-local state
 		"callout-studio-theme-claims-v1", // localStorage key for the claim check's verdicts
 		"callout-studio-dynamic-css", // <style> element id
+		"callout-studio-preview-css", // <style> element id of the demo preview layer
 		"callout-studio-do-not-delete", // the legacy vault snippet's filename
 		"callout-studio-custom", // the exported vault snippet's filename
 		"callout-studio-welcome", // obsidian:// URI action
@@ -257,20 +246,47 @@ describe("class names in styles.css and src/ agree", () => {
 	 * line here.
 	 */
 	const EMITTED_WITHOUT_RULES = new Set([
-		"cs-paused-allowed", // a marker pausedReadOnly reads: the row stays usable while saving is paused
-		"cs-occurrences-summary", // view-specific lookup; shared cs-sidebar-summary supplies the presentation
+		"cs-load-more-sentinel", // the empty marker a list ends in while more is left to load (ui/loadOnScroll.ts)
+		"cs-notice-action", // a notice's action button; Obsidian's .notice-cta draws it
+		"cs-import-issue", // one problem's row in the import report; tests count the rows by it
+		"cs-import-issue-field", // the field a problem is about; Obsidian's .setting-item-description code draws it
+		"cs-import-report-group", // one entry's group in the import report; Obsidian's SettingGroup draws it
+		"cs-occurrences-summary", // view-specific lookup; Obsidian's .search-results-result-count supplies the presentation
 		"cs-occurrences-file", // per-view hook; shared cs-sidebar-file supplies the layout
 		"cs-portable-file", // per-view hook; shared cs-sidebar-file supplies the layout
 		"cs-occurrences-result", // identity/query hook; shared cs-sidebar-result supplies the card
 		"cs-occurrences-location", // per-view hook; shared cs-sidebar-location supplies its typography
+		"cs-combobox-iconless-option", // a test hook for the row with no icon; the shared .cs-combobox-option paints it
+		"cs-combobox-input", // finds a picker's search box in tests; Obsidian's .search-input-container rules draw it
+		"cs-palette-combobox", // finds the Color row's picker in tests; Obsidian's .dropdown draws its field
+		"cs-select-button", // finds a SelectDropdown's icon button in tests; its caller dresses it (.cs-footer-tile, .clickable-icon)
+		"cs-select-value", // an icon button's words, hidden or shown; its caller's tile lays them out
+		"callout-studio-suggestion-create-new", // finds a "Create …" row in tests and scenes; it is drawn like any suggestion row (S10-16)
+		"cs-btn-disabled", // marks a blocked button (ui/blockedButton.ts); Obsidian's aria-disabled rule draws the 70% dim
+		"cs-icon-adjust-reset", // finds an icon-adjustment group's ↺ in tests; Obsidian draws the button, cs-reset-idle hides it
+		"cs-group-reset", // finds a settings box's heading ↺ to dim it (declarative/rowParts.ts); Obsidian draws the button
+		"cs-tag-chip-remove", // finds an ID pill's x in tests; Obsidian's .multi-select-pill-remove-button draws it
+		"cs-tag-chip-lock", // finds the pinned ID's lock in tests; it sits in Obsidian's remove-button slot
+		"callout-studio-replace-search", // finds Replace's search box in tests and scenes; Obsidian's .search-input-container rules draw it
+		"cs-quick-insert-search", // finds Quick insert's search box in tests; Obsidian's .search-input-container rules draw it
+		"cs-icon-libraries", // Manage icon libraries' body, a hook for tests and snippets; its groups are Obsidian's SettingGroups
+		"cs-icon-library-reset", // finds the Available heading's reset arrow in tests; Obsidian draws the extra button, cs-reset-idle hides it
+		"cs-box", // marks every box of the plugin's settings (declarative/rowParts.ts); tests find the boxes by it. No rule keys on it since the rows went back to Obsidian's own alignment
+		// Window classes that only set a width until 2026-10-23. The windows are
+		// Obsidian's 560px dialog now; the classes stay as hooks a user's own
+		// snippet may already target.
+		"callout-studio-adm-import-modal",
+		"callout-studio-cm-import-modal",
+		"callout-studio-credits-modal",
+		"callout-studio-export-format-modal",
+		"callout-studio-import-report-modal",
+		"callout-studio-import-source-modal",
+		"cs-portable-modal",
 
 		"callout-studio-more-btn",
 		"callout-studio-replace-modal",
 		"cs-cm-widget",
 		"cs-command-editor",
-		"cs-fold-dropdown",
-		"cs-fold-trigger",
-		"cs-icon-source",
 		"cs-source-name",
 		"cs-welcome-hero",
 		"cs-welcome-panel",
@@ -473,7 +489,7 @@ describe("modal surfaces use the --cs-surface pair", () => {
 			bad,
 			[],
 			report(
-				"Inside .cs-modal, paint var(--cs-surface, var(--background-primary)) or var(--cs-surface-raised, var(--background-secondary)) — the raw variables are wrong on mobile dark:",
+				"Inside .cs-modal, paint var(--cs-surface, var(--background-primary)) or var(--cs-surface-raised, var(--setting-items-background)) — the raw variables are wrong on mobile dark:",
 				bad,
 			),
 		);

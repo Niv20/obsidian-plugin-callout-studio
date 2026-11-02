@@ -6,7 +6,7 @@
  *
  * Requests start only on Download or confirmation of uncached artwork.
  */
-import { Modal, setIcon } from "obsidian";
+import { Modal } from "obsidian";
 import type { App } from "obsidian";
 import type {
 	CalloutDefinition,
@@ -16,7 +16,7 @@ import type {
 	UserImageIcon,
 } from "../../types";
 import type { IconVariantState } from "../../icons/types";
-import { ICON_SOURCE_IDS, getSource, packFor } from "../../icons/registry";
+import { getSource, packFor } from "../../icons/registry";
 import type { IconService } from "../../icons/IconService";
 import {
 	isDownloaded,
@@ -42,15 +42,17 @@ import {
 } from "./allSources";
 import { PackPanel } from "./PackPanel";
 import { ImagePanel } from "./ImagePanel";
-import { IconLibrariesModal } from "./IconLibrariesModal";
+import { openIconLibraries } from "./openIconLibraries";
+import { loadSourceCounts } from "./sourceCounts";
 import {
 	alignIconPickerRows,
 	mountIconSourcePicker,
 	showIconSource,
 } from "./sourcePicker";
 import { explainIfBlocked, paintBlocked } from "../../ui/blockedButton";
+import { setButtonBusy } from "../../ui/busyButton";
 import type { ListboxPopup } from "../../ui/listboxPopup";
-import { applyModalChrome, removeModalChrome } from "../modalChrome";
+import { addCancelButton, applyModalChrome, removeModalChrome } from "../modalChrome";
 import { t } from "../../i18n";
 
 /**
@@ -170,13 +172,13 @@ export class IconPicker extends Modal {
 		// Bundled indexes make counting offline and normally finish before first open.
 		void this.loadSourceCounts(generation);
 
-		this.previewEl = footer.createDiv("icon-picker-preview");
+		// `mod-secondary` is Obsidian's mark for the one item in a button bar
+		// that is not a button: at the start on a computer, under the buttons
+		// on a phone or tablet, where the bar stacks.
+		this.previewEl = footer.createDiv("icon-picker-preview mod-secondary");
 		this.updatePreview();
 
-		const cancelBtn = footer.createEl("button", {
-			text: t("iconPicker.cancel"),
-		});
-		cancelBtn.addEventListener("click", () => this.cancel());
+		addCancelButton(footer, t("iconPicker.cancel"), () => this.cancel());
 
 		this.confirmBtn = footer.createEl("button", {
 			text: t("iconPicker.confirm"),
@@ -287,18 +289,8 @@ export class IconPicker extends Modal {
 	}
 
 	private async loadSourceCounts(generation: number): Promise<void> {
-		for (const id of ICON_SOURCE_IDS) {
-			try {
-				const index = await getSource(id).loadIndex();
-				if (generation !== this.openGeneration) return;
-				this.sourceCounts.set(id, index.entries.length);
-			} catch (e) {
-				if (generation !== this.openGeneration) return;
-				// A source that cannot describe itself simply shows no count.
-				console.warn(`[CalloutStudio] could not count icons in "${id}"`, e);
-			}
-		}
-		this.sourcePicker?.setItems();
+		const finished = await loadSourceCounts(this.sourceCounts, () => generation === this.openGeneration);
+		if (finished) this.sourcePicker?.setItems();
 	}
 
 	/**
@@ -315,24 +307,23 @@ export class IconPicker extends Modal {
 	 */
 	private async openLibraries(): Promise<void> {
 		const generation = this.openGeneration;
-		// A library downloaded in an earlier session reads as missing until its
-		// file has been read back, which the picker does as it opens. Pressing
-		// Manage libraries first would list a library the person already has
-		// under "to download" — so wait for the same read, free once done.
-		await this.plugin.icons.packs.loadAllFromDisk();
-		if (generation !== this.openGeneration) return;
-		const offeredBefore = new Set(this.pooledSources());
-		const shownBefore = this.panelContents();
-		const changed = await new IconLibrariesModal({
-			app: this.plugin.app,
-			settings: this.plugin.settings,
-			saveSettings: () => this.plugin.saveSettings(),
-			settingsWriter: this.plugin.settingsWriter,
-			registry: this.plugin.registry,
-			icons: this.plugin.icons,
+		let offeredBefore = new Set<IconSourceId>();
+		let shownBefore = "";
+		// The window reads the pack files back before it opens (a library
+		// downloaded in an earlier session reads as missing until then, and
+		// pressing Manage libraries first would list it under "to download").
+		// What the picker shows is taken once that is done, so the comparison
+		// below sees only what the window changed.
+		const changed = await openIconLibraries(this.plugin, {
 			countFor: (id) => this.sourceCount(id),
 			editing: this.editedCallout(),
-		}).openAndWait();
+			beforeOpen: () => {
+				if (generation !== this.openGeneration) return false;
+				offeredBefore = new Set(this.pooledSources());
+				shownBefore = this.panelContents();
+				return true;
+			},
+		});
 		if (!changed || generation !== this.openGeneration) return;
 
 		const offered = new Set(this.pooledSources());
@@ -540,8 +531,8 @@ export class IconPicker extends Modal {
 	 * Why Confirm cannot act, or null: no icon is chosen — which is also what
 	 * switching to another source does, since an icon only means something
 	 * within the source it came from. Dimmed rather than disabled, so pressing
-	 * it says so. (While the artwork downloads it is truly disabled: the
-	 * spinner and "Downloading icon" in its label already say why.)
+	 * it says so. (While the artwork downloads it is truly disabled, and
+	 * Obsidian's loading ring in place of its label says why.)
 	 */
 	private confirmBlockedReason(): string | null {
 		return this.selectedIcon ? null : t("iconPicker.chooseFirst");
@@ -559,26 +550,16 @@ export class IconPicker extends Modal {
 			return;
 		}
 
-		const originalText = this.confirmBtn.textContent ?? "";
-		this.confirmBtn.disabled = true;
-		this.confirmBtn.toggleClass("is-disabled", true);
-		this.confirmBtn.empty();
-		this.confirmBtn.addClass("callout-studio-icon-picker-loading");
-		const spinner = this.confirmBtn.createSpan({
-			cls: "callout-studio-spinner",
-		});
-		setIcon(spinner, "loader-2");
-		this.confirmBtn.createSpan({ text: t("editor.downloadingIcon") });
+		// Obsidian's busy button, as a form shows while it submits: a ring over
+		// the label, without changing the button's width.
+		setButtonBusy(this.confirmBtn, true);
 		try {
 			await this.plugin.ensureIconArtwork(this.selectedIcon);
 		} catch {
 			// Failures surface through the icon's own error state; never trap
 			// the user in the picker over one.
 		} finally {
-			this.confirmBtn.disabled = false;
-			this.confirmBtn.removeClass("callout-studio-icon-picker-loading");
-			this.confirmBtn.empty();
-			this.confirmBtn.textContent = originalText;
+			setButtonBusy(this.confirmBtn, false);
 		}
 		// The user may have closed the modal while the fetch was in flight.
 		if (!this.resolve) return;

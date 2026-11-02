@@ -189,21 +189,45 @@ describe("generateMetadataColorCSS — the rules", () => {
 		}
 	});
 
-	it("stays off callouts the theme owns", () => {
+	it("colours a callout the theme draws too, and repaints its frame, title and icon", () => {
 		const h = harness();
 		h.registry.add(definition({ id: "themed" }));
 		h.registry.setThemeOwnedIds(new Set(["themed"]));
 		const css = internals(h).generateMetadataColorCSS();
-		assert.ok(css.includes(':not([data-callout="themed"])'));
+		assert.ok(!css.includes(":not("), "no callout is left out of the colour");
+		const red = flattenNesting(css.slice(css.indexOf("/* metadata colour: red */")));
+		const drawn = rulesMatching(red, ':is([data-callout="themed"])').find((r) => r.props.includes("border-color"));
+		assert.ok(drawn, "a block for the names the theme draws");
+		assert.deepStrictEqual(
+			["border-color", "--callout-title-color", "--callout-icon-color"].filter((p) => !drawn.props.includes(p)),
+			[],
+		);
+		// One class heavier than the colour block, which is what lets it beat the theme's rule.
+		const colour = rulesMatching(red, ".callout[data-callout]:is([data-callout-metadata")
+			.find((r) => r.props.includes("--cs-accent"));
+		assert.ok(colour);
+		assert.ok(compareSpecificity(specificityOf(splitSelectorList(drawn.selector)[0]!), specificityOf(splitSelectorList(colour.selector)[0]!)) > 0);
 	});
 
-	it("stays off only the claimed name of a callout the theme partly names", () => {
+	it("repaints only the names the theme draws, not the rest of a callout it partly names", () => {
 		const h = harness();
 		h.registry.add(definition({ id: "mine", aliases: ["themed"] }));
 		h.registry.setThemeOwnedIds(new Set(["themed"]));
 		const css = internals(h).generateMetadataColorCSS();
-		assert.ok(css.includes(':not([data-callout="themed"])'));
+		assert.ok(css.includes('[data-callout="themed"]'));
 		assert.ok(!css.includes('[data-callout="mine"]'));
+	});
+
+	it("a transparent palette keeps the frame it cleared on a callout the theme draws", () => {
+		const h = harness();
+		h.registry.settings.customPalettes = [palette("Glass", { transparentBg: true })];
+		h.registry.add(definition({ id: "themed" }));
+		h.registry.setThemeOwnedIds(new Set(["themed"]));
+		const css = internals(h).generateMetadataColorCSS();
+		const glass = css.slice(css.indexOf("/* metadata colour: glass */"));
+		const drawn = glass.slice(glass.indexOf(':is([data-callout="themed"])'));
+		assert.ok(drawn.includes("--callout-title-color"));
+		assert.ok(!drawn.includes("color-mix(in oklch, var(--cs-accent) calc("), "no border colour is put back");
 	});
 
 	it("a transparent palette clears the background and the two child boxes", () => {
@@ -224,6 +248,7 @@ describe("generateMetadataColorCSS — the rules", () => {
 		assert.ok(!css.includes(".cs-inline-callout"));
 		assert.ok(!css.includes(".cs-heading-callout"));
 		assert.ok(!css.includes(":not("), "the theme of THIS vault means nothing elsewhere");
+		assert.ok(!css.includes("--callout-title-color"), "nor does what it repaints on the theme's callouts");
 	});
 });
 

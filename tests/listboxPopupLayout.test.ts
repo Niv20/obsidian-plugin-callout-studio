@@ -182,6 +182,20 @@ describe("listbox popup placement — visible space", () => {
 		} finally { h.dispose(); }
 	});
 
+	// The popover hangs from the field's END edge (styles.css, `inset-inline-end`):
+	// its right edge on the field's right in English, its left on the field's left
+	// in Hebrew. The fake popover is 240px wide, the field spans 100–340px.
+	it("hangs from the field's end edge and stays put while it fits, in either direction", () => {
+		const h = mount();
+		try {
+			for (const direction of ["ltr", "rtl"]) {
+				h.view.styles.set(asEl(h.control), { direction });
+				h.refresh();
+				assert.equal(h.menu.style.getPropertyValue("--cs-dropdown-menu-offset-x"), "0px");
+			}
+		} finally { h.dispose(); }
+	});
+
 	it("bounds width and shifts from the trigger consistently, including RTL", () => {
 		const h = mount();
 		try {
@@ -191,7 +205,9 @@ describe("listbox popup placement — visible space", () => {
 				for (let i = 0; i < 2; i++) {
 					h.refresh();
 					assert.equal(h.menu.style.getPropertyValue("--cs-dropdown-menu-max-width"), "184px");
-					assert.equal(h.menu.style.getPropertyValue("--cs-dropdown-menu-offset-x"), direction === "ltr" ? "-42px" : "-98px");
+					// 184px wide in 58–242px: from the end edge, 156px in English
+					// and 100px in Hebrew, both moved to 58px.
+					assert.equal(h.menu.style.getPropertyValue("--cs-dropdown-menu-offset-x"), direction === "ltr" ? "-98px" : "-42px");
 				}
 			}
 		} finally { h.dispose(); }

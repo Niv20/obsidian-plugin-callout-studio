@@ -96,15 +96,15 @@ const buildRegularFoldDefaults: ItemBuilder = (_plugin, menu, context) => {
 	const headerText = editor.getLine(callout.headerLine);
 	const currentMark = (headerText.match(CALLOUT_FOLD_MARK_REGEX)?.[3] ??
 		"") as "" | "+" | "-";
+	// Only the two states the callout is NOT in: "set it to what it already is"
+	// does nothing, so that row is left out instead of being shown with a ✓.
 	for (const option of foldOptions()) {
 		if (option.mark === currentMark) continue;
 		menu.addItem((item) => {
 			item.setTitle(option.title)
 				.setIcon(option.icon)
 				.setSection(MENU_SECTION)
-				.onClick(() =>
-					setRegularFoldMark(editor, callout, option.mark),
-				);
+				.onClick(() => setRegularFoldMark(editor, callout, option.mark));
 		});
 	}
 };
@@ -150,8 +150,10 @@ const buildCopySection: ItemBuilder = (_plugin, menu, context) => {
 const buildDeleteSection: ItemBuilder = (_plugin, menu, context) => {
 	if (context.role !== "heading") return;
 	menu.addItem((item) => {
+		// Red, as every Delete in Obsidian's own menus is (`setWarning`).
 		item.setTitle(t("contextMenu.deleteSection"))
 			.setIcon("trash-2")
+			.setWarning(true)
 			.setSection(MENU_SECTION)
 			.onClick(() => {
 				const range = getHeadingSectionRange(

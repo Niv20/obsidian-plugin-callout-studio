@@ -15,25 +15,19 @@
  * suggestions (`CalloutMetadataSuggest`). Neither ever rewrites or adds the
  * `]` — see `replaceTypeText`. Enter is unchanged — most people never use
  * metadata, and Enter finishing the callout is what they expect.
+ *
+ * Settings → Editor → Callout autocomplete can switch it off. Typing then opens nothing, but
+ * the Insert and Wrap commands still open it on the `[!]` they write: they
+ * leave an empty type for the user to choose, and this list is how the
+ * command asks. The row under it can leave the theme's own callouts out.
  */
-import {
-	Editor,
-	EditorPosition,
-	EditorSuggest,
-	EditorSuggestContext,
-	EditorSuggestTriggerInfo,
-	MarkdownView,
-	Notice,
-	TFile,
-	setIcon,
-} from "obsidian";
+import { Editor, EditorPosition, EditorSuggest, EditorSuggestContext, EditorSuggestTriggerInfo, MarkdownView, TFile, setIcon } from "obsidian";
 import type CalloutStudioPlugin from "../main";
 import type { CalloutDefinition, CalloutRenderRole } from "../types";
 import { CalloutEditor } from "../settings/CalloutEditor";
-import { paintCalloutListIcon } from "../manager/theme/calloutListIcon";
 import { getLocale, t } from "../i18n";
 import { suggestableCallouts } from "../utils/usableCallouts";
-import { calloutMatchesQuery } from "../utils/calloutSearch";
+import { calloutMatchesQuery, matchedCalloutId } from "../utils/calloutSearch";
 import { readCalloutTrigger, tokenBodyAt, triggerInCode } from "./calloutTriggerContext";
 import {
 	landAfterInlineToken,
@@ -51,7 +45,9 @@ import {
 	titleAfterToken,
 } from "./calloutWriter";
 import { sortCalloutsByDisplayName } from "../utils/sorting";
-import { renderCalloutIdLine } from "../settings/calloutComboboxRow";
+import { renderCalloutComboboxRow } from "../settings/calloutComboboxRow";
+import { createSuggestionRow } from "../ui/suggestionRow";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 interface CreateNewSuggestion {
 	__createNew: true;
@@ -68,6 +64,11 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 	private plugin: CalloutStudioPlugin;
 	/** Role classified by the latest onTrigger; read by selectSuggestion. */
 	private triggerRole: CalloutRenderRole = "regular";
+	/**
+	 * The `[!` a command opened the list on while autocomplete is off: the
+	 * list keeps opening there as the type is typed, and nowhere else.
+	 */
+	private askedAt: { line: number; ch: number } | null = null;
 
 	constructor(plugin: CalloutStudioPlugin) {
 		super(plugin.app);
@@ -94,11 +95,15 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 	 * a frame so CM6 has flushed the insert and (when run from the command
 	 * palette) focus has returned to the editor — the manager no-ops unless the
 	 * editor is focused, hence the explicit `focus()`.
+	 *
+	 * `fromCommand`: a command wrote the `[!` and asks for its type, so the
+	 * list opens there even while autocomplete is switched off.
 	 */
-	triggerNow(editor: Editor, file: TFile | null): void {
+	triggerNow(editor: Editor, file: TFile | null, fromCommand = false): void {
 		if (!file) return;
 		window.requestAnimationFrame(() => {
 			editor.focus();
+			if (fromCommand) this.askedAt = this.tokenAtCursor(editor);
 			const manager = (
 				this.app.workspace as unknown as {
 					editorSuggest?: {
@@ -114,6 +119,13 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		});
 	}
 
+	/** Where the `[!` before the cursor opens, or null when the cursor is in no token. */
+	private tokenAtCursor(editor: Editor): { line: number; ch: number } | null {
+		const cursor = editor.getCursor();
+		const trigger = readCalloutTrigger(editor.getLine(cursor.line), cursor.ch, this.plugin.settings);
+		return trigger ? { line: cursor.line, ch: trigger.triggerCh } : null;
+	}
+
 	onTrigger(
 		cursor: EditorPosition,
 		editor: Editor,
@@ -127,6 +139,15 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 			this.plugin.settings,
 		);
 		if (!trigger) return null;
+
+		// Switched off: open only on the `[!` a command asked about.
+		if (!this.plugin.settings.suggestions.callouts) {
+			const asked = this.askedAt;
+			if (!asked || asked.line !== cursor.line || asked.ch !== trigger.triggerCh) {
+				this.askedAt = null;
+				return null;
+			}
+		}
 
 		// The query is the whole type, independent of where the cursor sits
 		// within it — reading only up to the cursor would mis-filter a mid-token
@@ -162,10 +183,16 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		// fallback row genuinely used elsewhere still autocompletes normally.
 		// The role narrows it again — see onTrigger, which classified it.
 		const all = suggestableCallouts(this.plugin.registry, this.triggerRole);
+		// The theme's own callouts, when the user left them out (Settings →
+		// Editor). Only from the rows: their names still count as taken
+		// below, so typing one in full never offers to create it again.
+		const offered = this.plugin.settings.suggestions.themeCallouts
+			? all
+			: all.filter((d) => d.source !== "theme");
 
 		// Filter — the same predicate the quick-insert window matches with, so
 		// the two lists can never disagree about what a typed word finds.
-		const filtered = all.filter((d) => calloutMatchesQuery(d, query));
+		const filtered = offered.filter((d) => calloutMatchesQuery(d, query));
 
 		const sorted = sortCalloutsByDisplayName(filtered, getLocale());
 
@@ -185,52 +212,31 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		return result;
 	}
 
+	/**
+	 * Draw one row of the popover, in Obsidian's suggestion anatomy (the icon,
+	 * the name, the ids under it; see ui/suggestionRow.ts), so it looks like the
+	 * link and tag suggestions around it (S10-16).
+	 */
 	renderSuggestion(item: CalloutSuggestion, el: HTMLElement): void {
 		el.closest<HTMLElement>(".suggestion")?.addClass("callout-studio-suggestion-list");
 		if (isCreateNew(item)) {
-			el.addClass("callout-studio-suggestion", "callout-studio-suggestion-create-new");
-			const iconEl = el.createDiv({
-				cls: "callout-studio-suggestion-icon",
+			// The plain look of any other row: a plus where a callout's icon
+			// would be. The class stays as a hook.
+			const { iconEl } = createSuggestionRow(el, {
+				title: t("autocomplete.createNew", { name: item.query }),
 			});
+			el.addClass("callout-studio-suggestion-create-new");
 			setIcon(iconEl, "plus");
-			const textEl = el.createDiv({
-				cls: "callout-studio-suggestion-text",
-			});
-			textEl.createDiv({
-				cls: "callout-studio-suggestion-name",
-				text: t("autocomplete.createNew", { name: item.query }),
-			});
 			return;
 		}
-		const def = item;
-		el.addClass("callout-studio-suggestion");
-
-		const isDark = activeDocument.body.classList.contains("theme-dark");
-
-		// A callout the theme owns keeps its place in the list — it is still a
-		// real id worth inserting — but wears the theme's icon and colour, not
-		// the ones stored on its row. Naming an appearance here that the callout
-		// will not have on the page is the one thing the entry must not do, and
-		// The list-icon painter asks derived theme ownership directly, so the
-		// answer moves immediately when the active theme changes.
-		const iconEl = el.createDiv({
-			cls: "callout-studio-suggestion-icon",
+		// The settings pickers draw their callouts with the same function: the
+		// two lists offer the same callouts and must not describe them
+		// differently. A callout the theme owns wears the theme's icon and
+		// colour there, not the ones stored on its row.
+		renderCalloutComboboxRow(el, item, this.plugin.registry, {
+			isDark: activeDocument.body.classList.contains("theme-dark"),
+			query: this.context?.query ?? "",
 		});
-		const color = paintCalloutListIcon(iconEl, def, this.plugin.registry, isDark);
-		iconEl.style.color = color;
-
-		// Text container
-		const textEl = el.createDiv({ cls: "callout-studio-suggestion-text" });
-		const nameEl = textEl.createDiv({
-			cls: "callout-studio-suggestion-name",
-			text: def.displayName,
-		});
-		nameEl.style.color = color;
-
-		// Second line: id + aliases, drawn by the same function the settings
-		// picker uses — the two lists offer the same callouts and must not
-		// describe them differently.
-		renderCalloutIdLine(textEl, def, this.context?.query ?? "");
 	}
 
 	/**
@@ -290,11 +296,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 
 		// If the user typed an alias, use that alias as the ID
 		const queryLower = query.toLowerCase();
-		const allIds = [def.id, ...(def.aliases ?? [])];
-		const matchedId =
-			allIds.find((id) => id.toLowerCase() === queryLower) ??
-			allIds.find((id) => id.toLowerCase().startsWith(queryLower)) ??
-			def.id;
+		const matchedId = matchedCalloutId(def, queryLower);
 
 		// Tab and `|` complete the type and nothing else, whatever the role.
 		if (key === "pipe") {
@@ -554,7 +556,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		// Nothing below may trust a position captured before that await.
 		const line = this.liveTriggerLine(editor, file, start);
 		if (line === null) {
-			new Notice(t("notice.autocompleteTargetMoved"));
+			showNotice("problem", t("notice.autocompleteTargetMoved"));
 			return;
 		}
 		// Both ends are re-derived from the line as it stands now. `end` was the

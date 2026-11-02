@@ -59,8 +59,8 @@ A refused request is remembered, though, and owed **only if the registry moved
 during the pass**. That same listener reconciles the theme's overlay rows
 before it injects, and a reconcile that changes a row is a registry round
 whose own inject arrives mid-pass. Dropped, its effect stayed out of the sheet
-- the fallback's exclusion list and the metadata colours' `:not()` of
-theme-owned ids - until something unrelated injected. `registry.revision`
+- the fallback's exclusion list and the metadata colours' theme-drawn block
+(`themeDrawnRules`) - until something unrelated injected. `registry.revision`
 counts `onChange` rounds, so the listener's unconditional `inject(false)`, which
 moves nothing, never buys a second pass. One rerun at most: a change made
 inside it waits for the next inject, as every nested request used to.
@@ -149,6 +149,78 @@ Comparing text first keeps that cost tied to actual changes.
 binding to a freshly-created or pre-existing element, `destroy()`), because in
 those cases the target may hold text this instance didn't write and can't be
 trusted as a comparison baseline.
+
+## The preview layer - a demo's rules in a sheet of their own
+
+The byte-identical short-circuit above saves the passes that change nothing. A
+colour drag in the palette editor is the opposite case: it changes something on
+every step, and what it changes is the rules of **one** stand-in callout
+(`palette-demo`) in a stylesheet that holds a rule block for every callout in
+the vault. Measured in a vault with 766 callouts (a 735 KB sheet), one step cost
+about 23 ms of script and 36 ms of frame, a profile that was almost all
+writing the sheet: `replaceSync` on the adopted sheet (~7 ms), the same text
+again into the `<style>` element (~8 ms), Obsidian copying that `<style>` text
+into the Settings pop-out window (~7 ms, on a mutation observer after the
+step), the style recalculation that follows, and under all of it generating a
+rule block for 766 callouts (~6 ms). A browser reports the colour many times a
+second while the picker is dragged, so the editor "stuck".
+
+`CSSInjector.repaintDemoPreview()` is what the palette editor's `beforeRender`
+calls instead of `inject(false)`. The demo's rules live in
+`manager/css/PreviewLayer.ts`: a second adopted sheet (adopted after the main
+one, so it wins a tie as the rules would have inside it) and a second `<style>`
+element with its own id (`callout-studio-preview-css`), written to the same two
+places the main sheet is for the same reason - the preview can sit in the main
+window, which shows the adopted sheet, or in a pop-out, which only gets the
+`<style>` copy.
+
+- **The first call** records the demo's id (`layeredDemoId`) and runs one
+  ordinary pass. The pass leaves that id out of the main sheet's per-callout
+  rules (`layeredDemo()`) and writes it to the layer. Everything else the pass
+  builds still sees the demo in `callouts`: the fallback and metadata rules are
+  made from every id the registry knows.
+- **Every later call** regenerates just that callout (`generateCalloutCSS`) and
+  rewrites just the layer, about 1 ms and a few hundred bytes. It is only taken
+  once the layer already carries the id (`previewLayer.owner`), the proof that
+  the main sheet was built without it.
+- **Any other pass** (a theme switch, an icon landing) still leaves the demo
+  out of the main sheet and rewrites the layer from the registry's current
+  definition. `PreviewLayer.write` skips text it already holds.
+- **Release** is automatic: the first pass that finds no lone demo clears
+  `layeredDemoId` and the layer, so a settings window that never says it is
+  done cannot leave the main sheet short a callout.
+
+Why skipping the whole pass is safe is a property, pinned by
+`tests/cssInjectorPreviewLayer.test.ts`: **the main sheet's text does not
+depend on the demo's fields.** A whole pass over a demo with a different accent,
+a hidden icon and a transparent background comes out byte-identical. If a future
+rule ever makes the main sheet read a demo's colours, that test fails and this
+shortcut has to go.
+
+Only a *lone* demo takes this path - `registry.getDemoPreview()`: a demo
+preview that stands on an id of its own. A preview that shadows a real callout
+(the callout editor's own) occupies that callout's place in the sheet and its
+rules replace the callout's there, so it cannot be lifted out; `repaintDemoPreview`
+falls back to the ordinary pass for it and for no preview at all. Two things a
+pass does that a layer step does not, and why neither is owed: `paintIcons()`
+(the stand-in's icon never changes while a palette is edited, and the first pass
+paints it) and `refreshAllCalloutEditors()` (no real callout changed, and the
+preview's own editor rebuilds its widgets in `LiveCalloutPreview.refresh`).
+
+The layer generates outside a pass, so it reuses the weight and accent spelling
+memoised by the last pass (`StudioWeightCache`) instead of calling
+`beginPass()`, which would re-scan the theme; a theme change is a `css-change`,
+which runs a whole pass and refreshes both. The one piece of pass state it does
+set is `emitThemeOff`, put back afterwards.
+
+Two callers use it. The palette editor never changes its stand-in's icon and
+passes nothing. The callout editor passes `iconRoot`, its preview pane: an icon
+is drawn into the DOM by `paintIcons`, not by CSS, so a step that may change it
+sweeps that one pane (a full pass sweeps every window). The callout editor only
+gains for a *new* callout, whose draft is a lone demo; editing an existing one
+shadows the real callout and takes the ordinary pass, as it always did. The
+per-role style popups change global rules that live in the main sheet, so a
+layer would not help them.
 
 ## `injectFromCache()` - the startup fast path
 
@@ -275,12 +347,13 @@ Three properties of that rule are the whole design, and each is load-bearing:
   about to emit. It also covers both claim sources at once, which two
   recording-site fixes would not.
 
-It is emitted only when `dialect.read !== coreAccentDialect()`, and never for a
-theme-owned row. **The fallback block deliberately gets no shim**: its native
-Block selector is an optional one-class baseline that must remain weaker than an
-ordinary exact theme or snippet definition. Unknown ids still receive a
-correctly-spelled `--callout-color`; registering the callout is the route to the
-full per-id repair and Studio-strength styling.
+It is emitted only when `dialect.read !== CORE_ACCENT_SPELLING` (a theme that
+reads a triplet), and never for a theme-owned row. **The fallback block
+deliberately gets no shim**: its native Block selector is an optional one-class
+baseline that must remain weaker than an ordinary exact theme or snippet
+definition. Unknown ids still receive a correctly-spelled `--callout-color`;
+registering the callout is the route to the full per-id repair and
+Studio-strength styling.
 
 ### Backgrounds are always translucent tints - never the authored hex
 
@@ -304,6 +377,18 @@ saturated a colour anything nested inside converges toward. It caps that at
 the callout's own accent - and drops a cap it cannot meet rather than let the
 background fall back to an opaque fill. See
 [Which alpha, and why it isn't simply the smallest](12-color-system.md#which-alpha-and-why-it-isnt-simply-the-smallest).
+
+Because the tint is solved against each mode's own page, **any callout with a
+background gets a `.theme-dark` block**, even when its light and dark hexes are
+equal (`accentDeclarations.needsDarkBlock`). The light rule is unscoped and
+matches in both themes, and its tint, solved against white, painted `#8899aa`
+as `#182333` on the dark page. Until 2026-11-01 the block was skipped when the
+hexes matched; nothing produced equal backgrounds then, but the palette
+editor's separate colours now let each mode keep its own, and the same colour
+in both is an ordinary choice. In that dark block, a background darker than
+the dark page (by luminance) also gets `mix-blend-mode: normal`, so core's
+`lighten` does not turn it into the page - see
+[Colour system](12-color-system.md#the-nesting-invariant-in-full).
 
 `transparentBg` short-circuits this entirely: `background-color: transparent`
 + `background-image: none`, checked **before** the "no background hex → emit
@@ -681,8 +766,9 @@ for the built-in exception), and when only some are claimed,
 stock alias while the theme claims its id, to Obsidian - and leaves the others
 out. The `.cs-*` token
 rules keep every name: no theme selector reaches that DOM. The global frame
-selectors, the metadata-colour exclusion list, `paintIcons` and the metadata
-dropdown make the same per-name cut, through that one registry question. Before issue #84 one claimed alias handed over the whole callout,
+selectors, `paintIcons` and the metadata dropdown's heading and inline rows make
+the same per-name cut, through that one registry question. (The metadata colours
+no longer cut: a block callout the theme draws is coloured too, see below.) Before issue #84 one claimed alias handed over the whole callout,
 and a name the user had added - `[!описание]` beside a theme's
 `[!description]` - was then styled by nobody.
 
@@ -868,6 +954,20 @@ them, and the user's snippet keeps them rather than being painted over at
 not read as the user's. Themes are not reserved - colouring a theme's colour
 words is the deliberate exception in [04-data-model.md](04-data-model.md).
 
+**Callouts the theme draws.** A metadata word is the user's own request for one
+callout, so the colour block carries no `:not()` of theme-owned ids any more
+(until 2026-11-01 it did, and `[!note|red]` under Lumines did nothing). For the
+names `themeOwnedAttrIds` lists, `themeDrawnRules` adds one block, one class
+heavier, pointing `border-color`, `--callout-title-color` and
+`--callout-icon-color` at `--cs-accent`: the colour block alone reaches the
+accent and the background, and Lumines paints its frame, title and icon from its
+own `--primary-*` colours, which gave a red callout with a blue edge (measured in
+headless Chrome against the real `app.css`, light and dark). A transparent
+palette keeps the frame it cleared. The export (`standalone`) has neither, as it
+names no theme. The heading and inline forms of an owned type are not rendered
+at all, so the dropdown still offers no colours there
+(`CalloutMetadataSuggest.getSuggestions`: `themeOwned` only for non-block roles).
+
 **Pure CSS, keyed on the attribute.** Obsidian writes `data-callout-metadata` on
 every block callout and the plugin stamps it on its own heading and inline DOM,
 so nothing runs per element: the colour is there at first paint, and the block
@@ -954,8 +1054,8 @@ theme-owned attr id (the same for every colour, so weights stay equal). Unknown
 ids are not excluded: the rule names no id. The standalone export drops the
 `:not()` and the token rules, as `generateCalloutCSS` drops theme-specific blocks.
 
-**Off is nothing.** The hidden `metadataColors.enabled` switch (no UI; `data.json`
-only) makes `activeMetadataColorEntries` return no entries, and the generator
+**Off is nothing.** The `metadataColors.enabled` switch (Settings → Editor →
+Metadata → Metadata colors) makes `activeMetadataColorEntries` return no entries, and the generator
 returns `""` - a test pins the empty string.
 
 ## Unknown-callout fallback: deliberately weak on native Blocks

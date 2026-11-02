@@ -1,13 +1,12 @@
 /**
- * settings/sections/calloutListsSignature.ts — would this repaint draw anything
- * different?
+ * settings/sections/calloutListsSignature.ts — would drawing the callout lists
+ * again show anything different?
  *
- * Four subscriptions funnel into the callout lists' refresh and two of them are
- * noisy: `css-change` fires for any theme, snippet or other plugin in the vault,
- * and `registry.onChange` fires on every sync round trip. Each one tore all
- * three lists down and rebuilt them byte-identically. Comparing first is what
- * stops a repaint that had nothing to repaint — and a repaint above the fold is
- * never free, because ten sections and a reader sit below it.
+ * Who calls it. The settings tab's signature (declarative/declarativeSettings.ts),
+ * and the Built-in and theme pages, which draw their own rows
+ * (declarative/calloutListPage.ts). Both skip a redraw when it would draw the
+ * same thing: `css-change` fires for any theme, snippet or other plugin in the
+ * vault, and `registry.onChange` on every sync round trip.
  *
  * ## The whole definition goes in, not the fields a row reads today
  *
@@ -20,16 +19,12 @@
  * colour scheme (swatches show the current mode), the theme's name and what the
  * appearance probe measured (theme rows only — the one list that draws it), the
  * locale (id sort order), the fallback id (the *Default fallback* tag), and
- * the theme section's switch (whether that section stays up with no rows).
- *
- * The paging cursors are in it too, and they have to be: **Load more** changes
- * what is drawn without changing a single definition, so leaving them out would
- * make pressing the button do nothing at all.
+ * the theme's styles switch.
  *
  * ## Two inputs are deliberately absent
  *
- * Both are answered with the refresh's `force` flag instead, because no amount
- * of reading the registry can see them:
+ * Both are answered with a forced redraw instead, because no amount of reading
+ * the registry can see them:
  *
  * - **Icon artwork.** It lives in a download cache keyed by icon name, so the
  *   definition naming a not-yet-downloaded icon is byte-identical to the one
@@ -41,28 +36,22 @@
  *   reason that signal exists.
  *
  * Both directions of failure are worth naming. A signature that changes when
- * nothing did costs one repaint that the scroll anchor already makes invisible.
- * One that *fails* to change leaves a stale row on screen — so where the two are
- * in tension, this errs toward including more.
+ * nothing did costs one redraw. One that *fails* to change leaves a stale row
+ * on screen — so where the two are in tension, this errs toward including more.
  */
 import type { CalloutDefinition } from "../../types";
-import type { PagingState } from "./listPaging";
 import type { RowKind } from "./rowOwnership";
-import type { SettingsSectionContext } from "./types";
+import type { SettingsContext } from "./types";
 
 /** The three lists, already partitioned, in the order they are drawn. */
 export type CalloutListRows = Record<RowKind, CalloutDefinition[]>;
 
-/** Every list back to its first page. See `SettingsTab.paging` for the owner. */
-export const freshPaging = (): Record<RowKind, PagingState> => ({
-	theme: { expanded: false },
-	user: { expanded: false },
-	builtin: { expanded: false },
-});
-
+/**
+ * The three lists as one string, with what their rows read besides the
+ * definitions. Equal strings mean drawing the lists again would change nothing.
+ */
 export function calloutListsSignature(
-	ctx: SettingsSectionContext,
-	paging: Record<RowKind, PagingState>,
+	ctx: SettingsContext,
 	themeLabel: string,
 	locale: string,
 	rows: CalloutListRows,
@@ -72,16 +61,16 @@ export function calloutListsSignature(
 		themeLabel,
 		locale,
 		ctx.plugin.settings.fallbackCalloutId,
-		// The theme section's switch, which keeps the section on screen while
-		// off — with no rows, nothing else here would move when it is flipped.
+		// The theme's styles switch: with no theme rows, nothing else here
+		// would move when it is flipped.
 		ctx.plugin.registry.settings.themeCalloutStyles.enabled,
 	];
 	const add = (kind: RowKind): void => {
 		const defs = rows[kind];
-		parts.push(kind, paging[kind].expanded, defs.length);
+		parts.push(kind, defs.length);
 		for (const def of defs) {
 			parts.push(def);
-			// Only the theme list draws it — see `renderCalloutRow`.
+			// Only the theme list draws it — see `drawCalloutRow`.
 			if (kind === "theme") {
 				parts.push(ctx.plugin.registry.themeAppearanceOf(def));
 			}

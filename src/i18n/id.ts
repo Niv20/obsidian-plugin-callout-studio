@@ -20,6 +20,7 @@ export const id: Record<string, string> = {
 	"autocomplete.createNew": 'Buat "{{name}}"',
 	"metadataSuggest.finish": "Selesai",
 	"metadataSuggest.colors": "Warna",
+	"metadataSuggest.yourWords": "Kata Anda",
 	"metadataSuggest.useTyped": 'Gunakan "{{text}}"',
 	"metadataSuggest.replaces": "Menggantikan {{word}}",
 	"metadataSuggest.themeAlso": "Tema Anda juga menata kata ini",
@@ -36,8 +37,8 @@ export const id: Record<string, string> = {
 	"replaceModal.searchPlaceholder": "Cari callout",
 	"replaceModal.chooseFirstReplace": "Pilih dulu callout yang akan menggantikannya.",
 	"settings.fallbackTag": "Default",
-	"settings.fallbackTagAuto": "Default otomatis",
-	"settings.rescanVaultDesc": "Menambahkan tipe callout yang digunakan di catatan Anda yang belum ada di daftar ini. Callout dan catatan Anda yang sudah ada tidak diubah.",
+	"settings.fallbackTagAuto": "Otomatis",
+	"settings.rescanVaultDesc": "Menambahkan jenis callout yang dipakai catatan Anda dan belum ada di daftar ini.",
 	"settings.rescanVaultHintAction": "Pindai callout",
 	"manualDiscovery.failed": "Hasil pemindaian tidak tersimpan. Pastikan pengaturan dapat ditulis dan sinkronisasi telah selesai, lalu coba lagi melalui Pengaturan → Tipe callout saya → Pindai callout. Callout yang ada tidak diganti.",
 	"manualDiscovery.scanning": "Memindai…",
@@ -45,7 +46,6 @@ export const id: Record<string, string> = {
 		"Pemindaian selesai: {{count}} tipe callout baru ditambahkan.",
 	"replaceModal.titleReplace": "Ganti di vault",
 
-	"welcome.tooltip": "Tentang Callout Studio",
 	"welcome.title": "Selamat datang di Callout Studio!",
 	"welcome.tagline":
 		"Solusi lengkap Anda untuk membuat, menata gaya, dan mengelola callout Obsidian.",
@@ -53,7 +53,6 @@ export const id: Record<string, string> = {
 		"Kami melihat Anda menggunakan {{plugins}}. Ingin mengimpor callout Anda?",
 	"importBanner.action": "Impor",
 	"importBanner.dismiss": "Abaikan",
-	"welcome.previewTitle": "Lihat dalam aksi",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio memungkinkan Anda membuat callout dengan ikon, warna, dan nama khusus.\n\n" +
@@ -64,16 +63,18 @@ export const id: Record<string, string> = {
 		"> [!{{id}}] Callout blok\n" +
 		"> Callout klasik tetap berfungsi dengan sintaks yang sama persis seperti yang sudah Anda kenal: `> [!type]`.\n\n" +
 		"Callout Studio masih punya banyak hal lain untuk ditawarkan! [Pelajari lebih lanjut]({{repoUrl}}).\n",
+	"deleteModal.title": "Hapus callout",
 
-	"deleteModal.title": 'Hapus callout "{{name}}"?',
 	"deleteModal.bodyInUse":
 		"Callout ini muncul {{count}} kali di {{files}} file.",
 	"deleteModal.notesUntouched":
 		"Ini hanya menghapus definisi callout. Catatan Anda tidak disentuh, jadi callout yang ada hanya akan kembali ke gaya default.",
 	"deleteModal.fallbackTarget":
 		"Ini juga callout fallback default Anda, jadi callout tanpa gaya sendiri akan beralih ke {{fallback}}.",
+	"deleteModal.subtitleFallback": "“{{name}}” · gaya cadangan default Anda",
+	"convertModal.title": "Ubah menjadi teks biasa",
+	"convertModal.subtitle": "Setiap “{{name}}” di vault Anda",
 	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
-	"convertModal.title": 'Ubah "{{name}}" ke teks biasa?',
 	"convertModal.explain":
 		"Masing-masing menjadi teks biasa: judul dan isinya tetap, hanya format callout yang hilang.",
 	"convertModal.typeStays": "Tipe callout itu sendiri tetap ada di daftar Anda.",
@@ -85,14 +86,10 @@ export const id: Record<string, string> = {
 	"deleteModal.keepsRowTheme":
 		"{{theme}} mendefinisikan tipe callout ini, sehingga tetap tersedia dan mempertahankan tampilannya. Callout Studio hanya mengubah catatan di dalam vault Anda — tidak ada yang berkaitan dengan tema Anda yang tersentuh.",
 
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Tipe callout saya",
 	"settings.builtInCallouts": "Callout bawaan",
 	"settings.contextMenu": "Menu konteks",
-	"settings.keyboardShortcuts": "Perintah",
 	"settings.language": "Bahasa",
-	"settings.languageDesc":
-		"Bahasa tampilan untuk Callout Studio. Secara default mengikuti bahasa antarmuka Obsidian.",
 	"settings.importExport": "Impor dan ekspor",
 	"settings.import": "Impor…",
 	"settings.export": "Ekspor…",
@@ -108,6 +105,9 @@ export const id: Record<string, string> = {
 	"settings.addNewCallout": "tambah callout",
 
 	"settings.noCalloutsNow": "Tidak ada callout kustom untuk saat ini.",
+	"settings.calloutCount": "{{count}} callout",
+	"settings.calloutCountOne": "1 callout",
+	"settings.searchCallouts": "Cari callout…",
 
 	"settings.editAria": "Sunting {{name}}",
 	"settings.moreRowActionsAria": "Tindakan lainnya untuk {{name}}",
@@ -125,22 +125,17 @@ export const id: Record<string, string> = {
 	"settings.colorSwatchAria": "Aksen: {{accent}} · Latar belakang: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callout dari tema Anda",
-	"settings.themeCalloutsDesc":
-		"{{theme}} menyediakan atau mengubah gaya callout ini, sehingga Callout Studio membiarkannya persis seperti yang digambar oleh tema Anda, dan hanya menawarkannya sebagai callout blok. Dua jenis muncul di sini: tipe callout yang ditambahkan oleh tema Anda, dan callout bawaan yang tampilannya digantikan tema. Tipe callout yang ditambahkan tema Anda hanya terdaftar selama tema itu aktif.",
 	"settings.themeCalloutsDefaultTheme": "Tema Anda",
+	"settings.themeCalloutsEmpty": "{{theme}} saat ini tidak menata gaya callout apa pun.",
 	"settings.themePreviewAria":
 		'Pratinjau "{{name}}" — lihat bagaimana tema Anda menggambarnya',
 	"settings.builtInAllThemeStyled":
-		"{{theme}} mengubah gaya setiap callout bawaan, sehingga semuanya terdaftar di atas dan Callout Studio membiarkannya begitu saja. Untuk merancang milik Anda sendiri, tambahkan callout dengan ID yang berbeda.",
+		"{{theme}} menata semua callout bawaan, jadi Callout Studio membiarkan semuanya apa adanya. Untuk merancang milik Anda sendiri, tambahkan callout dengan ID yang berbeda.",
 	"settings.fallbackCallout": "Callout fallback default",
 	"settings.fallbackCalloutDesc":
-		"Tipe callout yang tidak dikenal di vault Anda akan mewarisi gaya callout ini.",
+		"Tipe callout yang tidak dikenal mewarisi gaya ini.",
 
-	"settings.globalStyleRegularTitle": "Gaya global callout blok",
-	"settings.globalStyleHeadingTitle": "Gaya global callout judul",
-	"settings.globalStyleInlineTitle": "Gaya global callout sebaris",
 	"settings.border": "Batas",
-	"settings.borderAll": "Semua",
 	"settings.borderTop": "Atas",
 	"settings.borderRight": "Kanan",
 	"settings.borderBottom": "Bawah",
@@ -150,14 +145,11 @@ export const id: Record<string, string> = {
 	"settings.titleScale": "Judul",
 	"settings.contentScale": "Konten",
 	"settings.inlineTextScale": "Teks",
-	"settings.shapeGroup": "Bentuk",
 	"settings.borderRadius": "Pembulatan sudut",
-	"settings.alignGroup": "Perataan",
 	"settings.alignContent": "Sejajarkan konten dengan judul",
 	"settings.headingSpacingGroup": "Jarak judul",
 	"settings.headingPadVertical": "Jarak vertikal",
 	"settings.headingGap": "Jarak antar judul",
-	"settings.headingFoldGroup": "Lipat",
 	"settings.headingFoldArrow": "Tampilkan panah lipat",
 	"settings.styleDemoName": "Contoh",
 	"settings.styleDemoInlineName": "Contoh",
@@ -169,21 +161,19 @@ export const id: Record<string, string> = {
 	"settings.customPalettes": "Palet warna tersimpan",
 	"settings.newPalette": "Palet baru",
 	"settings.customPalettesEmpty": "Tidak ada palet tersimpan untuk saat ini.",
+	"settings.paletteCount": "{{count}} palet",
+	"settings.paletteCountOne": "1 palet",
 	"settings.editPaletteAria": "Edit palet {{name}}",
-	"settings.deletePaletteAria": "Hapus palet {{name}}",
-	"settings.deletePaletteConfirm":
-		'Hapus palet "{{name}}"?\nCallout yang menggunakan warna ini tidak terpengaruh.',
+	"settings.deletePaletteTitle": "Hapus palet",
+	"settings.deletePaletteBody":
+		'Callout yang menggunakan warna ini tidak terpengaruh.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callout yang menyebutnya di metadata ("{{key}}") akan memakai warna bawaan dengan nama itu. Catatan Anda tidak berubah.',
 
 	"settings.customCommands": "Perintah & tombol pintas",
-	"settings.customCommandsDesc":
-		"Lihat setiap perintah Callout Studio dan pintasan yang ditetapkan padanya, serta buat perintah Anda sendiri untuk callout yang paling sering Anda gunakan. Tidak ada pintasan yang ditetapkan secara default.",
-	"settings.customCommandsButton": "Kelola perintah",
+	"settings.customCommandsDesc": "Semua perintah Callout Studio, pintasannya, dan perintah buatan Anda sendiri.",
 
 	"commandBuilder.title": "Perintah dan pintasan",
-	"commandBuilder.desc":
-		"Gunakan tombol + untuk menetapkan atau mengubah pintasan di pengaturan hotkey Obsidian.",
 	"commandBuilder.builtIn": "Perintah bawaan",
 	"commandBuilder.toggleAria": "Aktifkan atau nonaktifkan {{name}}",
 	"commandBuilder.hotkeyBlank": "Kosong",
@@ -193,9 +183,7 @@ export const id: Record<string, string> = {
 	"commandBuilder.empty": "Belum ada perintah kustom.",
 	"commandBuilder.unknownCommand": "perintah ini",
 	"commandBuilder.editAria": "Sunting {{name}}",
-	"commandBuilder.deleteAria": "Hapus {{name}}",
-	"commandBuilder.deleteConfirm":
-		"Hapus perintah {{name}}? Pintasan apa pun yang ditetapkan padanya akan berhenti berfungsi.",
+	"commandBuilder.deleteConfirm": "Pintasan apa pun yang ditetapkan untuknya akan berhenti berfungsi.",
 	"commandBuilder.newTitle": "Perintah baru",
 	"commandBuilder.editTitle": "Edit perintah",
 	"commandBuilder.format": "Format callout",
@@ -207,8 +195,9 @@ export const id: Record<string, string> = {
 		"Format ini dimatikan, sehingga perintah akan menyisipkan teks biasa sampai Anda mengaktifkannya kembali.",
 	"commandBuilder.roleThemeOwned":
 		"Tema Anda menyediakan callout ini, sehingga hanya memiliki format Block.",
-	"commandBuilder.commandSuspended":
-		"Dijeda: tema Anda menyediakan callout ini, sehingga hanya memiliki format Block. Perintah ini akan berfungsi lagi ketika tema berhenti menyediakannya.",
+	"commandBuilder.commandSuspended": "Dijeda selama tema Anda menyediakan callout ini, yang kemudian hanya memiliki format blok.",
+	"commandBuilder.pausedTag": "Dijeda oleh tema",
+	"commandBuilder.missingTag": "Callout hilang",
 	"commandBuilder.callout": "Tipe callout",
 	"commandBuilder.calloutDesc": "Callout yang disisipkan oleh perintah ini.",
 	"commandBuilder.headingLevel": "Level heading",
@@ -238,10 +227,11 @@ export const id: Record<string, string> = {
 
 	"settings.resetAll": "Reset",
 	"settings.resetAllDesc":
-		"Menghapus semua callout pengguna, mereset callout bawaan, gaya global (batas, skala font, bentuk), palet warna tersimpan, penyesuaian menu klik kanan, dan SVG Material yang diunduh.",
+		"Memulihkan semua pengaturan dan penyesuaian ke default.",
 	"settings.resetAllButton": "Reset semua",
 	"notice.resetAllDone": "Semua telah direset ke default.",
 	"settings.resetIntro": "Luangkan waktu sejenak untuk menghargai semua yang telah Anda bangun dengan Callout Studio.",
+	"settings.resetSubtitleDefaults": "Pengaturan Anda kembali ke default",
 	"settings.resetDeletes": "Semua ini akan dihapus:",
 	"settings.resetRestores": "Ini akan dikembalikan ke default:",
 	"settings.resetItemCallouts": "{{count}} jenis callout kustom",
@@ -255,9 +245,10 @@ export const id: Record<string, string> = {
 	"settings.resetItemHeading": "Pengaturan callout judul",
 	"settings.resetItemInline": "Pengaturan callout inline",
 	"settings.resetItemThemeCalloutStyles": "Gaya callout dari tema Anda",
+	"settings.resetItemAutocomplete": "Pengaturan pelengkapan otomatis dan metadata",
 	"settings.resetItemFallback": "Gaya cadangan",
 	"settings.resetItemIconLibraries": "Urutan pustaka ikon dan pustaka tersembunyi",
-	"settings.resetAllConfirmAfter": "Tenang: sebelum mereset, kami menyimpan cadangan penyiapan Anda saat ini. Anda bisa memulihkannya kapan saja dari bagian Cadangan di pengaturan.\nJika Anda memakai layanan sinkronisasi, reset ini mungkin juga sampai ke perangkat Anda yang lain.",
+	"settings.resetAllConfirmAfter": "Tenang saja: sebelum direset, kami menyimpan cadangan pengaturan Anda saat ini. Anda bisa mengembalikannya kapan saja dengan Pulihkan versi sebelumnya di pengaturan.\nJika Anda memakai layanan sinkronisasi, reset mungkin juga menjalar ke perangkat Anda yang lain.",
 	"settings.resetNothing": "Tidak ada yang perlu direset: semuanya sudah di pengaturan default.",
 
 	"notice.customCommandMissingCallout":
@@ -342,13 +333,13 @@ export const id: Record<string, string> = {
 	"editor.foldClosed": "Tertutup secara default",
 	"editor.cancel": "Batal",
 	"editor.saveChanges": "Simpan perubahan",
-	"editor.saving": "Menyimpan…",
 	"editor.saveFailed": "Penyimpanan tidak dapat diselesaikan. Jika editor ini masih terbuka, biarkan tetap terbuka dan coba lagi setelah memeriksa penyimpanan serta sinkronisasi. Beberapa pengaturan atau perubahan catatan mungkin sudah tersimpan.",
 	"editor.createCallout": "Buat callout",
 	"editor.nameRequired": "Nama tampilan diperlukan sebelum membuat callout.",
 	"editor.noChangesToSave": "Tidak ada perubahan yang dibuat.",
-	"editor.downloadingIcon": "Mengunduh ikon",
 	"editor.idEmpty": "Diperlukan setidaknya satu ID",
+	"editor.idAlreadyHere": "ID ini sudah ada",
+	"editor.idTooLong": "ID maksimal {{max}} karakter",
 	"editor.idExists": "Callout dengan ID ini sudah ada",
 	"editor.idConflict": "ID ini bertentangan dengan callout yang ada",
 	"editor.idFromTheme":
@@ -376,7 +367,7 @@ export const id: Record<string, string> = {
 	"editor.loremIpsumShort":
 		"Angin sepoi-sepoi bertiup di antara pepohonan.",
 	"editor.sampleInlineText":
-		"Berikut adalah Inline Callout [!{id}] di dalam sebuah paragraf.",
+		"Berikut adalah Inline Callout [!{id}]{{title}} di dalam sebuah paragraf.",
 	"editor.previewReadOnly": "Pratinjau langsung tidak dapat diedit",
 	"noteChanges.title": "Perbarui catatan Anda?",
 	"noteChanges.leave": "Biarkan apa adanya",
@@ -411,7 +402,6 @@ export const id: Record<string, string> = {
 	"palette.namePlaceholder": "Palet saya",
 	"palette.nameExists": "Palet dengan nama ini sudah ada",
 	"palette.saveBlockedName": "Palet dengan nama ini sudah ada. Pilih nama lain untuk menyimpannya.",
-	"palette.metadataName": "Di metadata callout: {{key}}",
 	"palette.metadataNameExists":
 		'Palet lain sudah ditulis sebagai "{{key}}" di metadata callout. Pilih nama yang berbeda.',
 	"palette.metadataNameShared":
@@ -423,16 +413,15 @@ export const id: Record<string, string> = {
 	"palette.renameNotesFailed":
 		"Beberapa catatan tidak dapat diperbarui. Yang sudah diperbarui tersimpan; sisanya masih memakai nama lama.",
 	"palette.baseColor": "Warna dasar",
-	"palette.baseColorHint":
-		"Kami akan otomatis menyesuaikan warna latar belakang dengannya. Jika mau, Anda dapat mengaturnya secara terpisah dengan {{link}}.",
-	"palette.baseColorHintLink": "klik di sini",
+	"palette.colorViewAdvanced": "Atur setiap warna secara terpisah",
+	"palette.colorViewSimple": "Kembali ke satu warna dasar",
 	"palette.advancedColors": "Warna",
-	"palette.advancedColorsHint":
-		"Mengedit warna untuk mode {{mode}} - mode lainnya diperbarui secara otomatis. Ganti tema Obsidian untuk memeriksanya.",
-	"palette.revertHint": "Lebih suka satu warna dasar saja? {{link}}.",
-	"palette.revertHintLink": "Kembalikan",
-	"palette.lightMode": "Terang",
-	"palette.darkMode": "Gelap",
+	"palette.lightModeColors": "Warna mode terang",
+	"palette.darkModeColors": "Warna mode gelap",
+	"palette.modeColorsHintLight": "Perubahan ini hanya berlaku untuk mode terang. Mode gelap tetap memakai warnanya sendiri.\nUntuk mengeditnya, tekan tombol bulan di atas.",
+	"palette.modeColorsHintDark": "Perubahan ini hanya berlaku untuk mode gelap. Mode terang tetap memakai warnanya sendiri.\nUntuk mengeditnya, tekan tombol matahari di atas.",
+	"palette.showLightMode": "Tampilkan mode terang",
+	"palette.showDarkMode": "Tampilkan mode gelap",
 	"palette.accentColor": "Warna aksen",
 	"palette.backgroundColorChannel": "Warna latar belakang",
 	"palette.textColorChannel": "Warna teks",
@@ -503,6 +492,7 @@ export const id: Record<string, string> = {
 	"iconPicker.searchMaterial": "cari ikon Material",
 	"iconPicker.searchEmoji": "Cari emoji",
 	"iconPicker.skinTone": "Warna kulit",
+	"iconPicker.skinToneDefault": "Default",
 	"iconPicker.allCategories": "Semua kategori",
 	"iconPicker.noIconSelected": "Tidak ada ikon yang dipilih",
 	"iconPicker.chooseFirst": "Pilih ikon terlebih dahulu.",
@@ -544,7 +534,6 @@ export const id: Record<string, string> = {
 	"iconPicker.allSources": "Semua sumber",
 	"iconPicker.searchAllSources": "Cari semua sumber ikon",
 	"iconPicker.chooseSource": "Pilih sumber",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "Pustaka tersedia",
 	"iconPicker.librariesToDownload": "Pustaka untuk diunduh",
 	"iconPicker.groupCurrent": "Ikon saat ini",
@@ -698,6 +687,10 @@ export const id: Record<string, string> = {
 		"Karya seni ikon untuk {{names}} telah diunduh.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio tidak dapat menyimpan paket ikon ke disk, sehingga perlu diunduh ulang lain kali. Ikon yang Anda pilih tetap tersimpan dengan pengaturan Anda.",
+	"settings.colorsAndIcons": "Warna dan ikon",
+	"settings.iconLibrariesDesc": "Urutkan ulang dan unduh pustaka ikon tambahan.",
+	"settings.iconLibrariesEditorOpen":
+		"Selesaikan dulu pekerjaan di editor callout. Ikonnya yang belum disimpan bisa berasal dari pustaka yang Anda hapus di sini.",
 	"iconLibraries.manage": "Kelola pustaka ikon",
 	"iconLibraries.title": "Pustaka ikon",
 	"iconLibraries.desc":
@@ -721,6 +714,7 @@ export const id: Record<string, string> = {
 	"iconLibraries.inUseMore": "dan {{count}} lainnya",
 	"iconLibraries.inUseKeeps":
 		"Ikonnya tetap ada — salinan setiap ikon disimpan bersama pengaturan Anda. Untuk memilih ikon baru dari {{name}} nanti, unduh lagi pustaka tersebut.",
+	"iconLibraries.resetSubtitle": "Kembali ke pustaka asli plugin",
 	"iconLibraries.resetConfirm":
 		"Ini mengembalikan pustaka seperti saat plugin datang: urutan bawaan, tidak ada yang disembunyikan, dan tanpa pustaka yang telah diunduh. Pustaka berikut akan dihapus:",
 	"iconLibraries.resetKeeps":
@@ -728,6 +722,9 @@ export const id: Record<string, string> = {
 	"iconLibraries.resetButton": "Setel ulang",
 
 	// Icon licences & credits
+	"license.title": "Lisensi",
+	"license.openSourceBeforeLink": "Callout Studio bersifat sumber terbuka, dan akan tetap begitu. Kamu bisa menemukan lisensinya ",
+	"license.openSourceLink": "di sini",
 	"credits.title": "Lisensi ikon dan kredit",
 	"credits.introBeforeNotices":
 		"Callout Studio menggunakan pustaka ikon sumber terbuka; lihat lisensi, atribusi, dan modifikasi tiap pustaka di bawah, atau baca ",
@@ -749,32 +746,53 @@ export const id: Record<string, string> = {
 	"heading.toggleFold": "Alihkan lipatan",
 
 	"settings.globalSettings": "Opsi gaya global Callout Studio",
+	"settings.calloutStyle": "Gaya global",
+	"settings.menusAndCommands": "Menu dan perintah",
+	"settings.editorBox": "Editor",
+	"settings.autocompleteAndMetadata": "Pelengkapan otomatis dan metadata",
+	"settings.autocompleteAndMetadataDesc": "Daftar yang terbuka saat Anda mengetik callout, dan metadata setelah |.",
+	"settings.calloutAutocomplete": "Pelengkapan otomatis callout",
+	"settings.calloutAutocompleteDesc": "Tampilkan daftar callout saat Anda mengetik [!.",
+	"settings.suggestThemeCallouts": "Sertakan callout dari tema Anda",
+	"settings.suggestThemeCalloutsDesc": "Tampilkan callout yang ditambahkan tema Anda.",
+	"settings.metadataPage": "Metadata",
+	"settings.metadataPageDesc": "Warna dan kata setelah | dalam callout.",
+	"settings.metadataColors": "Warna metadata",
+	"settings.metadataColorsDesc": "Warna setelah | hanya mewarnai callout itu, seperti pada [!note|red].",
+	"settings.metadataAutocomplete": "Pelengkapan otomatis metadata",
+	"settings.metadataAutocompleteDesc": "Tampilkan daftar warna dan kata saat Anda mengetik | dalam callout.",
+	"settings.suggestThemeMetadata": "Sertakan kata dari tema Anda",
+	"settings.suggestThemeMetadataDesc": "Tampilkan kata yang direspons tema Anda.",
+	"settings.metadataWords": "Kata Anda",
+	"settings.metadataWordsDesc": "Kata yang disarankan setelah |, seperti kata yang dibaca plugin lain.",
+	"settings.metadataWordsPlaceholder": "Tambahkan kata",
+	"settings.addMetadataWord": "Tambah kata",
+	"settings.metadataWordAlreadyHere": "Kata ini sudah ada di daftar",
+	"settings.metadataWordTooLong": "Satu kata maksimal {{max}} karakter",
+	"settings.maxMetadataWords": "Maksimal {{max}} kata. Hapus satu untuk menambah yang lain.",
+	"settings.buildFailed": "Callout Studio tidak dapat menampilkan pengaturannya; mulai ulang Obsidian, dan laporkan jika terjadi lagi.",
 	"settings.globalSettingsRegularDesc":
-		"Sesuaikan batas, radius, skala font, dan perataan setiap block callout di vault Anda.",
+		"Batas, radius, skala font, dan perataan.",
 	"settings.globalSettingsHeadingDesc":
-		"Sesuaikan batas, bentuk, dan jarak vertikal setiap callout heading di vault Anda.",
+		"Batas, bentuk, dan jarak vertikal.",
 	"settings.globalSettingsInlineDesc":
-		"Sesuaikan batas dan bentuk setiap callout sebaris di vault Anda.",
-	"settings.globalSettingsCustomize": "Sesuaikan",
+		"Batas dan bentuk.",
 	"settings.themeCalloutStyles": "Gunakan gaya callout dari tema Anda",
-	"settings.themeCalloutStylesDesc":
-		"Aktif: callout yang ditata oleh tema Anda tetap tampil seperti tema Anda.\nNonaktif: Callout Studio menggambar setiap callout sendiri, dan gaya callout dari tema Anda dimatikan.",
+	"settings.themeCalloutStylesDesc": "Saat aktif, callout yang ditata tema Anda mempertahankan tampilan tema dan hanya muncul sebagai callout blok. Saat nonaktif, Callout Studio menggambar semua callout.",
 
-	"settings.calloutTypeRegular": "Callout blok",
-	"settings.calloutTypeHeading": "Callout heading",
-	"settings.calloutTypeInline": "Callout sebaris",
+	"settings.calloutTypeRegular": "Gaya callout blok",
+	"settings.calloutTypeHeading": "Gaya callout heading",
+	"settings.calloutTypeInline": "Gaya callout sebaris",
 
-	"settings.customizeMenu": "Sesuaikan item menu",
-	"settings.customizeMenuDesc":
-		"Pilih tindakan klik kanan mana yang muncul untuk setiap tipe callout dan atur ulang urutannya. Berfungsi di mode sumber dan Pratinjau Langsung.",
-	"settings.customizeMenuButton": "Sesuaikan item menu",
+	"settings.customizeMenuDesc": "Pilih dan urutkan aksi klik kanan untuk setiap jenis callout.",
 	"menuCustomize.title": "Sesuaikan menu klik kanan",
-	"menuCustomize.desc":
-		"Aktifkan atau nonaktifkan tindakan dan seret gagang untuk mengatur ulang urutannya. Perubahan disimpan secara otomatis.",
 	"menuCustomize.regular": "Callout blok",
 	"menuCustomize.heading": "Callout heading",
 	"menuCustomize.inline": "Callout sebaris",
 	"menuCustomize.dragHandle": "Seret untuk mengatur ulang urutan",
+	"menuCustomize.hiddenHeading": "Disembunyikan dari menu callout judul",
+	"menuCustomize.hiddenInline": "Disembunyikan dari menu callout sebaris",
+	"menuCustomize.hiddenRegular": "Disembunyikan dari menu callout blok",
 	"menuItem.createOrEdit": "Buat atau edit callout",
 	"menuItem.openSettings": "Buka pengaturan",
 	"menuItem.copyMarkdown": "Salin Markdown",
@@ -786,10 +804,10 @@ export const id: Record<string, string> = {
 	"confirm.ok": "Hapus",
 	"confirm.cancel": "Batal",
 	"confirm.acknowledge": "Saya sudah membaca dan memahami",
+	"confirm.subtitleName": "“{{name}}”",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Hapus perintah",
-	"confirm.titleDeletePalette": "Hapus palet",
 	"confirm.titleDeleteImage": "Hapus gambar",
 	"confirm.titleDeleteLibrary": "Hapus pustaka ikon",
 	"confirm.titleResetLibraries": "Setel ulang pustaka ikon",
@@ -802,7 +820,6 @@ export const id: Record<string, string> = {
 		"{{count}} judul callout diperbarui di file vault: {{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated":
 		"Tanda lipat {{count}} callout diperbarui di file vault.",
-	"vault.replaceWith": "Ganti dengan:",
 	"vault.confirmReplace": "Ganti",
 	"vault.replacePromptInUse":
 		'"{{name}}" digunakan {{count}} kali di {{files}} file. Pilih callout untuk menggantikannya:',
@@ -840,7 +857,6 @@ export const id: Record<string, string> = {
 	"vaultStats.roleBlock": "Blok",
 	"vaultStats.roleHeading": "Judul",
 	"vaultStats.roleInline": "Sebaris",
-	"portable.subtitle": "Pilih callout judul dan sebaris yang akan dikonversi ke Markdown standar sebelum berhenti menggunakan Callout Studio.",
 	"portable.customize": "Penggantian khusus…",
 	"portable.editCustom": "Edit penggantian khusus…",
 	"portable.restoreDefault": "Pulihkan penggantian bawaan",
@@ -853,13 +869,13 @@ export const id: Record<string, string> = {
 
 	"usage.title": "Temukan callout",
 	"usage.command": "Temukan callout",
-	"usage.subtitle": "Temukan callout di vault Anda dan langsung buka sumbernya.",
 	"usage.browse": "Jelajahi",
 	"usage.allTypes": "Semua tipe",
 	"usage.registeredCallouts": "Callout terdaftar",
 	"usage.unregisteredCallouts": "Callout tidak terdaftar",
 	"usage.summary": "{{count}} kemunculan di {{files}} file",
 	"usage.allRoles": "Semua format",
+	"usage.filterFormat": "Filter menurut format",
 	"usage.failed": "Tidak dapat memperbarui kemunculan callout.",
 	"usage.loading": "Memindai catatan Markdown…",
 	"usage.partial": "Hasil belum lengkap: {{count}} kesalahan pembacaan.",
@@ -872,7 +888,6 @@ export const id: Record<string, string> = {
 	"usage.missing": "Catatan ini sudah tidak ada. Memperbarui hasil…",
 	"usage.changed": "Kemunculan ini berubah atau berpindah ke lokasi yang tidak pasti. Memperbarui hasil…",
 	"usage.openFailed": "Tidak dapat membuka kemunculan callout ini.",
-	"usage.menuCount": "Temukan callout ({{count}})",
 	"usage.menuIncomplete": "Temukan callout — pemindaian belum lengkap",
 	"usage.menu": "Temukan callout",
 	"usage.closeSettings": "Tutup Pengaturan untuk melihat hasil callout di bilah samping.",
@@ -1055,18 +1070,14 @@ export const id: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Judul memiliki {{length}} karakter; dipendekkan menjadi {{max}}.",
 
-	"footer.prompt":
-		"Pertanyaan, bug, atau ide? Saya senang mendengarnya!{{break}} {{issue}} atau {{email}}.",
-	"footer.openIssue": "Buka issue GitHub",
-	"footer.sendEmail": "kirim email kepada saya",
+	"footer.openIssue": "Buka issue",
 	"footer.sourceCode": "Kode sumber",
-	"footer.contribute": "Berkontribusi",
-	"footer.license": "Lisensi plugin",
-	"footer.iconCredits": "Lisensi ikon",
-	"settings.deletePaletteConfirmLinkedOne":
-		'Hapus palet "{{name}}"?\n1 callout menggunakannya. Ia tetap mempertahankan warnanya, dan Anda bisa menyambungkannya lagi nanti dari baris Warna di editornya.',
-	"settings.deletePaletteConfirmLinked":
-		'Hapus palet "{{name}}"?\n{{count}} callout menggunakannya. Mereka tetap mempertahankan warnanya, dan Anda bisa menyambungkannya lagi nanti dari baris Warna di salah satu editornya.',
+	"settings.about": "Tentang",
+	"settings.version": "Versi",
+	"settings.deletePaletteBodyLinkedOne":
+		'1 callout menggunakannya. Ia tetap mempertahankan warnanya, dan Anda bisa menyambungkannya lagi nanti dari baris Warna di editornya.',
+	"settings.deletePaletteBodyLinked":
+		'{{count}} callout menggunakannya. Mereka tetap mempertahankan warnanya, dan Anda bisa menyambungkannya lagi nanti dari baris Warna di salah satu editornya.',
 	"notice.palettesMerged":
 		"Menggabungkan {{count}} warna tersimpan yang memiliki warna identik: {{names}}. Callout yang menggunakannya tetap mempertahankan warnanya dan sekarang tertaut ke warna yang tersisa.",
 	"editor.colorsDescDeleted":
@@ -1078,9 +1089,8 @@ export const id: Record<string, string> = {
 		'Warna-warna ini identik dengan "{{name}}". Dua warna tersimpan tidak boleh sama — ubah satu warna, atau {{link}}.',
 	"palette.colorExistsUseLink": "gunakan yang sudah ada",
 	"locale.downloading": "Mengunduh terjemahan…",
+	"locale.downloaded": "Terjemahan telah diunduh.",
 	"locale.notDownloaded": "{{name}} belum diunduh",
-	"locale.notDownloadedDesc":
-		"Callout Studio menampilkan bahasa Inggris sampai terjemahan dapat diunduh. Akan mencoba lagi saat Obsidian dijalankan berikutnya.",
 	"locale.retry": "Coba lagi",
 	"locale.diskWriteFailed":
 		"Callout Studio tidak dapat menyimpan terjemahan ke disk, jadi terjemahan perlu diunduh lagi nanti.",
@@ -1093,6 +1103,7 @@ export const id: Record<string, string> = {
 	"notice.exportCssEnabled":
 		"Cuplikan ini diaktifkan di vault ini. Callout Studio sudah memberi gaya pada callout tersebut, dan cuplikan mempertahankan gaya saat diekspor.",
 	"confirm.titleOverwriteSnippet": "Timpa cuplikan CSS",
+	"confirm.subtitleOverwriteSnippet": "Diedit sejak Callout Studio menulisnya",
 	"confirm.overwriteSnippet":
 		"Cuplikan CSS di folder snippets berubah sejak ditulis oleh Callout Studio. Mengekspor lagi akan mengganti seluruh file.",
 	"confirm.overwriteSnippetOk": "Timpa",
@@ -1104,13 +1115,14 @@ export const id: Record<string, string> = {
 	"export.formatCss": "Snapshot CSS mandiri",
 	"export.formatCssDesc":
 		"Untuk situs web atau vault tempat Callout Studio tidak berjalan. Hanya mencakup callout blok dan harus diekspor ulang setelah ada perubahan.",
+	"export.formatCssAction": "Ekspor",
 	"quickInsert.readingViewHint": "Catatan ini terbuka dalam mode baca, jadi tidak ada yang dapat disisipkan.",
 	"quickInsert.readingView": "Beralihlah ke mode sumber atau Pratinjau Langsung untuk menyisipkan callout.",
 	"quickInsert.noCursorHint": "Tidak ada kursor di catatan ini, jadi tidak ada tempat untuk menyisipkan.",
 	"quickInsert.noCursor": "Tempatkan kursor di catatan pada posisi tempat Anda ingin menyisipkan callout, lalu coba lagi.",
 	"notice.legacyDiscoveryArchiveFailed": "Salinan pemulihan pemutakhiran tidak dapat diselesaikan. Cache penemuan lokal sebelumnya dan CSS saat mulai dijalankan tetap tidak berubah. Periksa izin menulis, akses penyimpanan, dan ruang kosong, lalu mulai ulang Obsidian untuk mencoba lagi.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "Dijeda: callout tidak ada. Temukan atau buat untuk memulihkan perintah ini, atau edit perintah untuk memilih jenis lain.",
+	"commandBuilder.missingCallout": "Dijeda sampai Anda membuat ulang callout yang hilang atau memilih yang lain.",
 	"confirm.titleRestoreSettings": "Pulihkan pengaturan ini",
 	"confirm.titleCreateSettingsFile": "Buat file pengaturan",
 	"confirm.saveDisplayedSettings":
@@ -1180,8 +1192,8 @@ export const id: Record<string, string> = {
 	"portable.scanning": "Membaca catatan Markdown…",
 	"portable.progress": "Membaca catatan: {{done}} dari {{total}}",
 	"portable.empty": "Tidak ditemukan callout judul atau sebaris yang dapat dikonversi. Tidak ada yang akan diubah.",
-	"portable.skipped": "{{count}} kemunculan yang tidak lengkap atau tidak didukung dibiarkan tanpa perubahan untuk ditinjau secara manual.",
 	"portable.confirmTitle": "Konversikan vault ini secara permanen?",
+	"portable.confirmSubtitle": "Tidak ada cadangan otomatis yang dibuat",
 	"portable.confirmBody": "Konversikan {{count}} kemunculan dan perbarui {{links}} tautan judul dalam {{files}} catatan?\nTindakan ini mengubah berkas asli dan tidak dapat dibatalkan di Callout Studio. Cadangan tidak dibuat secara otomatis. Cadangkan vault terlebih dahulu, simpan catatan yang terbuka, lalu jeda penyuntingan dan sinkronisasi hingga konversi selesai.\nJika berkas berubah atau penulisan gagal, konversi berhenti. Catatan yang sudah dikonversi tetap berubah.",
 	"portable.confirmAction": "Konversi secara permanen",
 	"portable.converting": "Mengonversi perubahan yang dipilih… Menutup panel ini tidak akan menghentikan konversi.",
@@ -1254,9 +1266,11 @@ export const id: Record<string, string> = {
 	"settings.resetNotSaved": "Reset ditampilkan tetapi belum dapat disimpan, sehingga berkas pengaturan Anda masih menyimpan konfigurasi sebelumnya. Periksa status penyimpanan di pengaturan Callout Studio.",
 	"confirm.titleResetEverything": "Reset semuanya",
 	"confirm.titleReplaceUnreadable": "Ganti berkas pengaturan",
+	"confirm.subtitleReplaceUnreadable": "Salinan persis disimpan terlebih dahulu",
 	"confirm.replaceUnreadable": "Salinan persis dari berkas saat ini disimpan terlebih dahulu ke folder cadangan plugin. Berkas kemudian diganti dengan konfigurasi yang ditampilkan di sini, dan layanan sinkronisasi Anda mengirimkannya ke perangkat lain Anda.",
 	"confirm.replaceUnreadableSalvage": "Salinan persis dari berkas saat ini disimpan terlebih dahulu ke folder cadangan plugin. Pengaturan di dalamnya digabungkan dengan konfigurasi yang ditampilkan di sini, dan berkas ditulis ulang agar setiap perangkat dapat membacanya lagi.",
 	"confirm.titleDiscardRecoveryCopy": "Buang salinan pemulihan",
+	"confirm.subtitleDiscardRecoveryCopy": "Penyimpanan dijeda di perangkat ini",
 	"confirm.discardRecoveryCopy": "Salinan pemulihan perangkat ini tidak dapat dibaca, sehingga penyimpanan dijeda di perangkat ini. Salinan persisnya disimpan terlebih dahulu ke folder cadangan plugin. Kemudian diganti dengan konfigurasi yang ditampilkan di sini. Berkas pengaturan Anda tidak berubah.",
 	"vault.undoRewrite": "Urungkan",
 	"vault.undoRestored": "{{count}} catatan dipulihkan.",
@@ -1453,7 +1467,7 @@ export const id: Record<string, string> = {
 	"recovery.delete": "Hapus",
 
 	// Version history
-	"saveStatus.guide.versions": "Setelah penyimpanan berfungsi lagi, Anda juga dapat memulihkan versi sebelumnya dari riwayat versi.",
+	"saveStatus.guide.versions": "Setelah penyimpanan berfungsi lagi, Anda juga dapat kembali ke versi tersimpan dengan Pulihkan versi sebelumnya.",
 	"saveStatus.goToVersions": "Buka riwayat versi",
 	"versions.title": "Riwayat versi",
 	"versions.intro": "Callout Studio otomatis menyimpan versi konfigurasi Anda.\nVersi lama dihapus secara bertahap.\nMemulihkan versi mengganti konfigurasi saat ini di semua perangkat yang disinkronkan.",
@@ -1473,13 +1487,14 @@ export const id: Record<string, string> = {
 	"versions.reason.beforeImport": "Sebelum impor",
 	"versions.reason.beforeRepair": "Sebelum berkas pengaturan diperbaiki",
 	"versions.restoreTitle": "Pulihkan versi ini",
-	"versions.restoreBody": "Konfigurasi saat ini diganti dengan “{{name}}” dari {{when}} ({{count}} perbedaan).\nKonfigurasi saat ini disimpan terlebih dahulu sebagai versi agar Anda dapat kembali ke sana.\nLayanan sinkronisasi kemudian mengirim konfigurasi yang dipulihkan ke perangkat Anda lainnya.",
+	"versions.subtitle": "“{{name}}” · {{when}}",
+	"versions.restoreBody": "Penyiapan Anda saat ini akan diganti ({{count}} perbedaan).\nPenyiapan itu disimpan dulu sebagai versi, sehingga Anda bisa kembali ke sana.\nLayanan sinkronisasi Anda lalu mengirim penyiapan yang dipulihkan ke perangkat Anda yang lain.",
 	"versions.restoreSame": "Versi ini sama dengan konfigurasi saat ini, jadi tidak ada yang perlu dipulihkan.",
 	"versions.restored": "“{{name}}” dari {{when}} dipulihkan.",
 	"versions.backupFailed": "Tidak ada yang dipulihkan: konfigurasi saat ini tidak dapat disimpan terlebih dahulu sebagai versi. Periksa ruang penyimpanan yang tersedia, lalu coba lagi.",
 	"versions.restoreFailed": "Versi tidak dapat dipulihkan. Tidak ada yang diubah.",
 	"versions.deleteTitle": "Hapus versi ini",
-	"versions.deleteAvailableBody": "Versi “{{name}}” dari {{when}} dan semua salinannya yang tersedia akan dihapus secara permanen.",
+	"versions.deleteAvailableBody": "Versi ini beserta semua salinannya yang tersedia akan dihapus permanen.",
 	"versions.deleteSyncedFiles": "Penghapusan file-file ini dapat disinkronkan ke perangkat Anda yang lain. Salinan lokal di perangkat tersebut mungkin tetap ada.",
 	"versions.deleteFinal": "Tindakan ini tidak dapat dibatalkan. Konfigurasi saat ini tidak terpengaruh.",
 	"versions.deleted": "“{{name}}” dari {{when}} dihapus.",
@@ -1488,10 +1503,10 @@ export const id: Record<string, string> = {
 	"versions.details.difference": "{{count}} perbedaan dari pengaturan Anda saat ini",
 	"versions.details.differences": "{{count}} perbedaan dari pengaturan Anda saat ini",
 	"versions.details.comparisonUnavailable": "Perbandingan tidak tersedia",
-	"notice.unsavedChangesKept": "Beberapa perubahan pada perangkat ini belum disimpan dan digantikan oleh pengaturan yang lebih baru dari perangkat lain. Versi Anda disimpan terlebih dahulu: buka riwayat versi di pengaturan Callout Studio untuk memulihkannya.",
-	"settings.versionHistory": "Riwayat versi",
+	"notice.unsavedChangesKept": "Beberapa perubahan pada perangkat ini belum disimpan dan digantikan oleh pengaturan yang lebih baru dari perangkat lain. Versi Anda disimpan terlebih dahulu: buka Pulihkan versi sebelumnya di pengaturan Callout Studio untuk memulihkannya.",
+	"settings.versionHistory": "Pulihkan versi sebelumnya",
 	"settings.versions": "Versi sebelumnya",
-	"settings.versionsDesc": "Callout Studio otomatis menyimpan versi konfigurasi Anda.\nBandingkan atau kembali ke salah satunya.",
+	"settings.versionsDesc": "Ganti penyiapan Anda saat ini dengan versi sebelumnya yang tersimpan.",
 	"settings.versionsButton": "Lihat versi",
 	"noteChanges.callouts": "{{count}} callout",
 	"noteChanges.calloutsOne": "1 callout",

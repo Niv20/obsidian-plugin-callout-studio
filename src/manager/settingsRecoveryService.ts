@@ -11,7 +11,6 @@
  * agrees on it: rows added since the old setup are deleted, rows deleted since
  * come back.
  */
-import { Notice } from "obsidian";
 import { t } from "../i18n";
 import { listUserImages, setUserImages } from "../icons/packs/userImages";
 import type { PluginData } from "../types";
@@ -25,12 +24,14 @@ import {
 import { inspectSettingsFile, type SettingsDiagnosis } from "./settingsDiagnosis";
 import { settingsDataPath } from "./settingsFile";
 import { hasSafeSettingsFileShape } from "./settingsFileShape";
-import { differingEntries } from "./setupDifference";
+import { differencesFrom } from "./setupDifference";
 import { setupDetails, type SetupDetails } from "./setupDetails";
 import { retrySettingsRecovery } from "./settingsRecoveryActions";
 import { mergeVersions, type SetupVersion } from "./setupVersions";
+import { hash64 } from "./syncFingerprint";
 import { canonical, content } from "./syncTree";
 import { forgetBackupReasons, readVersionLabels } from "./versionLabels";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 export type RecoverySourceKind = "history" | "backup" | "copy";
 
@@ -79,6 +80,16 @@ function normalized(data: unknown): Partial<PluginData> | null {
 }
 
 export class SettingsRecoveryService {
+	/**
+	 * What each copy the last listing read holds, normalized, keyed by its
+	 * content: a history entry by the hash it is stored under, a file by a hash
+	 * of its text. Normalizing is most of a listing's work and the same content
+	 * always gives the same result, so opening Version history again, and the
+	 * listing after a restore or a delete, only normalize what is new. Only the
+	 * last listing's copies are kept, so a deleted one does not stay in memory.
+	 */
+	private normalizedCopies = new Map<string, Partial<PluginData> | null>();
+
 	constructor(private readonly host: ExternalReloadHost) {}
 
 	/** Why the settings file cannot be used, for the paused-saving banner. */
@@ -86,41 +97,61 @@ export class SettingsRecoveryService {
 		return (await inspectSettingsFile(this.host)).diagnosis;
 	}
 
-	/** Device history, then backups, then stray copies of the settings file, each newest first. */
+	/**
+	 * Device history, then backups, then stray copies of the settings file, each
+	 * newest first. The three places, and the files in each, are read at once
+	 * rather than one after another.
+	 */
 	async listSources(): Promise<RecoverySource[]> {
-		const sources: RecoverySource[] = [];
-		try {
-			for (const entry of await this.host.settingsWriter.historyEntries()) {
-				sources.push({ kind: "history", time: entry.savedAt, path: null, historyHash: entry.hash, origin: "this-device",
-					data: normalized(entry.data), reason: entry.reason ?? null });
-			}
-		} catch (error) { console.warn("[callout-studio] settings history could not be read", error); }
+		const known = this.normalizedCopies, seen = new Map<string, Partial<PluginData> | null>();
+		const normalize = (key: string, raw: () => unknown): Partial<PluginData> | null => {
+			const data = known.has(key) ? known.get(key) ?? null : normalized(raw());
+			seen.set(key, data);
+			return data;
+		};
 		const { adapter } = this.host.app.vault;
-		const labels = await readVersionLabels(adapter, settingsBackupDir(this.host));
 		const read = async (path: string) => {
 			try {
-				const raw: unknown = JSON.parse(await adapter.read(path));
-				return { data: normalized(raw) };
+				const text = await adapter.read(path);
+				return { data: normalize(`file:${hash64(text)}`, () => JSON.parse(text)) };
 			} catch { return { data: null }; }
 		};
-		try {
-			const device = backupDeviceOf(this.host);
-			for (const entry of await listSettingsBackups(this.host)) {
-				const origin = entry.device === null ? "older-version" : entry.device === device ? "this-device" : "other-device";
-				sources.push({ kind: "backup", time: entry.time, path: entry.path, historyHash: null, origin,
-					reason: labels.reasons.get(baseName(entry.path)) ?? null, ...await read(entry.path) });
-			}
-		} catch (error) { console.warn("[callout-studio] settings backups could not be listed", error); }
-		try {
-			const primary = settingsDataPath(this.host);
-			const dir = primary.slice(0, primary.lastIndexOf("/"));
-			for (const path of (await adapter.list(dir)).files.sort()) {
+		const history = async (): Promise<RecoverySource[]> => {
+			try {
+				return (await this.host.settingsWriter.historyEntries()).map(entry => ({
+					kind: "history", time: entry.savedAt, path: null, historyHash: entry.hash, origin: "this-device",
+					data: normalize(`history:${entry.hash}`, () => entry.data), reason: entry.reason ?? null,
+				}));
+			} catch (error) { console.warn("[callout-studio] settings history could not be read", error); return []; }
+		};
+		const backups = async (): Promise<RecoverySource[]> => {
+			try {
+				const [labels, entries] = await Promise.all([
+					readVersionLabels(adapter, settingsBackupDir(this.host)), listSettingsBackups(this.host),
+				]);
+				const device = backupDeviceOf(this.host);
+				return await Promise.all(entries.map(async (entry): Promise<RecoverySource> => ({
+					kind: "backup", time: entry.time, path: entry.path, historyHash: null,
+					origin: entry.device === null ? "older-version" : entry.device === device ? "this-device" : "other-device",
+					reason: labels.reasons.get(baseName(entry.path)) ?? null, ...await read(entry.path),
+				})));
+			} catch (error) { console.warn("[callout-studio] settings backups could not be listed", error); return []; }
+		};
+		const copies = async (): Promise<RecoverySource[]> => {
+			try {
+				const primary = settingsDataPath(this.host);
+				const dir = primary.slice(0, primary.lastIndexOf("/"));
 				// Any sync service's copy: `data 2.json`, `data (conflicted copy …).json`, …
-				if (path === primary || !/^data\b.*\.json$/i.test(path.slice(dir.length + 1))) continue;
-				sources.push({ kind: "copy", time: await this.modifiedTime(path), path, historyHash: null, origin: null,
-					reason: null, ...await read(path) });
-			}
-		} catch (error) { console.warn("[callout-studio] settings copies could not be listed", error); }
+				const paths = (await adapter.list(dir)).files.sort()
+					.filter(path => path !== primary && /^data\b.*\.json$/i.test(path.slice(dir.length + 1)));
+				return await Promise.all(paths.map(async (path): Promise<RecoverySource> => {
+					const [time, contents] = await Promise.all([this.modifiedTime(path), read(path)]);
+					return { kind: "copy", time, path, historyHash: null, origin: null, reason: null, ...contents };
+				}));
+			} catch (error) { console.warn("[callout-studio] settings copies could not be listed", error); return []; }
+		};
+		const sources = (await Promise.all([history(), backups(), copies()])).flat();
+		this.normalizedCopies = seen;
 		return sources;
 	}
 
@@ -143,7 +174,13 @@ export class SettingsRecoveryService {
 
 	/** How `data` differs from what is displayed now. */
 	difference(data: Partial<PluginData>): SetupDifference {
-		return { callouts: data.callouts?.length ?? 0, changed: differingEntries(this.host.registry.toSaveData(), data).size };
+		return this.differences()(data);
+	}
+
+	/** {@link difference} for a whole list of setups: what is displayed now is read once, for all of them. */
+	differences(): (data: Partial<PluginData>) => SetupDifference {
+		const fromNow = differencesFrom(this.host.registry.toSaveData());
+		return data => ({ callouts: data.callouts?.length ?? 0, changed: fromNow(data).size });
 	}
 
 	/**
@@ -243,7 +280,7 @@ export class SettingsRecoveryService {
 		const raw = first.raw;
 		// Only bytes that hold still, and never a later build's file.
 		if (raw === null || raw !== second.raw || first.diagnosis === "newer") {
-			new Notice(t("notice.replaceUnreadableUnavailable"), 10000);
+			showNotice("problem", t("notice.replaceUnreadableUnavailable"));
 			return false;
 		}
 		if (first.salvage) {
@@ -285,7 +322,7 @@ export class SettingsRecoveryService {
 		let stored: unknown;
 		try { stored = await writer.recoveryCopyRaw(); } catch (error) {
 			console.error("[callout-studio] the device recovery copy could not be read", error);
-			new Notice(t("notice.recoveryStorageUnavailable"), 10000);
+			showNotice("problem", t("notice.recoveryStorageUnavailable"));
 			return false;
 		}
 		if (stored === undefined) return false;
@@ -345,6 +382,6 @@ export class SettingsRecoveryService {
 		host.refreshThemeAppearance();
 		host.customCommands.syncAll();
 		host.refreshCallouts();
-		if (host.settingsTab?.containerEl.isConnected) host.settingsTab.display();
+		host.settingsTab?.update();
 	}
 }

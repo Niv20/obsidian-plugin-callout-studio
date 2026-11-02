@@ -45,8 +45,7 @@ export const calloutStudioCaretDrop = StateEffect.define<null>();
  * settings preview. Their inline callouts and heading callouts are widget DOM the icon sweep
  * deliberately will not touch (see CSS_CM_WIDGET), so missing them here left
  * them with no refresh path at all — they kept the old icon until the next
- * keystroke in that editor. GlobalStyleModal had already grown a local
- * workaround for its own preview; this removes the need for one.
+ * keystroke in that editor.
  */
 const liveViews = new Set<EditorView>();
 

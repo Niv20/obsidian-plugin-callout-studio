@@ -1,15 +1,14 @@
 import { canonicalIconValue } from "../../icons/lucideId";
 import { reportSettingsSaveFailure, clearSettingsSaveFailure } from "../../manager/settingsSaveReporter";
 import { SettingsPersistenceError } from "../../manager/settingsSaveStatus";
-import { en } from "../../i18n/en";
 import { canonical } from "../../manager/syncTree";
 import type { PluginData } from "../../types";
-import { Notice } from "obsidian";
 import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
 import type { CalloutEditorPlugin } from "./types";
 import { persistEditorSettings } from "./persistEditorSettings";
 import type { CalloutVaultSavePlan } from "./calloutVaultSavePlan";
+import { showNotice } from "../../ui/mascot/mascotNotices";
 
 class NoteUpdateError extends Error {}
 
@@ -39,7 +38,7 @@ export class EditorSaveSession {
 			onBusyChange();
 			const recovered = await host.retrySettingsRecovery({ editor: true, canApply: data =>
 				!this.pendingRow || this.rowSnapshot(data, this.pendingRow.id) === this.pendingRow.json });
-			if (recovered) new Notice(t("saveStatus.reviewDraft"), 10000);
+			if (recovered) showNotice("info", t("saveStatus.reviewDraft"));
 			return recovered;
 		} finally { this.busy = false; onBusyChange(); }
 	}
@@ -52,7 +51,7 @@ export class EditorSaveSession {
 		}
 		if (!await persistEditorSettings(host)) throw new SettingsPersistenceError(host.settingsWriter.status?.reason ?? "changed", "Callout must be saved before rewriting notes");
 		try { await this.pendingVaultChanges(); }
-		catch (error) { console.error("[callout-studio] note updates failed", error); throw new NoteUpdateError(en["saveStatus.notesFailed"]); }
+		catch (error) { console.error("[callout-studio] note updates failed", error); throw new NoteUpdateError(t("saveStatus.notesFailed")); }
 		this.pendingVaultChanges = null;
 		this.pendingRow = null;
 	}

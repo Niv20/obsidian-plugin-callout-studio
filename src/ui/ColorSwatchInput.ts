@@ -1,58 +1,53 @@
 /**
- * ui/ColorSwatchInput.ts — Native color input styled as a swatch box.
+ * ui/ColorSwatchInput.ts — the palette editor's colour picker: Obsidian's own
+ * round colour dot.
  *
- * The visible swatch is a wrapper whose background-color we fully control (so
- * it renders identically on desktop, iPhone and tablets); the native
- * <input type="color"> sits invisibly on top to keep the OS color-picker
- * behaviour. Each swatch also carries a hidden low-contrast warning badge
- * toggled via setContrastWarning. Shared by the callout editor's color grid
- * and the custom palette editor modal.
+ * Who calls it. The palette editor's colour rows (`PaletteEditorModal` and
+ * `paletteBaseColorRow.ts`).
+ *
+ * The main idea. It is the very element Obsidian's `ColorComponent` makes, a
+ * bare `<input type="color">`, so Obsidian's app.css draws it: a round 22px dot
+ * (40px on a phone or tablet), a soft ring under the pointer and a grey ring on
+ * keyboard focus (finding S6-11); styles.css adds 4px of height, because
+ * app.css leaves no room for the ring at the top and bottom. It used to be a painted rectangle with the
+ * real input invisible on top, which answered neither the pointer nor the
+ * keyboard.
+ *
+ * It is made here rather than with `ColorComponent` because that reports a
+ * colour only once the system picker closes (the `change` event), while the
+ * live preview has to follow every move inside the picker (the `input` event).
+ * Both are passed on: `onPick` for every move, `onCommit` once the pick has
+ * settled.
  */
-import { setIcon } from "obsidian";
-import { t } from "../i18n";
 
 export interface ColorSwatchInput {
-	/** The native color input (read/write its `.value` to sync the swatch). */
+	/** The native colour input (read or write its `.value`). */
 	input: HTMLInputElement;
-	/** Grid-cell wrapper containing the swatch and the warning badge. */
-	cell: HTMLElement;
-	/** Warning badge, hidden until shown via setContrastWarning. */
-	warnEl: HTMLElement;
 }
 
+/**
+ * Add a colour dot to `parent`.
+ *
+ * @param parent Where the dot goes, usually a setting row's control column.
+ * @param value The colour it starts on, as `#rrggbb`.
+ * @param onPick Called with the colour on every move inside the picker.
+ * @param onCommit Optional: called once the picker settles on a colour, for
+ *   work that should not run mid-pick (a warning line that would make the
+ *   rows below jump while the user is still choosing).
+ */
 export function createColorSwatchInput(
 	parent: HTMLElement,
 	value: string,
 	onPick: (next: string) => void,
+	onCommit?: (next: string) => void,
 ): ColorSwatchInput {
-	const cell = parent.createDiv({ cls: "cs-color-cell" });
-	const wrap = cell.createEl("label", {
-		cls: "callout-studio-color-input-wrap",
-	});
-	wrap.style.backgroundColor = value;
-	const input = wrap.createEl("input", {
+	const input = parent.createEl("input", {
 		type: "color",
 		value,
+		// A hook for tests and the screenshot scripts; app.css draws the dot.
 		cls: "callout-studio-color-input",
 	});
-	input.addEventListener("input", () => {
-		wrap.style.backgroundColor = input.value;
-		onPick(input.value);
-	});
-	const warnEl = cell.createSpan({ cls: "cs-contrast-warning" });
-	setIcon(warnEl, "triangle-alert");
-	return { input, cell, warnEl };
-}
-
-/** Shows or hides a swatch's low-contrast warning badge (never blocks saving). */
-export function setContrastWarning(
-	warnEl: HTMLElement,
-	visible: boolean,
-): void {
-	warnEl.toggleClass("is-visible", visible);
-	if (visible) {
-		warnEl.setAttribute("aria-label", t("editor.contrastWarning"));
-	} else {
-		warnEl.removeAttribute("aria-label");
-	}
+	input.addEventListener("input", () => onPick(input.value));
+	if (onCommit) input.addEventListener("change", () => onCommit(input.value));
+	return { input };
 }

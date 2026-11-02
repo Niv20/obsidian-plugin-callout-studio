@@ -62,6 +62,7 @@ import type { ThemeCalloutStore } from "./theme/ThemeCalloutStore";
 import { ThemeMetadataCatalog } from "./theme/ThemeMetadataCatalog";
 import { generateFallbackCSS } from "./css/fallbackCSS";
 import { generateMetadataColorCSS } from "./css/metadataColorCSS";
+import { PreviewLayer } from "./css/PreviewLayer";
 import {
 	activeMetadataColorEntries,
 	definitionWithMetadataColor,
@@ -95,7 +96,7 @@ import {
 	tokenAttrSel,
 } from "../utils/calloutSelector";
 import { coreAccentShimCSS } from "./css/coreAccentShim";
-import { coreAccentDialect } from "../utils/calloutColorFormat";
+import { CORE_ACCENT_SPELLING } from "../utils/calloutColorFormat";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import { StartupStyleCache } from "./StartupStyleCache";
 import { OWN_CSS_CHANGE } from "./ownCssChange";
@@ -217,11 +218,25 @@ export class CSSInjector {
 	/** Artwork lookup for both the CSS masks and the DOM export copies. */
 	private icons: IconResolver;
 	private destroyed = false;
+	/**
+	 * Where a demo preview's rules go while the main sheet leaves them out. See
+	 * {@link repaintDemoPreview}.
+	 */
+	private readonly previewLayer: PreviewLayer;
+	/**
+	 * The id of the demo preview whose rules belong in {@link previewLayer}
+	 * rather than in the main sheet, or null when no demo has asked for that.
+	 * Set by {@link repaintDemoPreview}; cleared by the first pass that finds
+	 * the demo gone, so a settings window that forgets to say it is done cannot
+	 * leave the main sheet short of a callout.
+	 */
+	private layeredDemoId: string | null = null;
 
 	constructor(app: App, registry: CalloutRegistry) {
 		this.app = app;
 		this.registry = registry;
 		this.icons = createIconResolver(registry);
+		this.previewLayer = new PreviewLayer(app);
 		this.startupCache = new StartupStyleCache(app);
 		this.studioWeights = new StudioWeightCache(app, () => this.themeOff());
 		this.metadataCatalog = new ThemeMetadataCatalog(app, () => this.themeOff());
@@ -306,11 +321,13 @@ export class CSSInjector {
 		const el = this.styleEl;
 		const sheetWas = sheet?.disabled ?? false;
 		const elWas = el?.disabled ?? false;
+		const restoreLayer = this.previewLayer.suspend();
 		if (sheet) sheet.disabled = true;
 		if (el) el.disabled = true;
 		return () => {
 			if (sheet) sheet.disabled = sheetWas;
 			if (el) el.disabled = elWas;
+			restoreLayer();
 		};
 	}
 
@@ -449,12 +466,80 @@ export class CSSInjector {
 		}
 	}
 
+	/**
+	 * Repaint after the registry's demo preview changed — the stand-in callout
+	 * a settings window shows (`registry.setPreviewDefinition(def, true)`), as
+	 * the palette editor does on every step of a colour drag.
+	 *
+	 * The first call lifts the demo's rules out of the main sheet into the
+	 * preview layer, through one ordinary pass; every later call regenerates
+	 * just that callout and rewrites just the layer. A colour drag used to run
+	 * the ordinary pass per step, which writes the whole stylesheet twice and
+	 * makes Obsidian copy it into every pop-out window; this writes a few
+	 * hundred bytes, and a step costs about a millisecond instead of about
+	 * thirty.
+	 *
+	 * Nothing else a pass does is owed here. The main sheet's text does not
+	 * depend on the demo's colours, no real callout changed, and the editor
+	 * that shows the demo rebuilds its own widgets on its refresh.
+	 *
+	 * The one thing a pass does that a step might owe is the painted icons: a
+	 * Lucide, emoji or picture icon is drawn into the callout's DOM by
+	 * `paintIcons`, not by CSS. A caller whose form can change the icon (the
+	 * callout editor) passes `iconRoot`, the element the demo is shown in, and
+	 * only that is swept. The palette editor never changes its stand-in's icon
+	 * and passes nothing.
+	 *
+	 * Anything that is not a lone demo — no preview, or one standing on a real
+	 * callout — takes the ordinary pass, so this is safe to call from any
+	 * preview.
+	 */
+	repaintDemoPreview(iconRoot?: ParentNode): void {
+		if (this.destroyed) return;
+		const demo = this.registry.getDemoPreview();
+		if (!demo) {
+			this.inject(false);
+			return;
+		}
+		// The layer is the proof the main sheet already leaves this id out: a
+		// pass writes the layer only after building a main text without it.
+		if (this.layeredDemoId !== demo.id || this.previewLayer.owner !== demo.id) {
+			this.layeredDemoId = demo.id;
+			this.inject(false);
+			return;
+		}
+		// Outside a pass, so the one piece of pass state generateCalloutCSS
+		// reads that an ordinary pass sets up is set here. The memoised theme
+		// weight and accent spelling are kept from the last pass; a theme change
+		// is a `css-change`, which runs a whole pass and refreshes them.
+		const themeOffWas = this.emitThemeOff;
+		this.emitThemeOff = this.themeOff();
+		try {
+			this.previewLayer.write(demo.id, this.generateCalloutCSS(demo));
+		} finally {
+			this.emitThemeOff = themeOffWas;
+		}
+		if (iconRoot) this.paintIcons(iconRoot);
+	}
+
+	/** The demo whose rules this pass keeps out of the main sheet, if any. */
+	private layeredDemo(): CalloutDefinition | null {
+		if (this.layeredDemoId === null) return null;
+		const demo = this.registry.getDemoPreview();
+		return demo?.id === this.layeredDemoId ? demo : null;
+	}
+
 	private injectNow(emitCssChange: boolean): void {
 		this.ensureStyleSheet();
 		this.studioWeights.beginPass();
 		this.emitThemeOff = this.themeOff();
 
 		const callouts = this.registry.getAll();
+		// A demo preview that asked for it (repaintDemoPreview) has its rules in
+		// the preview layer, so they are left out of this text. Everything else
+		// below still sees it in `callouts`: the fallback and the metadata rules
+		// are built from every id the registry knows.
+		const layered = this.layeredDemo();
 		const rules: string[] = [CSS_HEADER];
 		if (this.emitThemeOff) rules.push(THEME_CALLOUTS_OFF_MARKER);
 
@@ -481,6 +566,7 @@ export class CSSInjector {
 		);
 
 		for (const def of callouts) {
+			if (def.id === layered?.id) continue;
 			rules.push(this.generateCalloutCSS(def));
 		}
 
@@ -509,6 +595,18 @@ export class CSSInjector {
 			if (this.styleSheet) this.styleSheet.replaceSync(cssText);
 			if (this.styleEl) this.styleEl.textContent = cssText;
 			this.lastCssText = cssText;
+		}
+
+		// The demo's own rules, after the main sheet so they win a tie as they
+		// would have inside it. Written on every pass, not only when the main
+		// text moved: a theme switch moves what the demo's rules should say
+		// while the demo's definition stands still. The layer skips the write
+		// itself when the text is unchanged.
+		if (layered) {
+			this.previewLayer.write(layered.id, this.generateCalloutCSS(layered));
+		} else {
+			this.layeredDemoId = null;
+			this.previewLayer.clear();
 		}
 
 		// Snapshot the same text for next launch's startup fast path (see
@@ -641,7 +739,7 @@ export class CSSInjector {
 			selectors: sels.join(",\n"),
 			titleSelectors: sels.map((s) => `${s} > .callout-title`).join(",\n"),
 			dialect: this.studioWeights.dialect(),
-			core: coreAccentDialect(),
+			core: CORE_ACCENT_SPELLING,
 			ownsAccentVariable: this.themeAccentVar(def) === undefined,
 			ownsBackground:
 				def.transparentBg === true ||
@@ -2016,9 +2114,9 @@ export class CSSInjector {
 
 	/**
 	 * Every colour a callout can take from its own metadata — see
-	 * `css/metadataColorCSS.ts`. Empty while the hidden `metadataColors`
-	 * switch is off. `standalone` is the exported snippet's cut, as for
-	 * {@link generateCalloutCSS}.
+	 * `css/metadataColorCSS.ts`. Empty while the `metadataColors` switch
+	 * (Settings → Editor → Metadata → Metadata colors) is off. `standalone`
+	 * is the exported snippet's cut, as for {@link generateCalloutCSS}.
 	 *
 	 * Sets the ambient weight and importance the shared emitters read
 	 * (`themeSurface`, `printGradientCSS`) for the duration, like
@@ -2101,5 +2199,6 @@ export class CSSInjector {
 		this.styleEl?.remove();
 		this.styleEl = null;
 		this.lastCssText = null;
+		this.previewLayer.destroy();
 	}
 }

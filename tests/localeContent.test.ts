@@ -248,31 +248,6 @@ describe("export format guidance is translated everywhere", () => {
 	}
 });
 
-describe("global style modal titles are translated everywhere", () => {
-	const keys = [
-		"settings.globalStyleRegularTitle",
-		"settings.globalStyleHeadingTitle",
-		"settings.globalStyleInlineTitle",
-	] as const;
-
-	for (const [fileId, table] of entries) {
-		it(`${fileId}.ts has its own title for each callout style`, () => {
-			for (const key of keys) {
-				assert.strictEqual(
-					typeof table[key],
-					"string",
-					`${fileId}.ts is missing ${key}`,
-				);
-				assert.notStrictEqual(
-					table[key],
-					en[key],
-					`${fileId}.ts still shows the English ${key}`,
-				);
-			}
-		});
-	}
-});
-
 describe("the plugin import window is translated everywhere", () => {
 	// Both importers share one window with a single Import. These are the words
 	// that tell a user what that Import will act on — a staged file's line,

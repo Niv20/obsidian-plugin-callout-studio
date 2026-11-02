@@ -1,9 +1,10 @@
-import { Menu, Notice, type App } from "obsidian";
+import { Menu, type App } from "obsidian";
 import { t } from "../i18n";
 import { PortableCustomReplacementError, type PortableReplacement } from "../utils/portableCalloutCustom";
 import { retainPortableCalloutReplacements, reviewPortableCalloutSelection, type PortableCalloutConversionPlan } from "../utils/portableCalloutVault";
 import { createPortableReplacementEditor } from "./portableReplacementEditor";
 import { PortableInlineReplacement } from "./portableInlineReplacement";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 interface ReviewState { ready: boolean; plan?: PortableCalloutConversionPlan; selected: ReadonlySet<string> }
 
@@ -50,7 +51,7 @@ export class PortableConversionCustom {
 		const slot = id && this.slot(id);
 		if (!ready || !plan || plan.recovery || !row || !base || !slot) return;
 		const editor = createPortableReplacementEditor(base, row, this.replacements.get(row.id));
-		if (!editor) { new Notice(t("portable.customInvalid")); return; }
+		if (!editor) { showNotice("blocked", t("portable.customInvalid")); return; }
 		this.clearSourceHighlight();
 		this.close(); slot.empty();
 		const snapshot = this.base;
@@ -83,7 +84,7 @@ export class PortableConversionCustom {
 	focusDraft(): void { this.editor?.view.focus(); }
 	finish(): void {
 		const message = this.editor?.view.submit(false);
-		if (message) { new Notice(message); this.close(); this.redraw(); }
+		if (message) { showNotice("blocked", message); this.close(); this.redraw(); }
 	}
 	private syncReset(): void {
 		const editor = this.editor;
@@ -100,7 +101,7 @@ export class PortableConversionCustom {
 		if (this.editor?.id === row.id && this.editor.view.changed) { this.close(); this.redraw(); this.focusEdit(row.id); return; }
 		if (!row.custom) return;
 		const error = this.save(plan, row.id);
-		if (error) new Notice(error);
+		if (error) showNotice("blocked", error);
 	}
 	private slot(id: string): HTMLElement | undefined {
 		return Array.from(this.root?.querySelectorAll<HTMLElement>("[data-replacement]") ?? []).find(el => el.dataset.replacement === id);
@@ -115,7 +116,7 @@ export class PortableConversionCustom {
 		}, oldId => invalidated.add(oldId));
 		for (const id of previous.keys()) if (!relocated.has(id)) invalidated.add(id);
 		this.base = plan;
-		if (invalidated.size) new Notice(t("portable.customDiscarded", { count: invalidated.size }));
+		if (invalidated.size) showNotice("info", t("portable.customDiscarded", { count: invalidated.size }));
 		return { invalidated, relocated };
 	}
 	review(selected: ReadonlySet<string>, refreshed = false): PortableCalloutConversionPlan {
@@ -135,7 +136,7 @@ export class PortableConversionCustom {
 				for (const id of this.replacements.keys()) safe.delete(id);
 				plan = reviewPortableCalloutSelection(this.app, this.base!, safe, this.replacements);
 			}
-			new Notice(t("portable.customInvalid"));
+			showNotice("blocked", t("portable.customInvalid"));
 			return plan;
 		}
 	}

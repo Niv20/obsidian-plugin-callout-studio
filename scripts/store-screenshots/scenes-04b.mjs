@@ -12,6 +12,12 @@ const requestedOrder = [
 	"rpg-awesome", "octicons", "simple-icons",
 ];
 
+// The window as someone who has used it sees it, so all three of its groups
+// show: Emoji put away (a library that ships with the plugin is hidden, never
+// "to download"), two small libraries not fetched yet, the rest on this device.
+const hiddenLibraries = ["emoji"];
+const librariesToDownload = ["rpg-awesome", "octicons"];
+
 async function waitFor(predicate, label) {
 	for (let frame = 0; frame < 180; frame++) {
 		if (predicate()) return;
@@ -30,10 +36,11 @@ export async function mountScene() {
 		requestedOrder.some(id => !ICON_SOURCE_IDS.includes(id))) {
 		throw new Error("The 04B library order no longer matches the icon catalog");
 	}
-	plugin.settings.iconLibraries = { order: requestedOrder, hidden: [] };
-	// The offline fixture has no vault files. Mark every downloadable pack as
-	// present on this device so the production window puts every row above the line.
-	const ready = new Set(ICON_SOURCE_IDS.flatMap(libraryFiles));
+	plugin.settings.iconLibraries = { order: requestedOrder, hidden: hiddenLibraries };
+	// The offline fixture has no vault files. Mark the downloadable packs as
+	// present on this device, bar the two still to fetch, which the production
+	// window then lists under Libraries to download.
+	const ready = new Set(ICON_SOURCE_IDS.filter(id => !librariesToDownload.includes(id)).flatMap(libraryFiles));
 	plugin.icons.packs.state = id => ready.has(id) ? "ready" : "unavailable";
 	const counts = new Map(await Promise.all(ICON_SOURCE_IDS.map(async id => [
 		id, id === "image" ? 0 : (await getSource(id).loadIndex()).entries.length,
@@ -44,7 +51,7 @@ export async function mountScene() {
 	});
 	picker.open();
 	picker.modalEl.id = "guide-picker";
-	await waitFor(() => picker.modalEl.querySelector(".icon-picker-grid.is-loaded .icon-picker-cell"), "Lucide icon grid");
+	await waitFor(() => picker.modalEl.querySelector(".icon-picker-grid .icon-picker-cell"), "Lucide icon grid");
 	await waitFor(() => picker.modalEl.querySelector(".icon-picker-cell.is-selected"), "selected lightbulb");
 
 	const libraries = new IconLibrariesModal({

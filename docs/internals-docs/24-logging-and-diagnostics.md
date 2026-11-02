@@ -173,6 +173,18 @@ and
 | [cssSnippetExport.ts](../../src/manager/cssSnippetExport.ts) | `runExport()` | writing the exported snippet to disk throws |
 | [legacyStartupSnippet.ts](../../src/manager/legacyStartupSnippet.ts) | `removeLegacyStartupSnippet()` | removing the legacy startup CSS snippet throws on launch |
 
+### The declarative settings tree - `console.error` / `console.warn`
+
+| File | Function | Fires when |
+| --- | --- | --- |
+| [safeTree.ts](../../src/settings/declarative/safeTree.ts) | `buildTreeSafely()` | building the settings tree throws (`console.error`); Obsidian gets the fallback instead, so the plugin still loads |
+| [safeTree.ts](../../src/settings/declarative/safeTree.ts) | `guardRender()` | one settings row's `render` throws (`console.error`, naming the row); the rest of the page still draws |
+| [controlBinding.ts](../../src/settings/declarative/controlBinding.ts) | `writeControlValue()` | a control names a setting that does not exist (`console.warn`); nothing is written or saved |
+| [persistentParts.ts](../../src/settings/declarative/persistentParts.ts) | `disposeQuietly()` | disposing one surviving settings part throws (`console.error`); the others are still disposed |
+
+No `Notice` for any of them: each is a mistake in the plugin's own tree, not
+something the user did or can fix, and the page goes on working around it.
+
 `LiveCalloutPreview.ts`'s `build()` guards an undocumented internal Obsidian
 API with a working fallback - see
 [Common pitfalls § Obsidian APIs with special lifecycle requirements](23-common-pitfalls.md#obsidian-apis-with-special-lifecycle-requirements).

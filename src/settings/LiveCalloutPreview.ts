@@ -32,10 +32,11 @@
  * per-role global style popups (previewing the neutral demo callout under
  * the vault-wide geometry).
  */
-import { Component, MarkdownRenderer, Notice, type App } from "obsidian";
+import { Component, MarkdownRenderer, Setting, type App } from "obsidian";
 import { EmbeddableMarkdownEditor } from "./EmbeddableMarkdownEditor";
 import { calloutStudioRefresh } from "../editor/livepreview/refresh";
 import { t } from "../i18n";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 /** How long to wait after the last change before re-rendering the fallback. */
 const RENDER_DEBOUNCE_MS = 150;
@@ -44,8 +45,9 @@ const RENDER_DEBOUNCE_MS = 150;
 const READ_ONLY_NOTICE_THROTTLE_MS = 1500;
 
 export interface LiveCalloutPreviewOptions {
-	/** Header label shown above the preview. Omit for a headerless preview
-	 * (e.g. inside a card that carries its own title). */
+	/** Heading shown above the preview's box, as an Obsidian group heading.
+	 * Omit for a preview without one (e.g. inside a card that carries its own
+	 * title). */
 	title?: string;
 	/** Initial sample markdown to render. */
 	initialText: string;
@@ -135,7 +137,7 @@ export class LiveCalloutPreview {
 			return;
 		}
 		this.lastReadOnlyNoticeTs = now;
-		new Notice(t("editor.previewReadOnly"));
+		showNotice("blocked", t("editor.previewReadOnly"));
 	}
 
 	destroy(): void {
@@ -154,16 +156,18 @@ export class LiveCalloutPreview {
 	// ── DOM ────────────────────────────────────────────────────────────
 
 	private build(parentEl: HTMLElement): void {
+		if (this.opts.title) {
+			// The title is Obsidian's own group heading above the box, the way
+			// an Obsidian settings page names a group (finding S5-07), rather
+			// than a grey strip inside the box. A plain `Setting` marked as a
+			// heading draws exactly that: the heading's type, 16px in from the
+			// box's edge, with 16px below it.
+			new Setting(parentEl).setHeading().setName(this.opts.title);
+		}
+
 		const container = parentEl.createDiv({
 			cls: "callout-studio-preview-container cs-live-preview-container",
 		});
-
-		if (this.opts.title) {
-			const header = container.createDiv({
-				cls: "callout-studio-preview-header",
-			});
-			header.createSpan({ text: this.opts.title });
-		}
 
 		const body = container.createDiv({
 			cls: "cs-live-preview-body",

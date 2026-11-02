@@ -7,11 +7,12 @@
  * structurally — an unreadable binding reads as unassigned instead of throwing,
  * and a deep link that cannot find the pane says so instead of doing nothing.
  */
-import { Notice, Platform } from "obsidian";
+import { Platform } from "obsidian";
 import type { App } from "obsidian";
 import { t } from "../i18n";
 import type { StoredHotkey } from "../types";
 import { autofocusOnDesktop } from "./modalAutofocus";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 /** How Obsidian keys a plugin command: the plugin's id, then the short id. */
 export function fullCommandId(pluginId: string, shortId: string): string {
@@ -156,7 +157,7 @@ export function openHotkeySettings(app: App, query: string): void {
 	const pane: SettingsPane = app.setting;
 
 	if (!pane?.openTabById) {
-		new Notice(t("notice.openHotkeysFailed"));
+		showNotice("problem", t("notice.openHotkeysFailed"));
 		return;
 	}
 
@@ -169,7 +170,7 @@ export function openHotkeySettings(app: App, query: string): void {
 		}
 		filterHotkeys(query, 1);
 	} catch {
-		new Notice(t("notice.openHotkeysFailed"));
+		showNotice("problem", t("notice.openHotkeysFailed"));
 	}
 }
 
@@ -177,7 +178,7 @@ function filterHotkeys(query: string, attempt: number): void {
 	if (applyHotkeySearchFilter(query)) return;
 
 	if (attempt >= HOTKEY_SEARCH_MAX_ATTEMPTS) {
-		new Notice(t("notice.filterHotkeysFailed"));
+		showNotice("warning", t("notice.filterHotkeysFailed"));
 		return;
 	}
 

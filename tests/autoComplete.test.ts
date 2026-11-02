@@ -913,37 +913,59 @@ describe("renderSuggestion", () => {
 		assert.ok(classes(list).includes("callout-studio-suggestion-list"));
 	});
 
-	it("paints the Create-new row with its own marker class", () => {
-		const h = harness();
-		const el = row();
-		h.suggest.renderSuggestion({ __createNew: true, query: "brand new" }, el);
+	/** A text-bearing element as the fake DOM gives it back. */
+	type Node_ = { textContent: string; children: Node_[]; style: { color?: string } };
 
-		assert.ok(classes(el).includes("callout-studio-suggestion"));
-		assert.ok(classes(el).includes("callout-studio-suggestion-create-new"));
-		assert.ok(
-			(el as unknown as { textContent: string }).textContent.includes(
-				"brand new",
-			),
+	/**
+	 * The parts of a row in Obsidian's suggestion anatomy (S10-16):
+	 * `.suggestion-icon > .suggestion-flair`, then `.suggestion-content` with
+	 * the title and the note.
+	 */
+	const parts = (element: unknown) => {
+		const [slot, content] = children(element) as Node_[];
+		const [flair] = children(slot) as Node_[];
+		const [title, note] = children(content) as Node_[];
+		return { slot: slot!, flair: flair!, content: content!, title: title!, note: note! };
+	};
+
+	/** The bold runs (`.suggestion-highlight`) inside an element. */
+	const bold = (element: unknown): string[] =>
+		Array.from(
+			(element as { querySelectorAll(sel: string): ArrayLike<{ textContent: string }> })
+				.querySelectorAll(".suggestion-highlight"),
+			(span) => span.textContent,
 		);
-	});
 
-	it("paints a callout row as icon + name + ids", () => {
+	it("paints a callout row in Obsidian's suggestion anatomy: icon, name, ids", () => {
 		const h = harness();
 		addCallout(h.registry, { aliases: ["hush"] });
 		const el = row();
 		h.suggest.renderSuggestion(h.registry.get("quiet")!, el);
 
-		const [icon, text] = children(el);
-		assert.deepStrictEqual(classes(icon), ["callout-studio-suggestion-icon"]);
-		assert.deepStrictEqual(classes(text), ["callout-studio-suggestion-text"]);
-		const [name, idsEl] = children(text);
-		assert.strictEqual((name as { textContent: string }).textContent, "Quiet");
+		assert.ok(classes(el).includes("mod-complex"));
+		assert.ok(classes(el).includes("callout-studio-suggestion"));
+		const { slot, flair, content, title, note } = parts(el);
+		assert.deepStrictEqual(classes(slot), ["suggestion-icon"]);
+		assert.ok(classes(flair).includes("suggestion-flair"));
+		assert.ok(classes(flair).includes("callout-studio-suggestion-icon"));
+		assert.deepStrictEqual(classes(content), ["suggestion-content", "callout-studio-suggestion-text"]);
+		assert.deepStrictEqual(classes(title), ["suggestion-title", "callout-studio-suggestion-name"]);
+		assert.strictEqual(title.textContent, "Quiet");
+		assert.deepStrictEqual(classes(note), ["suggestion-note", "callout-studio-suggestion-id"]);
 		// Id and aliases share one sorted list (getSortedCalloutIds), so the
 		// second line does not depend on the order the aliases were stored in.
-		assert.strictEqual(
-			(idsEl as { textContent: string }).textContent,
-			"hush, quiet",
-		);
+		assert.strictEqual(note.textContent, "hush, quiet");
+	});
+
+	it("paints the Create-new row like any other row, with a plus", () => {
+		const h = harness();
+		const el = row();
+		h.suggest.renderSuggestion({ __createNew: true, query: "brand new" }, el);
+
+		assert.ok(classes(el).includes("mod-complex"));
+		const { flair, title } = parts(el);
+		assert.ok(classes(flair).includes("suggestion-flair"));
+		assert.ok(title.textContent.includes("brand new"));
 	});
 
 	it("draws the muted no-icon ring for a callout that hides its icon", () => {
@@ -953,10 +975,10 @@ describe("renderSuggestion", () => {
 		const el = row();
 		h.suggest.renderSuggestion(h.registry.get("quiet")!, el);
 
-		assert.ok(classes(children(el)[0]).includes(CSS_ICON_NONE));
+		assert.ok(classes(parts(el).flair).includes(CSS_ICON_NONE));
 	});
 
-	it("follows the theme for the row's colour", () => {
+	it("colours the icon for the theme, and never the name", () => {
 		const h = harness();
 		addCallout(h.registry, { colorLight: "#111111", colorDark: "#eeeeee" });
 		const def = h.registry.get("quiet")!;
@@ -964,18 +986,13 @@ describe("renderSuggestion", () => {
 		fakeDom.light();
 		const light = row();
 		h.suggest.renderSuggestion(def, light);
-		assert.strictEqual(
-			(children(light)[0] as { style: { color: string } }).style.color,
-			"#111111",
-		);
+		assert.strictEqual(parts(light).flair.style.color, "#111111");
+		assert.ok(!parts(light).title.style.color, "the name is in the list's normal text");
 
 		fakeDom.dark();
 		const dark = row();
 		h.suggest.renderSuggestion(def, dark);
-		assert.strictEqual(
-			(children(dark)[0] as { style: { color: string } }).style.color,
-			"#eeeeee",
-		);
+		assert.strictEqual(parts(dark).flair.style.color, "#eeeeee");
 		fakeDom.light();
 	});
 
@@ -989,10 +1006,7 @@ describe("renderSuggestion", () => {
 		const el = row();
 		h.suggest.renderSuggestion(h.registry.get("quiet")!, el);
 
-		assert.strictEqual(
-			(children(el)[0] as { style: { color: string } }).style.color,
-			"var(--text-muted)",
-		);
+		assert.strictEqual(parts(el).flair.style.color, "var(--text-muted)");
 	});
 
 	it("shows only the ids that match, once something has been typed", () => {
@@ -1002,41 +1016,37 @@ describe("renderSuggestion", () => {
 
 		const el = row();
 		h.suggest.renderSuggestion(h.registry.get("quiet")!, el);
-		const idsEl = children(children(el)[1])[1] as { textContent: string };
-		assert.strictEqual(idsEl.textContent, "hush");
+		assert.strictEqual(parts(el).note.textContent, "hush");
 	});
 
-	it("keeps the matched run at full strength and fades the rest", () => {
+	it("marks the typed run bold in the name and in the ids, as Obsidian does", () => {
 		const h = harness();
 		addCallout(h.registry, { id: "hushed", displayName: "Hushed" });
 		(h.suggest as unknown as { context: unknown }).context = { query: "ush" };
 
 		const el = row();
 		h.suggest.renderSuggestion(h.registry.get("hushed")!, el);
-		const idsEl = children(children(el)[1])[1];
-		// Each id is one item. In it, `h` before and `ed` after are dimmed spans;
-		// `ush` is a bare text node.
-		const items = (idsEl as { children: { children: { textContent: string }[] }[] }).children;
-		assert.strictEqual(items.length, 1);
-		assert.deepStrictEqual(
-			items[0]!.children.map((span) => span.textContent),
-			["h", "ed"],
-		);
-		assert.strictEqual((idsEl as { textContent: string }).textContent, "hushed");
+		const { title, note } = parts(el);
+		assert.deepStrictEqual(bold(title), ["ush"]);
+		assert.strictEqual(title.textContent, "Hushed");
+		// Each id is one item; in it, only the matched run is a span.
+		assert.strictEqual(note.children.length, 1);
+		assert.deepStrictEqual(bold(note), ["ush"]);
+		assert.strictEqual(note.textContent, "hushed");
 	});
 
-	it("shows every id unfaded when only the display name matched", () => {
+	it("leaves the ids plain when only the display name matched", () => {
 		const h = harness();
 		addCallout(h.registry, { displayName: "Library Voice", aliases: ["shh"] });
 		(h.suggest as unknown as { context: unknown }).context = { query: "library" };
 
 		const el = row();
 		h.suggest.renderSuggestion(h.registry.get("quiet")!, el);
-		const idsEl = children(children(el)[1])[1];
-		// One item per id, none of them carrying a dimmed span.
-		const items = (idsEl as { children: { children: unknown[] }[] }).children;
-		assert.strictEqual(items.length, 2);
-		assert.ok(items.every((item) => item.children.length === 0));
-		assert.strictEqual((idsEl as { textContent: string }).textContent, "quiet, shh");
+		const { title, note } = parts(el);
+		assert.deepStrictEqual(bold(title), ["Library"]);
+		// One item per id, none of them carrying a bold run.
+		assert.strictEqual(note.children.length, 2);
+		assert.deepStrictEqual(bold(note), []);
+		assert.strictEqual(note.textContent, "quiet, shh");
 	});
 });

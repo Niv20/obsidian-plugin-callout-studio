@@ -124,14 +124,18 @@ because their previews appear here. See
 
 ## The device-local store
 
-`DeviceLocalStore` v3 stores section folds, prior-install/welcome markers, the
+`DeviceLocalStore` v3 stores prior-install/welcome markers, the
 one-time **Find callouts** offer (`occurrencesTabOffered`), the
 import prompt's dismissal (`importBannerHandled`, for a device that has no
 settings file to record it in), the device's name for backup files
 (`deviceId`), where the icon picker and Quick Insert were left
 (`iconCategories`, `emojiSkinTone`, `quickInsertSource`), and optional
 `pending | seen` markers for the one-time personal-CSS-retirement and
-autocomplete-migration notices in vault-scoped browser storage.
+autocomplete-migration notices in vault-scoped browser storage. Until
+2026-10-25 it also kept which sections of the old settings page were folded
+(`listsExpanded`); a blob that still carries it loads fine, the next write
+drops the key, and an older build reading a blob without it shows every
+section open.
 
 `occurrencesTabOffered` records the initial offer, not whether the tab is open.
 It is saved before the tab is added on a confirmed first install; failed
@@ -174,8 +178,10 @@ persist(cssText: string): void     // called by every inject() with no preview r
 
 The key is vault-scoped:
 `${appId ?? vault.getName()}-callout-studio-css-v2` - `App.loadLocalStorage`'s
-own `${appId}-${key}` convention, replicated by hand because that public API
-requires Obsidian ≥1.8.7 while this plugin's `minAppVersion` is lower.
+own `${appId}-${key}` convention, built by hand. The plugin's minimum (1.13.4)
+has that API, but it stores JSON (`JSON.stringify` on save, `JSON.parse` on
+load), and the snapshot is plain CSS text: reading the existing key through it
+would return `null` on every device once.
 
 The snapshot holds the **exact text** the adopted stylesheet gets, so the
 handoff from cached-snapshot to freshly-generated CSS is invisible - there's

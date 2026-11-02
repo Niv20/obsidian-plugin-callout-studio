@@ -15,7 +15,7 @@ import type { NoteChangesModalInput } from "../src/settings/editor/NoteChangesMo
 import { choicesFor } from "../src/settings/editor/noteChangeQuestion";
 import type { NoteChoices } from "../src/settings/editor/noteChanges";
 import { handleBuiltInReset } from "../src/settings/sections/builtInResetAction";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import type { SettingsContext } from "../src/settings/sections/types";
 import { fakeDom } from "./support/fakeDom";
 import { Notice } from "./support/obsidianStub";
 
@@ -38,7 +38,7 @@ function setup(notes: Record<string, string>, opts: { failWrites?: boolean } = {
 	registry.load(null);
 	registry.update("note", { aliases: ["memo"] });
 	let displayed = 0;
-	const ctx = { app, plugin: { registry }, display: () => { displayed++; } } as unknown as SettingsSectionContext;
+	const ctx = { app, plugin: { registry }, redraw: () => { displayed++; } } as unknown as SettingsContext;
 	return {
 		ctx, registry, contents,
 		displayed: () => displayed,

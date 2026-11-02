@@ -20,11 +20,23 @@ File identity, modification time, size, Markdown-file membership and the theme's
 usable declared ids are checked. A failure, added/changed/deleted/renamed note or
 changed theme-id set cancels the whole pass. Settings and all scan inputs are
 checked after scanning and again after the asynchronous disk freshness check,
-immediately before the write. Theme attribute values that cannot form a Markdown
+immediately before the write (only the settings and the theme there when the
+caller waited, see below). Theme attribute values that cannot form a Markdown
 callout token (including brackets, metadata pipes and CSS escapes) are skipped.
 A successful save precedes the one registry batch that publishes the new rows.
 Failed saves leave no partial rows. Another click joins the same promise;
 unloading invalidates the scan.
+
+`run(beforeSave?)` awaits `beforeSave` once every note is read, before the new
+rows are staged, saved and published. The settings use it to take **Scanning…**
+away first, since that work holds the page for most of a second when hundreds of
+rows are new ([chapter 16](16-settings-ui-and-modals.md#scan-for-callouts)). The
+notes are checked once, before the wait: it is the notice staying up for at
+least two seconds, not reading, and a note that a sync service or another
+plugin touches meanwhile does not make what was read wrong (a scan only adds
+types). After the wait, and again before the write, only the settings and the
+theme's ids are checked, so a settings edit made during it still cancels the
+scan. A call that joins a running scan is not heard.
 
 A local edit during an already-started write keeps priority: publication skips
 ids/aliases it has since claimed, and uses the latest fallback selection and
@@ -92,10 +104,9 @@ provides appearance/status only; fallback artwork never changes usage ownership.
 `CalloutOccurrencesView` is a registered ItemView with a searchable
 `CalloutCombobox`, role filters, counted file groups and paged results. A summary
 below the controls reports the filtered occurrence and distinct-file counts;
-the vault-wide metric tiles are not displayed. The shared sidebar heading,
-subtitles, filters and summary stay above a separate result scroll container.
-File headings stick to the top of that container while their own result section
-remains in view, then yield to the next section's heading. Its picker combines committed, non-theme-only
+the vault-wide metric tiles are not displayed. The type field and the summary
+stay above a separate result scroll container, under the pane's nav header.
+Its picker combines committed, non-theme-only
 definitions with unregistered identities observed by the read-only index. Saved
 definitions include their aliases; equivalent identities and registered aliases
 are deduplicated before unknown options are added. A sidebar-local adapter supplies
@@ -152,13 +163,13 @@ behavior. **Review conversion** still has no startup tab: any leaf restored by
 Obsidian is closed on every launch, and a new review opens only when requested
 from Settings.
 
-The type and format controls have no visible labels; each keeps a localized
-accessible name. They share one grid row until the sidebar container is 440px
-wide, then stack in one column. The format filter uses the shared
-`SelectDropdown` with the same menu keyboard and pointer behavior as other
-finite-choice controls. The view registers a menu
-scope host so Escape first closes an open picker, and releases the host and both
-pickers when the frame is rebuilt or the view closes.
+The type field has no visible label; it keeps a localized accessible name, and
+fills Obsidian's search row. The format filter is the nav header's button
+(`openFormatMenu` in `usage/occurrencesViewFrame.ts`): Obsidian's menu with a ✓
+on the current format, its keys Obsidian's; the button is lit while a format is
+chosen. The view registers a menu scope host so Escape first closes an open
+picker, releases the host and the picker when the frame is rebuilt, and closes
+an open format menu and removes the nav header when the view closes.
 
 The shared `SidebarActiveFile` (`ui/sidebarActiveFile.ts`) tracks the most recent
 document in the main workspace for both occurrences and conversion review.
@@ -182,11 +193,10 @@ The active-file highlight remains in place. Filter changes do not reveal extra
 results or scroll to that file's section; an actual active-editor change may
 still request those actions.
 
-`OccurrenceResults` owns card rendering, selection, and focus restoration. A
-file group and its row-major grid come from `ui/sidebarResults.ts`, shared with
-the conversion sidebar. CSS bounds both panes' content at 1000px, switches cards
-to two columns at 680px container width, and keeps each file heading full-width
-and sticky within its section. `ui/sidebarNavigation.ts` owns opening a note and
+`OccurrenceResults` owns row rendering, selection, and focus restoration. A
+file group - Obsidian's search title row over one box of result rows - comes
+from `ui/sidebarResults.ts`, shared with the conversion sidebar (see
+[Settings UI and modals](16-settings-ui-and-modals.md)). `ui/sidebarNavigation.ts` owns opening a note and
 revealing a validated source range; each consumer supplies its source resolver.
 A card's identity includes its path, source fingerprint, token coordinates,
 identity, and role; array offsets are presentation data only. A `WeakMap` maps
@@ -206,13 +216,21 @@ the first two seconds of one continuous idle/loading/stale episode, so ordinary
 navigation and incremental refreshes do not flash progress copy. One cancellable
 timer spans those status transitions; a long-running episode is announced, while
 completion or view closure clears it. Partial and failed states remain immediate.
+A long-running episode shows Obsidian's thin loading bar across the top of the
+results (`.is-loading` on the scroller) and keeps its words in the live region
+for a screen reader only (`cs-visually-hidden`); partial and failed are drawn in
+the warning colour. An empty result is Obsidian's quiet `.search-empty-state`
+line, as Search says "No matches found" (finding S10-08).
 `VaultCalloutStatisticsModal` and its row renderer have been removed, along with
 the Settings action and styles. Result cards omit redundant type labels and
 clamp excerpts to two lines while preserving raw Markdown syntax; block excerpts
 prefer a header line and a line of body content. Preview formatting does not
-change source coordinates or token exclusions. Fine-pointer hover changes only a
-result card's border to the theme's focus-border colour; selected and
-keyboard-focus treatments remain distinct.
+change source coordinates or token exclusions. Under the pointer a Find
+callouts row takes Obsidian's match tint (`--text-selection`), and a tap on a
+phone the same; selected and keyboard-focus treatments remain distinct. Only the
+Find callouts rows answer this way, because each of them is a whole-row button.
+A Review conversion row is not itself a control, so it never fills. Its source
+line's location steps up to normal text, and its own icon buttons sharpen.
 `prepareUsageMenu` gives the shared occurrence scan up to 200 ms before any
 custom, built-in or theme row menu is constructed. A ready index bypasses both
 the wait and a freshness request. Concurrent requests share one scan; the latest
@@ -243,7 +261,8 @@ that were added before the count was known; see
 [settings menu groups](16-settings-ui-and-modals.md#callout-row-menu-groups).
 Menus unsubscribe when hidden.
 Views unsubscribe from both index and registry changes when closed.
-The list starts with 100 results and adds 100 per **Show more** action. Per-file
+The list starts with 100 results and adds 100 each time its end scrolls into
+reach (see [Settings UI and modals](16-settings-ui-and-modals.md)). Per-file
 heading counts cover the complete filtered query, including unloaded cards.
 The native sidebar tab is the sole visible occurrences control. It is offered
 once on first install, and the fixed command and **Find callouts** menu reopen
@@ -297,6 +316,47 @@ CodeMirror extension forwards selection transactions to per-editor subscribers;
 there is no polling. Subscriptions are removed when the card is released or its
 view closes.
 
+### Parking far groups
+
+Both sidebars keep a long list from slowing the editor (`ui/sidebarParking.ts`).
+Every arrow key in the editor makes CodeMirror move the page's text selection,
+and the browser then brings style and layout up to date; that costs more the
+more elements are drawn anywhere in the window, a sidebar's included, off
+screen or not. Opening a note deep in the Find callouts list draws every row
+before it (`SidebarActiveFile.sync` raises the limit until the note's group is
+in), and 2,600 rows made each key press about 2 ms slower: a quarter of a
+frame on a 120 Hz screen, and most noticeable on the lines that enter or leave
+a callout, which already cost the most. Review conversion has the same shape
+but a shorter list in practice, since only heading and inline callouts need
+converting.
+
+`SidebarParking` (one per sidebar) watches the file groups with an
+`IntersectionObserver` rooted in the list's scroller, with a screen of margin
+above and below. A group that leaves that zone gets the `is-parked` class and
+`--cs-parked-size`, the height the browser measured for it; `styles.css` then
+gives it that block size and stops drawing its children (`display: none`). A
+group that comes back is drawn again. The scrollbar and every other group stay
+exactly where they were, which is why groups are `display: flow-root`: their
+rows' outer margin (8px) used to collapse out of the group's box, and a parked
+group, with nothing inside to carry it, would have lost it.
+
+The groups stay in the DOM, so every lookup (`OccurrenceResults.rows`, the
+drawn cards the caret is matched against, `aria-current`, `SidebarFold`) works
+whether a group is parked or not. The one thing a parked row cannot do is be
+measured, so `revealSidebarCard` and `SidebarActiveFile.sync` call
+`unparkGroupOf` before they measure a row or scroll to a group. Nothing is
+parked while the tab is hidden (zero-height scroller), when the browser has not
+laid the group out (zero height), or when it holds the focus. The view calls
+`watch(list)` after every redraw (Find callouts only when
+`OccurrenceResults.render` returns `true`) and `stop()` when the frame is
+dropped. Parking works a whole group at a time, so one group taller than the
+zone stays drawn in full.
+
+What does not help, measured in the live app: `content-visibility`, `contain`,
+`visibility: hidden`, and reducing the rows' own elements. The elements still
+exist for the browser; only `display: none` or a detached element is free. See
+[Common pitfalls](23-common-pitfalls.md#everything-drawn-in-the-window-slows-the-editor).
+
 ### Cursor-follow
 
 Find callouts and Review conversion mark the card for what is under the caret, as
@@ -320,10 +380,9 @@ to the DOM only when the marked card changes (`OccurrenceResults.followCaret`,
 `PortableConversionNavigation.followCaret`), and both scroll the list with
 `revealSidebarCard` (`ui/sidebarResults.ts`, over `scrollToReveal`) only when
 that card is out of sight and the scroller is laid out (a hidden sidebar tab has
-zero height). The card's own file heading is sticky at the top of the scroller,
-so its height is passed as `coveredTop`: a card whose top edge sits under that
-heading counts as out of sight, and lands 8 px below it. It never moves focus or
-expands **Show more**.
+zero height). Nothing sticks over the list, so a row lands 8 px inside the
+scroller's edge (`coveredTop` 0; it was the height of a sticky file heading
+until 2026-10-24). It never moves focus or loads another page.
 
 `usage/occurrenceAtCursor.ts` resolves the caret against the **drawn** cards of
 that note (`OccurrenceResults.linesOf`), innermost first: an inline pill the caret
@@ -415,8 +474,10 @@ link.
   budget counts the first `before` and the latest `after`.
 
 **Delete** rewrites no note, so it has no journal. Its notice comes from
-`noticeWithUndoAction` instead, the same fragment and link around a plain
-callback; see [the delete flow](#delete-flow).
+`noticeWithUndoAction` instead, the same notice and Undo button around a
+plain callback; see [the delete flow](#delete-flow). Both build the notice
+with `showActionNotice` (`ui/noticeAction.ts`; see
+[Notices with an action](16-settings-ui-and-modals.md#notices-with-an-action)).
 
 The portable Markdown conversion below has its own reviewed, confirmed
 irreversible flow and does not use the journal.
@@ -438,14 +499,43 @@ Bare inline tokens use the trimmed written type, with metadata removed, regardle
 of definitions, aliases, fallback settings or feature toggles. A complete inline
 payload is unwrapped without a type prefix; empty payloads disappear. Literal
 labels and newly exposed block markers are escaped where necessary to preserve
-text semantics. Malformed or unsupported nested payloads remain for manual review.
-This is a recognition boundary, not a best-effort text replacement: an incomplete
-`[!note]{unfinished` or nested `[!note]{outer [!tip]{inner}}` is left byte-exact.
-The converter never guesses a closing delimiter or strips a partly understood
-payload. Unknown type IDs are still valid tokens; they do not require a registered
-definition. Only recognized source spans enter the selectable conversion plan.
-Block-preserving escapes also cover a newly exposed reference definition; a
-conversion that would expose a raw HTML block is skipped for manual review.
+text semantics.
+
+**What is converted, and what is not.** `unsupportedTokens()`
+(`calloutPlainTextLine.ts`) and the reparse check in `convertPortableCallouts`
+decide which tokens on a line are left alone. A token is left byte-exact when:
+
+- its `{` payload never closes on the line (`contentOpen`), e.g. `[!note]{unfinished`;
+- another token starts inside its payload, or tokens overlap. This is a blanket
+  rule, not a parse failure: a well-formed `[!note]{outer [!tip]{inner}}` is
+  skipped as a whole, outer and inner, even though the scanner returns both
+  tokens correctly. Nested payloads are deliberately out of scope; the review
+  model also assumes one token per unit (`buildPortableCalloutPlan` rejects a
+  custom replacement whose `inline` list is not exactly that token), so
+  supporting nesting would reach past the converter;
+- it sits inside a `[` … `]` that holds another `[`, e.g. `[!broken[!inner]]`,
+  where the shared scanner can recover an inner token from a broken outer one;
+- the export's own masks (`portableCalloutExclusions.ts`) change where its
+  payload ends compared with the unmasked scan ("a new exclusion must never
+  silently change which braces a pill owns");
+- removing it would expose a raw HTML block (`exposesHtmlBlock`), in which case
+  every token on that line stays.
+
+This is a recognition boundary, not a best-effort text replacement. The
+converter never guesses a closing delimiter or strips a partly understood
+payload, and a safe token beside an unsafe one on the same line is still
+converted (the HTML-block case aside). Unknown type IDs are still valid tokens;
+they do not require a registered definition. Only recognized source spans enter
+the selectable conversion plan. Block-preserving escapes also cover a newly
+exposed reference definition.
+
+`PortableCalloutConversion.skipped` still counts the tokens left alone (one per
+token, so one nested pair is 2), and the counter is summed into the plan, but
+nothing displays it. The review used to open with a "N incomplete or unsupported
+occurrences were left unchanged for manual review" line (`portable.skipped`);
+it was removed on 2026-10-28 by decision: these edge cases get documentation,
+not a notice or a list of lines. `tests/portableCallouts.test.ts` pins the
+behaviour above, including the counter.
 
 In a valid unquoted ATX heading, bare tokens are decorations when other title
 text remains, including tokens following that text. If only tokens remain, their
@@ -565,12 +655,13 @@ Obsidian's HTML menu (`setUseNativeMenu(false)`) so the edit and restore icons a
 visible consistently. When a customized card is not being edited, the `rotate-ccw`
 button beside the pencil exposes the same restore-default action.
 
-Conversion cards never clamp or ellipsize their source/replacement text. File
-headings remain sticky, show counts in parentheses after the name, and open the
-note when clicked. The source card's format/line label and **Before** text
+Conversion rows never clamp or ellipsize their source/replacement text. File
+title rows show their count as a faint number at the end and open the note when
+clicked. The source card's format/line label and **Before** text
 navigate to its precise token or heading range; **After** starts inline editing.
-Purple active styling is cleared when that exact editor selection no longer
-exists. The fixed header places the conversion action beside the description.
+The current-row mark is cleared when that exact editor selection no longer
+exists. The fixed header puts the conversion action across the pane in a row of
+its own, under the nav header that holds the help button.
 A single summary checkbox uses the native indeterminate state for partial
 selection, with a horizontal dash. Clicking an empty or partial state selects
 all; clicking the checked state clears all. Its count measures review units rather than source
@@ -709,7 +800,7 @@ rewrites those notes before resetting when the answer is Change.
 7. registry.cleanupUnusedIconSvgs()
 8. await plugin.saveSettings()                    ← awaited explicitly, see below
 9. plugin.refreshCallouts()   ← notes keep [!id] and now look different
-10. ctx.display(); notice "Deleted …" with Undo (noticeWithUndoAction)
+10. ctx.redraw(); notice "Deleted …" with Undo (noticeWithUndoAction)
 ```
 
 - **Failed count.** A partial count is never taken for "unused", which here
@@ -749,7 +840,7 @@ with it.
 
 ## Convert flow
 
-`handleClearCalloutUsages` behind the `⋯` item **Convert uses to plain text**
+`handleClearCalloutUsages` behind the `⋮` item **Convert uses to plain text**
 (`addConvertUsesItem`). Every row kind offers it: user, built-in and theme. It
 shows whenever the menu's count is not known to be zero, and is greyed out if
 that count lands on zero after the menu opened.
@@ -760,7 +851,7 @@ that count lands on zero after the menu opened.
      deleteModal.bodyInUse + convertModal.explain + who keeps the type
 3. convertCalloutsToPlainTextInVault(..., requireComplete = true, journal)
 4. incomplete → notice.calloutDeleteIncomplete; converted files stay converted
-5. noticeWithUndo(journal); ctx.display()
+5. noticeWithUndo(journal); ctx.redraw()
 ```
 
 The definition is never touched, and nothing is saved. The last line of the
@@ -777,8 +868,8 @@ finishes the remaining notes, since conversion is idempotent.
 
 ## Replace flow
 
-`handleCalloutReplace` counts usages, opens `ReplaceCalloutModal` (a dropdown
-of every *other* registered callout), and on confirmation calls
+`handleCalloutReplace` counts usages, opens `ReplaceCalloutModal` (a search over
+a list of every *other* registered callout), and on confirmation calls
 `replaceCalloutIdsInVault`. If the replacement target's display name differs
 from the callout being replaced, the title rewrite rides along too - because
 a header this plugin wrote carries the callout's display name as literal

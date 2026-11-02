@@ -8,7 +8,8 @@ import type { RecoverySource, SettingsRecoveryService } from "../src/manager/set
 import { setupDetails, type SetupDetails } from "../src/manager/setupDetails";
 import { mergeVersions, type SetupVersion } from "../src/manager/setupVersions";
 import { SettingsRecoveryDetailsModal } from "../src/settings/SettingsRecoveryDetailsModal";
-import { SettingsRecoveryModal } from "../src/settings/SettingsRecoveryModal";
+import { VersionHistoryPage } from "../src/settings/declarative/versionHistoryPage";
+import type { TreeContext } from "../src/settings/declarative/types";
 import { recoveryFieldLabel } from "../src/settings/recoveryDetailFields";
 import { recoverySourceTime, renderRecoveryDetails } from "../src/settings/recoveryDetailsView";
 import { formatNumber } from "../src/settings/recoveryValues";
@@ -16,6 +17,7 @@ import type { CustomPalette, PluginData } from "../src/types";
 import { definition } from "./support/discoveryHarness";
 import { fakeDom, type FakeElement } from "./support/fakeDom";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";
+import { readRepoFile } from "./support/sourceScan";
 
 function savedSetup(): PluginData {
 	const registry = new CalloutRegistry(); registry.load(null);
@@ -140,15 +142,15 @@ describe("earlier setup detail reports", () => {
 		const h = await render(everySection());
 		try {
 			assert.deepEqual(sections(h.root),
-				["user", "builtin", "iconSources", "fallback", "palettes", "style", "contextMenu", "commands", "language", "other"]);
+				["user", "builtin", "fallback", "palettes", "iconSources", "style", "contextMenu", "commands", "language", "other"]);
 			for (const section of h.root.querySelectorAll("[data-recovery-section]")) {
 				assert.equal(section.tagName.toLowerCase(), "table");
 				const toggle = section.querySelector("thead .cs-recovery-section-toggle");
 				assert.ok(toggle, "the title row folds the section");
 				// The shared heading count, beside the title rather than inside
 				// it, so a title cut short still shows how many changes it holds.
-				const count = toggle.children.find(child => child.hasClass("cs-heading-count"));
-				assert.equal(text(count), ` (${section.querySelectorAll("tbody").length})`);
+				const count = toggle.children.find(child => child.hasClass("cs-faint-count"));
+				assert.equal(text(count), ` ${section.querySelectorAll("tbody").length}`);
 				assert.deepEqual(section.querySelectorAll(".cs-recovery-column-row th").map(th => th.textContent), [
 					t("recovery.details.column.number"), t("recovery.details.column.item"),
 					t("recovery.details.current"), t("recovery.details.restored"),
@@ -236,12 +238,19 @@ describe("earlier setup detail reports", () => {
 			const toggle = table.querySelector(".cs-recovery-section-toggle")!;
 			assert.equal(toggle.tagName.toLowerCase(), "button");
 			assert.equal(toggle.getAttribute("aria-expanded"), "true");
+			// Obsidian's fold triangle, which app.css turns while it is folded.
+			const fold = toggle.querySelector(".collapse-icon")!;
+			assert.ok(fold, "Obsidian's .collapse-icon leads the title");
+			assert.equal(fold.getAttribute("aria-hidden"), "true");
+			assert.equal(fold.hasClass("is-collapsed"), false);
 			toggle.fire("click");
 			assert.ok(table.hasClass("is-collapsed"));
-			assert.ok(table.querySelector(".cs-recovery-section-heading")!.hasClass("is-collapsed"), "the chevron turns");
+			assert.ok(table.querySelector(".cs-recovery-section-heading")!.hasClass("is-collapsed"));
+			assert.ok(fold.hasClass("is-collapsed"), "the triangle turns");
 			assert.equal(toggle.getAttribute("aria-expanded"), "false");
 			toggle.fire("click");
 			assert.ok(!table.hasClass("is-collapsed"));
+			assert.equal(fold.hasClass("is-collapsed"), false);
 			h.component.unload();
 			toggle.fire("click");
 			assert.ok(!table.hasClass("is-collapsed"), "the listener goes with the window's component");
@@ -408,7 +417,7 @@ describe("viewing details from Version history", () => {
 			await settle(ready);
 			assert.ok(titleEl.textContent.startsWith(t("versions.details.title")));
 			assert.equal(text(titleEl.querySelector(".cs-version-detail-date")), ` (${recoverySourceTime(details.source)})`);
-			assert.ok(modalEl.hasClass("cs-modal-wide"));
+			assert.ok(modalEl.hasClass("mod-scrollable-content"), "Obsidian's long-dialog shell");
 			assert.deepEqual(sections(contentEl), ["style"]);
 			modal.onOpen();
 			await settle(ready);
@@ -416,7 +425,7 @@ describe("viewing details from Version history", () => {
 			assert.equal(titleEl.querySelectorAll(".cs-version-detail-date").length, 1, "reopening replaces the title date");
 			modal.onClose();
 			assert.equal(contentEl.children.length, 0);
-			assert.ok(!modalEl.hasClass("cs-modal-wide"));
+			assert.ok(!modalEl.hasClass("mod-scrollable-content"), "the shell comes off with the window");
 		} finally { modal.onClose(); containerEl.remove(); setLocale(previous); }
 	});
 
@@ -460,16 +469,15 @@ describe("viewing details from Version history", () => {
 						assert.equal(of, version, "the report classifies the complete version");
 						return setupDetails(selected, savedSetup());
 					},
-					difference: () => ({ callouts: 1, changed: mode === "identical" ? 0 : 1 }),
 					restore: () => { restoreCalls++; return Promise.resolve("restored" as const); },
 					remove: () => Promise.resolve(true),
 				} as unknown as SettingsRecoveryService;
-				const modal = new SettingsRecoveryModal(app, { recovery, settingsWriter: { isFrozen: mode === "frozen" } });
-				Object.assign(modal, { app });
+				const ctx = { app, plugin: { recovery, settingsWriter: { isFrozen: mode === "frozen" } } } as unknown as TreeContext;
+				const page = new VersionHistoryPage(ctx);
 				const root = fakeDom.document.body.createDiv();
 				try {
-					const renderer = modal as unknown as { renderRow(parent: HTMLElement, version: SetupVersion): void };
-					renderer.renderRow(root as unknown as HTMLElement, version!);
+					const renderer = page as unknown as { renderRow(list: HTMLElement, version: SetupVersion, compare: () => object): void };
+					renderer.renderRow(root as unknown as HTMLElement, version!, () => ({ callouts: 1, changed: mode === "identical" ? 0 : 1 }));
 					const view = root.querySelectorAll(".clickable-icon").find(element => element.dataset.csTooltip === t("recovery.details.view"));
 					assert.ok(view, mode);
 					assert.notEqual(view.getAttribute("aria-disabled"), "true");
@@ -485,5 +493,34 @@ describe("viewing details from Version history", () => {
 			else Reflect.deleteProperty(SettingsRecoveryDetailsModal.prototype, "open");
 			setLocale(previous);
 		}
+	});
+});
+
+/**
+ * The window's look (finding S9-12): the summary has no frame, and every line
+ * in the tables is Obsidian's table line, solid, so a theme that restyles
+ * tables restyles these too.
+ */
+describe("Version details look like Obsidian's tables", () => {
+	const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, "");
+	const rules: string[] = css.match(/[^{}]+\{[^{}]*\}/g) ?? [];
+	/** Every rule whose selector names `cls`, with its declarations. */
+	const rulesNaming = (cls: string) => rules.filter(rule => rule.split("{")[0]!.includes(cls));
+
+	it("draws no frame around the summary", () => {
+		for (const rule of rulesNaming(".cs-recovery-detail-outcome")) {
+			assert.doesNotMatch(rule, /border|background|padding/, rule);
+		}
+	});
+
+	it("separates with Obsidian's solid table line, never a dashed one", () => {
+		const lines = [...rulesNaming(".cs-recovery-comparison"), ...rulesNaming(".cs-recovery-item"), ...rulesNaming(".cs-recovery-field-row")]
+			.filter(rule => /border(-[a-z-]+)?:/.test(rule));
+		assert.ok(lines.length >= 4, "found the table's lines");
+		for (const rule of lines) {
+			assert.doesNotMatch(rule, /dashed/, rule);
+			assert.doesNotMatch(rule, /border(-[a-z-]+)?:\s*\d+px solid var\(--background-modifier-border\)/, rule);
+		}
+		assert.ok(rulesNaming(".cs-recovery-column-row > th").some(rule => /--table-header-weight/.test(rule) && /--table-header-color/.test(rule)));
 	});
 });

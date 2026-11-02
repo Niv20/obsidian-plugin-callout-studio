@@ -377,8 +377,8 @@ paused, because the copy has to reach the disk before the file goes.
 
 #### The callout being edited counts as a user
 
-The only road to the window is *callout editor → Pick an icon → Manage libraries*, so a
-callout editor is always open behind it, and the icon the person just picked
+Through *callout editor → Pick an icon → Manage libraries* a callout editor is
+always open behind the window, and the icon the person just picked
 sits in `CalloutEditor.icon` until **Save** - the registry knows nothing of it.
 Download a library, pick one of its icons, open the window again and press
 **Delete**: if "who uses this library?" were answered from the registry alone
@@ -407,6 +407,12 @@ The registry's preview slot (`setPreviewDefinition`) is deliberately **not** the
 source: it holds the half-typed callout under a placeholder id so it can be
 *drawn*, it is cleared and restored by other modals, and a rename of the id
 field would make it disagree with the real callout it shadows.
+
+The settings' **Icon libraries** row is the window's other door, and it has no
+editor behind it: it passes no `editing`, and it could not learn an unsaved
+icon if one existed. So it refuses while `plugin.settingsEditOpen` is true,
+rather than let a library an unsaved icon came from be deleted without a word
+(26 § The Colors and icons box).
 
 `fetchArtwork` returns early for an icon that `isIconFullyCached`, before it
 looks at the pack. Confirming a callout's own icon in the picker - on a device
@@ -726,9 +732,9 @@ from Obsidian, and the other SVG libraries are fetched as described above.
 renders category and named variant filters through `SelectDropdown`, preserving
 its intrinsic option sizing and change-only callbacks. The emoji skin tone filter
 uses a selection-only `ListboxPopup` for its richer rows. Both share the same
-popup engine. The source picker uses the same 36px control,
-focus treatment and up/down chevron, so the toolbar reads as one family of
-fields. Material's three-filter toolbar puts search on its own row at any
+popup engine. The source picker, the filters and the search field are all
+`--input-height` tall, drawn as Obsidian's dropdowns and text field, so the
+toolbar reads as one family of controls. Material's three-filter toolbar puts search on its own row at any
 modal width, leaving the style, weight and category fields room to show their
 selected labels; the fields wrap when they cannot fit together. On wider screens,
 Tabler keeps search beside its two filters but gives it a smaller width so the

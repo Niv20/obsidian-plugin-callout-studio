@@ -31,15 +31,15 @@
  * that state, draws it (pluginImportViews.ts) and runs the import; everything
  * specific to one plugin comes from its PluginImportSource.
  */
-import { Modal, Notice } from "obsidian";
+import { Modal } from "obsidian";
 import { t } from "../../i18n";
 import { ImportReportModal } from "../../utils/ImportReportModal";
 import { assertImportSize, assertImportTextSize, ImportLimitError } from "../../utils/importLimits";
 import { markCompetitorImportBannerHandled } from "../competitorImportState";
-import { applyModalChrome, removeModalChrome } from "../modalChrome";
+import { addCancelButton, applyModalChrome, removeModalChrome } from "../modalChrome";
 import { blockedWhilePaused } from "../pausedGuard";
 import { writeSettingsBackup } from "../../manager/settingsBackup";
-import type { SettingsSectionContext } from "../sections/types";
+import type { SettingsContext } from "../sections/types";
 import {
 	activeOption,
 	canImport,
@@ -55,6 +55,7 @@ import {
 	type PluginImportSource,
 } from "./pluginImportSource";
 import { renderOptions, type OptionsView } from "./pluginImportViews";
+import { showNotice } from "../../ui/mascot/mascotNotices";
 
 export class PluginImportModal extends Modal {
 	private flow = initialFlow();
@@ -71,7 +72,7 @@ export class PluginImportModal extends Modal {
 	private view: OptionsView | null = null;
 
 	constructor(
-		private readonly ctx: SettingsSectionContext,
+		private readonly ctx: SettingsContext,
 		private readonly source: PluginImportSource,
 	) {
 		super(ctx.app);
@@ -131,9 +132,7 @@ export class PluginImportModal extends Modal {
 		if (this.source.manual.kind === "file") this.bindFileDrop(this.view.manualEl);
 
 		const footer = applyModalChrome(this, { footer: true });
-		footer
-			.createEl("button", { text: t(copy.cancel) })
-			.addEventListener("click", () => this.close());
+		addCancelButton(footer, t(copy.cancel), () => this.close());
 		this.importBtn = footer.createEl("button", {
 			text: t(copy.importButton),
 			cls: "mod-cta",
@@ -244,7 +243,7 @@ export class PluginImportModal extends Modal {
 
 	/** The fallback is empty: say what fills it — a paste, or an upload. */
 	private noticeFillFirst(): void {
-		new Notice(t(this.source.manual.kind === "file" ? "import.uploadFirst" : "import.pasteFirst"));
+		showNotice("blocked", t(this.source.manual.kind === "file" ? "import.uploadFirst" : "import.pasteFirst"));
 	}
 
 	/** Upload, or Replace: open the file picker. */
@@ -267,7 +266,7 @@ export class PluginImportModal extends Modal {
 		this.flow.hasManual = true;
 		this.flow.chosen = "manual";
 		this.update();
-		new Notice(t(replaced ? "import.fileReplaced" : "import.fileUploaded", { name: file.name }));
+		showNotice("success", t(replaced ? "import.fileReplaced" : "import.fileUploaded", { name: file.name }));
 		this.importBtn.focus({ preventScroll: true });
 	}
 
@@ -298,18 +297,18 @@ export class PluginImportModal extends Modal {
 		try {
 			text = await navigator.clipboard.readText();
 		} catch {
-			if (generation === this.generation) new Notice(t("import.clipboardBlocked"));
+			if (generation === this.generation) showNotice("problem", t("import.clipboardBlocked"));
 			return;
 		}
 		if (generation !== this.generation || this.flow.busy) return;
 		if (text.trim() === "") {
-			new Notice(t("import.clipboardEmpty"));
+			showNotice("notFound", t("import.clipboardEmpty"));
 			return;
 		}
 		try {
 			assertImportTextSize(text);
 		} catch (error) {
-			new Notice(t(error instanceof ImportLimitError ? error.messageKey : "import.err.processingFailed"));
+			showNotice("problem", t(error instanceof ImportLimitError ? error.messageKey : "import.err.processingFailed"));
 			return;
 		}
 		input.value = text;
@@ -421,7 +420,7 @@ export class PluginImportModal extends Modal {
 		if (blockedWhilePaused(this.ctx.plugin.settingsWriter)) return;
 		// An import updates existing callouts in place: keep a way back.
 		if (!await writeSettingsBackup(this.ctx.plugin, this.ctx.plugin.registry.toSaveData(), { reason: "before-import" })) {
-			new Notice(t("import.backupFailed"), 10000);
+			showNotice("problem", t("import.backupFailed"));
 			return;
 		}
 		if (generation !== this.generation) return;
@@ -430,9 +429,9 @@ export class PluginImportModal extends Modal {
 		await markCompetitorImportBannerHandled(this.ctx.plugin);
 		await this.ctx.plugin.saveSettings();
 		if (this.ctx.plugin.settingsWriter.persists?.(this.ctx.plugin.registry.toSaveData()) === false) {
-			new Notice(t("import.notSaved"), 10000);
-		} else new Notice(t(this.source.copy.notice, { created, updated }));
-		this.ctx.display();
+			showNotice("problem", t("import.notSaved"));
+		} else showNotice("celebrate", t(this.source.copy.notice, { created, updated }));
+		this.ctx.redraw();
 		this.close();
 		plan.afterApply?.();
 	}

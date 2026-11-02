@@ -9,9 +9,9 @@ everything**. Both ask for confirmation because they can make lasting changes.
 Use this when moving notes to an app without Callout Studio, or when you want
 to stop using the plugin's heading and inline formats. Choose **Review
 conversion** to close settings and open the review directly in the right
-sidebar; this does not edit notes. The question-mark icon at the opposite end
-of the title row opens **About conversion**, with a single **Before**/**After**
-example table and backup advice. This tab appears when you open the review,
+sidebar; this does not edit notes. The question-mark icon at the top of the
+sidebar opens **About conversion**, with a single **Before**/**After**
+example table and a highlighted backup warning. This tab appears when you open the review,
 rather than at startup. If it was left open in an earlier session, Callout
 Studio closes it on the next launch; use **Review conversion** to open a new review.
 
@@ -37,14 +37,27 @@ reset settings, remove callout definitions, or uninstall Callout Studio. It
 removes the plugin's additional syntax; other Obsidian-specific features in
 your vault may remain.
 
-### What is left for review
+### What is not converted
 
 Code blocks, inline code, frontmatter, comments, math, raw HTML, and callout-like
-text inside link syntax are protected. If removing a token would expose a raw
-HTML block, that occurrence stays unchanged. Incomplete or unsupported nested
-inline syntax is also left unchanged; for example, `[!note]{unfinished` has no
-closing brace, and `[!note]{outer [!tip]{inner}}` nests one payload inside
-another. The converter cannot safely infer the intended text in those cases.
+text inside link syntax are protected: they stay exactly as written.
+
+The converter only handles inline callouts that are complete and stand on their
+own. These stay exactly as written, and the review neither lists them nor
+mentions them:
+
+- An inline callout whose `{` is never closed on its line, such as
+  `[!note]{unfinished`.
+- An inline callout with another inline callout inside its `{…}`, such as
+  `[!note]{outer [!tip]{inner}}`. Nesting is not supported, so both the outer
+  and the inner one stay.
+- A `[!type]` broken by another bracket inside it, such as `[!broken[!inner]]`.
+- A line where removing the token would start a raw HTML block. The whole line
+  stays.
+
+Other complete callouts on the same line are still converted. If your notes
+contain any of the cases above, simplify them by hand before converting, or
+edit them after.
 
 A heading needs a space after its `#` marks; `#Title` is not repaired. Literal
 `+` and `-` in heading text stay. Braces immediately after a leading heading
@@ -56,42 +69,62 @@ type count as heading text, not as an inline payload.
 
 *Review each proposed replacement before converting. The selected-change summary stays visible while the file groups scroll below it.*
 
-The sidebar groups results by file and shows the number of changes beside each
-file name. Select a file to open its note. Each card shows the format and line
+The sidebar starts with **Convert selected**, and at the end of the same row a
+small **?** button that opens the explanation of what converting does. Under
+it, beside the select-all box, the selection takes two lines: how many
+replacements are selected, such as **74 of 74 replacements selected**, and under
+it, only while there are some, how many heading links will be updated.
+
+The boxes animate when they change: an empty box fills and its tick is drawn,
+and a ticked box has its tick taken back and empties. The select-all box shows a
+minus while only some of the changes are chosen, and the minus grows from the
+middle of an empty box, and gives way to the tick when everything is chosen.
+(With the system setting to reduce motion on, they simply change.)
+
+The sidebar groups results by file, as Obsidian's **Search** pane does: the
+note's name with the number of changes at the end, then one box with a row for
+each change. Select a file's name to open its note. The small triangle before
+the name folds that file's rows away and shows them again (a right-to-left
+interface turns it the other way, so a folded file points left); a file you fold
+stays folded while the review updates. Each row shows the format and line
 number, followed by **Before** and **After** with the original text and proposed
-replacement. Heading cards show the complete heading. Each inline callout gets
-a separate card showing its `[!type]` token and optional `{content}` payload,
+replacement. Heading rows show the complete heading. Each inline callout gets
+a separate row showing its `[!type]` token and optional `{content}` payload,
 even when several are on one line. Long text wraps in full.
 
-Select a card's format label or **Before** text to open its note scrolled to
+Select a row's format label or **Before** text to open its note scrolled to
 that source, which briefly glows; the cursor stays where it was, as in
-[Find callouts](12-find-callouts.md#navigate-through-occurrences). The card stays
+[Find callouts](12-find-callouts.md#navigate-through-occurrences). The row stays
 highlighted until you click or type in the note.
 
 The highlight also follows your cursor, as in
 [Find callouts](12-find-callouts.md#follow-your-cursor): while you edit a note,
-the card for what your cursor is in is highlighted, and the list scrolls just far
+the row for what your cursor is in is highlighted, and the list scrolls just far
 enough to show it. That is an inline callout while the cursor touches it (its
 `{content}` included), a heading callout while the cursor is on its line, and
-otherwise a **Heading link** card for the cursor's line. While you edit a
-replacement, only that card is highlighted. A line you have just typed on
+otherwise a **Heading link** row for the cursor's line. While you edit a
+replacement, only that row is highlighted. A line you have just typed on
 highlights nothing until the review catches up with your edit.
 
-Only the card's checkbox includes or excludes that replacement. The summary
+Only the row's checkbox includes or excludes that replacement. The summary
 checkbox selects all changes, clears them all, or shows a dash when only some
 are selected. Beside it, the summary counts the selected replacements and the
 heading links they will update; when there are none, it leaves heading links
-out. **Show more** reveals additional results; switching notes scrolls
+out. More results load as you scroll down the list. While the review is
+being updated, a thin line runs across the top of the results; a problem with
+the review is said in orange above them. Switching notes scrolls
 to that file's results.
 
-To change a proposed replacement, click its **After** text or the pencil in the
-card's upper corner. The pencil fades in when you hover over the card or focus
-its controls, and stays visible on touch devices. Right-clicking the card and
+To change a proposed replacement, click its **After** text or the pencil at the
+end of the row's first line. The pencil fades in while the pointer is on the row,
+or while you tab to it, and goes again when the pointer moves on, also from a row
+you have just clicked. It stays visible on touch devices. Clicking a row to open
+its note does not redraw the list, so the pencil under the pointer stays where it is. Right-clicking the row and
 choosing **Custom replacement** opens the same inline editor. The **After**
 text becomes an editable field while **Before** stays visible. All editable
-text is selected so typing replaces it immediately. The card gains a purple
-highlight while the note stays in place; any previous card highlight clears.
-Editing does not change the card's
+text is selected so typing replaces it immediately, in a field with a thin ring, as when you rename a file. The row takes a light
+accent tint while the note stays in place; any previous row highlight clears.
+Editing does not change the row's
 checkbox. To see the source in the note, click **Before** or the format and line
 label.
 The field contains only the replacement; surrounding words from the note are
@@ -112,9 +145,9 @@ moved to another level, or changed to introduce another heading or protected
 syntax. Saving changes the preview only; you still need to select and confirm
 the conversion. If a replacement is unsafe or conflicts with a link, it is
 rejected or deselected for review. An invalid draft is discarded with a notice
-if you click away. When the card is not being edited, click the
+if you click away. When the row is not being edited, click the
 return arrow beside the pencil to restore its default replacement. You can
-also right-click the card and choose **Restore default replacement**.
+also right-click the row and choose **Restore default replacement**.
 
 An unfinished draft survives interface-language redraws, but is discarded if
 the review becomes stale or closes. Saved custom
@@ -128,7 +161,7 @@ Links and embeds that point to a changed heading are updated, including wiki
 links and internal Markdown links. This also covers same-note links, relative
 paths, parent or child headings, custom heading titles, and reference-style
 Markdown links. Link labels and optional titles stay the same. The sidebar
-shows these as **Heading link** cards, and updates them automatically when you
+shows these as **Heading link** rows, and updates them automatically when you
 change a heading replacement.
 
 If a heading change would make an existing reference ambiguous, that change is
@@ -184,6 +217,7 @@ or restores:
 - Customizations to Obsidian's built-in callouts.
 - Global styles, including borders, font scale, shape, spacing, and alignment.
 - Heading and inline callout settings, and the fallback style.
+- The **Autocomplete and metadata** settings, including your own words.
 - Saved color palettes.
 - Right-click menu customization.
 - The order of the icon libraries in the icon picker, and any you hid there.
@@ -191,8 +225,8 @@ or restores:
 
 Callouts supplied by the active theme are not deleted from the theme. They
 remain available while that theme is active. Icon libraries you downloaded stay
-on the device; delete them from **Manage icon libraries** in the icon picker if you no
-longer want them - the reset arrow there removes them all at once.
+on the device; delete them from **Manage icon libraries** (the **Manage libraries** button in the icon
+picker, or **Icon libraries** under **Colors and icons** in the settings) if you no longer want them - the reset arrow there removes them all at once.
 
 Before the reset runs, Callout Studio shows a confirmation. It opens with a
 reminder that everything you built is about to be deleted, then lists, as a
@@ -204,10 +238,9 @@ changed and which settings go back to their defaults. Anything you have none of
 is left off the list.
 
 The **Reset everything** button in that window stays disabled until you tick
-**I have read and understood**, in a box on the last line of the window. If the
-list is long enough to scroll, pressing the button early scrolls all the way
-down to the box, which shakes and turns red, tick square included, for a
-moment before fading back.
+**I have read and understood**, next to the buttons at the bottom of the window
+(on a phone or tablet, above them). Pressing the button early makes the tick
+shake and turn red for a moment before fading back.
 
 If everything is already at its defaults, for example right after a reset, no
 window opens and a message says there is nothing to reset.
@@ -220,7 +253,7 @@ saving problem first. If the reset is displayed but could not be saved, a
 message says so instead of reporting success.
 
 **There is no undo button.** To bring the previous setup back, open
-[Version history](13-syncing-and-backups.md#version-history) and restore the
+[Restore an earlier version](13-syncing-and-backups.md#version-history) and restore the
 version named *Before Reset everything*, saved just before the reset. A synced vault can send the
 reset to your other devices, and the backups folder lives in the synced plugin
 folder. Export a [complete backup](13-syncing-and-backups.md) and keep it

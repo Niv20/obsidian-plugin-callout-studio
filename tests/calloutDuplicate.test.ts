@@ -5,7 +5,7 @@ import { t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { SettingsWriter } from "../src/manager/SettingsWriter";
 import { addDuplicateItem, handleCalloutDuplicate } from "../src/settings/sections/duplicateCallout";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import type { SettingsContext } from "../src/settings/sections/types";
 import type { CalloutDefinition, PluginData } from "../src/types";
 
 const notices: string[] = [];
@@ -70,9 +70,9 @@ function harness(source = definition(), checkpoint = false) {
 			saveSettings: () => writer.save(),
 			refreshCallouts: () => { state.refreshes++; },
 		},
-		display: () => { state.displays++; },
+		redraw: () => { state.displays++; },
 		revealCallout: (def: CalloutDefinition) => { state.revealed.push(def.id); },
-	} as unknown as SettingsSectionContext;
+	} as unknown as SettingsContext;
 	return {
 		registry, writer, state, ctx,
 		run: (id = source.id) => handleCalloutDuplicate(ctx, id),

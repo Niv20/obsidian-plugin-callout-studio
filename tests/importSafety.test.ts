@@ -8,9 +8,9 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import { processImportedJSON } from "../src/settings/sections/DataManagementSection";
+import { processImportedJSON } from "../src/settings/sections/backupImport";
 import { content } from "../src/manager/syncTree";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import type { SettingsContext } from "../src/settings/sections/types";
 import { en } from "../src/i18n/en";
 import { definition } from "./support/discoveryHarness";
 import { memoryVault, PLUGIN_MANIFEST, savingWriter, stubConfirm } from "./support/importSafetyStubs";
@@ -37,8 +37,8 @@ function run(registry: CalloutRegistry, writer = savingWriter()) {
 			saveSettings: () => { saves++; return Promise.resolve(); },
 			refreshRenderModes: () => {}, ensureIconArtworkFor: () => Promise.resolve(),
 		},
-		display: () => {},
-	} as unknown as SettingsSectionContext;
+		redraw: () => {},
+	} as unknown as SettingsContext;
 	return { ctx, notices, files: files.files, get saves() { return saves; } };
 }
 

@@ -3,10 +3,11 @@ import { describe, it } from "node:test";
 import { Platform } from "obsidian";
 import { t } from "../src/i18n";
 import { DEFAULT_SETTINGS } from "../src/constants";
+import { PACK_MANIFEST } from "../src/icons/data/packManifest";
 import { getSource, ICON_SOURCE_IDS } from "../src/icons/registry";
 import type { IconIndex } from "../src/icons/types";
 import { IconPicker, type IconPickerPlugin } from "../src/settings/iconpicker/IconPickerModal";
-import type { IconSourceId } from "../src/types";
+import type { IconPackId, IconSourceId } from "../src/types";
 import { fakeDom, type FakeElement } from "./support/fakeDom";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";
 import { Notice } from "./support/obsidianStub";
@@ -33,7 +34,10 @@ function harness(
 	const plugin = {
 		app: { keymap: new TestKeymap(), scope: new TestScope() }, settings: structuredClone(DEFAULT_SETTINGS),
 		registry: { getUserImages: () => [], getAll: () => [] },
-		icons: { packs: { loadAllFromDisk: loadDisk, onChange: () => () => {}, state: () => "missing" } },
+		icons: { packs: {
+			loadAllFromDisk: loadDisk, onChange: () => () => {}, state: () => "missing",
+			info: (id: IconPackId) => PACK_MANIFEST[id],
+		} },
 	} as unknown as IconPickerPlugin;
 	const modal = new IconPicker(plugin, { type: "lucide", value: "star" });
 	const containerEl = fakeDom.document.body.createDiv({ cls: "modal-container" });
@@ -91,7 +95,7 @@ describe("icon picker asynchronous lifecycle", () => {
 		try {
 			h.modal.onOpen();
 			await Promise.all(h.tasks);
-			const confirm = (h.modal.modalEl as unknown as FakeElement).querySelector(".cs-modal-footer button.mod-cta");
+			const confirm = (h.modal.modalEl as unknown as FakeElement).querySelector(".modal-button-container button.mod-cta");
 			assert.ok(confirm);
 			assert.equal(confirm.getAttribute("aria-disabled"), "false", "the icon being edited is selected");
 			// An icon only means something within its own source, so switching drops it.
@@ -155,9 +159,9 @@ describe("icon picker asynchronous lifecycle", () => {
 			h.modal.onClose();
 			h.modal.onOpen();
 			await Promise.all(h.tasks.slice(2));
-			const input = h.contentEl.querySelector(".icon-picker-source-dropdown .cs-combobox-input");
-			assert.ok(input);
-			input.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
+			const field = h.contentEl.querySelector(".icon-picker-source-dropdown .cs-dropdown-field");
+			assert.ok(field);
+			field.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
 			const row = h.contentEl.querySelectorAll(".icon-picker-source-menu-item")[1];
 			assert.match(row?.textContent ?? "", /42/);
 			index.resolve(emptyIndex);

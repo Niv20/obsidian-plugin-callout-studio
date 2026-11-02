@@ -9,14 +9,20 @@
  * ## The rows
  *
  * - **Colours** — the user's palettes, Obsidian's colours and the extra
- *   presets, together. None for a callout the theme owns, which no metadata
- *   colour reaches.
+ *   presets, together. None for a heading or inline callout of a type the
+ *   theme owns: those are drawn as plain text, so no colour reaches them.
+ *   A block callout the theme draws takes the colour all the same.
+ * - **Your words** — the ones the user typed in Settings → Editor → Metadata, for
+ *   another plugin or CSS the scan cannot read. They lead the word groups and
+ *   may stand anywhere.
  * - **The styling's own words** — what the active theme and enabled snippets
  *   react to (`themeMetadataScan.ts`), minus any that could not work where
  *   the cursor is: an `alone` word next to other words, a `first` word
- *   anywhere but first, a word tied to another callout.
+ *   anywhere but first, a word tied to another callout. The theme's are left
+ *   out when the user switched them off; a colour row still says when the
+ *   theme reacts to its word too, since that stays true either way.
  *
- * Each group — the colours, each theme or snippet — is sorted on its own:
+ * Each group — the colours, your words, each theme or snippet — is sorted on its own:
  * prefix matches before matches inside a word, then A→Z by the word written.
  * - **Done** — on an empty word after a separator, at the top, so Enter there
  *   finishes the header instead of breaking the line inside `[!…]`.
@@ -77,9 +83,11 @@ export type MetadataSuggestion =
 			joinedFrom?: number;
 	  }
 	| {
+			/** A word from a stylesheet, or from the user's own list (`origin`). */
 			kind: "theme";
 			word: ThemeMetadataWord;
 			source: string;
+			origin: MetadataWordSource["origin"];
 			/**
 			 * Where a name typed with spaces for its dashes starts (`comic re`
 			 * for `comic-red`): the pick replaces from here, not only the word
@@ -101,11 +109,18 @@ export interface SuggestionInput {
 	slot: MetadataSlot;
 	/** The callout's type as written, for words tied to one callout. */
 	calloutId: string;
-	/** The theme owns this callout: no metadata colour reaches it. */
+	/** The callout is drawn as plain text because the theme owns its type: no metadata colour reaches it. */
 	themeOwned: boolean;
 	/** Every colour, weakest first (`metadataColorEntries`). */
 	colors: readonly MetadataColorEntry[];
+	/** The words to offer, a group per source, in the order the groups show. */
 	sources: readonly MetadataWordSource[];
+	/**
+	 * Every stylesheet's words, offered or not — what a colour row checks
+	 * before saying the styling reacts to its word too. Left out, the
+	 * stylesheets among `sources`.
+	 */
+	styling?: readonly MetadataWordSource[];
 	/** For sorting each group A→Z. */
 	locale: string;
 }
@@ -225,24 +240,29 @@ export function buildMetadataSuggestions(input: SuggestionInput): MetadataSugges
 	const query = slot.query;
 	const joinedFrom = (reading: Reading) => (reading.joined ? { joinedFrom: reading.from } : {});
 
-	// The styling's words that could work where `reading` puts the word.
-	const usableIn = (reading: Reading) => {
+	// The words of `sources` that could work where `reading` puts the word.
+	// A word two sources share is listed once, under the first of them.
+	type Usable = { word: ThemeMetadataWord; source: MetadataWordSource };
+	const usableIn = (reading: Reading, sources: readonly MetadataWordSource[]): Usable[] => {
 		const isFirst = !reading.others.some((w) => w.to <= reading.from);
-		const usable: Array<{ word: ThemeMetadataWord; source: string }> = [];
+		const usable: Usable[] = [];
 		const seen = new Set<string>();
-		for (const source of input.sources) {
+		for (const source of sources) {
 			for (const word of source.words) {
 				if (seen.has(word.word)) continue;
 				seen.add(word.word);
 				if (!wordAppliesTo(word, input.calloutId)) continue;
 				if (word.placement === "alone" && reading.others.length > 0) continue;
 				if (word.placement === "first" && !isFirst) continue;
-				usable.push({ word, source: source.label });
+				usable.push({ word, source });
 			}
 		}
 		return usable;
 	};
-	const stylingWords = usableIn(plain).map((u) => u.word);
+	// The user's own words style nothing: they never make a colour row say
+	// "your theme also styles this".
+	const styling = input.styling ?? input.sources.filter((s) => s.origin !== "user");
+	const stylingWords = usableIn(plain, styling).map((u) => u.word);
 
 	/** `word` is what the row writes and shows — what A→Z goes by. */
 	type Ranked<T> = { rank: number; group: number; word: string; row: T };
@@ -283,7 +303,7 @@ export function buildMetadataSuggestions(input: SuggestionInput): MetadataSugges
 
 	const themeRows: Array<Ranked<MetadataSuggestion>> = [];
 	const sourceOrder = input.sources.map((s) => s.label);
-	const usableByReading = readings.map((r) => usableIn(r));
+	const usableByReading = readings.map((r) => usableIn(r, input.sources));
 	const candidates = [
 		...new Map(usableByReading.flat().map((u) => [u.word, u] as const)).values(),
 	];
@@ -301,9 +321,15 @@ export function buildMetadataSuggestions(input: SuggestionInput): MetadataSugges
 		themeRows.push({
 			rank: best.hit.rank,
 			// Grouped by where the word comes from, so each source sits under one heading.
-			group: sourceOrder.indexOf(source),
+			group: sourceOrder.indexOf(source.label),
 			word: word.word,
-			row: { kind: "theme", word, source, ...joinedFrom(best.reading) },
+			row: {
+				kind: "theme",
+				word,
+				source: source.label,
+				origin: source.origin,
+				...joinedFrom(best.reading),
+			},
 		});
 	}
 

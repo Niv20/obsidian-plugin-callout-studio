@@ -14,7 +14,7 @@ function vectorContent(svg, prefix) {
 export function compose04B(pickerSvg, librariesSvg) {
 	const picker = vectorContent(pickerSvg, "04B-picker");
 	const libraries = vectorContent(librariesSvg, "04B-libraries");
-	const description = "Pick an icon and Manage icon libraries, with all nine icon libraries available and the requested order.";
+	const description = "Pick an icon beside Manage icon libraries: six libraries available in the chosen order, Octicons and RPG Awesome listed under Libraries to download, and Emoji under Hidden libraries.";
 	const scaffold = compose("04-icons", '<svg viewBox="0 0 1 1"></svg>', { description });
 	const marker = '<g transform="translate(';
 	const at = scaffold.lastIndexOf(marker);

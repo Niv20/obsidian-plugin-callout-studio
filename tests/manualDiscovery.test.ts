@@ -82,6 +82,37 @@ describe("manual discovery is an explicit additive transaction", () => {
 		assert.equal(h.registry.get("pending"), undefined);
 		g.release(); assert.equal(await first, 1); assert.equal(h.state.writes, 1);
 	});
+	it("waits for its caller after reading the notes, before anything is saved or shown", async () => {
+		const h = discoveryHarness({ "a.md": "> [!waited]", "b.md": "> [!also]" }); const g = gate();
+		let readsAtWait = -1;
+		let reached!: () => void;
+		const waiting = new Promise<void>((resolve) => { reached = resolve; });
+		const scan = h.discovery.run(() => { readsAtWait = h.state.reads; reached(); return g.promise; });
+		await waiting;
+		assert.equal(readsAtWait, 2, "every note is read first");
+		assert.equal(h.state.writes, 0); assert.equal(h.registry.get("waited"), undefined);
+		g.release(); assert.equal(await scan, 2); assert.equal(h.state.writes, 1);
+	});
+	it("is cancelled by a local edit made while its caller waits", async () => {
+		const h = discoveryHarness({ "a.md": "> [!new]" });
+		await assert.rejects(h.discovery.run(async () => { h.registry.add(definition({ id: "mine" })); }));
+		assert.equal(h.registry.get("new"), undefined); assert.equal(h.state.writes, 0);
+	});
+	it("is not cancelled by a note that changes or arrives while its caller waits", async () => {
+		const h = discoveryHarness({ "a.md": "> [!kept]" });
+		const added = await h.discovery.run(async () => {
+			h.vault.write("a.md", "> [!kept]\nedited by a sync service");
+			h.vault.write("b.md", "> [!later]");
+		});
+		assert.equal(added, 1); assert.ok(h.registry.get("kept")); assert.equal(h.state.writes, 1);
+		assert.equal(h.registry.get("later"), undefined, "a note that arrived after reading waits for the next scan");
+	});
+	it("is still cancelled by a note that changes while it reads", async () => {
+		const h = discoveryHarness({ "a.md": "> [!first]", "b.md": "> [!second]" });
+		h.state.duringRead = () => { if (h.state.reads === 1) h.vault.write("b.md", "> [!second]\nchanged"); };
+		await assert.rejects(h.discovery.run(async () => {}));
+		assert.equal(h.state.writes, 0);
+	});
 	it("aborts the entire scan on an unreadable note, then allows retry", async () => {
 		const h = discoveryHarness({ "a.md": "> [!first]", "b.md": "> [!second]" });
 		h.state.duringRead = () => { if (h.state.reads === 2) h.state.failRead = true; };

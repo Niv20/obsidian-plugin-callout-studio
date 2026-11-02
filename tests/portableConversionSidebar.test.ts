@@ -4,9 +4,11 @@ import { setTimeout as wait } from "node:timers/promises";
 import { t } from "../src/i18n";
 import { fingerprintCalloutContent } from "../src/usage/contentFingerprint";
 import { resolvePortableSourcePosition } from "../src/portable/portableConversionNavigation";
+import { splitSelectionSummary } from "../src/portable/portableConversionFrame";
 import { portableConversionViewHarness as harness } from "./support/portableConversionViewHarness";
 import { deferred } from "./support/portableVaultHarness";
 import { notifySidebarEditorSelection } from "../src/ui/sidebarSelection";
+import { readRepoFile } from "./support/sourceScan";
 
 const saved = (before: string, content = before, line = 1) =>
 	({ before, line, contentFingerprint: fingerprintCalloutContent(content) });
@@ -50,9 +52,13 @@ describe("conversion file groups and cards", () => {
 			h.root.fire("click", { target: h.root.querySelectorAll('button[data-action="result"]')[0] });
 			await h.settle();
 			assert.equal(h.root.querySelectorAll('[aria-current="true"]').length, 1);
+			// The whole row, its checkbox included, takes the current-row fill.
+			const rows = h.root.querySelectorAll(".cs-portable-row");
+			assert.deepEqual(rows.map((row) => row.hasClass("is-active")), [true, false]);
 			const opened = [...h.opened], revealed = [...h.revealed];
 			h.root.fire("click", { target: h.root.querySelectorAll(".cs-portable-after-button")[1] });
 			assert.equal(h.root.querySelector('[aria-current="true"]'), null);
+			assert.equal(h.root.querySelectorAll(".cs-portable-row.is-active").length, 0, "the edited row is the only marked one");
 			assert.equal(h.root.querySelectorAll(".is-editing").length, 1);
 			assert.ok(h.root.querySelectorAll(".cs-portable-change")[1]!.hasClass("is-editing"));
 			assert.deepEqual(h.opened, opened);
@@ -112,21 +118,24 @@ describe("conversion file groups and cards", () => {
 			assert.deepEqual(h.written, []);
 		} finally { await h.destroy(); }
 	});
-	it("groups source and linked changes by file using shared grids and localized row roles", async () => {
+	it("groups source and linked changes by file, in one box per note, with localized row roles", async () => {
 		const h = harness({ "a.md": "# Report [!note]\n[!tip]", "b.md": "[[a#Report note]]" });
 		try {
 			await h.view.onOpen();
 			const groups = h.root.querySelectorAll(".cs-sidebar-file");
 			assert.deepEqual(groups.map(group => group.dataset.path), ["a.md", "b.md"]);
-			assert.deepEqual(groups.map(group => group.querySelector(".cs-sidebar-file-link")?.textContent), ["a.md (2)", "b.md (1)"]);
+			assert.deepEqual(groups.map(group => group.querySelector(".cs-sidebar-file-link")?.textContent), ["a 2", "b 1"]);
 			for (const group of groups) {
 				const link = group.querySelector(".cs-sidebar-file-link")!;
 				assert.equal(link.getAttribute("aria-label"), null, "file names rely on visible text without a hover popup");
 				assert.equal(link.getAttribute("title"), null);
-				assert.equal(link.querySelector(".cs-heading-count")?.getAttribute("aria-hidden"), null);
+				assert.equal(link.querySelector(".tree-item-flair")?.getAttribute("aria-hidden"), null, "the count is read out");
 			}
 			assert.deepEqual(groups.map(group => group.querySelectorAll(".cs-sidebar-result").length), [2, 1]);
-			assert.equal(groups[0]!.querySelectorAll(".cs-sidebar-grid").length, 1);
+			assert.equal(groups[0]!.querySelectorAll(".search-result-file-matches").length, 1);
+			// A conversion row is not a control itself, so it is not Obsidian's
+			// match row, whose hover tint would light it up.
+			assert.equal(h.root.querySelectorAll(".search-result-file-match").length, 0);
 			const locations = h.root.querySelectorAll(".cs-portable-change-location");
 			assert.ok(locations[0]!.textContent.includes(t("vaultStats.roleHeading")));
 			assert.ok(locations[1]!.textContent.includes(t("vaultStats.roleInline")));
@@ -197,18 +206,53 @@ describe("conversion file groups and cards", () => {
 		} finally { await h.destroy(); }
 	});
 	it("leaves heading links out of the summary when there are none to update", async () => {
-		const summary = (h: ReturnType<typeof harness>): string => h.root.querySelector(".cs-portable-summary-text")!.textContent;
+		/** The selection's two lines, one under the other: the replacements, then the heading links. */
+		const lines = (h: ReturnType<typeof harness>) => h.root.querySelectorAll(".cs-portable-summary-line");
 		const plain = harness({ "a.md": "[!note]\n[!tip]" });
 		try {
 			await plain.view.onOpen();
-			assert.equal(summary(plain), t("portable.selectionSummaryNoLinks", { selected: 2, total: 2 }));
-			assert.ok(!summary(plain).includes("0"));
+			assert.equal(lines(plain)[0]!.textContent, t("portable.selectionSummaryNoLinks", { selected: 2, total: 2 }));
+			assert.ok(!lines(plain)[0]!.textContent.includes("0"));
+			assert.equal((lines(plain)[1] as unknown as HTMLElement).hidden, true, "no second line to say 0");
 		} finally { await plain.destroy(); }
 		const linked = harness({ "a.md": "# Report [!note]", "b.md": "[[a#Report note]]" });
 		try {
 			await linked.view.onOpen();
-			assert.equal(summary(linked), t("portable.selectionSummary", { selected: 1, total: 1, links: 1 }));
+			const [replacements, links] = splitSelectionSummary(t("portable.selectionSummary", { selected: 1, total: 1, links: 1 }));
+			assert.deepEqual(Array.from(lines(linked), (line) => line.textContent), [replacements, links]);
+			assert.equal((lines(linked)[1] as unknown as HTMLElement).hidden, false);
 		} finally { await linked.destroy(); }
+	});
+	it("marks a clicked row where it stands, without drawing the rows again, so the icons under the pointer stay put", async () => {
+		const h = harness({ "a.md": "[!note]\n[!tip]" });
+		try {
+			await h.view.onOpen();
+			const rows = Array.from(h.root.querySelectorAll(".cs-portable-row"));
+			const icons = Array.from(h.root.querySelectorAll(".cs-portable-card-actions"));
+			assert.equal(rows.length, 2);
+			h.root.fire("click", { target: h.root.querySelectorAll('button[data-action="result"]')[0] });
+			await h.settle();
+			// The same elements, not new ones with the same look: a new pair of icons would vanish and fade in again.
+			assert.deepEqual(Array.from(h.root.querySelectorAll(".cs-portable-row"), (row, i) => row === rows[i]), [true, true]);
+			assert.deepEqual(Array.from(h.root.querySelectorAll(".cs-portable-card-actions"), (el, i) => el === icons[i]), [true, true]);
+			assert.deepEqual(rows.map((row) => row.hasClass("is-active")), [true, false]);
+		} finally { await h.destroy(); }
+	});
+	it("keeps a folded note folded when the rows are drawn again, until it is unfolded", async () => {
+		const h = harness({ "a.md": "[!note]\n[!tip]", "b.md": "[!info]" });
+		try {
+			await h.view.onOpen();
+			const sections = (): boolean[] => Array.from(h.root.querySelectorAll(".cs-sidebar-file"), (section) => section.hasClass("is-collapsed"));
+			assert.deepEqual(sections(), [false, false]);
+			h.root.querySelectorAll(".cs-sidebar-fold")[0]!.fire("click");
+			assert.deepEqual(sections(), [true, false], "folded in place");
+			// A choice redraws every row, which used to put every note back to showing.
+			h.choose(0, false);
+			assert.deepEqual(sections(), [true, false], "still folded after the redraw");
+			h.root.querySelectorAll(".cs-sidebar-fold")[0]!.fire("click");
+			h.choose(0, true);
+			assert.deepEqual(sections(), [false, false]);
+		} finally { await h.destroy(); }
 	});
 	it("ignores the caret while a replacement draft holds the highlight", async () => {
 		const h = harness({ "a.md": "[!note]\n[!tip]" });
@@ -257,7 +301,7 @@ describe("conversion file groups and cards", () => {
 });
 
 describe("conversion refresh presentation", () => {
-	it("only shows slow work in an overlay and never injects transient text under the toolbar", async () => {
+	it("shows slow work as Obsidian's loading bar, says it only to a screen reader, and never injects text under the toolbar", async () => {
 		const h = harness(undefined, 15), read = deferred();
 		try {
 			await h.view.onOpen();
@@ -269,12 +313,15 @@ describe("conversion refresh presentation", () => {
 			assert.equal(h.status(), "");
 			assert.equal(overlay.hidden, true);
 			assert.equal(h.root.querySelector(".cs-sidebar-toolbar .cs-portable-review-status"), null);
+			assert.equal(shell.hasClass("is-loading"), false, "a brief refresh shows nothing");
 			await wait(25);
 			assert.equal(overlay.hidden, false);
-			assert.ok(overlay.textContent.length > 0);
+			assert.ok(overlay.textContent.length > 0, "read out by the live region");
+			assert.ok(shell.hasClass("is-loading"), "Obsidian's thin bar across the results");
 			assert.equal(h.status(), "");
 			read.resolve(); await h.settle();
 			assert.equal(overlay.hidden, true);
+			assert.equal(shell.hasClass("is-loading"), false);
 			assert.equal(shell.hasClass("is-stale"), false);
 		} finally { read.resolve(); await h.destroy(); }
 	});
@@ -290,5 +337,39 @@ describe("conversion refresh presentation", () => {
 			await h.view.onClose(); read.resolve(); await wait(20);
 			assert.equal(h.root.children.length, 0);
 		} finally { await h.destroy(); }
+	});
+});
+
+describe("the sidebars' row marks look like Obsidian's", () => {
+	const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, "");
+	/** The declarations of the one rule whose selector list is exactly `selector`. */
+	const rule = (selector: string): string => {
+		const rules: string[] = css.match(/[^{}]+\{[^{}]*\}/g) ?? [];
+		const found = rules.filter((r) => r.split("{")[0]!.trim() === selector);
+		assert.equal(found.length, 1, selector);
+		return found[0]!;
+	};
+
+	it("fills the current row as the Outline fills its current heading, with no border", () => {
+		const current = rule('button.cs-sidebar-result[aria-current="true"],\n.cs-portable-row.is-active');
+		assert.match(current, /background-color:\s*var\(--nav-item-background-active\)/);
+		assert.doesNotMatch(current, /border/);
+	});
+
+	it("tints the row being edited as Obsidian tints a selected item", () => {
+		assert.match(rule(".cs-portable-change.is-editing"), /background-color:\s*var\(--nav-item-background-selected\)/);
+	});
+
+	it("sizes the row's icon buttons as Obsidian sizes a list row's icons", () => {
+		const icons = rule(".cs-portable-card-actions button");
+		assert.match(icons, /--icon-size:\s*var\(--icon-xs\)/);
+		assert.doesNotMatch(icons, /12px|color:/, "no size or colour of the plugin's own");
+	});
+
+	it("rings the field being edited as Obsidian rings a file being renamed, with no tint", () => {
+		const field = rule(".cs-portable-input-grow");
+		assert.match(field, /box-shadow:\s*0 0 0 2px var\(--background-modifier-border-focus\)/);
+		assert.doesNotMatch(field, /(^|[\s;{])background(-color)?\s*:/, "no fill of its own");
+		assert.match(rule(".cs-portable-input-grow:focus-within"), /box-shadow:\s*0 0 0 2px var\(--interactive-accent\)/);
 	});
 });

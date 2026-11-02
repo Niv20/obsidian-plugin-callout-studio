@@ -378,6 +378,48 @@ describe("bgProps — the background is always a tint", () => {
 	});
 });
 
+describe("bgProps — a dark-mode background darker than the page", () => {
+	// Core draws a dark-mode callout with `mix-blend-mode: lighten`, which keeps
+	// the lighter of the callout and the page in each channel: black came out
+	// as the page (#1c1c1c) in Reading view, while Live Preview showed black.
+	const blend = (props: string[]): string[] =>
+		props.filter((p) => p.trim().startsWith("mix-blend-mode"));
+
+	it("is drawn as it is, without core's lighten", () => {
+		const { css } = harness();
+		for (const dark of ["#000000", "#101010", "#0b1020"]) {
+			const props = css.bgProps(definition({ bgColorDark: dark }), "dark");
+			assert.deepStrictEqual(blend(props), ["  mix-blend-mode: normal;"], dark);
+		}
+	});
+
+	it("leaves core's blend alone for a background no darker than the page", () => {
+		const { css } = harness();
+		// #16202b has its red a few levels under the page's, as a dark tint of a
+		// saturated colour does, but is lighter overall: it keeps the look it
+		// has always had.
+		for (const dark of [PALE_DARK, "#16202b", "#1c1c1c", "#333333", "#ffffff"]) {
+			const props = css.bgProps(definition({ bgColorDark: dark }), "dark");
+			assert.deepStrictEqual(blend(props), [], dark);
+		}
+	});
+
+	it("never touches light mode, where nothing is lighter than the page", () => {
+		const { css } = harness();
+		const props = css.bgProps(definition({ bgColorLight: "#000000" }), "light");
+		assert.deepStrictEqual(blend(props), []);
+	});
+
+	it("goes in the dark block, with !important like the rest of it", () => {
+		const { css } = harness();
+		const out = css.generateCalloutCSS(definition({ bgColorLight: PALE_LIGHT, bgColorDark: "#000000" }));
+		const darkRule = ruleFor(out, '.theme-dark .callout[data-callout="quiet"]');
+		assert.strictEqual(valueOf(darkRule, "mix-blend-mode"), "normal !important");
+		const lightRule = ruleFor(out, '.callout[data-callout="quiet"]');
+		assert.strictEqual(valueOf(lightRule, "mix-blend-mode"), undefined);
+	});
+});
+
 describe("bgProps — transparentBg", () => {
 	it("clears the colour AND any image, before the no-background return", () => {
 		const { css } = harness();

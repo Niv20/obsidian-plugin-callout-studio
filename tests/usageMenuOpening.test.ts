@@ -44,8 +44,6 @@ function harness() {
 	const document = new FakeDocument(view);
 	const anchor = document.body.createEl("button");
 	anchor.isConnected = true;
-	const target = anchor.createSpan();
-	const event = { currentTarget: anchor, target } as unknown as MouseEvent;
 	const disposers: Array<() => void> = [];
 	let reads = 0;
 	let enumerations = 0;
@@ -60,10 +58,10 @@ function harness() {
 	} } as unknown as App;
 	const index = getCalloutOccurrenceIndex(app);
 	return {
-		app, index, view, document, anchor, event, disposers,
+		app, index, view, document, anchor, disposers,
 		reads: () => reads, enumerations: () => enumerations,
 		release: () => release("[!note]"), reject,
-		prepare: () => prepareUsageMenu(app, event, (dispose) => disposers.push(dispose)),
+		prepare: () => prepareUsageMenu(app, anchor as unknown as HTMLElement, (dispose) => disposers.push(dispose)),
 		assertClean: () => {
 			assert.equal(view.pendingTimers(), 0, "settlement clears the opening deadline");
 			assert.equal([...view.events.values()].flat().length, 0, "owner-window listeners are removed");

@@ -74,7 +74,7 @@ describe("which words mean something else too", () => {
 	});
 
 	it("knows a styling word in any case the stylesheet would match", () => {
-		const sources = [{ label: "Dune", words: [{ word: "Rot", placement: "spaced" as const, guards: null }] }];
+		const sources = [{ label: "Dune", origin: "theme" as const, words: [{ word: "Rot", placement: "spaced" as const, guards: null }] }];
 		assert.ok(isStylingWord("rot", sources));
 		assert.ok(!isStylingWord("blau", sources));
 	});
@@ -159,7 +159,7 @@ function open(input: PaletteNotesModalInput) {
 	let answer: boolean | null | undefined;
 	void modal.ask().then((result) => { answer = result; });
 	const button = (label: string): FakeElement =>
-		modalEl.querySelectorAll(".cs-modal-footer button").find((el) => el.textContent === label)!;
+		modalEl.querySelectorAll(".modal-button-container button").find((el) => el.textContent === label)!;
 	const cards = () => contentEl.querySelectorAll(".cs-option-box");
 	return {
 		titleEl, contentEl, cards,

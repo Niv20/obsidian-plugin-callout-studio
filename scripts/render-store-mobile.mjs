@@ -9,6 +9,8 @@ import { exportSvg } from "./user-guide/vector-exporter.mjs";
 import { loadObsidianAssets } from "./user-guide/obsidian-assets.mjs";
 import { captions } from "./store-screenshots/composition.mjs";
 import { composeMobile } from "./store-screenshots/composition-mobile.mjs";
+import { guideRuntimeOptions } from "./user-guide/guideRuntime.mjs";
+import { settingsPageCss } from "./user-guide/settingsPageLayout.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(import.meta.url);
@@ -17,17 +19,17 @@ const { appCss, icons, version } = loadObsidianAssets();
 const { outputFiles } = await build({
 	entryPoints: [path.join(root, "scripts/store-screenshots/scenes.mjs")], bundle: true,
 	write: false, format: "iife", globalName: "storeScenes",
-	alias: { obsidian: path.join(root, "scripts/user-guide/obsidian-runtime.ts") },
+	...guideRuntimeOptions(root),
 });
-// Host-window geometry only; controls keep their production phone CSS. The one
-// paint it owns is the settings pane: black, as Obsidian 1.13's dark phone
-// settings were, so image 01 stays one family with 02–05. 1.14 greys the pane
-// to --background-secondary, which is also the colour of the row pills, and
-// they would vanish into it.
+// Host-window geometry only; controls keep their production phone CSS. One
+// thing is moved: on a phone Obsidian hides a settings page's own title bar and
+// names the page in the window's header, which the frame does not draw, so the
+// page shows its title bar instead and the picture still says where it is.
 const layout = `
 body { margin:0; padding:0; overflow:hidden; background:var(--background-primary); }
 *, *::before, *::after { animation:none!important; transition:none!important; caret-color:transparent!important; }
-.guide-settings { width:430px; height:684px; padding:16px; background:#000; overflow:auto; }
+${settingsPageCss({ width: 430, height: 684 })}
+.is-phone .guide-settings-page .setting-page-titlebar { display:flex; }
 .modal-container { position:static; padding:0; height:auto; min-height:0; }
 .modal-bg { display:none; }
 .is-phone .modal { position:relative; top:auto; margin:0; max-height:684px; min-height:0; }
@@ -71,7 +73,10 @@ try {
 		});
 		const geometry = await page.evaluate(selector => {
 			const node = document.querySelector(selector), r = node.getBoundingClientRect();
-			return { width: r.width, height: r.height, scrollHeight: node.scrollHeight, scrollWidth: node.scrollWidth };
+			// A settings page scrolls inside its frame, never the frame itself.
+			const scroller = node.querySelector(".vertical-tab-content") ?? node;
+			const visible = Math.min(1, scroller.clientHeight / scroller.scrollHeight);
+			return { width: r.width, height: r.height, scrollHeight: node.scrollHeight, scrollWidth: node.scrollWidth, visible };
 		}, metadata.selector);
 		assert.ok(geometry.scrollWidth <= geometry.width + 1, `${name}: horizontal overflow`);
 		if (name === "02-notes") assert.ok(geometry.scrollHeight > geometry.height, `${name}: note must continue below the screen`);

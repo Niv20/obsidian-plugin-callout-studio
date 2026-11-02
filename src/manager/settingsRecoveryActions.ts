@@ -4,12 +4,13 @@ import type { PluginData } from "../types";
 import { reportSettingsSaveFailure } from "./settingsSaveReporter";
 import { settingsWriteReason } from "./settingsSaveStatus";
 import { canonical } from "./syncTree";
-import { Notice, normalizePath } from "obsidian";
+import { normalizePath } from "obsidian";
 import { t } from "../i18n";
 import { readSettledSettingsFile } from "./settingsSettledRead";
 import { tryAdoptExternalSettings, type ExternalReloadHost, type SettingsAdoptionOptions } from "./settingsAdopt";
 import { registryIsOwned } from "./registryOwnership";
 import { writeSettingsBackup } from "./settingsBackup";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 /** Explicit retry. Missing data on a used device never authorizes a reset. */
 export async function retrySettingsRecovery(host: ExternalReloadHost, options: SettingsAdoptionOptions = {}): Promise<boolean> {
@@ -50,7 +51,7 @@ export async function startFreshSettings(host: ExternalReloadHost): Promise<bool
 	if (read.kind !== "absent") {
 		if (read.kind === "loaded") {
 			const recovered = await retrySettingsRecovery(host);
-			if (recovered) new Notice(t("saveStatus.settingsArrived"), 10000);
+			if (recovered) showNotice("success", t("saveStatus.settingsArrived"));
 			return recovered;
 		}
 		writer.status.fail("unreadable");

@@ -23,7 +23,7 @@ migration/runtime-refresh."
 5. If it belongs to a **list the user builds up** (like `customPalettes`,
    `userImages`, `customCommands`), it must also be added to `mergeById`
    handling in the JSON importer
-   (`DataManagementSection.processImportedJSON`) - see
+   (`backupImport.processImportedJSON`) - see
    [Import and export § the three exceptions](15-import-export.md#settings-import-restore-the-groups-the-file-carries-three-lists-merge-by-id).
    A brand-new such list needs a fourth stop: register it in `mergeById`'s
    call site the same way the existing three are handled, and add it to
@@ -52,8 +52,8 @@ registrations added elsewhere. See
 [Editor integrations § built-in commands](10-editor-integrations.md#built-in-commands-and-availability).
 
 Anything tied to "wrap this callout type" belongs in the **custom command**
-system instead (`CustomCommandManager` - users build these themselves via
-`CommandBuilderModal`; there's nothing for a contributor to add here beyond
+system instead (`CustomCommandManager` - users build these themselves on the
+Commands and shortcuts settings page, with `CommandEditorModal`; there's nothing for a contributor to add here beyond
 new *roles/actions* the builder can offer, which would touch
 `CustomCommandAction`/`CustomCommand.role` in `src/types.ts`,
 `src/utils/customCommands.ts`'s `describeCommand`, and
@@ -107,10 +107,11 @@ command and any custom command sharing the same operation can't drift apart.
    role is simply skipped, so the same `ContextMenuItemConfig` shape can
    carry role-specific ids safely.
 4. **`src/i18n/en.ts`** - add the label key (`menuItem.<id>` convention, see
-   `MenuCustomizationModal.ITEM_LABEL_KEY`) and the menu-item's own display
+   `menuItems.ts`'s `ITEM_LABEL_KEY`) and the menu-item's own display
    string.
-5. **`src/settings/MenuCustomizationModal.ts`** - add it to
-   `ITEM_LABEL_KEY` so it appears in the drag-sortable customization list.
+5. **`src/settings/menuItems.ts`** - add it to `ITEM_LABEL_KEY` and
+   `ITEM_ICON`, so it appears, with its icon, in the customization window and
+   on the settings page.
 6. `mergeMenuItems()` in `settingsMerge.ts` already handles new-id-appended
    automatically for upgrading users - no change needed there unless the
    new item needs a specific *default position* rather than appended last.
@@ -142,8 +143,10 @@ but specifically through `GlobalStyleSettings` /
 with the merge logic in **`src/utils/globalStyleMerge.ts`** (its own module,
 not `settingsMerge.ts` directly, because this section is deep enough to
 warrant one - see [Colour system](12-color-system.md#globalstylemergets-and-iconadjustts)).
-The UI lives in `GlobalStyleModal.ts`'s per-role popups, driven by
-`styleControls.ts`'s shared slider/toggle builders. Remember: a new numeric
+The UI is the declarative style pages (`declarative/stylePages.ts`), built
+from the slider definitions in `styleSpecs.ts` (a new slider is one entry
+there) and `styleControls.ts`'s shared builders (the
+live-drag wiring is `wireStyleSlider`). Remember: a new numeric
 style field almost certainly needs a clamp in `clampGlobalStyle`
 (`settingsGuards.ts`) so a hand-edited or imported `data.json` can't set it
 to something absurd.
@@ -163,7 +166,7 @@ to something absurd.
   [Import and export](15-import-export.md#import-from-callout-manager). The
   window itself is not yours to write: add a `PluginImportSource` beside
   `admonitionImportSource.ts` and open `PluginImportModal` with it from a new
-  `ImportSourceModal` row, under that window's **From another plugin** caption
+  `ImportSourceModal` row (`addChoiceRow`), in that window's **From another plugin** group
  - see
   [the plugin import window](15-import-export.md#the-plugin-import-window).
   The source names **one** fallback besides the vault (`manual`: a file
@@ -171,7 +174,7 @@ to something absurd.
   other plugin actually hands its users. The window shows both on one screen
   when it finds the plugin's data, and the fallback alone otherwise; it cannot
   be given a third route.
-- **A new export format**: add a row inside `ExportFormatModal`, not a new
+- **A new export format**: add a row (`addChoiceRow`) inside `ExportFormatModal`, not a new
   top-level settings-tab row - the project's stated rationale is that a
   second top-level row would leave Import and Export shaped inconsistently.
 

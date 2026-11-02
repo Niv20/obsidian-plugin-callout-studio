@@ -4,7 +4,7 @@
  * Provides async functions for reading every markdown file in the vault:
  * discovering unknown callout IDs, counting usages, bulk-replacing callout IDs
  * or titles, converting callouts to plain text, and normalizing fold markers.
- * Used by ManualCalloutDiscovery (explicit scans), DataManagementSection,
+ * Used by ManualCalloutDiscovery (explicit scans), backupImport,
  * and CalloutRowActions (pre-delete counts). The user-facing usage report lives
  * next door in vaultCalloutStats.ts.
  *

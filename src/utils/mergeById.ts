@@ -11,7 +11,7 @@
  * a file that never mentioned them, which is the failure
  * docs/internals-docs/15-import-export.md warns about for every new list.
  *
- * Lifted out of `DataManagementSection.applyImport`, which needs a live
+ * Lifted out of `backupImport.applyImport`, which needs a live
  * registry, a live plugin and a modal before a single line of it runs, so the
  * rule could be a test rather than a comment.
  *

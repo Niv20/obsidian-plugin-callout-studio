@@ -32,7 +32,7 @@ export interface CalloutComboboxOptions {
 	choices: () => readonly CalloutDefinition[];
 	/** Selected id, or "" for none. An id absent from `choices` reads as none. */
 	value: string;
-	/** Accessible name for the input (no hover tooltip); the call site owns the wording. */
+	/** Accessible name for the field (no hover tooltip); the call site owns the wording. */
 	ariaLabel: string;
 	/** Optional committed label; popup rows keep the shared name/id presentation. */
 	labelOf?: (def: CalloutDefinition) => string;
@@ -120,15 +120,24 @@ export class CalloutCombobox {
 		return this.popup.value?.id ?? "";
 	}
 
+	/**
+	 * The picker's outer element (field, icon and list). It can be moved to
+	 * another parent as a whole: the declarative settings keep one picker and
+	 * put it back into its row after every redraw (declarative/persistentParts.ts).
+	 */
+	get el(): HTMLElement {
+		return this.popup.el;
+	}
+
 	/** Move the selection without firing `onChange`. */
 	setValue(id: string): void {
 		this.popup.setSelected(id);
 		this.paintLead(this.popup.value);
 	}
 
-	/** Put the caret in the search field, which opens the list. */
+	/** Put the focus on the field, without opening its list. */
 	focus(): void {
-		this.popup.inputEl.focus();
+		this.popup.focus();
 	}
 
 	setChoices(choices: () => readonly CalloutDefinition[]): void {
@@ -149,12 +158,10 @@ export class CalloutCombobox {
 		const created = await this.options.onCreate?.(query);
 		if (!created) return;
 		this.syncDisabled();
-		this.setValue(created.id);
-		if (this.popup.value?.id !== created.id) {
-			this.paintLead(created);
-			this.popup.inputEl.value = this.options.labelOf?.(created) ?? created.displayName;
-			this.popup.el.toggleClass("is-empty", false);
-		}
+		// The label covers a callout `choices` does not offer yet: the field
+		// still names it, and the next opening finds it once it is offered.
+		this.popup.setSelected(created.id, this.options.labelOf?.(created) ?? created.displayName);
+		this.paintLead(created);
 		void this.options.onChange(created.id);
 	}
 
@@ -181,7 +188,7 @@ export class CalloutCombobox {
 	}
 
 	/**
-	 * Draw the *committed* callout beside the input.
+	 * Draw the *committed* callout before the field's words.
 	 *
 	 * Committed, not highlighted: arrowing down the list has not chosen
 	 * anything, so the field must go on showing what it will still hold if the

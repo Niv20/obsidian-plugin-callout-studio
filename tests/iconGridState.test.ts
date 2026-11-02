@@ -59,3 +59,134 @@ it("marks the grid while a message stands in for its cells, and only then", () =
 	grid.setEntries([]);
 	assert.equal(gridEl.hasClass("has-message"), false, "the empty state is not a message");
 });
+
+it("folds a pooled group with Obsidian's own collapse triangle", () => {
+	// `.collapse-icon` + `right-triangle` is the file explorer's and search's
+	// fold control; app.css sizes it and turns it by the reading direction, so
+	// the grid only has to say which way it is.
+	fakeDom.light();
+	const body = el();
+	const grid = new IconGrid(asEl(body), {
+		renderCell: (cell, entry) => cell.setText(entry.name),
+		isSelected: () => false,
+		onSelect: () => {},
+		labelFor: (entry) => entry.name,
+		emptyText: "Empty collection",
+		loadMoreText: "Load more",
+		groupLabelFor: (entry, previous) =>
+			previous?.categories[0] === entry.categories[0] ? undefined : { name: entry.categories[0] ?? "" },
+	});
+	grid.setEntries([
+		{ name: "star", categories: ["Lucide"], keywords: [] },
+		{ name: "heart", categories: ["Lucide"], keywords: [] },
+		{ name: "smile", categories: ["Emoji"], keywords: [] },
+	]);
+	const header = body.querySelector(".icon-picker-group-header")!;
+	const fold = header.querySelector(".collapse-icon");
+	assert.ok(fold, "the heading carries Obsidian's .collapse-icon");
+	assert.equal(fold.hasClass("is-collapsed"), false);
+	header.fire("click");
+	assert.equal(fold.hasClass("is-collapsed"), true);
+	assert.equal(header.getAttribute("aria-expanded"), "false");
+	header.fire("click");
+	assert.equal(fold.hasClass("is-collapsed"), false);
+	assert.equal(header.getAttribute("aria-expanded"), "true");
+});
+
+it("moves along the reading direction with the left and right arrows", () => {
+	// Obsidian marks a right-to-left interface with `.mod-rtl`, whose
+	// `direction: rtl` the grid inherits; the cells then flow from the right.
+	fakeDom.light();
+	const body = el();
+	const grid = new IconGrid(asEl(body), {
+		renderCell: (cell, entry) => cell.setText(entry.name),
+		isSelected: () => false,
+		onSelect: () => {},
+		labelFor: (entry) => entry.name,
+		emptyText: "Empty collection",
+		loadMoreText: "Load more",
+	});
+	grid.setEntries(["a", "b", "c"].map((name) => ({ name, categories: [], keywords: [] })));
+	const gridEl = body.querySelector(".icon-picker-grid")!;
+	const cells = body.querySelectorAll(".icon-picker-cell");
+	const press = (key: string) => gridEl.fire("keydown", { type: "keydown", key, preventDefault: () => {} });
+	const win = fakeDom.window;
+	for (const direction of ["ltr", "rtl"] as const) {
+		Object.defineProperty(win, "getComputedStyle", { configurable: true, value: () => ({ direction }) });
+		try {
+			cells[1]!.focus();
+			press("ArrowRight");
+			assert.equal(fakeDom.document.activeElement, cells[direction === "ltr" ? 2 : 0], `${direction}: right arrow`);
+			cells[1]!.focus();
+			press("ArrowLeft");
+			assert.equal(fakeDom.document.activeElement, cells[direction === "ltr" ? 0 : 2], `${direction}: left arrow`);
+		} finally {
+			Reflect.deleteProperty(win, "getComputedStyle");
+		}
+	}
+});
+
+/**
+ * The grid is one Tab stop (finding S8-V1): one cell has `tabindex="0"`, every
+ * other `-1`, so Tab lands in the grid once and goes on past it, while the
+ * arrow keys and a click still reach every cell.
+ */
+function tabStops(body: ReturnType<typeof el>): string[] {
+	return body.querySelectorAll(".icon-picker-cell")
+		.filter((cell) => cell.getAttribute("tabindex") === "0")
+		.map((cell) => cell.textContent);
+}
+
+function roverGrid(selected: string | null, grouped = false) {
+	fakeDom.light();
+	const body = el();
+	const grid = new IconGrid(asEl(body), {
+		renderCell: (cell, entry) => cell.setText(entry.name),
+		isSelected: (entry) => entry.name === selected,
+		onSelect: () => {},
+		labelFor: (entry) => entry.name,
+		emptyText: "Empty collection",
+		loadMoreText: "Load more",
+		groupLabelFor: grouped
+			? (entry, previous) => previous?.categories[0] === entry.categories[0] ? undefined : { name: entry.categories[0]! }
+			: undefined,
+	});
+	const entries = [
+		{ name: "book", categories: ["Lucide"], keywords: [] },
+		{ name: "star", categories: ["Lucide"], keywords: [] },
+		{ name: "bolt", categories: ["Tabler"], keywords: [] },
+		{ name: "heart", categories: ["Tabler"], keywords: [] },
+	];
+	grid.setEntries(entries);
+	return { body, grid };
+}
+
+it("lets Tab land on the chosen icon only, every other cell left to the arrows", () => {
+	const { body } = roverGrid("bolt");
+	assert.deepEqual(tabStops(body), ["bolt"]);
+	for (const cell of body.querySelectorAll(".icon-picker-cell")) {
+		assert.ok(["0", "-1"].includes(cell.getAttribute("tabindex") ?? ""), "every cell can still take focus");
+	}
+});
+
+it("lets Tab land on the first icon when none is chosen", () => {
+	const { body } = roverGrid(null);
+	assert.deepEqual(tabStops(body), ["book"]);
+});
+
+it("moves the Tab stop with a pick and with the focus", () => {
+	const { body, grid } = roverGrid(null);
+	const cells = body.querySelectorAll(".icon-picker-cell");
+	grid.markSelected(asEl(cells[2]!));
+	assert.deepEqual(tabStops(body), ["bolt"]);
+	// focusin bubbles to the grid, which reads the cell from the event.
+	body.querySelector(".icon-picker-grid")!.fire("focusin", { target: cells[3] });
+	assert.deepEqual(tabStops(body), ["heart"], "an arrow key or a click moves it too");
+});
+
+it("keeps one Tab stop on screen when the group holding it collapses", () => {
+	const { body } = roverGrid("bolt", true);
+	assert.deepEqual(tabStops(body), ["bolt"]);
+	body.querySelectorAll(".icon-picker-group-header")[1]!.fire("click");
+	assert.deepEqual(tabStops(body), ["book"], "off the collapsed group, onto the first cell on screen");
+});

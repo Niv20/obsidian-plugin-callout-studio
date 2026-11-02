@@ -9,7 +9,7 @@ import { describe, it } from "node:test";
 import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { handleClearCalloutUsages } from "../src/settings/sections/calloutVaultActions";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import type { SettingsContext } from "../src/settings/sections/types";
 import type { CalloutDefinition } from "../src/types";
 import { en } from "../src/i18n/en";
 import { savingWriter, stubConfirm } from "./support/importSafetyStubs";
@@ -39,9 +39,9 @@ describe("converting uses after a failed write", () => {
 				contents.set(file.path, transform(contents.get(file.path)!));
 			},
 		} } as unknown as App;
-		const ctx = { app, display: () => {}, plugin: {
+		const ctx = { app, redraw: () => {}, plugin: {
 			registry, settingsWriter: savingWriter(), saveSettings: async () => { saves++; },
-		} } as unknown as SettingsSectionContext;
+		} } as unknown as SettingsContext;
 		const confirm = stubConfirm(true), warn = console.warn;
 		console.warn = () => {};
 		try {

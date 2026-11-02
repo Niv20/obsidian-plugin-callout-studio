@@ -89,10 +89,13 @@ export function compose(name, source, metadata) {
 	body += `<g transform="translate(${x} ${y}) scale(${scale})">${scene.content}</g>`;
 	if (name === "01-settings") {
 		body += '</g>';
-		const trackHeight = scene.height * scale - 28;
-		const thumbHeight = trackHeight * metadata.geometry.height / metadata.geometry.scrollHeight;
-		body += rect(x + scene.width * scale - 7, y + 14, 3, trackHeight, "#39363D", 1.5);
-		body += rect(x + scene.width * scale - 7, y + 14, 3, thumbHeight, "#6D6479", 1.5);
+		// A scrollbar only when the page goes on below, as macOS shows one.
+		if (metadata.geometry.visible < 1) {
+			const trackHeight = scene.height * scale - 28;
+			const thumbHeight = trackHeight * metadata.geometry.visible;
+			body += rect(x + scene.width * scale - 7, y + 14, 3, trackHeight, "#39363D", 1.5);
+			body += rect(x + scene.width * scale - 7, y + 14, 3, thumbHeight, "#6D6479", 1.5);
+		}
 	}
 	return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="title description"><title id="title">${escape(headline)} — Callout Studio</title><desc id="description">${escape(metadata.description)} Purple promotional frame with a simplified Obsidian workspace. Desktop store artwork, 1200 by 800 pixels.</desc>${body}</svg>\n`;
 }

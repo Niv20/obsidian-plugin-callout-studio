@@ -111,12 +111,12 @@ The source map is deliberately explicit:
 | Incoming-file scheduling and adoption | [`reloadQueue.ts`](../../src/manager/reloadQueue.ts), [`settingsAdopt.ts`](../../src/manager/settingsAdopt.ts), [`registryOwnership.ts`](../../src/manager/registryOwnership.ts) |
 | Merge representation and integrity | [`settingsSync.ts`](../../src/manager/settingsSync.ts), [`settingsGenesis.ts`](../../src/manager/settingsGenesis.ts), [`syncTree.ts`](../../src/manager/syncTree.ts), [`syncFingerprint.ts`](../../src/manager/syncFingerprint.ts), [`foreignFields.ts`](../../src/manager/foreignFields.ts) |
 | Checkpoints, history, backups and conflict copies | [`settingsCheckpoint.ts`](../../src/manager/settingsCheckpoint.ts), [`settingsHistory.ts`](../../src/manager/settingsHistory.ts), [`settingsRecovery.ts`](../../src/manager/settingsRecovery.ts), [`settingsBackup.ts`](../../src/manager/settingsBackup.ts), [`settingsConflictBackup.ts`](../../src/manager/settingsConflictBackup.ts), [`settingsConflictFiles.ts`](../../src/manager/settingsConflictFiles.ts) |
-| Explicit recovery | [`settingsRecoveryActions.ts`](../../src/manager/settingsRecoveryActions.ts), [`missingSettingsRecovery.ts`](../../src/manager/missingSettingsRecovery.ts), [`settingsRecoveryService.ts`](../../src/manager/settingsRecoveryService.ts), [`settingsDiagnosis.ts`](../../src/manager/settingsDiagnosis.ts), [`SettingsRecoveryModal.ts`](../../src/settings/SettingsRecoveryModal.ts) |
+| Explicit recovery | [`settingsRecoveryActions.ts`](../../src/manager/settingsRecoveryActions.ts), [`missingSettingsRecovery.ts`](../../src/manager/missingSettingsRecovery.ts), [`settingsRecoveryService.ts`](../../src/manager/settingsRecoveryService.ts), [`settingsDiagnosis.ts`](../../src/manager/settingsDiagnosis.ts), [`versionHistoryPage.ts`](../../src/settings/declarative/versionHistoryPage.ts) |
 | Version history | [`setupVersions.ts`](../../src/manager/setupVersions.ts), [`versionLabels.ts`](../../src/manager/versionLabels.ts), [`versionRow.ts`](../../src/settings/versionRow.ts) |
 | Earlier-setup inspection | [`setupDetails.ts`](../../src/manager/setupDetails.ts), [`SettingsRecoveryDetailsModal.ts`](../../src/settings/SettingsRecoveryDetailsModal.ts), [`recoveryDetailsView.ts`](../../src/settings/recoveryDetailsView.ts), [`recoverySections.ts`](../../src/settings/recoverySections.ts), [`recoveryCollections.ts`](../../src/settings/recoveryCollections.ts), [`recoveryModel.ts`](../../src/settings/recoveryModel.ts), [`recoveryValues.ts`](../../src/settings/recoveryValues.ts), [`recoveryDetailFields.ts`](../../src/settings/recoveryDetailFields.ts), [`recoveryComparisonTable.ts`](../../src/settings/recoveryComparisonTable.ts), [`recoveryPreview.ts`](../../src/settings/recoveryPreview.ts), [`recoveryRolePreview.ts`](../../src/settings/recoveryRolePreview.ts) |
 | Paused state | [`pausedRecheck.ts`](../../src/manager/pausedRecheck.ts), [`pausedIndicator.ts`](../../src/settings/pausedIndicator.ts), [`withTimeout.ts`](../../src/utils/withTimeout.ts) |
 | Status and user feedback | [`settingsSaveStatus.ts`](../../src/manager/settingsSaveStatus.ts), [`settingsSaveReporter.ts`](../../src/manager/settingsSaveReporter.ts), [`settingsSaveMessage.ts`](../../src/manager/settingsSaveMessage.ts), [`saveStatusBanner.ts`](../../src/settings/saveStatusBanner.ts), [`saveStatusCopy.ts`](../../src/settings/saveStatusCopy.ts), [`settingsNotices.ts`](../../src/manager/settingsNotices.ts) |
-| Destructive actions while paused | [`pausedGuard.ts`](../../src/settings/pausedGuard.ts), [`DataManagementSection.ts`](../../src/settings/sections/DataManagementSection.ts), [`PluginImportModal.ts`](../../src/settings/pluginImport/PluginImportModal.ts), [`calloutVaultActions.ts`](../../src/settings/sections/calloutVaultActions.ts) |
+| Destructive actions while paused | [`pausedGuard.ts`](../../src/settings/pausedGuard.ts), [`backupImport.ts`](../../src/settings/sections/backupImport.ts), [`resetEverything.ts`](../../src/settings/resetEverything.ts), [`PluginImportModal.ts`](../../src/settings/pluginImport/PluginImportModal.ts), [`calloutVaultActions.ts`](../../src/settings/sections/calloutVaultActions.ts) |
 
 ## Startup and file classification
 
@@ -532,7 +532,7 @@ echo still checks for conflict files, but a sidecar alone may not trigger an eve
 
 ### Version history source comparison
 
-**Version history** keeps two derived categories only to choose a fallback title
+The **Restore an earlier version** page keeps two derived categories only to choose a fallback title
 when no recognized reason is recorded: **Automatic backup** when any copy has
 kind `history` or `backup`, and **Sync copy** when every copy has kind `copy`.
 Automatic backup takes precedence for mixed versions. Category does not select
@@ -787,7 +787,9 @@ Status subscriptions update the banner slot without rebuilding the form or movin
 settings scroll. Subscription exceptions cannot interrupt persistence. The shared
 reporter deduplicates recent identical notices and clears them when the underlying
 status recovers. Notices and a one-off failure's message take their prose from
-the canonical English table (`settingsSaveMessage()`). The paused banner's
+`settingsSaveMessage()`, which says each reason through `t()` like the rest of
+the interface (until 2026-10-31 it read the English table directly, so these
+notices were English in every language). The paused banner's
 calm/what-happened/what-to-do copy, action labels, titles and confirmation text
 use `t()`, under keys of their own, so a stale translation of the older wording
 never shows through; see
@@ -894,12 +896,14 @@ its dialog closes, because saving can pause while the dialog is open.
 | Delete a custom callout | Before the dialog, after it, and before Undo restores it | Nothing: no note is touched, only the row is removed | Unchanged |
 | Callout editor Save | Already refused while frozen | See [Callout editor](14-callout-editor.md#save-pipeline) | Unchanged |
 
-**The settings page is read-only while paused.** `makePausedReadOnly()`
-(`settings/sections/pausedReadOnly.ts`) marks everything that would change a
-setting `inert`, and `SettingsTab` redraws whenever the writer freezes or thaws.
-A change made while paused used to look applied and vanish on the next launch.
-The title, the banner, folding the lists, and the rows marked `cs-paused-allowed`
-(Export, Earlier versions, Review conversion) stay usable.
+**The settings are read-only while paused.** Every row that would change a
+setting is disabled or dimmed, and every change refuses with its reason, even
+one a disabled row cannot stop (a drag, the Delete key): see
+[26 § Read-only while saving is paused](26-declarative-settings.md#read-only-while-saving-is-paused).
+The settings redraw whenever the writer freezes or thaws (the saving status is
+one of their signals). A change made while paused used to look applied and
+vanish on the next launch. Export, Version history, Convert to standard
+Markdown and a callout row's ⋮ (for Find callouts) stay usable.
 
 `SettingsWriter.persists(data)` answers whether the settings file now holds
 `data`, by content. `save()` resolves in every case, including when nothing was
@@ -907,7 +911,7 @@ written, so a caller that announces success awaits `saveSettings()` and then
 asks. Reset's confirmation is titled and labelled **Reset everything** rather
 than **Delete**, lists what it removes from this vault as bullets with the count
 first in each, and keeps its button locked until the **I have read and understood** box
-is ticked. With nothing to reset it says so and asks nothing.
+in its button bar is ticked. With nothing to reset it says so and asks nothing.
 
 ### Recovery without file surgery
 
@@ -917,8 +921,8 @@ On a phone that folder is out of reach, and a file-level rollback does not even
 stick, because running devices merge their newer stamps straight back over it.
 `SettingsRecoveryService` (`settingsRecoveryService.ts`, the plugin's `recovery`)
 offers diagnosis, replacement and discarding from the banner, and earlier
-versions from **Settings → Version history → Earlier versions**, which the
-banner's **Go to version history** scrolls to.
+versions from **Settings → Callout Studio → Danger zone → Restore an earlier version** (a page), which the banner's
+**Go to version history** opens.
 
 **Diagnosis.** `inspectSettingsFile()` (`settingsDiagnosis.ts`) reads the raw
 bytes through the adapter, with the same timeout, and names the cause:
@@ -957,8 +961,9 @@ valid again just retries recovery. Otherwise the value is copied to
 checkpoint is replaced with the stamped display, and recovery is retried. The
 settings file is not touched.
 
-**Version history** (`SettingsRecoveryModal`) lists every earlier setup from three
-sources, as one timeline:
+**Restore an earlier version** (`VersionHistoryPage`, `declarative/versionHistoryPage.ts`)
+lists every earlier setup from three sources, in one list, newest first, a heading
+per day on a timeline:
 
 - device history (`historyEntries()`)
 - vault backups, from this device, another device, or 2.14 (`listSettingsBackups()`)
@@ -967,7 +972,19 @@ sources, as one timeline:
   these but does not date them, so their time is the file's `mtime`
   (`adapter.stat()`), or null when the vault cannot say.
 
-`listSources()` returns one `RecoverySource` per copy. `listVersions()` passes them
+`listSources()` returns one `RecoverySource` per copy. It reads the three places,
+and the files in each, at once rather than one after another, and the result is
+still history, then backups, then copies. Normalizing a copy (a scratch
+`CalloutRegistry` loaded and saved again, so an older format reads as this
+build's) is most of the work, so the service keeps each copy's normalized
+`data` keyed by its content: a history entry by the hash it is stored under, a
+file by `hash64` of its text. Only the last listing's copies are kept. The next
+listing (opening the page again, or the reload after a restore or a delete)
+normalizes only what is new or changed, and `mergeVersions()` keeps the content
+key it worked out for each `data` object in a `WeakMap`, so an unchanged copy is
+not hashed again either. On a vault with 754 callouts and 25 copies this took a
+listing from ~140 ms to ~30 ms in Node; the first listing of a session costs
+what it did. `listVersions()` passes them
 through `mergeVersions()` (`setupVersions.ts`): copies whose normalized `data` hash
 to the same `canonical()` text are one `SetupVersion`, whose `copies` are newest
 first; versions are newest first, a version with no time last, in a fixed order on
@@ -977,13 +994,13 @@ history entry of the setup it restores, and a time window would fold exactly the
 two versions someone most needs told apart. A copy whose `data` is null is never
 merged, not even with another unreadable copy: there is nothing to compare.
 
-The timeline groups these versions by local calendar day. Each heading shows the
+The timeline puts these versions under a heading per local calendar day. Each heading shows the
 full localized date first, followed by its relative age in parentheses: **today**,
 **yesterday**, or the number of days ago. Future dates show only the full date.
 The age counts calendar days rather than elapsed hours, so daylight-saving changes
 do not shift it. A continuous
 vertical line connects one small decorative dot per version. Versions with no saved
-date form a separate final group. This local display grouping does not change
+date go under a heading of their own, at the end. This local display grouping does not change
 stored timestamps or retention rules.
 
 Each row has its automatic name and a summary of its differences from now. Its
@@ -1169,7 +1186,9 @@ edit the restoring device never saw survives it. Inspection remains available
 while saving is paused; restoring does not.
 
 **Seeing a pause.** `pausedIndicator.ts` keeps a status bar item up on desktop,
-and a notice that stays on mobile, while `writer.isVisiblyPaused`. That is every
+and a notice that stays on mobile, while `writer.isVisiblyPaused`. The item's
+icon is Obsidian's own `span.status-bar-item-icon`, so it has the size and
+stroke of Sync's and the editor mode's. That is every
 freeze except the quiet provisional one of a new install (`freeze(reason, false)`).
 A missing file at launch already has a notice that stays, so mobile does not
 add a second one. That notice (`offerFreshStart()`) is one reassuring line and a
@@ -1202,13 +1221,13 @@ snapshot with `writer.lastSaved` (what the file held after this device's last
 write or adoption). If `unsavedChangesReplaced()` (`setupDifference.ts`) counts
 one or more callout types or setting groups that were changed here and then
 replaced, a notice (`notice.unsavedChangesKept`) says so and points to
-**Version history**. The adoption has already backed up that version, which the
+**Restore an earlier version**. The adoption has already backed up that version, which the
 list names *Before changes from another device*.
 
 `recovery.diagnostics()` builds a plain-English report. It has no settings-page
 entry point of its own anymore - the **Sync diagnostics** row and its **Copy
 diagnostics** button were removed from `renderBackupSection`
-(`settings/sections/DataManagementSection.ts`) - but the method itself is
+(`settings/sections/backupImport.ts`) - but the method itself is
 unchanged and is meant for another caller to invoke and copy on the user's
 behalf. The report:
 
@@ -1274,7 +1293,7 @@ every combination of OS, provider and hardware has been exercised.
 | Valid remote settings plus unsaved registry changes | Merge against accepted causal history, preserve losing authored versions as required, and save through the normal guard. |
 | Stale snapshot resurrects a deleted id | Retained tombstones block the stale recreation. A legitimate recreation after observing deletion is a new causal edit. |
 | Incompatible old device writes an unstamped snapshot | Do not let it undo stamped history. Preserve relevant losing authored data; manual recovery may be required. |
-| Recognized intact conflict copy | Validate and incorporate its stamped history without deleting the file. Unrecognized/unstamped copies are listed in **Version history** as sync copies, never merged automatically. |
+| Recognized intact conflict copy | Validate and incorporate its stamped history without deleting the file. Unrecognized/unstamped copies are listed in **Restore an earlier version** as sync copies, never merged automatically. |
 | Notes sync but settings do not | Check provider configuration/profile inclusion. The plugin cannot infer that settings synchronization is enabled from note events. |
 
 ### Storage failures and async boundaries
@@ -1361,7 +1380,7 @@ Related existing suites verify other layers:
 | Backups, history, device memory | [`settingsBackup.test.ts`](../../tests/settingsBackup.test.ts), [`settingsConflictBackup.test.ts`](../../tests/settingsConflictBackup.test.ts), [`settingsHistory.test.ts`](../../tests/settingsHistory.test.ts), [`deviceMemory.test.ts`](../../tests/deviceMemory.test.ts) |
 | Recovery without file surgery | [`settingsDiagnosis.test.ts`](../../tests/settingsDiagnosis.test.ts), [`settingsRecoveryService.test.ts`](../../tests/settingsRecoveryService.test.ts), [`settingsRecoveryModal.test.ts`](../../tests/settingsRecoveryModal.test.ts), [`setupVersions.test.ts`](../../tests/setupVersions.test.ts), [`versionLabels.test.ts`](../../tests/versionLabels.test.ts), [`settingsNewerFormat.test.ts`](../../tests/settingsNewerFormat.test.ts), [`pausedSaving.test.ts`](../../tests/pausedSaving.test.ts) |
 | Earlier-setup comparison | [`setupDetails.test.ts`](../../tests/setupDetails.test.ts), [`settingsRecoveryService.test.ts`](../../tests/settingsRecoveryService.test.ts), [`settingsRecoveryDetails.test.ts`](../../tests/settingsRecoveryDetails.test.ts), [`recoveryPreview.test.ts`](../../tests/recoveryPreview.test.ts) |
-| Paused page, unsaved changes, lifecycle, undo | [`pausedReadOnly.test.ts`](../../tests/pausedReadOnly.test.ts), [`unsavedChangesNotice.test.ts`](../../tests/unsavedChangesNotice.test.ts), [`writerLifecycle.test.ts`](../../tests/writerLifecycle.test.ts), [`noteRewriteUndo.test.ts`](../../tests/noteRewriteUndo.test.ts) |
+| Paused page, unsaved changes, lifecycle, undo | [`declarativeBannerRows.test.ts`](../../tests/declarativeBannerRows.test.ts), [`declarativeCalloutPages.test.ts`](../../tests/declarativeCalloutPages.test.ts), [`unsavedChangesNotice.test.ts`](../../tests/unsavedChangesNotice.test.ts), [`writerLifecycle.test.ts`](../../tests/writerLifecycle.test.ts), [`noteRewriteUndo.test.ts`](../../tests/noteRewriteUndo.test.ts) |
 | Destructive actions | [`resetSafety.test.ts`](../../tests/resetSafety.test.ts), [`importSafety.test.ts`](../../tests/importSafety.test.ts), [`deleteWhilePaused.test.ts`](../../tests/deleteWhilePaused.test.ts), [`calloutDeleteDefinitionOnly.test.ts`](../../tests/calloutDeleteDefinitionOnly.test.ts), [`replaceCalloutModal.test.ts`](../../tests/replaceCalloutModal.test.ts) |
 
 The replica harness (`tests/support/syncReplicaHarness.ts`) follows Obsidian's

@@ -8,6 +8,8 @@ import { build } from "esbuild";
 import { exportSvg } from "./user-guide/vector-exporter.mjs";
 import { loadObsidianAssets } from "./user-guide/obsidian-assets.mjs";
 import { compose, captions } from "./store-screenshots/composition.mjs";
+import { guideRuntimeOptions } from "./user-guide/guideRuntime.mjs";
+import { settingsPageCss } from "./user-guide/settingsPageLayout.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(import.meta.url);
@@ -16,12 +18,12 @@ const { appCss, icons, version } = loadObsidianAssets();
 const { outputFiles } = await build({
 	entryPoints: [path.join(root, "scripts/store-screenshots/scenes.mjs")], bundle: true,
 	write: false, format: "iife", globalName: "storeScenes",
-	alias: { obsidian: path.join(root, "scripts/user-guide/obsidian-runtime.ts") },
+	...guideRuntimeOptions(root),
 });
 const layout = `
 body { margin:0; padding:24px; overflow:hidden; background:var(--background-primary); }
 *, *::before, *::after { animation:none!important; transition:none!important; caret-color:transparent!important; }
-.guide-settings { width:780px; height:650px; padding:24px; background:var(--settings-background); overflow:auto; }
+${settingsPageCss({ width: 780 })}
 .modal-container { position:static; padding:0; height:auto; min-height:0; }
 .modal-bg { display:none; }
 .modal { position:relative; margin:0; max-height:640px!important; }
@@ -54,7 +56,10 @@ try {
 		const metadata = await page.evaluate(name => storeScenes.mountScene(name), name);
 		const geometry = await page.evaluate(selector => {
 			const node = document.querySelector(selector), r = node.getBoundingClientRect();
-			return { width: r.width, height: r.height, scrollHeight: node.scrollHeight, labels: node.innerText.slice(0, 250) };
+			// A settings page scrolls inside its frame, never the frame itself.
+			const scroller = node.querySelector(".vertical-tab-content") ?? node;
+			const visible = Math.min(1, scroller.clientHeight / scroller.scrollHeight);
+			return { width: r.width, height: r.height, scrollHeight: node.scrollHeight, visible, labels: node.innerText.slice(0, 250) };
 		}, metadata.selector);
 		const source = await exportSvg(page, metadata.selector, { ...metadata, padding: 0, background: "transparent" });
 		const svg = compose(name, source, { ...metadata, geometry });

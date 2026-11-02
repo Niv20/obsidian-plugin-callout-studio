@@ -12,8 +12,8 @@
  * settings toggle to switch it off, and each is pinned here:
  *
  * - **It is scoped per vault.** The key mirrors `App.loadLocalStorage`'s own
- *   `${appId}-${key}` convention, which we cannot call directly (it needs
- *   Obsidian 1.8.7 and `minAppVersion` is 1.6.6). localStorage is per *device*,
+ *   `${appId}-${key}` convention (that API stores JSON, and the snapshot is
+ *   plain CSS text, so it is built by hand). localStorage is per *device*,
  *   not per vault, so an unscoped key would paint one vault's callout colours
  *   over another's for the first frames of every launch.
  * - **It never throws.** A refused write (quota, private mode, storage disabled)

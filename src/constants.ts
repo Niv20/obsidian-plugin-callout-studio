@@ -50,10 +50,20 @@ export const MAX_TAG_LENGTH: number = 200;
 export const MAX_TAGS_COUNT: number = 10;
 
 /**
+ * The most words of their own a user can add to the `|` dropdown
+ * (Settings → Editor → Metadata → Your words), and how long one may be. The
+ * dropdown shows 50 rows at most, so more words than that would never all be
+ * seen at once anyway.
+ */
+export const MAX_METADATA_WORDS = 50;
+export const MAX_METADATA_WORD_LENGTH = 40;
+
+/**
  * The Lucide id that stands for Callout Studio itself.
  *
- * The welcome splash's hero mark. Action-specific composites for quick insert
- * and occurrences live separately in icons/uiIcons.ts.
+ * The welcome splash's hero mark, and the settings tab's icon. Action-specific
+ * composites for quick insert and occurrences live separately in
+ * icons/uiIcons.ts.
  */
 export const PLUGIN_ICON_ID = "paintbrush";
 
@@ -282,6 +292,13 @@ export const DEFAULT_SETTINGS: PluginSettings = {
 	},
 	autocomplete: {
 		enabled: true,
+	},
+	suggestions: {
+		callouts: true,
+		themeCallouts: true,
+		metadata: true,
+		themeMetadata: true,
+		metadataWords: [],
 	},
 	iconSources: {
 		materialStyleDefault: "rounded",

@@ -90,7 +90,10 @@ export function buildFormatRow(
 		.setDesc(t("commandBuilder.formatDesc"));
 	const dd = new SelectDropdown(setting.controlEl, t("commandBuilder.format"))
 		.onChange((raw) => onPick(raw as CalloutRenderRole));
-	const noticeEl = setting.descEl.createDiv({ cls: "cs-command-role-notice" });
+	// Under the description, in Obsidian's warning colour (`p.mod-warning`): an
+	// off format is worth flagging but does not stop the command being saved.
+	// It simply appears and goes, with no animation.
+	const noticeEl = setting.descEl.createEl("p", { cls: "mod-warning cs-command-format-notice cs-hidden" });
 	let applied = "";
 
 	return {
@@ -118,7 +121,7 @@ export function buildFormatRow(
 					? t("commandBuilder.roleDisabled")
 					: "";
 			noticeEl.setText(notice);
-			noticeEl.toggleClass("is-visible", notice.length > 0);
+			noticeEl.toggleClass("cs-hidden", notice.length === 0);
 			return next;
 		},
 	};

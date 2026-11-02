@@ -45,6 +45,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
+import { NOTICE_MOODS } from "../src/ui/mascot/mascotNotices";
 import {
 	allSourceFiles,
 	argSpan,
@@ -188,20 +189,37 @@ describe("no hardcoded UI copy", () => {
 
 	it("no Notice is raised with a bare literal", () => {
 		// A Notice is the loudest untranslated surface there is — it is the only
-		// UI that appears without the user opening anything.
+		// UI that appears without the user opening anything. Every notice goes
+		// through showNotice or showActionNotice (see the next suite), whose first
+		// argument is a kind of notice, a word that is not copy.
+		const kinds = new Set<string>(Object.keys(NOTICE_MOODS));
 		const bad: string[] = [];
 		for (const f of files) {
-			for (const m of f.code.matchAll(/new\s+Notice\s*\(/g)) {
+			for (const m of f.code.matchAll(/\b(?:showNotice|showActionNotice)\s*\(/g)) {
 				const index = m.index ?? 0;
 				const span = argSpan(f.code, index + m[0].length - 1);
 				if (!span) continue;
 				const raw = f.text.slice(span.start, span.end);
 				if (TRANSLATED.test(raw)) continue;
-				const prose = literals(raw).filter((l) => LOOKS_LIKE_PROSE.test(l.value));
+				const prose = literals(raw).filter((l) => !kinds.has(l.value) && LOOKS_LIKE_PROSE.test(l.value));
 				if (prose.length > 0) bad.push(`${at(f, index)}  ${prose[0]?.value ?? ""}`);
 			}
 		}
 		assert.deepStrictEqual(bad, [], report("Untranslated Notice text:", bad));
+	});
+
+	it("every notice goes through showNotice, so it has the mascot", () => {
+		// A bare `new Notice(` is a notice without the mascot, and the next one
+		// added would be too. The one file that builds the Obsidian notice
+		// itself is the whole exception.
+		const OWN = new Set(["src/ui/mascot/mascotNotices.ts"]);
+		const bad: string[] = [];
+		// Every source file, the translation store (src/i18n/) included.
+		for (const f of allSourceFiles()) {
+			if (OWN.has(f.path)) continue;
+			for (const m of f.code.matchAll(/new\s+Notice\s*\(/g)) bad.push(at(f, m.index ?? 0));
+		}
+		assert.deepStrictEqual(bad, [], report("Use showNotice (ui/mascot/mascotNotices.ts) instead of new Notice:", bad));
 	});
 
 	it("aria-labels go through t() too", () => {

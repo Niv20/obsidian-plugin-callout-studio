@@ -35,10 +35,12 @@ import {
 import type { PackDataStore } from "../../icons/PackDataStore";
 import { formatBytes } from "../../icons/iconLibraries";
 import { isAllSources } from "./allSources";
-import { IconGrid } from "./IconGrid";
+import { IconGrid, type GridGroupHeading } from "./IconGrid";
 import { PackToolbarFilters } from "./PackToolbarFilters";
 import { t } from "../../i18n";
 import { autofocusOnDesktop } from "../modalAutofocus";
+import { createSearchField } from "../../ui/searchField";
+import { addMascot, SearchMascot } from "../../ui/mascot/mascotPlaces";
 
 /**
  * Draws grid cells straight from pack data, bypassing the `data.json` cache.
@@ -72,6 +74,8 @@ export class PackPanel {
 	private category = "";
 	private variants: IconVariantState;
 	private searchInput: HTMLInputElement | null = null;
+	/** The brush mascot of a search that found nothing: sad, and looking around while typing. */
+	private readonly searchMascot = new SearchMascot();
 	private filters: PackToolbarFilters | null = null;
 	/** Rebuilt on every variant change — Font Awesome's applies to Brands only. */
 	private noticeEl: HTMLElement | null = null;
@@ -116,6 +120,7 @@ export class PackPanel {
 
 	dispose(): void {
 		this.disposed = true;
+		this.searchMascot.hide();
 		this.filters?.destroy();
 		this.container.empty();
 	}
@@ -133,6 +138,10 @@ export class PackPanel {
 			groupLabelFor: (entry, previous) =>
 				this.groupLabelFor(entry, previous),
 			emptyText: t("iconPicker.noResults"),
+			renderEmpty: (host) => {
+				host.setText(t("iconPicker.noResults"));
+				this.searchMascot.showEmpty(host);
+			},
 			loadMoreText: t("iconPicker.loadMore"),
 		});
 		this.renderAttribution();
@@ -152,16 +161,19 @@ export class PackPanel {
 	// ── Toolbar ─────────────────────────────────────────────────────────
 
 	private buildToolbar(): void {
-		this.searchInput = this.toolbarEl.createEl("input", {
-			type: "text",
-			cls: "icon-picker-search-input cs-text-control",
+		// Obsidian's search field (magnifier, ×; finding S6-15). Its × filters
+		// too: `onChange` hears it, an `input` listener would not.
+		this.searchInput = createSearchField(this.toolbarEl, {
 			placeholder: t(this.pack.searchPlaceholderKey),
+			fieldCls: "icon-picker-search",
+			inputCls: "icon-picker-search-input",
 			value: this.query,
-		});
-		this.searchInput.addEventListener("input", () => {
-			this.query = this.searchInput?.value ?? "";
-			this.applyFilter();
-		});
+			onChange: (query) => {
+				this.query = query;
+				this.applyFilter();
+				this.searchMascot.typed();
+			},
+		}).inputEl;
 		this.filters = new PackToolbarFilters(
 			this.toolbarEl, this.pack, this.variants, this.category, {
 				onCategory: (category) => {
@@ -295,6 +307,7 @@ export class PackPanel {
 			: entries;
 		this.countGroups(shown);
 		this.grid?.setEntries(shown);
+		if (shown.length > 0) this.searchMascot.hide();
 	}
 
 	/**
@@ -324,13 +337,15 @@ export class PackPanel {
 	private groupLabelFor(
 		entry: IconEntry,
 		previous: IconEntry | undefined,
-	): string | undefined {
+	): GridGroupHeading | undefined {
 		if (!isAllSources(this.pack) || !entry.pack) return undefined;
 		if (previous && previous.pack === entry.pack) return undefined;
-		return t("iconPicker.sourceGroup", {
+		// The library's name, with how many of its icons match as a faint
+		// count at the end of the line (no "(24)" any more).
+		return {
 			name: t(this.packOf(entry).labelKey),
-			count: String(this.groupCounts.get(entry.pack) ?? 0),
-		});
+			count: this.groupCounts.get(entry.pack) ?? 0,
+		};
 	}
 
 	// ── Download states ─────────────────────────────────────────────────
@@ -385,8 +400,12 @@ export class PackPanel {
 		this.setToolbarEnabled(false);
 		this.grid?.showMessage((host) => {
 			const row = host.createDiv("icon-picker-notice-loading");
-			const spinner = row.createSpan({ cls: "callout-studio-spinner" });
-			setIcon(spinner, "loader-2");
+			// The brush mascot paints while the library downloads (the grid that
+			// replaces this message takes it off the page, which ends it); the
+			// spinner where the mascot cannot be drawn.
+			const painter = addMascot(row, "small", "start");
+			if (painter) painter.hold("paint");
+			else setIcon(row.createSpan({ cls: "callout-studio-spinner" }), "loader-2");
 			row.createSpan({
 				text: t("iconPack.downloading", {
 					name: this.pack.attribution.title,

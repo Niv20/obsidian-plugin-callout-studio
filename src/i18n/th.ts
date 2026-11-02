@@ -37,8 +37,8 @@ export const th: Record<string, string> = {
 	"portable.scanning": "กำลังอ่านโน้ต Markdown…",
 	"portable.progress": "กำลังอ่านโน้ต: {{done}} จาก {{total}}",
 	"portable.empty": "ไม่พบ callout ในหัวข้อหรือแบบอินไลน์ที่แปลงได้ จะไม่มีการเปลี่ยนแปลงใด ๆ",
-	"portable.skipped": "คงรายการที่ไม่สมบูรณ์หรือไม่รองรับ {{count}} รายการไว้โดยไม่แก้ไข เพื่อตรวจสอบด้วยตนเอง",
 	"portable.confirmTitle": "แปลงคลังนี้อย่างถาวรหรือไม่?",
+	"portable.confirmSubtitle": "ระบบไม่สร้างข้อมูลสำรองอัตโนมัติ",
 	"portable.confirmBody": "แปลง {{count}} รายการและอัปเดตลิงก์หัวข้อ {{links}} รายการใน {{files}} โน้ตหรือไม่?\nการดำเนินการนี้แก้ไขไฟล์ต้นฉบับและไม่สามารถเลิกทำใน Callout Studio ได้ ระบบจะไม่สร้างข้อมูลสำรองโดยอัตโนมัติ โปรดสำรองคลังก่อน บันทึกโน้ตที่เปิดอยู่ และหยุดแก้ไขและซิงค์ชั่วคราวจนกว่าการแปลงจะเสร็จ\nหากไฟล์เปลี่ยนแปลงหรือเขียนไม่สำเร็จ การแปลงจะหยุดลง โน้ตที่แปลงแล้วจะยังคงการเปลี่ยนแปลงไว้",
 	"portable.confirmAction": "แปลงอย่างถาวร",
 	"portable.converting": "กำลังแปลงการเปลี่ยนแปลงที่เลือก… การปิดแผงนี้จะไม่หยุดการแปลง",
@@ -74,6 +74,7 @@ export const th: Record<string, string> = {
 	"autocomplete.createNew": 'สร้าง "{{name}}"',
 	"metadataSuggest.finish": "เสร็จสิ้น",
 	"metadataSuggest.colors": "สี",
+	"metadataSuggest.yourWords": "คำของคุณ",
 	"metadataSuggest.useTyped": 'ใช้ "{{text}}"',
 	"metadataSuggest.replaces": "แทนที่ {{word}}",
 	"metadataSuggest.themeAlso": "ธีมของคุณก็จัดรูปแบบคำนี้เช่นกัน",
@@ -90,8 +91,8 @@ export const th: Record<string, string> = {
 	"replaceModal.searchPlaceholder": "ค้นหา callout",
 	"replaceModal.chooseFirstReplace": "โปรดเลือก callout ที่จะใช้แทนก่อน",
 	"settings.fallbackTag": "ค่าเริ่มต้น",
-	"settings.fallbackTagAuto": "ค่าเริ่มต้นอัตโนมัติ",
-	"settings.rescanVaultDesc": "เพิ่มชนิด callout ที่ใช้ในโน้ตของคุณซึ่งยังไม่อยู่ในรายการนี้ callout และโน้ตที่มีอยู่ของคุณจะไม่ถูกเปลี่ยนแปลง",
+	"settings.fallbackTagAuto": "อัตโนมัติ",
+	"settings.rescanVaultDesc": "เพิ่มประเภท callout ที่โน้ตของคุณใช้และยังไม่อยู่ในรายการนี้",
 	"settings.rescanVaultHintAction": "สแกนหา callout",
 	"manualDiscovery.failed": "ไม่ได้บันทึกผลการสแกน ตรวจสอบว่าสามารถเขียนไฟล์การตั้งค่าได้และการซิงค์เสร็จสิ้นแล้ว จากนั้นลองอีกครั้งผ่าน การตั้งค่า → ประเภท callout ของฉัน → สแกนหา callout โดย callout ที่มีอยู่ไม่ได้ถูกแทนที่",
 	"manualDiscovery.scanning": "กำลังสแกน…",
@@ -99,7 +100,6 @@ export const th: Record<string, string> = {
 		"สแกนเสร็จแล้ว: เพิ่มชนิด callout ใหม่ {{count}} รายการ",
 	"replaceModal.titleReplace": "แทนที่ใน vault",
 
-	"welcome.tooltip": "เกี่ยวกับ Callout Studio",
 	"welcome.title": "ยินดีต้อนรับสู่ Callout Studio!",
 	"welcome.tagline":
 		"โซลูชันครบวงจรของคุณสำหรับสร้าง จัดรูปแบบ และจัดการ callout ใน Obsidian",
@@ -107,7 +107,6 @@ export const th: Record<string, string> = {
 		"เราสังเกตเห็นว่าคุณใช้ {{plugins}} คุณต้องการนำเข้า callout ของคุณหรือไม่?",
 	"importBanner.action": "นำเข้า",
 	"importBanner.dismiss": "ปิด",
-	"welcome.previewTitle": "ดูการทำงานจริง",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio ช่วยให้คุณสร้าง callout ที่มีไอคอน สี และชื่อที่กำหนดเองได้\n\n" +
@@ -118,16 +117,18 @@ export const th: Record<string, string> = {
 		"> [!{{id}}] callout แบบบล็อก\n" +
 		"> callout แบบคลาสสิกยังคงทำงานด้วยไวยากรณ์แบบเดียวกับที่คุณคุ้นเคยอยู่แล้ว: `> [!type]`\n\n" +
 		"Callout Studio ยังมีอะไรให้มากกว่านี้อีกมาก! [เรียนรู้เพิ่มเติม]({{repoUrl}})\n",
+	"deleteModal.title": "ลบ callout",
 
-	"deleteModal.title": 'ลบ callout "{{name}}" หรือไม่?',
 	"deleteModal.bodyInUse":
 		"callout นี้ปรากฏ {{count}} ครั้งใน {{files}} ไฟล์",
 	"deleteModal.notesUntouched":
 		"การดำเนินการนี้จะลบเฉพาะคำจำกัดความของ callout เท่านั้น โน้ตของคุณจะไม่ถูกแตะต้อง ดังนั้น callout ที่มีอยู่จะกลับไปใช้สไตล์เริ่มต้น",
 	"deleteModal.fallbackTarget":
 		"นี่ยังเป็น callout สำรองเริ่มต้นของคุณด้วย ดังนั้น callout ที่ไม่มีสไตล์ของตัวเองจะเปลี่ยนไปใช้ {{fallback}}",
+	"deleteModal.subtitleFallback": "“{{name}}” · สไตล์สำรองเริ่มต้นของคุณ",
+	"convertModal.title": "แปลงเป็นข้อความธรรมดา",
+	"convertModal.subtitle": "“{{name}}” ทุกรายการใน vault ของคุณ",
 	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
-	"convertModal.title": 'แปลง "{{name}}" เป็นข้อความธรรมดาหรือไม่?',
 	"convertModal.explain":
 		"แต่ละรายการจะกลายเป็นข้อความธรรมดา: หัวเรื่องและเนื้อหายังคงอยู่ มีเพียงรูปแบบ callout ที่หายไป",
 	"convertModal.typeStays": "ประเภท callout นี้ยังคงอยู่ในรายการของคุณ",
@@ -139,14 +140,10 @@ export const th: Record<string, string> = {
 	"deleteModal.keepsRowTheme":
 		"{{theme}} กำหนดประเภท callout นี้ไว้ จึงยังคงใช้งานได้และคงรูปลักษณ์เดิม Callout Studio จะเปลี่ยนเฉพาะโน้ตภายใน vault ของคุณเท่านั้น — ไม่แตะต้องสิ่งใดที่เป็นของธีมของคุณ",
 
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "ประเภท callout ของฉัน",
 	"settings.builtInCallouts": "Callout ในตัว",
 	"settings.contextMenu": "เมนูบริบท",
-	"settings.keyboardShortcuts": "คำสั่ง",
 	"settings.language": "ภาษา",
-	"settings.languageDesc":
-		"ภาษาที่แสดงผลสำหรับ Callout Studio ค่าเริ่มต้นจะใช้ตามภาษาอินเทอร์เฟซของ Obsidian",
 	"settings.importExport": "นำเข้าและส่งออก",
 	"settings.import": "นำเข้า…",
 	"settings.export": "ส่งออก…",
@@ -162,6 +159,9 @@ export const th: Record<string, string> = {
 	"settings.addNewCallout": "เพิ่ม callout",
 
 	"settings.noCalloutsNow": "ยังไม่มี callout แบบกำหนดเองในขณะนี้",
+	"settings.calloutCount": "{{count}} callout",
+	"settings.calloutCountOne": "1 callout",
+	"settings.searchCallouts": "ค้นหา callout…",
 
 	"settings.editAria": "แก้ไข {{name}}",
 	"settings.moreRowActionsAria": "การดำเนินการเพิ่มเติมสำหรับ {{name}}",
@@ -179,22 +179,17 @@ export const th: Record<string, string> = {
 	"settings.colorSwatchAria": "จุดเน้น: {{accent}} · พื้นหลัง: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callout จากธีมของคุณ",
-	"settings.themeCalloutsDesc":
-		"{{theme}} กำหนดหรือปรับสไตล์ callout เหล่านี้ ดังนั้น Callout Studio จะปล่อยให้เป็นไปตามที่ธีมของคุณวาดไว้ และเสนอให้ใช้ได้เฉพาะแบบ Block callout เท่านั้น ทั้งสองประเภทจะปรากฏที่นี่: ประเภท callout ที่ธีมของคุณเพิ่มเข้ามา และ callout ในตัวที่ธีมเปลี่ยนรูปลักษณ์ ประเภท callout ที่ธีมของคุณเพิ่มเข้ามาจะแสดงเฉพาะขณะที่ธีมนั้นใช้งานอยู่เท่านั้น",
 	"settings.themeCalloutsDefaultTheme": "ธีมของคุณ",
+	"settings.themeCalloutsEmpty": "ขณะนี้ {{theme}} ไม่ได้จัดสไตล์ callout ใด ๆ",
 	"settings.themePreviewAria":
 		'ดูตัวอย่าง "{{name}}" — ดูว่าธีมของคุณวาดมันอย่างไร',
 	"settings.builtInAllThemeStyled":
-		"{{theme}} ปรับสไตล์ callout ในตัวทุกรายการ ดังนั้นทั้งหมดจะแสดงอยู่ด้านบนและ Callout Studio จะไม่แตะต้อง หากต้องการออกแบบของคุณเอง ให้เพิ่ม callout ที่มี ID ต่างออกไป",
+		"{{theme}} จัดสไตล์ callout ในตัวทุกรายการ Callout Studio จึงปล่อยทั้งหมดไว้ตามเดิม หากต้องการออกแบบของคุณเอง ให้เพิ่ม callout ที่มี ID ต่างออกไป",
 	"settings.fallbackCallout": "Callout สำรองเริ่มต้น",
 	"settings.fallbackCalloutDesc":
-		"ประเภท callout ที่ไม่รู้จักใน vault จะสืบทอดสไตล์ของ callout นี้",
+		"ประเภท callout ที่ไม่รู้จักจะสืบทอดสไตล์นี้",
 
-	"settings.globalStyleRegularTitle": "สไตล์ส่วนกลางสำหรับ block callout",
-	"settings.globalStyleHeadingTitle": "สไตล์ส่วนกลางสำหรับ callout หัวข้อ",
-	"settings.globalStyleInlineTitle": "สไตล์ส่วนกลางสำหรับ callout อินไลน์",
 	"settings.border": "ขอบ",
-	"settings.borderAll": "ทั้งหมด",
 	"settings.borderTop": "บน",
 	"settings.borderRight": "ขวา",
 	"settings.borderBottom": "ล่าง",
@@ -204,14 +199,11 @@ export const th: Record<string, string> = {
 	"settings.titleScale": "หัวเรื่อง",
 	"settings.contentScale": "เนื้อหา",
 	"settings.inlineTextScale": "ข้อความ",
-	"settings.shapeGroup": "รูปร่าง",
 	"settings.borderRadius": "ความโค้งมุม",
-	"settings.alignGroup": "การจัดแนว",
 	"settings.alignContent": "จัดเนื้อหาให้ตรงกับชื่อเรื่อง",
 	"settings.headingSpacingGroup": "ระยะห่างหัวเรื่อง",
 	"settings.headingPadVertical": "ระยะห่างแนวตั้ง",
 	"settings.headingGap": "ระยะห่างระหว่างหัวข้อ",
-	"settings.headingFoldGroup": "การพับ",
 	"settings.headingFoldArrow": "แสดงลูกศรพับ",
 	"settings.styleDemoName": "ตัวอย่าง",
 	"settings.styleDemoInlineName": "ตัวอย่าง",
@@ -223,21 +215,19 @@ export const th: Record<string, string> = {
 	"settings.customPalettes": "ชุดสีที่บันทึกไว้",
 	"settings.newPalette": "ชุดสีใหม่",
 	"settings.customPalettesEmpty": "ยังไม่มีชุดสีที่บันทึกไว้ในขณะนี้",
+	"settings.paletteCount": "{{count}} แผงสี",
+	"settings.paletteCountOne": "1 แผงสี",
 	"settings.editPaletteAria": "แก้ไขชุดสี {{name}}",
-	"settings.deletePaletteAria": "ลบชุดสี {{name}}",
-	"settings.deletePaletteConfirm":
-		'ลบชุดสี "{{name}}" หรือไม่?\nCallout ที่ใช้สีนี้จะไม่ได้รับผลกระทบ',
+	"settings.deletePaletteTitle": "ลบจานสี",
+	"settings.deletePaletteBody":
+		'Callout ที่ใช้สีนี้จะไม่ได้รับผลกระทบ',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'callout ที่ระบุชื่อนี้ในเมทาดาทา ("{{key}}") จะใช้สีในตัวที่มีชื่อนั้นแทน บันทึกของคุณจะไม่เปลี่ยนแปลง',
 
 	"settings.customCommands": "คำสั่งและปุ่มลัด",
-	"settings.customCommandsDesc":
-		"ดูคำสั่งทั้งหมดของ Callout Studio และแป้นพิมพ์ลัดที่ผูกไว้ พร้อมสร้างคำสั่งของคุณเองสำหรับ callout ที่คุณใช้บ่อยที่สุด ไม่มีการกำหนดแป้นพิมพ์ลัดโดยค่าเริ่มต้น",
-	"settings.customCommandsButton": "จัดการคำสั่ง",
+	"settings.customCommandsDesc": "คำสั่งทั้งหมดของ Callout Studio ทางลัดของคำสั่งเหล่านั้น และคำสั่งของคุณเอง",
 
 	"commandBuilder.title": "คำสั่งและแป้นพิมพ์ลัด",
-	"commandBuilder.desc":
-		"ใช้ปุ่ม + เพื่อตั้งค่าหรือเปลี่ยนแป้นพิมพ์ลัดในการตั้งค่าแป้นพิมพ์ลัดของ Obsidian",
 	"commandBuilder.builtIn": "คำสั่งในตัว",
 	"commandBuilder.toggleAria": "เปิดหรือปิด {{name}}",
 	"commandBuilder.hotkeyBlank": "ว่าง",
@@ -247,9 +237,7 @@ export const th: Record<string, string> = {
 	"commandBuilder.empty": "ยังไม่มีคำสั่งแบบกำหนดเอง",
 	"commandBuilder.unknownCommand": "คำสั่งนี้",
 	"commandBuilder.editAria": "แก้ไข {{name}}",
-	"commandBuilder.deleteAria": "ลบ {{name}}",
-	"commandBuilder.deleteConfirm":
-		"ลบคำสั่ง {{name}} หรือไม่? แป้นพิมพ์ลัดที่กำหนดไว้จะใช้งานไม่ได้อีกต่อไป",
+	"commandBuilder.deleteConfirm": "ทางลัดที่กำหนดไว้กับจานสีนี้จะใช้ไม่ได้อีก",
 	"commandBuilder.newTitle": "คำสั่งใหม่",
 	"commandBuilder.editTitle": "แก้ไขคำสั่ง",
 	"commandBuilder.format": "รูปแบบ callout",
@@ -261,8 +249,9 @@ export const th: Record<string, string> = {
 		"รูปแบบนี้ถูกปิดอยู่ คำสั่งจึงจะแทรกข้อความธรรมดาจนกว่าคุณจะเปิดใช้อีกครั้ง",
 	"commandBuilder.roleThemeOwned":
 		"ธีมของคุณกำหนด callout นี้ไว้ จึงมีเฉพาะรูปแบบ Block เท่านั้น",
-	"commandBuilder.commandSuspended":
-		"หยุดชั่วคราว: ธีมของคุณกำหนด callout นี้ไว้ จึงมีเฉพาะรูปแบบ Block เท่านั้น คำสั่งนี้จะใช้งานได้อีกครั้งเมื่อธีมเลิกกำหนด callout นี้",
+	"commandBuilder.commandSuspended": "หยุดชั่วคราวขณะที่ธีมของคุณให้ callout นี้ ซึ่งจะมีเฉพาะรูปแบบบล็อก",
+	"commandBuilder.pausedTag": "หยุดชั่วคราวโดยธีม",
+	"commandBuilder.missingTag": "ไม่พบ callout",
 	"commandBuilder.callout": "ประเภท callout",
 	"commandBuilder.calloutDesc": "callout ที่คำสั่งนี้แทรก",
 	"commandBuilder.headingLevel": "ระดับหัวข้อ",
@@ -290,10 +279,11 @@ export const th: Record<string, string> = {
 
 	"settings.resetAll": "รีเซ็ต",
 	"settings.resetAllDesc":
-		"ลบ callout ผู้ใช้ทั้งหมด รีเซ็ต callout ในตัว สไตล์ส่วนกลาง (ขอบ ขนาดตัวอักษร รูปร่าง) ชุดสีที่บันทึกไว้ การปรับแต่งเมนูคลิกขวา และ SVG Material ที่ดาวน์โหลด",
+		"คืนค่าการตั้งค่าและการปรับแต่งทั้งหมดเป็นค่าเริ่มต้น",
 	"settings.resetAllButton": "รีเซ็ตทั้งหมด",
 	"notice.resetAllDone": "รีเซ็ตทุกอย่างเป็นค่าเริ่มต้นแล้ว",
 	"settings.resetIntro": "ใช้เวลาสักครู่เพื่อชื่นชมทุกสิ่งที่คุณสร้างไว้กับ Callout Studio",
+	"settings.resetSubtitleDefaults": "การตั้งค่าของคุณจะกลับเป็นค่าเริ่มต้น",
 	"settings.resetDeletes": "ทั้งหมดนี้กำลังจะถูกลบ:",
 	"settings.resetRestores": "รายการเหล่านี้จะกลับเป็นค่าเริ่มต้น:",
 	"settings.resetItemCallouts": "callout แบบกำหนดเอง {{count}} ประเภท",
@@ -307,9 +297,10 @@ export const th: Record<string, string> = {
 	"settings.resetItemHeading": "การตั้งค่า callout หัวข้อ",
 	"settings.resetItemInline": "การตั้งค่า callout แบบอินไลน์",
 	"settings.resetItemThemeCalloutStyles": "สไตล์ callout ของธีมของคุณ",
+	"settings.resetItemAutocomplete": "การตั้งค่าการเติมข้อความอัตโนมัติและ metadata",
 	"settings.resetItemFallback": "สไตล์สำรอง",
 	"settings.resetItemIconLibraries": "ลำดับคลังไอคอนและคลังที่ซ่อนไว้",
-	"settings.resetAllConfirmAfter": "ไม่ต้องกังวล: ก่อนรีเซ็ต เราจะบันทึกข้อมูลสำรองของการตั้งค่าปัจจุบันของคุณไว้ คุณกู้คืนได้ทุกเมื่อจากส่วนข้อมูลสำรองในการตั้งค่า\nหากคุณใช้บริการซิงก์ การรีเซ็ตอาจส่งไปถึงอุปกรณ์เครื่องอื่นของคุณด้วย",
+	"settings.resetAllConfirmAfter": "ไม่ต้องกังวล ก่อนรีเซ็ตเราจะบันทึกข้อมูลสำรองของการตั้งค่าปัจจุบัน คุณนำกลับมาได้ทุกเมื่อจาก กู้คืนเวอร์ชันก่อนหน้า ในการตั้งค่า\nหากคุณใช้บริการซิงก์ การรีเซ็ตอาจส่งไปถึงอุปกรณ์เครื่องอื่นของคุณด้วย",
 	"settings.resetNothing": "ไม่มีอะไรให้รีเซ็ต: ทุกอย่างเป็นค่าเริ่มต้นอยู่แล้ว",
 
 	"notice.customCommandMissingCallout":
@@ -391,13 +382,13 @@ export const th: Record<string, string> = {
 	"editor.foldClosed": "ปิดโดยค่าเริ่มต้น",
 	"editor.cancel": "ยกเลิก",
 	"editor.saveChanges": "บันทึกการเปลี่ยนแปลง",
-	"editor.saving": "กำลังบันทึก…",
 	"editor.saveFailed": "ไม่สามารถบันทึกให้เสร็จสมบูรณ์ได้ หากตัวแก้ไขนี้ยังเปิดอยู่ ให้เปิดค้างไว้และลองอีกครั้งหลังตรวจสอบพื้นที่จัดเก็บและการซิงค์ การตั้งค่าหรือการแก้ไขโน้ตบางส่วนอาจถูกบันทึกไปแล้ว",
 	"editor.createCallout": "สร้าง callout",
 	"editor.nameRequired": "ต้องใส่ชื่อที่แสดงก่อนสร้าง callout",
 	"editor.noChangesToSave": "ไม่มีการเปลี่ยนแปลง",
-	"editor.downloadingIcon": "กำลังดาวน์โหลดไอคอน",
 	"editor.idEmpty": "ต้องมี ID อย่างน้อยหนึ่งรายการ",
+	"editor.idAlreadyHere": "มี ID นี้อยู่แล้ว",
+	"editor.idTooLong": "ID ต้องยาวไม่เกิน {{max}} อักขระ",
 	"editor.idExists": "มี callout ที่มี ID นี้อยู่แล้ว",
 	"editor.idConflict": "ID นี้ขัดแย้งกับ callout ที่มีอยู่",
 	"editor.idFromTheme":
@@ -423,7 +414,7 @@ export const th: Record<string, string> = {
 		"สายลมอ่อน ๆ พัดผ่านต้นไม้ แสงแดดอบอุ่นส่องลงบนทางเดินอันเงียบสงบและทำให้ทิวทัศน์ดูมีชีวิตชีวา",
 	"editor.loremIpsumShort":
 		"สายลมอ่อน ๆ พัดผ่านต้นไม้",
-	"editor.sampleInlineText": "นี่คือแคปซูล [!{id}] แบบอินไลน์ภายในย่อหน้า",
+	"editor.sampleInlineText": "นี่คือแคปซูล [!{id}]{{title}} แบบอินไลน์ภายในย่อหน้า",
 	"editor.previewReadOnly": "ไม่สามารถแก้ไขตัวอย่างสดได้",
 	"noteChanges.title": "อัปเดตโน้ตของคุณไหม",
 	"noteChanges.leave": "ปล่อยไว้ตามเดิม",
@@ -457,7 +448,6 @@ export const th: Record<string, string> = {
 	"palette.namePlaceholder": "ชุดสีของฉัน",
 	"palette.nameExists": "มีชุดสีชื่อนี้อยู่แล้ว",
 	"palette.saveBlockedName": "มีชุดสีชื่อนี้อยู่แล้ว เลือกชื่ออื่นเพื่อบันทึก",
-	"palette.metadataName": "ในเมทาดาทาของ callout: {{key}}",
 	"palette.metadataNameExists":
 		'มีชุดสีอื่นเขียนเป็น "{{key}}" ในเมทาดาทาของ callout อยู่แล้ว เลือกชื่ออื่น',
 	"palette.metadataNameShared":
@@ -469,16 +459,15 @@ export const th: Record<string, string> = {
 	"palette.renameNotesFailed":
 		"อัปเดตบางบันทึกไม่สำเร็จ ที่อัปเดตแล้วถูกบันทึกไว้ ส่วนที่เหลือยังใช้ชื่อเดิม",
 	"palette.baseColor": "สีพื้นฐาน",
-	"palette.baseColorHint":
-		"เราจะจับคู่สีพื้นหลังให้เข้ากับสีนี้โดยอัตโนมัติ หากต้องการ คุณสามารถควบคุมแยกต่างหากได้โดย{{link}}",
-	"palette.baseColorHintLink": "คลิกที่นี่",
+	"palette.colorViewAdvanced": "ตั้งค่าแต่ละสีแยกกัน",
+	"palette.colorViewSimple": "กลับไปใช้สีพื้นฐานเพียงสีเดียว",
 	"palette.advancedColors": "สี",
-	"palette.advancedColorsHint":
-		"กำลังแก้ไขสีสำหรับโหมด {{mode}} - อีกโหมดจะอัปเดตโดยอัตโนมัติ สลับธีมของ Obsidian เพื่อตรวจสอบ",
-	"palette.revertHint": "ต้องการใช้สีพื้นฐานเดียวแทนหรือไม่? {{link}}",
-	"palette.revertHintLink": "เปลี่ยนกลับ",
-	"palette.lightMode": "สว่าง",
-	"palette.darkMode": "มืด",
+	"palette.lightModeColors": "สีของโหมดสว่าง",
+	"palette.darkModeColors": "สีของโหมดมืด",
+	"palette.modeColorsHintLight": "การเปลี่ยนแปลงนี้ใช้กับโหมดสว่างเท่านั้น โหมดมืดยังคงใช้สีของตัวเอง\nหากต้องการแก้ไข ให้กดปุ่มพระจันทร์ด้านบน",
+	"palette.modeColorsHintDark": "การเปลี่ยนแปลงนี้ใช้กับโหมดมืดเท่านั้น โหมดสว่างยังคงใช้สีของตัวเอง\nหากต้องการแก้ไข ให้กดปุ่มดวงอาทิตย์ด้านบน",
+	"palette.showLightMode": "แสดงโหมดสว่าง",
+	"palette.showDarkMode": "แสดงโหมดมืด",
 	"palette.accentColor": "สีเน้น",
 	"palette.backgroundColorChannel": "สีพื้นหลัง",
 	"palette.textColorChannel": "สีข้อความ",
@@ -549,6 +538,7 @@ export const th: Record<string, string> = {
 	"iconPicker.searchMaterial": "ค้นหาไอคอน Material",
 	"iconPicker.searchEmoji": "ค้นหาอีโมจิ",
 	"iconPicker.skinTone": "โทนสีผิว",
+	"iconPicker.skinToneDefault": "ค่าเริ่มต้น",
 	"iconPicker.allCategories": "ทุกหมวดหมู่",
 	"iconPicker.noIconSelected": "ไม่ได้เลือกไอคอน",
 	"iconPicker.chooseFirst": "โปรดเลือกไอคอนก่อน",
@@ -589,7 +579,6 @@ export const th: Record<string, string> = {
 	"iconPicker.allSources": "ทุกแหล่งข้อมูล",
 	"iconPicker.searchAllSources": "ค้นหาในทุกแหล่งไอคอน",
 	"iconPicker.chooseSource": "เลือกแหล่งข้อมูล",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "คลังที่ใช้ได้",
 	"iconPicker.librariesToDownload": "คลังที่ดาวน์โหลดได้",
 	"iconPicker.groupCurrent": "ไอคอนปัจจุบัน",
@@ -742,6 +731,10 @@ export const th: Record<string, string> = {
 	"iconPack.artworkRestored": "ดาวน์โหลดงานศิลป์ไอคอนสำหรับ {{names}} แล้ว",
 	"iconPack.diskWriteFailed":
 		"Callout Studio ไม่สามารถบันทึกชุดไอคอนลงดิสก์ได้ จึงต้องดาวน์โหลดใหม่ในครั้งถัดไป ไอคอนที่คุณเลือกยังคงบันทึกไว้ในการตั้งค่า",
+	"settings.colorsAndIcons": "สีและไอคอน",
+	"settings.iconLibrariesDesc": "จัดลำดับใหม่และดาวน์โหลดคลังไอคอนเพิ่มเติม",
+	"settings.iconLibrariesEditorOpen":
+		"ทำงานในตัวแก้ไข callout ให้เสร็จก่อน ไอคอนที่ยังไม่ได้บันทึกในนั้นอาจมาจากคลังที่คุณลบตรงนี้",
 	"iconLibraries.manage": "จัดการคลังไอคอน",
 	"iconLibraries.title": "คลังไอคอน",
 	"iconLibraries.desc":
@@ -765,6 +758,7 @@ export const th: Record<string, string> = {
 	"iconLibraries.inUseMore": "และอีก {{count}} รายการ",
 	"iconLibraries.inUseKeeps":
 		"ไอคอนของ callout เหล่านั้นจะยังอยู่ — สำเนาของแต่ละไอคอนถูกบันทึกไว้กับการตั้งค่าของคุณ หากต้องการเลือกไอคอนใหม่จาก {{name}} ภายหลัง ให้ดาวน์โหลดอีกครั้ง",
+	"iconLibraries.resetSubtitle": "กลับไปใช้ไลบรารีดั้งเดิมของปลั๊กอิน",
 	"iconLibraries.resetConfirm":
 		"การทำเช่นนี้จะคืนคลังให้เป็นอย่างที่ปลั๊กอินมา คือลำดับเริ่มต้น ไม่มีอะไรถูกซ่อน และไม่มีคลังที่ดาวน์โหลดไว้เลย คลังเหล่านี้จะถูกลบ:",
 	"iconLibraries.resetKeeps":
@@ -772,6 +766,9 @@ export const th: Record<string, string> = {
 	"iconLibraries.resetButton": "รีเซ็ต",
 
 	// Icon licences & credits
+	"license.title": "ใบอนุญาต",
+	"license.openSourceBeforeLink": "Callout Studio เป็นโอเพนซอร์ส และจะเป็นเช่นนี้ตลอดไป ดูใบอนุญาตได้",
+	"license.openSourceLink": "ที่นี่",
 	"credits.title": "ใบอนุญาตไอคอนและเครดิต",
 	"credits.introBeforeNotices":
 		"Callout Studio ใช้ไลบรารีไอคอนโอเพนซอร์ส ดูใบอนุญาต การระบุที่มา และการปรับแก้ของแต่ละไลบรารีได้ด้านล่าง หรืออ่าน",
@@ -793,32 +790,53 @@ export const th: Record<string, string> = {
 	"heading.toggleFold": "สลับการพับ",
 
 	"settings.globalSettings": "ตัวเลือกสไตล์ส่วนกลางของ Callout Studio",
+	"settings.calloutStyle": "สไตล์ส่วนกลาง",
+	"settings.menusAndCommands": "เมนูและคำสั่ง",
+	"settings.editorBox": "ตัวแก้ไข",
+	"settings.autocompleteAndMetadata": "การเติมข้อความอัตโนมัติและ metadata",
+	"settings.autocompleteAndMetadataDesc": "รายการที่เปิดขึ้นเมื่อคุณพิมพ์ callout และ metadata หลัง |",
+	"settings.calloutAutocomplete": "การเติม callout อัตโนมัติ",
+	"settings.calloutAutocompleteDesc": "แสดงรายการ callout เมื่อคุณพิมพ์ [!",
+	"settings.suggestThemeCallouts": "รวม callout ของธีมของคุณ",
+	"settings.suggestThemeCalloutsDesc": "แสดงรายการ callout ที่ธีมของคุณเพิ่มเข้ามา",
+	"settings.metadataPage": "Metadata",
+	"settings.metadataPageDesc": "สีและคำหลัง | ใน callout",
+	"settings.metadataColors": "สีของ metadata",
+	"settings.metadataColorsDesc": "สีหลัง | จะใส่สีให้เฉพาะ callout นั้น เช่นใน [!note|red]",
+	"settings.metadataAutocomplete": "การเติม metadata อัตโนมัติ",
+	"settings.metadataAutocompleteDesc": "แสดงรายการสีและคำเมื่อคุณพิมพ์ | ใน callout",
+	"settings.suggestThemeMetadata": "รวมคำของธีมของคุณ",
+	"settings.suggestThemeMetadataDesc": "แสดงรายการคำที่ธีมของคุณตอบสนอง",
+	"settings.metadataWords": "คำของคุณ",
+	"settings.metadataWordsDesc": "คำที่จะแนะนำหลัง | เช่นคำที่ปลั๊กอินอื่นอ่าน",
+	"settings.metadataWordsPlaceholder": "เพิ่มคำ",
+	"settings.addMetadataWord": "เพิ่มคำ",
+	"settings.metadataWordAlreadyHere": "คำนี้อยู่ในรายการแล้ว",
+	"settings.metadataWordTooLong": "คำหนึ่งคำต้องยาวไม่เกิน {{max}} อักขระ",
+	"settings.maxMetadataWords": "สูงสุด {{max}} คำ ลบหนึ่งคำเพื่อเพิ่มคำอื่น",
+	"settings.buildFailed": "Callout Studio แสดงหน้าการตั้งค่าไม่ได้ ให้รีสตาร์ท Obsidian และแจ้งปัญหาหากเกิดซ้ำ",
 	"settings.globalSettingsRegularDesc":
-		"ปรับขอบ ความโค้งมุม ขนาดตัวอักษร และการจัดแนวของทุก block callout ใน vault ของคุณ",
+		"ขอบ ความโค้งมุม ขนาดตัวอักษร และการจัดแนว",
 	"settings.globalSettingsHeadingDesc":
-		"ปรับขอบ รูปร่าง และระยะห่างแนวตั้งของทุก callout หัวข้อ ใน vault ของคุณ",
+		"ขอบ รูปร่าง และระยะห่างแนวตั้ง",
 	"settings.globalSettingsInlineDesc":
-		"ปรับขอบและรูปร่างของทุก callout อินไลน์ ใน vault ของคุณ",
-	"settings.globalSettingsCustomize": "ปรับแต่ง",
+		"ขอบและรูปร่าง",
 	"settings.themeCalloutStyles": "ใช้สไตล์ callout ของธีมของคุณ",
-	"settings.themeCalloutStylesDesc":
-		"เปิด: callout ที่ธีมของคุณกำหนดสไตล์จะคงรูปลักษณ์ตามธีมของคุณ\nปิด: Callout Studio จะวาด callout ทุกรายการเอง และสไตล์ callout ของธีมของคุณจะถูกปิด",
+	"settings.themeCalloutStylesDesc": "เมื่อเปิด callout ที่ธีมของคุณจัดสไตล์จะคงรูปลักษณ์ของธีมไว้และแสดงเป็น callout แบบบล็อกเท่านั้น เมื่อปิด Callout Studio จะวาด callout ทั้งหมดเอง",
 
-	"settings.calloutTypeRegular": "callout แบบบล็อก",
-	"settings.calloutTypeHeading": "Callout หัวข้อ",
-	"settings.calloutTypeInline": "Callout อินไลน์",
+	"settings.calloutTypeRegular": "สไตล์ callout แบบบล็อก",
+	"settings.calloutTypeHeading": "สไตล์ callout หัวข้อ",
+	"settings.calloutTypeInline": "สไตล์ callout อินไลน์",
 
-	"settings.customizeMenu": "ปรับแต่งรายการเมนู",
-	"settings.customizeMenuDesc":
-		"เลือกว่าการดำเนินการคลิกขวาใดจะปรากฏสำหรับแต่ละประเภท callout และจัดลำดับใหม่ ใช้งานได้ในโหมดต้นฉบับ และ Live Preview",
-	"settings.customizeMenuButton": "ปรับแต่งรายการเมนู",
+	"settings.customizeMenuDesc": "เลือกและจัดลำดับการทำงานเมื่อคลิกขวาสำหรับ callout แต่ละประเภท",
 	"menuCustomize.title": "ปรับแต่งเมนูคลิกขวา",
-	"menuCustomize.desc":
-		"เปิดหรือปิดการดำเนินการและลากที่จับเพื่อจัดลำดับใหม่ การเปลี่ยนแปลงจะถูกบันทึกโดยอัตโนมัติ",
 	"menuCustomize.regular": "callout แบบบล็อก",
 	"menuCustomize.heading": "Callout หัวข้อ",
 	"menuCustomize.inline": "Callout อินไลน์",
 	"menuCustomize.dragHandle": "ลากเพื่อจัดลำดับใหม่",
+	"menuCustomize.hiddenHeading": "ซ่อนจากเมนู callout ของหัวข้อ",
+	"menuCustomize.hiddenInline": "ซ่อนจากเมนู callout ในบรรทัด",
+	"menuCustomize.hiddenRegular": "ซ่อนจากเมนู callout แบบบล็อก",
 	"menuItem.createOrEdit": "สร้างหรือแก้ไข callout",
 	"menuItem.openSettings": "เปิดการตั้งค่า",
 	"menuItem.copyMarkdown": "คัดลอก Markdown",
@@ -830,10 +848,10 @@ export const th: Record<string, string> = {
 	"confirm.ok": "ลบ",
 	"confirm.cancel": "ยกเลิก",
 	"confirm.acknowledge": "ฉันอ่านและเข้าใจแล้ว",
+	"confirm.subtitleName": "“{{name}}”",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "ลบคำสั่ง",
-	"confirm.titleDeletePalette": "ลบชุดสี",
 	"confirm.titleDeleteImage": "ลบรูปภาพ",
 	"confirm.titleDeleteLibrary": "ลบคลังไอคอน",
 	"confirm.titleResetLibraries": "รีเซ็ตคลังไอคอน",
@@ -846,7 +864,6 @@ export const th: Record<string, string> = {
 		"อัปเดต {{count}} หัวเรื่อง callout ในไฟล์ vault แล้ว: {{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated":
 		"อัปเดตเครื่องหมายการพับของ callout {{count}} รายการในไฟล์ vault แล้ว",
-	"vault.replaceWith": "แทนที่ด้วย:",
 	"vault.confirmReplace": "แทนที่",
 	"vault.replacePromptInUse":
 		'"{{name}}" ถูกใช้งาน {{count}} ครั้งใน {{files}} ไฟล์ เลือก callout เพื่อแทนที่:',
@@ -884,7 +901,6 @@ export const th: Record<string, string> = {
 	"vaultStats.roleBlock": "บล็อก",
 	"vaultStats.roleHeading": "หัวเรื่อง",
 	"vaultStats.roleInline": "อินไลน์",
-	"portable.subtitle": "เลือก callout ในหัวข้อและอินไลน์ที่จะแปลงเป็น Markdown มาตรฐานก่อนเลิกใช้ Callout Studio",
 	"portable.customize": "ข้อความแทนที่แบบกำหนดเอง…",
 	"portable.editCustom": "แก้ไขข้อความแทนที่แบบกำหนดเอง…",
 	"portable.restoreDefault": "คืนค่าข้อความแทนที่เริ่มต้น",
@@ -897,13 +913,13 @@ export const th: Record<string, string> = {
 
 	"usage.title": "ค้นหา callout",
 	"usage.command": "ค้นหา callout",
-	"usage.subtitle": "ค้นหา callout ในคลังของคุณและไปยังตำแหน่งต้นฉบับ",
 	"usage.browse": "เรียกดู",
 	"usage.allTypes": "ทุกประเภท",
 	"usage.registeredCallouts": "callout ที่ลงทะเบียน",
 	"usage.unregisteredCallouts": "callout ที่ไม่ได้ลงทะเบียน",
 	"usage.summary": "พบ {{count}} รายการใน {{files}} ไฟล์",
 	"usage.allRoles": "ทุกรูปแบบ",
+	"usage.filterFormat": "กรองตามรูปแบบ",
 	"usage.failed": "ไม่สามารถอัปเดตตำแหน่งที่พบ callout ได้",
 	"usage.loading": "กำลังสแกนโน้ต Markdown…",
 	"usage.partial": "ผลลัพธ์ไม่ครบถ้วน: อ่านไฟล์ไม่สำเร็จ {{count}} ครั้ง",
@@ -916,7 +932,6 @@ export const th: Record<string, string> = {
 	"usage.missing": "โน้ตนี้ไม่มีอยู่แล้ว กำลังอัปเดตผลลัพธ์…",
 	"usage.changed": "รายการนี้เปลี่ยนแปลงหรือถูกย้ายโดยไม่สามารถระบุตำแหน่งใหม่ได้ กำลังอัปเดตผลลัพธ์…",
 	"usage.openFailed": "ไม่สามารถเปิดตำแหน่งที่พบ callout นี้ได้",
-	"usage.menuCount": "ค้นหา callout ({{count}})",
 	"usage.menuIncomplete": "ค้นหา callout — สแกนไม่ครบ",
 	"usage.menu": "ค้นหา callout",
 	"usage.closeSettings": "ปิดการตั้งค่าเพื่อดูผลลัพธ์ของ callout ในแถบด้านข้าง",
@@ -1088,18 +1103,14 @@ export const th: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"หัวเรื่องยาว {{length}} อักขระ ถูกย่อเหลือ {{max}}",
 
-	"footer.prompt":
-		"มีคำถาม บั๊ก หรือไอเดียไหม? ยินดีรับฟัง!{{break}} {{issue}} หรือ {{email}}.",
-	"footer.openIssue": "เปิด issue บน GitHub",
-	"footer.sendEmail": "ส่งอีเมลถึงฉัน",
+	"footer.openIssue": "เปิด issue",
 	"footer.sourceCode": "ซอร์สโค้ด",
-	"footer.contribute": "มีส่วนร่วม",
-	"footer.license": "ใบอนุญาตปลั๊กอิน",
-	"footer.iconCredits": "ใบอนุญาตไอคอน",
-	"settings.deletePaletteConfirmLinkedOne":
-		'ลบพาเลต "{{name}}" ใช่ไหม?\nมี 1 callout ใช้งานอยู่ มันจะคงสีเดิมไว้ และคุณสามารถเชื่อมโยงกลับได้ภายหลังจากแถวสีในตัวแก้ไขของมัน',
-	"settings.deletePaletteConfirmLinked":
-		'ลบพาเลต "{{name}}" ใช่ไหม?\nมี {{count}} callout ใช้งานอยู่ พวกมันจะคงสีเดิมไว้ และคุณสามารถเชื่อมโยงกลับได้ภายหลังจากแถวสีในตัวแก้ไขของแต่ละรายการ',
+	"settings.about": "เกี่ยวกับ",
+	"settings.version": "เวอร์ชัน",
+	"settings.deletePaletteBodyLinkedOne":
+		'มี 1 callout ใช้งานอยู่ มันจะคงสีเดิมไว้ และคุณสามารถเชื่อมโยงกลับได้ภายหลังจากแถวสีในตัวแก้ไขของมัน',
+	"settings.deletePaletteBodyLinked":
+		'มี {{count}} callout ใช้งานอยู่ พวกมันจะคงสีเดิมไว้ และคุณสามารถเชื่อมโยงกลับได้ภายหลังจากแถวสีในตัวแก้ไขของแต่ละรายการ',
 	"notice.palettesMerged":
 		"รวมสีที่บันทึกไว้ {{count}} รายการที่มีสีเหมือนกัน: {{names}} callout ที่ใช้สีเหล่านี้จะยังคงสีเดิม และตอนนี้เชื่อมโยงกับสีที่เหลืออยู่แล้ว",
 	"editor.colorsDescDeleted":
@@ -1111,9 +1122,8 @@ export const th: Record<string, string> = {
 		'สีเหล่านี้เหมือนกับ "{{name}}" ทุกประการ ไม่สามารถมีสีที่บันทึกไว้สองรายการที่เหมือนกันได้ — เปลี่ยนสีหนึ่งสี หรือ {{link}}',
 	"palette.colorExistsUseLink": "ใช้สีที่มีอยู่",
 	"locale.downloading": "กำลังดาวน์โหลดคำแปล…",
+	"locale.downloaded": "ดาวน์โหลดคำแปลแล้ว",
 	"locale.notDownloaded": "ยังไม่ได้ดาวน์โหลด {{name}}",
-	"locale.notDownloadedDesc":
-		"Callout Studio กำลังแสดงภาษาอังกฤษจนกว่าจะดาวน์โหลดคำแปลได้ และจะลองอีกครั้งเมื่อ Obsidian เริ่มทำงานครั้งถัดไป",
 	"locale.retry": "ลองอีกครั้ง",
 	"locale.diskWriteFailed":
 		"Callout Studio ไม่สามารถบันทึกคำแปลลงดิสก์ได้ จึงต้องดาวน์โหลดใหม่ในครั้งถัดไป",
@@ -1126,6 +1136,7 @@ export const th: Record<string, string> = {
 	"notice.exportCssEnabled":
 		"เปิดใช้ snippet นี้ใน vault นี้อยู่ Callout Studio จัดรูปแบบ callout เหล่านี้อยู่แล้ว และ snippet จะคงรูปแบบ ณ เวลาที่ส่งออก",
 	"confirm.titleOverwriteSnippet": "เขียนทับ CSS snippet",
+	"confirm.subtitleOverwriteSnippet": "ถูกแก้ไขหลังจาก Callout Studio เขียนไว้",
 	"confirm.overwriteSnippet":
 		"CSS snippet ในโฟลเดอร์ snippets เปลี่ยนไปตั้งแต่ Callout Studio เขียนไว้ การส่งออกอีกครั้งจะแทนที่ทั้งไฟล์",
 	"confirm.overwriteSnippetOk": "เขียนทับ",
@@ -1137,13 +1148,14 @@ export const th: Record<string, string> = {
 	"export.formatCss": "สแนปช็อต CSS แบบสแตนด์อโลน",
 	"export.formatCssDesc":
 		"สำหรับเว็บไซต์หรือ vault ที่ไม่ได้เรียกใช้ Callout Studio ครอบคลุมเฉพาะ block callout และต้องส่งออกใหม่หลังการเปลี่ยนแปลง",
+	"export.formatCssAction": "ส่งออก",
 	"quickInsert.readingViewHint": "บันทึกนี้เปิดอยู่ในโหมดอ่าน จึงไม่สามารถแทรกอะไรได้",
 	"quickInsert.readingView": "สลับไปยังโหมดต้นฉบับหรือ Live Preview เพื่อแทรก callout",
 	"quickInsert.noCursorHint": "ไม่มีเคอร์เซอร์ในบันทึกนี้ จึงไม่มีตำแหน่งให้แทรก",
 	"quickInsert.noCursor": "วางเคอร์เซอร์ในบันทึกตรงตำแหน่งที่ต้องการแทรก callout แล้วลองอีกครั้ง",
 	"notice.legacyDiscoveryArchiveFailed": "ไม่สามารถดำเนินการสร้างสำเนาการกู้คืนสำหรับการอัปเกรดให้เสร็จสมบูรณ์ได้ ระบบได้เก็บแคชการค้นหาในเครื่องและ CSS เริ่มต้นเดิมไว้โดยไม่เปลี่ยนแปลง โปรดตรวจสอบสิทธิ์การเขียนข้อมูลและพื้นที่ว่างในพื้นที่จัดเก็บข้อมูล แล้วเริ่ม Obsidian ใหม่เพื่อลองอีกครั้ง",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "หยุดชั่วคราว: ไม่มี callout นี้ ค้นหาหรือสร้างเพื่อกู้คืนคำสั่งนี้ หรือแก้ไขคำสั่งเพื่อเลือกประเภทอื่น",
+	"commandBuilder.missingCallout": "หยุดชั่วคราวจนกว่าคุณจะสร้าง callout ที่หายไปใหม่หรือเลือกอันอื่น",
 	"confirm.titleRestoreSettings": "กู้คืนการตั้งค่าเหล่านี้",
 	"confirm.titleCreateSettingsFile": "สร้างไฟล์การตั้งค่า",
 	"confirm.saveDisplayedSettings":
@@ -1229,9 +1241,11 @@ export const th: Record<string, string> = {
 	"settings.resetNotSaved": "การรีเซ็ตแสดงอยู่แต่ยังไม่สามารถบันทึกได้ ดังนั้นไฟล์การตั้งค่าของคุณจึงยังคงเป็นชุดตั้งค่าก่อนหน้า ตรวจสอบสถานะการบันทึกในการตั้งค่าของ Callout Studio",
 	"confirm.titleResetEverything": "รีเซ็ตทั้งหมด",
 	"confirm.titleReplaceUnreadable": "แทนที่ไฟล์การตั้งค่า",
+	"confirm.subtitleReplaceUnreadable": "ระบบจะบันทึกสำเนาที่ตรงกันทุกประการก่อน",
 	"confirm.replaceUnreadable": "จะมีการบันทึกสำเนาที่เหมือนกันของไฟล์ปัจจุบันไว้ในโฟลเดอร์สำรองข้อมูลของปลั๊กอินก่อน จากนั้นไฟล์จะถูกแทนที่ด้วยชุดตั้งค่าที่แสดงที่นี่ และบริการซิงค์ของคุณจะส่งไฟล์ไปยังอุปกรณ์อื่นของคุณ",
 	"confirm.replaceUnreadableSalvage": "จะมีการบันทึกสำเนาที่เหมือนกันของไฟล์ปัจจุบันไว้ในโฟลเดอร์สำรองข้อมูลของปลั๊กอินก่อน การตั้งค่าภายในไฟล์นั้นจะถูกรวมเข้ากับชุดตั้งค่าที่แสดงที่นี่ และไฟล์จะถูกเขียนใหม่เพื่อให้ทุกอุปกรณ์อ่านได้อีกครั้ง",
 	"confirm.titleDiscardRecoveryCopy": "ยกเลิกสำเนากู้คืน",
+	"confirm.subtitleDiscardRecoveryCopy": "การบันทึกถูกหยุดชั่วคราวบนอุปกรณ์นี้",
 	"confirm.discardRecoveryCopy":
 		"ไม่สามารถอ่านสำเนากู้คืนของอุปกรณ์นี้ได้ ดังนั้นการบันทึกจึงถูกหยุดชั่วคราวบนอุปกรณ์นี้ จะมีการบันทึกสำเนาที่เหมือนกันของสำเนานั้นไว้ในโฟลเดอร์สำรองข้อมูลของปลั๊กอินก่อน จากนั้นจะถูกแทนที่ด้วยชุดตั้งค่าที่แสดงที่นี่ ไฟล์การตั้งค่าของคุณจะไม่เปลี่ยนแปลง",
 	"vault.undoRewrite": "เลิกทำ",
@@ -1429,7 +1443,7 @@ export const th: Record<string, string> = {
 	"recovery.delete": "ลบ",
 
 	// Version history
-	"saveStatus.guide.versions": "เมื่อบันทึกได้อีกครั้ง คุณสามารถคืนค่าเวอร์ชันก่อนหน้าจากประวัติเวอร์ชันได้ด้วย",
+	"saveStatus.guide.versions": "เมื่อบันทึกได้อีกครั้ง คุณยังย้อนกลับไปยังเวอร์ชันที่บันทึกไว้ได้ด้วย กู้คืนเวอร์ชันก่อนหน้า",
 	"saveStatus.goToVersions": "ไปที่ประวัติเวอร์ชัน",
 	"versions.title": "ประวัติเวอร์ชัน",
 	"versions.intro": "Callout Studio บันทึกเวอร์ชันของการตั้งค่าของคุณโดยอัตโนมัติ\nเวอร์ชันเก่าจะถูกลบออกตามเวลา\nการคืนค่าเวอร์ชันจะแทนที่การตั้งค่าปัจจุบันบนทุกอุปกรณ์ที่ซิงค์",
@@ -1449,13 +1463,14 @@ export const th: Record<string, string> = {
 	"versions.reason.beforeImport": "ก่อนนำเข้า",
 	"versions.reason.beforeRepair": "ก่อนซ่อมแซมไฟล์การตั้งค่า",
 	"versions.restoreTitle": "คืนค่าเวอร์ชันนี้",
-	"versions.restoreBody": "การตั้งค่าปัจจุบันจะถูกแทนที่ด้วย “{{name}}” จาก {{when}} (แตกต่าง {{count}} จุด)\nการตั้งค่าปัจจุบันจะถูกบันทึกเป็นเวอร์ชันก่อน เพื่อให้คุณกลับมาใช้ได้\nจากนั้นบริการซิงค์จะส่งการตั้งค่าที่คืนค่าไปยังอุปกรณ์อื่นของคุณ",
+	"versions.subtitle": "“{{name}}” · {{when}}",
+	"versions.restoreBody": "การตั้งค่าปัจจุบันของคุณจะถูกแทนที่ (ต่างกัน {{count}} จุด)\nระบบจะบันทึกเป็นเวอร์ชันก่อน คุณจึงย้อนกลับมาได้\nจากนั้นบริการซิงก์ของคุณจะส่งการตั้งค่าที่กู้คืนไปยังอุปกรณ์เครื่องอื่นของคุณ",
 	"versions.restoreSame": "เวอร์ชันนี้เหมือนกับการตั้งค่าปัจจุบัน จึงไม่มีอะไรให้คืนค่า",
 	"versions.restored": "คืนค่า “{{name}}” จาก {{when}} แล้ว",
 	"versions.backupFailed": "ไม่ได้คืนค่าอะไร: ไม่สามารถบันทึกการตั้งค่าปัจจุบันเป็นเวอร์ชันก่อนได้ ตรวจสอบพื้นที่ว่างแล้วลองอีกครั้ง",
 	"versions.restoreFailed": "คืนค่าเวอร์ชันไม่ได้ ไม่มีอะไรเปลี่ยนแปลง",
 	"versions.deleteTitle": "ลบเวอร์ชันนี้",
-	"versions.deleteAvailableBody": "เวอร์ชัน “{{name}}” จาก {{when}} และสำเนาที่พร้อมใช้งานทั้งหมดจะถูกลบอย่างถาวร",
+	"versions.deleteAvailableBody": "เวอร์ชันนี้และสำเนาที่มีอยู่ทั้งหมดจะถูกลบถาวร",
 	"versions.deleteSyncedFiles": "การลบไฟล์เหล่านี้อาจซิงค์ไปยังอุปกรณ์อื่นของคุณ สำเนาในเครื่องบนอุปกรณ์เหล่านั้นอาจยังคงอยู่",
 	"versions.deleteFinal": "การดำเนินการนี้ย้อนกลับไม่ได้ การตั้งค่าปัจจุบันจะไม่ได้รับผลกระทบ",
 	"versions.deleted": "ลบ “{{name}}” จาก {{when}} แล้ว",
@@ -1464,10 +1479,10 @@ export const th: Record<string, string> = {
 	"versions.details.difference": "แตกต่างจากการตั้งค่าปัจจุบันของคุณ {{count}} รายการ",
 	"versions.details.differences": "แตกต่างจากการตั้งค่าปัจจุบันของคุณ {{count}} รายการ",
 	"versions.details.comparisonUnavailable": "ไม่สามารถเปรียบเทียบได้",
-	"notice.unsavedChangesKept": "การเปลี่ยนแปลงบางอย่างบนอุปกรณ์นี้ยังไม่ได้บันทึก และถูกแทนที่ด้วยการตั้งค่าใหม่กว่าจากอุปกรณ์อื่น เวอร์ชันของคุณถูกบันทึกไว้ก่อนแล้ว: เปิดประวัติเวอร์ชันในการตั้งค่า Callout Studio เพื่อนำกลับมา",
-	"settings.versionHistory": "ประวัติเวอร์ชัน",
+	"notice.unsavedChangesKept": "การเปลี่ยนแปลงบางอย่างบนอุปกรณ์นี้ยังไม่ได้บันทึก และถูกแทนที่ด้วยการตั้งค่าใหม่กว่าจากอุปกรณ์อื่น เวอร์ชันของคุณถูกบันทึกไว้ก่อนแล้ว: เปิด กู้คืนเวอร์ชันก่อนหน้า ในการตั้งค่า Callout Studio เพื่อนำกลับมา",
+	"settings.versionHistory": "กู้คืนเวอร์ชันก่อนหน้า",
 	"settings.versions": "เวอร์ชันก่อนหน้า",
-	"settings.versionsDesc": "Callout Studio บันทึกเวอร์ชันของการตั้งค่าของคุณโดยอัตโนมัติ\nเปรียบเทียบ หรือกลับไปใช้เวอร์ชันใดเวอร์ชันหนึ่ง",
+	"settings.versionsDesc": "แทนที่การตั้งค่าปัจจุบันของคุณด้วยเวอร์ชันก่อนหน้าที่บันทึกไว้",
 	"settings.versionsButton": "ดูเวอร์ชัน",
 	"noteChanges.callouts": "{{count}} callout",
 	"noteChanges.calloutsOne": "1 callout",

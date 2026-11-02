@@ -2,14 +2,16 @@
 
 Changes to a callout's color, icon, name, or IDs take effect everywhere the callout appears. Your notes themselves change only when you say so: if saving would change something they hold, Callout Studio asks first. See [Remove, rename or move an ID](#remove-rename-or-move-an-id).
 
-A callout's three-dot menu groups its actions, with a line between groups:
+Your callouts are in **Settings → Callout Studio → My callout types**, Obsidian's in **Built-in callouts**, and your theme's in **Callouts from your theme**. Each page lists every callout, with a search field above that finds one by its name or any of its IDs. Obsidian's **Search settings…** finds your own callouts too, the same way.
 
-1. **Find callouts**, with the number of uses.
+A callout's three-dot menu groups its actions, with a line between groups. It opens under the three-dot button, like **More options** on Obsidian's own plugin list, and pressing the button again closes it. Right-clicking anywhere on a callout row opens the same menu where you clicked.
+
+1. **Find callouts**, with the number of uses as a small faint number at the end of the line.
 2. **Replace in vault…** and **Convert uses to plain text**, which change your notes.
 3. **Duplicate**, **Reset to default** or **Use default fallback style**, which change the callout itself.
 4. **Delete**, in red.
 
-A row shows only the actions that apply to it, and a group with nothing in it leaves no line. When the count shows that no note uses the callout, **Find callouts (0)** is greyed out. If the count arrives after the menu opened and it is 0, **Replace in vault…** and **Convert uses to plain text** are greyed out too.
+A row shows only the actions that apply to it, and a group with nothing in it leaves no line. When the count shows that no note uses the callout, **Find callouts** shows 0 and is greyed out. If the count arrives after the menu opened and it is 0, **Replace in vault…** and **Convert uses to plain text** are greyed out too.
 
 On desktop and tablet, a callout's three-dot menu closes when you scroll the
 settings list or resize the window. On a phone, Obsidian opens the menu at the
@@ -25,7 +27,7 @@ Click the pencil beside a callout to open its editor. Save the new color, icon, 
 
 ![Editing a customized built-in callout, with reset arrows beside its changed icon and color](../../assets/user-guide/edit-callout.svg)
 
-When you customize one of Obsidian's thirteen built-in callouts, small return arrows appear beside changed IDs, icons, and colors. Each icon-adjustment card also gets its own return arrow when its sliders change; it resets the size and both offsets for that callout format without touching the other two formats. To undo every customization on that built-in type at once, open its three-dot menu and choose **Reset to default**.
+When you customize one of Obsidian's thirteen built-in callouts, small return arrows appear beside changed IDs, icons, and colors. Each icon-adjustment group also gets its own return arrow, beside its heading, when its sliders change; it resets the size and both offsets for that callout format without touching the other two formats. To undo every customization on that built-in type at once, open its three-dot menu and choose **Reset to default**.
 
 Resetting **Callout IDs** restores Obsidian's original ID and aliases. Custom aliases it removes leave the callout when you save; if your notes use them, Callout Studio asks what should happen to those notes first, as for any ID you remove. If another callout already uses one of the original aliases, the draft stays unchanged and the IDs field shows the conflict.
 
@@ -55,9 +57,9 @@ When notes were changed, the notice offers **Undo** for a few seconds. Undo puts
 
 ### Move an ID to another callout
 
-An ID belongs to one callout. If you type one that another callout has, the IDs field says which callout it belongs to. When it can move, the message offers **move it here**: the ID joins this callout, and a note under the field says it moves when you save. On **Save changes**, the other callout gives the ID up and this one takes it. No note changes: callouts written with that ID simply take this callout's style.
+An ID belongs to one callout. If you type one that another callout has, a message under the **Callout IDs** label says which callout it belongs to. When it can move, the message offers **move it here**: the ID joins this callout, and a note under **Callout IDs** says it moves when you save. On **Save changes**, the other callout gives the ID up and this one takes it. No note changes: callouts written with that ID simply take this callout's style.
 
-![The Idea callout's editor after typing project, an ID of Project note, with the move it here offer under the IDs field](../../assets/user-guide/id-move-here.svg)
+![The Idea callout's editor after typing project, an ID of Project note, with the move it here offer under the Callout IDs label](../../assets/user-guide/id-move-here.svg)
 
 You can also do it in two steps: remove the ID from the callout that has it and choose **Leave them as they are**, then add the ID to the other callout. Your notes don't change either way.
 
@@ -71,7 +73,7 @@ Open a saved custom callout's three-dot menu and choose **Duplicate**. The copy 
 
 The copy receives a new name and ID ending in `copy`, then `copy 2`, `copy 3`, and so on when needed. Additional IDs receive their own unique copy suffixes. Long names and IDs are shortened to leave room for the suffix. Existing callouts in your notes keep using the original.
 
-After the copy is saved, its section opens and the list shows enough items to reveal it immediately, with a notification confirming success. If duplication fails, an error notification appears. No incomplete copy is added; if a later saving step fails after the complete copy has reached storage, that valid copy is kept.
+After the copy is saved, **My callout types** opens and the copy's row flashes, with a notification confirming success. If duplication fails, an error notification appears. No incomplete copy is added; if a later saving step fails after the complete copy has reached storage, that valid copy is kept.
 
 **Duplicate** is available for saved custom callouts; Obsidian's built-in callouts and callouts supplied only by a theme do not offer it.
 

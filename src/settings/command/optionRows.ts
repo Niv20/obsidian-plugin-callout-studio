@@ -12,6 +12,7 @@
 import { Setting } from "obsidian";
 import { t } from "../../i18n";
 import { SelectDropdown } from "../../ui/selectDropdown";
+import { linesFragment } from "../../ui/textLines";
 import { HEADING_LEVELS } from "../../utils/customCommands";
 import type { CalloutRenderRole, CustomCommandAction } from "../../types";
 
@@ -37,7 +38,9 @@ export function buildHeadingLevelRow(
 		.setClass("cs-command-field")
 		.setDesc(t("commandBuilder.headingLevelDesc"));
 	const dropdown = new SelectDropdown(setting.controlEl, t("commandBuilder.headingLevel"));
-	for (const level of HEADING_LEVELS) dropdown.addOption(String(level), `H${level}`);
+	// Lucide draws one icon per level, `heading-1` to `heading-6`, so the menu
+	// shows each level's own icon beside its name.
+	for (const level of HEADING_LEVELS) dropdown.addOption(String(level), `H${level}`, `heading-${level}`);
 	dropdown.setValue(String(value)).onChange((v) => onChange(Number(v)));
 	return { el: setting.settingEl, dropdown };
 }
@@ -56,12 +59,7 @@ export function buildActionRow(
 		.setValue(value).onChange((v) => onChange(v as CustomCommandAction));
 	// One short sentence per line.
 	const describe = (role: CalloutRenderRole): void => {
-		setting.setDesc(createFragment((frag) => {
-			t(ACTION_DESC_KEYS[role]).split("\n").forEach((line, i) => {
-				if (i > 0) frag.createEl("br");
-				frag.appendText(line);
-			});
-		}));
+		setting.setDesc(linesFragment(t(ACTION_DESC_KEYS[role])));
 	};
 	describe("regular");
 	return { el: setting.settingEl, dropdown, describe };

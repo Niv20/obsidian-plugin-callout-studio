@@ -238,11 +238,20 @@ scenes["carousel_outline"] = () => {
 };
 
 scenes["carousel_version-history"] = () => {
-	const c = carousel("Version history", "Callout Studio's Version history window: saved setups from today and yesterday along a timeline, such as Changes saved, Before an import and Before Reset everything, each with a compare button, a delete button and Restore.");
-	const p = part("history"), s = 0.86, w = p.width * s, h = p.height * s;
+	const c = carousel("Version history", "Callout Studio's Version history window: saved setups from today and yesterday along a timeline, such as Changes saved, Before an import and Before Reset everything, each with a compare button, a delete button and Restore. The timeline runs on to the bottom of the window, where one more version shows its title.");
+	// The whole window, margins like the other carousel images', with the list
+	// running on past its bottom edge: the page is cut just under the title of a
+	// fourth version (the rail ends at that version's dot, below the cut), so the
+	// window reads as a view onto a longer history instead of a picture cut off
+	// by the canvas.
+	const p = part("history"), crop = 520, s = (CH - 64) / crop, w = p.width * s, h = crop * s;
 	const x = (CW - w) / 2, y = (CH - h) / 2;
 	c.bloom(CW / 2, y, w * 0.85, h * 0.55);
-	c.panel(x, y, w, h, c.embed("history", { x, y, scale: s }));
+	// A short fade into the window's own colour where the list is cut, so what shows
+	// of the fourth version is a hint of it, not a sliver.
+	const grad = c.id("scroll-fade");
+	c.defs.push(`<linearGradient id="${grad}" gradientUnits="userSpaceOnUse" x1="0" y1="${n(y + h - 40)}" x2="0" y2="${n(y + h)}"><stop stop-color="${OBS.primary}" stop-opacity="0"/><stop offset="1" stop-color="${OBS.primary}" stop-opacity="0.6"/></linearGradient>`);
+	c.panel(x, y, w, h, c.embed("history", { box: [0, 0, p.width, crop], x, y, scale: s }) + rect(x, y + h - 40, w, 40, `url(#${grad})`), { radius: 12 * s });
 	return c;
 };
 

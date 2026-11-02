@@ -6,8 +6,8 @@ import { getLocale, registerLocale, setLocale, t } from "../src/i18n";
 import { he } from "../src/i18n/he";
 import { PortableConversionHelpModal } from "../src/portable/PortableConversionHelpModal";
 import { renderPortableRules } from "../src/settings/portableCalloutExamples";
-import { renderResetSection } from "../src/settings/sections/DataManagementSection";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import { dangerZoneGroup } from "../src/settings/declarative/mainPageGroups";
+import type { CsRender, TreeContext } from "../src/settings/declarative/types";
 import { convertPortableCallouts } from "../src/utils/portableCallouts";
 import { fakeDom } from "./support/fakeDom";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";
@@ -47,6 +47,9 @@ describe("portable conversion entry and help", () => {
 			h.modal.onOpen();
 			assert.equal(h.modalEl.querySelector(".modal-title")?.textContent, t("portable.help"));
 			assert.ok(h.contentEl.textContent.includes(t("portable.helpIntro")));
+			// The backup advice is the one line that is emphasised: bold, in the warning colour.
+			const backup = h.contentEl.querySelector("p.mod-warning.cs-portable-backup");
+			assert.equal(backup?.textContent, t("portable.backup"));
 			assert.equal(h.contentEl.querySelectorAll("table").length, 1);
 			assert.equal(h.contentEl.querySelectorAll("h1, h2, h3, h4, h5, h6").length, 0);
 			assert.equal(h.contentEl.querySelectorAll("tbody tr").length, 4);
@@ -54,7 +57,7 @@ describe("portable conversion entry and help", () => {
 			assert.equal(h.contentEl.querySelector(".cs-collapsible-heading"), null);
 			assert.equal(h.contentEl.querySelectorAll("svg").length, 0);
 			assert.deepEqual(h.calls, []);
-			assert.equal(h.modalEl.querySelector(".cs-modal-footer"), null);
+			assert.equal(h.modalEl.querySelector(".modal-button-container"), null);
 		} finally { h.destroy(); }
 	});
 
@@ -69,13 +72,17 @@ describe("portable conversion entry and help", () => {
 				const button = {
 					buttonEl: root.createEl("button"),
 					setButtonText(text: string) { label = text; return this; },
-					setWarning() { return this; },
+					setDestructive() { return this; },
+					setCta() { return this; },
 					onClick(action: () => unknown) { if (label === t("portable.review")) review = action; return this; },
 				} as unknown as ButtonComponent;
 				callback(button);
 				return this;
 			};
-			renderResetSection({ app: h.app } as SettingsSectionContext, root as unknown as HTMLElement);
+			// The settings page's Convert to standard Markdown row, drawn as Obsidian draws it.
+			const ctx = { app: h.app, plugin: { settingsWriter: { isFrozen: false } } } as unknown as TreeContext;
+			const conversionRow = dangerZoneGroup(ctx).items?.find((row) => row.id === "convert-to-markdown") as CsRender;
+			conversionRow.render(new Setting(root as unknown as HTMLElement), undefined as never);
 			assert.ok(review);
 			review();
 			await setImmediate();

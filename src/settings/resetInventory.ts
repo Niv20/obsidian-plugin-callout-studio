@@ -54,6 +54,10 @@ export function resetInventory(registry: CalloutRegistry): ResetInventory {
 				["settings.resetItemHeading", settings.headingCallouts, DEFAULT_SETTINGS.headingCallouts],
 				["settings.resetItemInline", settings.inlineCallouts, DEFAULT_SETTINGS.inlineCallouts],
 				["settings.resetItemThemeCalloutStyles", settings.themeCalloutStyles, DEFAULT_SETTINGS.themeCalloutStyles],
+				// One row for both dropdowns and the metadata colours.
+				["settings.resetItemAutocomplete",
+					{ suggestions: settings.suggestions, metadataColors: settings.metadataColors },
+					{ suggestions: DEFAULT_SETTINGS.suggestions, metadataColors: DEFAULT_SETTINGS.metadataColors }],
 				["settings.resetItemFallback", settings.fallbackCalloutId, DEFAULT_SETTINGS.fallbackCalloutId],
 				["settings.resetItemIconLibraries", settings.iconLibraries, DEFAULT_SETTINGS.iconLibraries],
 			]),

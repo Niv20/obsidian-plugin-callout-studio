@@ -41,7 +41,20 @@ export async function exportSvg(page, selector, options = {}) {
 		}
 		const visibleColor = color => color && color !== "transparent" && !/rgba\([^)]*,\s*0\)$/.test(color);
 		const box = r => ({ x: n(r.x - origin.x), y: n(r.y - origin.y), width: n(r.width), height: n(r.height) });
-		const rect = (r, fill, radius = 0, extra = "") => `<rect x="${n(r.x)}" y="${n(r.y)}" width="${n(r.width)}" height="${n(r.height)}" rx="${n(radius)}" fill="${escape(color(fill))}" ${extra}/>`;
+		// `radius` is one number for all four corners, or one per corner as
+		// cornerRadii returns them; a box with corners that differ is a path.
+		const rect = (r, fill, radius = 0, extra = "") => {
+			const [tl, tr, br, bl] = Array.isArray(radius) ? radius : [radius, radius, radius, radius];
+			if (tl === tr && tr === br && br === bl) return `<rect x="${n(r.x)}" y="${n(r.y)}" width="${n(r.width)}" height="${n(r.height)}" rx="${n(tl)}" fill="${escape(color(fill))}" ${extra}/>`;
+			const { x, y, width: w, height: h } = r, arc = v => `A${n(v)} ${n(v)} 0 0 1`;
+			const d = `M${n(x + tl)} ${n(y)}H${n(x + w - tr)}${arc(tr)} ${n(x + w)} ${n(y + tr)}V${n(y + h - br)}${arc(br)} ${n(x + w - br)} ${n(y + h)}H${n(x + bl)}${arc(bl)} ${n(x)} ${n(y + h - bl)}V${n(y + tl)}${arc(tl)} ${n(x + tl)} ${n(y)}Z`;
+			return `<path d="${d}" fill="${escape(color(fill))}" ${extra}/>`;
+		};
+		// Each corner's radius, [top-left, top-right, bottom-right, bottom-left]:
+		// a box may round only some corners (a list box under its search field
+		// rounds the bottom two), which one number for all four would draw wrong.
+		const cornerRadii = (style, r) => ["TopLeft", "TopRight", "BottomRight", "BottomLeft"]
+			.map(corner => Math.min(px(style[`border${corner}Radius`]), r.width / 2, r.height / 2));
 		const clip = (r, radius = 0) => {
 			const id = `clip-${++serial}`;
 			defs.push(`<clipPath id="${id}">${rect(r, "white", radius)}</clipPath>`);
@@ -83,20 +96,27 @@ export async function exportSvg(page, selector, options = {}) {
 			const mask = vectorUrl(style.maskImage || style.webkitMaskImage || "");
 			if (!mask) return null;
 			const viewBox = (mask.getAttribute("viewBox") || "").split(/[ ,]+/).map(Number);
-			const intrinsicWidth = px(mask.getAttribute("width") || "") || viewBox[2] || r.width;
-			const intrinsicHeight = px(mask.getAttribute("height") || "") || viewBox[3] || r.height;
+			const ownWidth = px(mask.getAttribute("width") || ""), ownHeight = px(mask.getAttribute("height") || "");
+			const intrinsicWidth = ownWidth || viewBox[2] || r.width;
+			const intrinsicHeight = ownHeight || viewBox[3] || r.height;
 			const ratio = intrinsicHeight / intrinsicWidth;
 			const [sx = "auto", sy = "auto"] = style.maskSize.split(" ");
 			const length = (value, total) => value.endsWith("%") ? px(value) / 100 * total : px(value);
 			let width, height;
-			if (sx === "contain" || sx === "cover") {
-				const scale = (sx === "contain" ? Math.min : Math.max)(r.width / intrinsicWidth, r.height / intrinsicHeight);
+			// An image with a shape (a viewBox) but no size of its own is drawn as
+			// large as fits, as `contain` would (CSS background sizing): an icon
+			// mask such as a search field's magnifier fills its box.
+			const sizeless = !ownWidth && !ownHeight && sx === "auto" && sy === "auto";
+			if (sx === "contain" || sx === "cover" || sizeless) {
+				const scale = (sx === "cover" ? Math.max : Math.min)(r.width / intrinsicWidth, r.height / intrinsicHeight);
 				width = intrinsicWidth * scale; height = intrinsicHeight * scale;
 			} else { width = sx === "auto" ? sy === "auto" ? intrinsicWidth : length(sy, r.height) / ratio : length(sx, r.width); height = sy === "auto" ? width * ratio : length(sy, r.height); }
 			const [posX = "50%", posY = "50%"] = style.maskPosition.split(" ");
 			for (const node of [mask, ...mask.querySelectorAll("*")]) {
 				node.removeAttribute("style"); node.removeAttribute("xmlns:xlink");
-				if (node.getAttribute("fill") !== "none") node.setAttribute("fill", color(style.backgroundColor));
+				// A shape without a fill of its own inherits its parent's: a Lucide
+				// icon says `fill="none"` once, on its <svg>, and is drawn by strokes.
+				if (node.closest("[fill]")?.getAttribute("fill") !== "none") node.setAttribute("fill", color(style.backgroundColor));
 				if (node.getAttribute("stroke") === "currentColor") node.setAttribute("stroke", color(style.backgroundColor));
 			}
 			mask.setAttribute("x", n(r.x + length(posX, r.width - width))); mask.setAttribute("y", n(r.y + length(posY, r.height - height)));
@@ -134,7 +154,7 @@ export async function exportSvg(page, selector, options = {}) {
 			return `url(#${id})`;
 		}
 		function paintBox(style, r) {
-			const radius = Math.min(px(style.borderTopLeftRadius), r.width / 2, r.height / 2);
+			const radius = cornerRadii(style, r);
 			const output = [];
 			const background = backgrounds(style);
 			if (background.at(-1).clip !== "text" && visibleColor(style.backgroundColor)) output.push(rect(r, style.backgroundColor, radius));
@@ -145,7 +165,7 @@ export async function exportSvg(page, selector, options = {}) {
 			const borders = ["Top", "Right", "Bottom", "Left"].map(side => ({ side, width: px(style[`border${side}Width`]), color: style[`border${side}Color`], style: style[`border${side}Style`] }));
 			if (borders.every(edge => edge.width === borders[0].width && edge.color === borders[0].color) && borders[0].width && borders[0].style !== "none") {
 				const edge = borders[0], inset = edge.width / 2;
-				output.push(rect({ x: r.x + inset, y: r.y + inset, width: r.width - edge.width, height: r.height - edge.width }, "none", Math.max(0, radius - inset), `stroke="${escape(color(edge.color))}" stroke-width="${n(edge.width)}"`));
+				output.push(rect({ x: r.x + inset, y: r.y + inset, width: r.width - edge.width, height: r.height - edge.width }, "none", radius.map(v => Math.max(0, v - inset)), `stroke="${escape(color(edge.color))}" stroke-width="${n(edge.width)}"`));
 			} else {
 				for (const edge of borders) if (edge.width && edge.style !== "none" && visibleColor(edge.color)) {
 					const b = edge.side === "Top" ? { x: r.x, y: r.y, width: r.width, height: edge.width }
@@ -215,7 +235,13 @@ export async function exportSvg(page, selector, options = {}) {
 					height: parentBox.height - top - px(parentStyle.borderBottomWidth) };
 			}
 			const size = (value, total) => value.endsWith("%") ? px(value) / 100 * total : px(value);
-			const width = size(style.width, parentBox.width), height = size(style.height, parentBox.height);
+			// A content-box size leaves out the border and padding, and a box with no
+			// content can still be a line: a settings row's divider is a 0-high
+			// ::before drawn entirely by its top border.
+			const outer = (start, end) => style.boxSizing === "border-box" ? 0
+				: px(style[`border${start}Width`]) + px(style[`border${end}Width`]) + px(style[`padding${start}`]) + px(style[`padding${end}`]);
+			const width = size(style.width, parentBox.width) + outer("Left", "Right");
+			const height = size(style.height, parentBox.height) + outer("Top", "Bottom");
 			if (!width || !height) return "";
 			const r = { x: parentBox.x + px(style.marginLeft), y: parentBox.y + px(style.marginTop), width, height };
 			if (style.left !== "auto") r.x += size(style.left, parentBox.width);
@@ -239,7 +265,15 @@ export async function exportSvg(page, selector, options = {}) {
 				const center = n(r.x + knob / 2 + fraction * (r.width - knob));
 				return `<line x1="${r.x}" x2="${r.x + r.width}" y1="${n(r.y + r.height / 2)}" y2="${n(r.y + r.height / 2)}" stroke="${escape(color(track))}" stroke-width="${r.height}" stroke-linecap="round"/><line x1="${r.x}" x2="${center}" y1="${n(r.y + r.height / 2)}" y2="${n(r.y + r.height / 2)}" stroke="${escape(color(fill))}" stroke-width="${r.height}" stroke-linecap="round"/><circle cx="${center}" cy="${n(r.y + r.height / 2)}" r="${knob / 2}" fill="${escape(color(thumb))}"/>`;
 			}
-			if (element instanceof HTMLInputElement && element.type !== "checkbox" || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement) {
+			// A colour input is Obsidian's round swatch (`::-webkit-color-swatch`,
+			// which the page cannot read): a circle of its value, filling the box.
+			if (element instanceof HTMLInputElement && element.type === "color") {
+				const radius = Math.min(r.width, r.height) / 2;
+				return `<circle cx="${n(r.x + r.width / 2)}" cy="${n(r.y + r.height / 2)}" r="${n(radius)}" fill="${escape(color(element.value))}"/>`;
+			}
+			// Inputs whose value is not text on screen: a radio's value is "on".
+			const textless = ["checkbox", "radio", "color", "file", "hidden", "button", "submit", "reset", "image"];
+			if (element instanceof HTMLInputElement && !textless.includes(element.type) || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement) {
 				const value = element instanceof HTMLSelectElement ? element.selectedOptions[0]?.textContent : element.value || element.placeholder;
 				const inset = px(style.paddingLeft) + px(style.borderLeftWidth), available = r.width - inset - px(style.paddingRight) - px(style.borderRightWidth);
 				metrics.font = font(style); const measured = metrics.measureText(value || "").width;
@@ -253,6 +287,9 @@ export async function exportSvg(page, selector, options = {}) {
 		function paintOrder(element) {
 			if (paintOrders.has(element)) return paintOrders.get(element);
 			const style = getComputedStyle(element), own = Number(style.zIndex) || 0;
+			// An element that is not displayed paints nothing, so it lifts nothing:
+			// a closed picker's list must not raise the page above an open menu.
+			if (style.display === "none") { paintOrders.set(element, 0); return 0; }
 			// A positioned popup participates in its nearest stacking context,
 			// even through wrappers whose z-index is auto. Keep that branch above
 			// ordinary siblings, stopping at real intervening stacking contexts.
@@ -260,24 +297,64 @@ export async function exportSvg(page, selector, options = {}) {
 			const order = context ? own : Math.max(own, ...[...element.children].map(paintOrder));
 			paintOrders.set(element, order); return order;
 		}
+		// What a sticky bar hides. The icon picker opens with its chosen icon centred,
+		// so a row or two of icons sit under the search bar, which stays at the top of
+		// the scroller. The browser never shows them. They were exported anyway,
+		// clipped to the scroller, and the bar's box starts at the very edge of that
+		// clip: at a fractional scale the one pixel row both only half cover let a
+		// hairline of the hidden icons through under the line above. So an element
+		// that lies wholly behind an opaque sticky bar is not drawn at all.
+		const hidingBars = [];
+		const opaque = value => /^rgb\(|,\s*1\)$/.test(color(value));
+		function stickyBarsIn(scroller, view) {
+			// Only a scrolled container has anything passing under its bars.
+			if (!scroller.scrollTop && !scroller.scrollLeft) return [];
+			const bars = [];
+			for (const candidate of scroller.querySelectorAll("*")) {
+				const style = getComputedStyle(candidate), measured = candidate.getBoundingClientRect();
+				if (style.position !== "sticky" || style.display === "none" || style.visibility === "hidden" || Number(style.opacity) < 1 || !opaque(style.backgroundColor)) continue;
+				if (measured.width && measured.height) bars.push({ element: candidate, order: paintOrder(candidate), view, box: box(measured) });
+			}
+			return bars;
+		}
+		function behindBar(element, r) {
+			return hidingBars.some(bar => {
+				// The bar, what it holds and what holds it are drawn; so is anything that paints above it.
+				if (bar.element.contains(element) || element.contains(bar.element) || paintOrder(element) > bar.order) return false;
+				const left = Math.max(r.x, bar.view.x), top = Math.max(r.y, bar.view.y);
+				const right = Math.min(r.x + r.width, bar.view.x + bar.view.width), bottom = Math.min(r.y + r.height, bar.view.y + bar.view.height);
+				return right > left && bottom > top && left >= bar.box.x - .02 && top >= bar.box.y - .02
+					&& right <= bar.box.x + bar.box.width + .02 && bottom <= bar.box.y + bar.box.height + .02;
+			});
+		}
 		function walk(element) {
 			const style = getComputedStyle(element), measured = element.getBoundingClientRect();
 			if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity) === 0) return "";
 			if (!measured.width || !measured.height) return [...element.children].map(walk).join("");
 			const r = box(measured);
 			if (r.x + r.width < padding || r.y + r.height < padding || r.x > width - padding || r.y > height - padding) return "";
+			if (behindBar(element, r)) return "";
 			if (element instanceof SVGSVGElement) return artwork(element, r);
 			if (element instanceof HTMLImageElement) throw new Error("Raster images are not supported by the vector documentation exporter");
 			const after = pseudo(element, "::after", r), afterBehind = Number(getComputedStyle(element, "::after").zIndex) < 0;
-			let result = paintBox(style, r) + pseudo(element, "::before", r) + (afterBehind ? after : "");
+			// A positioned ::before paints above the element's in-flow children, as
+			// the browser layers it (a search field's magnifier over its input).
+			const beforeStyle = getComputedStyle(element, "::before");
+			const beforeOnTop = beforeStyle.position !== "static" && !(Number(beforeStyle.zIndex) < 0);
+			const before = pseudo(element, "::before", r);
+			let result = paintBox(style, r) + (beforeOnTop ? "" : before) + (afterBehind ? after : "");
 			result = paintMask(style, r) ?? result;
 			result += control(element, style, r);
 			let children = "";
 			// Sticky toolbars and floating menus paint above their later siblings.
 			const childNodes = [...element.childNodes].map((node, index) => ({ node, index, z: node.nodeType === Node.ELEMENT_NODE ? paintOrder(node) : 0 })).sort((a, b) => a.z - b.z || a.index - b.index);
+			const clips = ["hidden", "clip", "auto", "scroll"].some(value => style.overflowX === value || style.overflowY === value);
+			const bars = clips ? stickyBarsIn(element, r) : [];
+			hidingBars.push(...bars);
 			for (const { node: child } of childNodes) children += child.nodeType === Node.TEXT_NODE ? textNode(child, style, element) : child.nodeType === Node.ELEMENT_NODE ? walk(child) : "";
-			if (["hidden", "clip", "auto", "scroll"].some(value => style.overflowX === value || style.overflowY === value)) children = `<g clip-path="url(#${clip(r, px(style.borderTopLeftRadius))})">${children}</g>`;
-			result += children + (afterBehind ? "" : after);
+			hidingBars.length -= bars.length;
+			if (clips) children = `<g clip-path="url(#${clip(r, cornerRadii(style, r))})">${children}</g>`;
+			result += children + (beforeOnTop ? before : "") + (afterBehind ? "" : after);
 			return Number(style.opacity) < 1 ? `<g opacity="${style.opacity}">${result}</g>` : result;
 		}
 		pieces.push(rect({ x: 0, y: 0, width, height }, options.background || getComputedStyle(document.body).backgroundColor || "#1e1e1e", 12));

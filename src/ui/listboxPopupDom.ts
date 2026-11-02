@@ -1,5 +1,5 @@
 /**
- * ui/listboxPopupDom.ts — the markup and the ARIA of a combobox, and nothing else.
+ * ui/listboxPopupDom.ts — the markup and the ARIA of a picker, and nothing else.
  *
  * Split out of {@link ListboxPopup} because they answer different questions.
  * This file answers "what is on the page and what does a screen reader call
@@ -8,29 +8,46 @@
  * reads far better as one declaration than scattered through the event wiring
  * that maintains it.
  *
- * The pattern is WAI-ARIA 1.2's **editable combobox with listbox popup**: the
- * roles sit on the `<input>` itself, not on a wrapper around it. The older 1.0
- * shape — `role="combobox"` on a containing div — is the one screen readers now
- * mis-announce, so it is worth being explicit that the modern one is deliberate.
+ * The shape is Obsidian's own combobox (Bases' pickers, the file pickers in
+ * Settings): a field drawn as Obsidian's dropdown, and under it Obsidian's
+ * popover (`.suggestion-container`) holding a search box above the list
+ * (`.suggestion`). Obsidian's CSS draws the field, the popover's frame and the
+ * search box; the rows are the plugin's.
+ *
+ * The ARIA is WAI-ARIA 1.2's. A searchable picker's search box is the
+ * **editable combobox** (the roles on the `<input>` itself, not on a wrapper:
+ * the older 1.0 shape is the one screen readers now mis-announce), and the
+ * field is the button that opens it. A select-only picker has no search box,
+ * so its field is the **select-only combobox** and keeps the focus.
  */
 import { setIcon } from "obsidian";
-import { appendDropdownCaret } from "./dropdownControl";
+import { DropdownField } from "./dropdownField";
 import { setFieldAccessibleName } from "./fieldAccessibleName";
+import { createSearchField } from "./searchField";
+import { createSuggestionRow } from "./suggestionRow";
 
 export interface ComboboxParts {
 	root: HTMLElement;
-	control: HTMLElement;
-	/** The slot left of the input, for the caller's icon or swatch. */
-	lead: HTMLElement;
-	input: HTMLInputElement;
+	/** The field: Obsidian's dropdown, showing the committed choice. */
+	field: DropdownField;
+	/** Obsidian's popover: the search box, if any, above the list. */
+	popup: HTMLElement;
+	/** The search box, or `null` for a select-only picker. */
+	input: HTMLInputElement | null;
+	/** The list itself (`role="listbox"`), the part of the popover that scrolls. */
 	menu: HTMLElement;
 }
 
 export interface ComboboxSkeletonOptions {
 	ariaLabel: string;
+	/** The search box's grey hint, such as "Search callouts…". */
 	placeholder: string;
-	/** Ties the input's `aria-controls` to the menu it opens. */
+	/** Ties the combobox's `aria-controls` to the list it opens. */
 	listboxId: string;
+	/** False for a select-only picker: no search box. */
+	searchable: boolean;
+	/** The search box's text, after every keystroke and after its × empties it. */
+	onQuery(query: string): void;
 }
 
 export function buildComboboxSkeleton(
@@ -38,38 +55,43 @@ export function buildComboboxSkeleton(
 	options: ComboboxSkeletonOptions,
 ): ComboboxParts {
 	const root = parent.createDiv({ cls: "cs-combobox" });
-	// Obsidian turns aria-label into a hover tooltip. A referenced hidden label
-	// keeps the field named for assistive technology without a second popup.
-	const control = root.createDiv({ cls: "cs-combobox-control cs-dropdown-control" });
-	const lead = control.createDiv({ cls: "cs-combobox-lead" });
+	const field = new DropdownField(root, { accessibleName: options.ariaLabel, popup: "listbox" });
+	field.el.setAttribute("aria-controls", options.listboxId);
 
-	const input = control.createEl("input", {
-		cls: "cs-combobox-input",
-		attr: {
-			type: "text",
+	const popup = root.createDiv({ cls: "suggestion-container cs-combobox-popup cs-combobox-popup-hidden" });
+	let input: HTMLInputElement | null = null;
+	if (options.searchable) {
+		// `combobox` is Obsidian's class for its combobox's popover: app.css then
+		// draws the search box flat inside it, as in Bases.
+		popup.addClass("combobox");
+		input = createSearchField(popup, {
+			placeholder: options.placeholder,
+			fieldCls: "cs-combobox-search",
+			inputCls: "cs-combobox-input",
+			onChange: (query) => options.onQuery(query),
+		}).inputEl;
+		for (const [name, value] of Object.entries({
 			role: "combobox",
 			"aria-expanded": "false",
 			"aria-controls": options.listboxId,
-			"aria-haspopup": "listbox",
 			"aria-autocomplete": "list",
-			placeholder: options.placeholder,
 			autocomplete: "off",
 			spellcheck: "false",
-			// Mobile: the keyboard's action key finishes the edit rather than
+			// Mobile: the keyboard's action key finishes the search rather than
 			// offering to insert a newline into a field that holds one line.
 			enterkeyhint: "done",
-		},
-	});
-	setFieldAccessibleName(input, options.ariaLabel);
+		})) input.setAttribute(name, value);
+		setFieldAccessibleName(input, options.ariaLabel);
+	} else {
+		field.el.setAttribute("role", "combobox");
+	}
 
-	appendDropdownCaret(control);
-
-	const menu = root.createDiv({
-		cls: "cs-combobox-menu cs-scrollable-dropdown-menu cs-combobox-menu-hidden",
+	const menu = popup.createDiv({
+		cls: "suggestion cs-combobox-menu",
 		attr: { role: "listbox", id: options.listboxId },
 	});
 
-	return { root, control, lead, input, menu };
+	return { root, field, popup, input, menu };
 }
 
 /**
@@ -79,7 +101,8 @@ export function buildComboboxSkeleton(
 export interface ComboboxRowContract<T> {
 	/**
 	 * Draw one row. The caller owns everything inside it; the row's own `role`,
-	 * `id` and `is-active`/`is-selected` classes are not the caller's to set.
+	 * `id`, its `is-active`/`is-selected` classes and the ✓ at its end (see
+	 * {@link appendComboboxCheck}) are not the caller's to set.
 	 */
 	renderRow(rowEl: HTMLElement, item: T, query: string): void;
 	/** Stable identity, so a selection survives a rebuild of the list. */
@@ -164,6 +187,8 @@ export function renderComboboxRows<T>(
 		if (spec.selectedKey !== undefined && spec.keyOf(item) === spec.selectedKey) {
 			rowEl.addClass("is-selected");
 			rowEl.setAttribute("aria-selected", "true");
+			// Appended after the caller's content, so it always lands last.
+			appendComboboxCheck(rowEl);
 		}
 		// mouseenter rather than hover CSS alone, because the popup's
 		// `onHighlight` live-previews and CSS cannot call it.
@@ -180,11 +205,39 @@ export function renderComboboxRows<T>(
 }
 
 /**
+ * Put a ✓ at the end of a row, to mark it as the current choice.
+ *
+ * This is how Obsidian marks the current choice in its own menus: calling
+ * `MenuItem.setChecked(true)` draws the same Lucide `check` icon at the end of
+ * the item. It replaces the filled stripe these lists used to paint behind the
+ * chosen row, so that a list looks like every other menu in Obsidian.
+ *
+ * Who calls it: {@link renderComboboxRows} for the committed row of every
+ * shared dropdown, and the callout editor's hand-built Fold menu, which is not
+ * a {@link ListboxPopup} but must mark its choice the same way.
+ *
+ * The icon is only decoration. A screen reader already hears "selected" from
+ * the row's `aria-selected="true"`, so `aria-hidden` stops it from also reading
+ * out the word "check".
+ *
+ * @param rowEl The row to mark. The check is appended as its last child.
+ * @returns The new check element (`span.cs-combobox-check`).
+ */
+export function appendComboboxCheck(rowEl: HTMLElement): HTMLElement {
+	const checkEl = rowEl.createSpan({
+		cls: "cs-combobox-check",
+		attr: { "aria-hidden": "true" },
+	});
+	setIcon(checkEl, "check");
+	return checkEl;
+}
+
+/**
  * The row offered when a query matched nothing — "Create «warning»" rather than
  * "no matches".
  *
  * Deliberately the `[!` popover's own create-row markup, class for class
- * (`editor/AutoComplete.ts` renders the same thing), so the offer looks and
+ * (both are built by {@link createSuggestionRow}), so the offer looks and
  * reads identically wherever the user meets it. It is a real row: the caller
  * appends it to the navigable list, so an arrow key reaches it and Enter takes
  * it, which an empty-state paragraph could never do.
@@ -195,14 +248,11 @@ export function renderComboboxCreateRow(
 	rowId: string,
 ): HTMLElement {
 	const rowEl = menuEl.createDiv({
-		cls: "cs-combobox-option callout-studio-suggestion callout-studio-suggestion-create-new",
+		cls: "cs-combobox-option callout-studio-suggestion-create-new",
 		attr: { role: "option", id: rowId },
 	});
-	const iconEl = rowEl.createDiv({ cls: "callout-studio-suggestion-icon" });
+	const { iconEl } = createSuggestionRow(rowEl, { title: label });
 	setIcon(iconEl, "plus");
-	rowEl
-		.createDiv({ cls: "callout-studio-suggestion-text" })
-		.createDiv({ cls: "callout-studio-suggestion-name", text: label });
 	return rowEl;
 }
 
@@ -214,49 +264,13 @@ export function renderComboboxEmptyState(
 	menuEl.createDiv({ cls: "callout-studio-empty-state", text });
 }
 
-export interface FooterRowSpec {
-	/** Lucide id. */
-	icon: string;
-	label: string;
-	onClick(): void;
-}
-
-/**
- * The optional row pinned below the list — the palette picker's Create "name" row.
- *
- * It is an action, not an item, which is why it is built here rather than
- * through the caller's `renderRow` and why the popup keeps it out of the array
- * the arrow keys walk: Enter must never land on it.
- */
-export function renderComboboxFooterRow(
-	menuEl: HTMLElement,
-	footer: FooterRowSpec,
-	onPointer: () => void,
-): void {
-	const rowEl = menuEl.createDiv({
-		cls: "cs-combobox-footer-row",
-		attr: { role: "option" },
-	});
-	const iconEl = rowEl.createSpan({ cls: "cs-combobox-footer-row-icon" });
-	setIcon(iconEl, footer.icon);
-	rowEl.createSpan({
-		cls: "cs-combobox-footer-row-label",
-		text: footer.label,
-	});
-	// Moving onto this row leaves the real ones, which also ends whatever they
-	// were previewing.
-	rowEl.addEventListener("mouseenter", onPointer);
-	rowEl.addEventListener("mousemove", onPointer);
-	rowEl.addEventListener("click", () => footer.onClick());
-}
-
 /**
  * The plain text that can close the list — see `footerNote`.
  *
- * Unlike {@link renderComboboxFooterRow} it is not an action, so it has no
- * role and no listeners: nothing highlights it, the popup never counts it among
- * its rows, and a press on it is swallowed by the menu's own `mousedown`, which
- * keeps focus in the input and the menu open.
+ * It is not an action, so it has no role and no listeners: nothing highlights
+ * it, the popup never counts it among its rows, and a press on it is swallowed
+ * by the popover's own `mousedown`, which keeps focus where it was and the
+ * list open.
  */
 export function renderComboboxFooterNote(menuEl: HTMLElement, text: string): void {
 	menuEl.createDiv({ cls: "cs-combobox-footer-note", text });

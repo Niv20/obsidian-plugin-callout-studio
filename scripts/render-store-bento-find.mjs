@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 import { loadObsidianAssets } from "./user-guide/obsidian-assets.mjs";
 import { exportSvg } from "./user-guide/vector-exporter.mjs";
+import { guideRuntimeOptions } from "./user-guide/guideRuntime.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(import.meta.url);
@@ -15,25 +16,17 @@ const { appCss, icons, version } = loadObsidianAssets();
 const { outputFiles } = await build({
 	entryPoints: [path.join(root, "scripts/store-bento/find-scene.mjs")],
 	bundle: true, write: false, format: "iife", globalName: "bentoFind",
-	alias: { obsidian: path.join(root, "scripts/user-guide/obsidian-runtime.ts") },
+	...guideRuntimeOptions(root),
 });
 const layout = `
 body { margin:0; padding:20px; overflow:hidden; background:transparent; }
 *, *::before, *::after { animation:none!important; transition:none!important; }
-#bento-find { width:233px; height:414px; background:transparent; }
-#bento-find .cs-sidebar-title, #bento-find .cs-sidebar-subtitle { display:none; }
-#bento-find .cs-sidebar-toolbar { padding:0; gap:8px; }
-#bento-find .cs-occurrences-controls { grid-template-columns:1fr 1.08fr; gap:8px; }
-#bento-find .cs-combobox-control { padding-inline:8px; gap:4px; height:32px; min-height:32px; }
-#bento-find .cs-combobox-control input[type="text"].cs-combobox-input { font-size:12.5px; }
-#bento-find .cs-sidebar-summary { border-top:0; padding:2px 0 4px; font-size:12.5px; line-height:18px; }
-#bento-find .cs-occurrences-scroll { padding:6px 0 0; overflow:hidden; }
-#bento-find .cs-sidebar-file { padding-bottom:8px; }
-#bento-find .cs-sidebar-file-heading { position:static; padding:6px 0 4px; font-size:12.5px; background:transparent; }
-#bento-find .cs-sidebar-grid { gap:7px; }
-#bento-find button.cs-sidebar-result { padding:8px 10px; gap:4px; }
-#bento-find .cs-sidebar-location { font-size:11.5px; }
-#bento-find .cs-occurrences-excerpt { font-size:12px; line-height:17px; }
+#bento-find { width:233px; height:414px; display:flex; flex-direction:column; overflow:hidden; background:transparent; }
+#bento-find .view-content { flex:1 1 auto; min-height:0; overflow:hidden; }
+#bento-find .cs-occurrences-picker .cs-dropdown-field { font-size:12.5px; }
+#bento-find .cs-occurrences-scroll { overflow:hidden; }
+#bento-find .search-result-file-title { font-size:12.5px; padding-block:2px; }
+#bento-find .search-result-file-match { font-size:12px; line-height:16px; padding-block:4px; }
 `;
 const browser = await chromium.launch({ headless: true, executablePath: process.env.BROWSER_EXECUTABLE });
 try {
@@ -55,13 +48,14 @@ try {
 	assert.equal(metadata.files, 3);
 	assert.equal(metadata.summary, "4 occurrences in 3 files");
 	assert.deepEqual(metadata.locations, ["Line 1 · Heading", "Line 9 · Block", "Line 3 · Heading", "Line 7 · Inline"]);
-	assert.deepEqual(await page.locator("#bento-find input").evaluateAll(inputs => inputs.map(input => input.value)), ["All types", "All formats"]);
+	assert.deepEqual(await page.locator("#bento-find .cs-occurrences-picker .cs-dropdown-field-label").allTextContents(), ["All types"]);
+	assert.equal(await page.locator("#bento-find .search-row .clickable-icon svg").count(), 1, "the format filter at the end of the type field's row");
 	const geometry = await page.locator(metadata.selector).boundingBox();
 	assert.equal(geometry.width, 233);
 	assert.equal(geometry.height, 414);
 	const contentBounds = await page.evaluate(() => {
 		const panel = document.querySelector("#bento-find").getBoundingClientRect();
-		return [...document.querySelectorAll("#bento-find .cs-sidebar-result")].map(card => ({
+		return [...document.querySelectorAll("#bento-find .search-result-file-match")].map(card => ({
 			top: card.getBoundingClientRect().top - panel.top, bottom: card.getBoundingClientRect().bottom - panel.top,
 		}));
 	});

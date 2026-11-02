@@ -163,8 +163,20 @@ what it is waiting for. Dim it with `paintBlocked()` and answer the press with
 `explainIfBlocked()` (both in `ui/blockedButton.ts`), driven by one
 `…BlockedReason()` method per button - see
 [Blocked main buttons say why](16-settings-ui-and-modals.md#blocked-main-buttons-say-why).
-Keep `disabled` only for a button that is merely *busy* and says so in its
-label ("Saving…", "Scanning…").
+Keep `disabled` only for a button that is merely *busy* and says so, in its
+label ("Scanning…") or with Obsidian's own spinner (`setButtonBusy` in
+`ui/busyButton.ts`, as the callout editor's Save does).
+
+## A ↺ is hidden when there is nothing to reset
+
+A "back to the default" arrow shows only while something differs from the
+default. Do not dim it (`aria-disabled` alone), do not leave it live, and do not
+hide it with `opacity: 0`, which leaves it hoverable, focusable and read out.
+Paint it with `paintResetIdle()` (`ui/resetArrow.ts`), or leave the layout with
+`addFieldResetButton` when the arrow sits beside a field that grows into its
+place. See [Scoped reset controls](16-settings-ui-and-modals.md#scoped-reset-controls);
+`declarativeSettingsTree.test.ts` fails on a settings ↺ that shows with nothing
+to reset.
 
 ## Settings that require a runtime refresh, not just a save
 
@@ -236,47 +248,56 @@ sufficient**. Common cases that also need an explicit follow-up call:
   A `:not()` guard is the opposite - that *is* the default state - and so is
   `.callout` itself.
 - **The settings tab's scroller is Obsidian's, not this plugin's, and a theme
-  can reach it.** `PluginSettingTab.containerEl` **is** `.vertical-tab-content`
- - the element that scrolls - so `.callout-studio-settings` lands on it and any
-  rule this plugin writes about the pane competes directly with the theme's own
-  `.vertical-tab-content` rules, at equal specificity and from an *earlier*
-  sheet. That matters for one property in particular: a sticky `top` is measured
-  from the scrollport's **content** box, so the pane's `padding-top` has to be
-  zero or every pinned section heading parks that far down with rows scrolling
-  through the strip above it. 20 of the 257 themes in the development vault put
-  that padding back, one with `!important` - which is why the reset carries an
-  `!important` of its own and an explicit `body:not(.is-phone)`. The band's
-  *paint* is the same problem one level down and does not have the same answer:
-  `background-color: inherit` copies the pane, a good many themes leave the
-  pane see-through, and three more beat the declaration outright - one of them (Lagom)
-  with an `!important` already at the band rule's own `(0,3,0)`, so there is no
-  weight to win with. That one is answered by a floor instead: a `::before` of
-  the theme's own surface tokens under the band and an `::after` repainting the
-  band over it, contesting nothing. Before adding any other rule about the
-  pane, assume a theme has an opinion about the same property, check the
-  weight, and ask whether being *under* the theme would do the job instead of
-  being above it. See
-  [Settings UI § the three sections pin their headings](16-settings-ui-and-modals.md#the-three-sections-pin-their-headings)
-  and sections 165 and 166 of `tests/modalBodyLayers.test.ts`.
+  can reach it.** The tab is drawn by Obsidian (26), and the plugin writes no
+  rule about `.vertical-tab-content` itself. The one layer that sticks inside
+  it is a style page's pinned preview, whose `top` is the page title bar's
+  height, measured at run time rather than assumed (26 § The style pages).
+  Before adding a rule about the pane, assume a theme has an opinion about the
+  same property, check the weight, and ask whether being *under* the theme
+  would do the job instead of being above it. The old settings page learned
+  this the hard way: its pinned section headings needed an `!important`
+  padding reset that 20 of the 257 themes in the development vault fought,
+  and a painted floor under Lagom; both went with the page in the *Clean
+  Sweep*. See section 165 of `tests/modalBodyLayers.test.ts`.
 - **The spelling of `--callout-color` is a fact about the active *theme*, not
-  about the running Obsidian version.** `requireApiVersion("1.13.0")` answers
-  only what *core* wants; a theme that never updated still reads
+  about the running Obsidian version.** Core (1.13.4 and later, the plugin's
+  minimum) wants a colour; a theme that never updated still reads
   `rgba(var(--callout-color), …)` and a hex makes every such declaration invalid
   at computed-value time - it unsets silently, so the symptom is a missing
   background or a vanished side accent, never an error. See
   [Colour system § accent dialect](12-color-system.md#accent-dialect-version-drift-and-theme-drift).
-- **`.callout-studio-row` is a size container, and Obsidian's settings-tab
-  container queries are unnamed.** Core's `@container (max-width: 400px)`
-  rules (written for `.vertical-tab-content`) give `.setting-item:not(…)
-  .setting-item-control` and its `button:not(.clickable-icon)` `width: 100%`
-  and left-align the control. An unnamed query matches the nearest container
-  of any kind, so a `Setting` row that also wears `.callout-studio-row` (Version
-  history's rows) becomes that container for its own children, in any
-  narrow window on any device class, not just `.is-phone`. With the control
-  also set not to shrink, the text column collapsed to 0px and every row grew
-  hundreds of pixels tall. `.cs-recovery-row.callout-studio-row` resets
-  `container-type: normal`; do the same for any other `Setting` row that
-  borrows the class. `tests/settingsRecoveryModal.test.ts` checks for the reset.
+- **A `Setting` row that is a size container meets Obsidian's unnamed
+  container queries.** Core's `@container (max-width: 400px)` rules (written
+  for `.vertical-tab-content`) give `.setting-item:not(…) .setting-item-control`
+  and its `button:not(.clickable-icon)` `width: 100%` and left-align the
+  control. An unnamed query matches the nearest container of any kind, so a
+  row that is itself a container becomes that container for its own children,
+  in any narrow window on any device class. Version history's rows were once
+  such containers (`callout-studio-row`): the text column collapsed to 0px and
+  every row grew hundreds of pixels tall. Its cards are plain `.setting-item`s
+  with a 12rem floor under the text column for that reason. The callout row
+  (`.setting-item.cs-callout-row`) was one until 2026-10-31, measured by a rule
+  that hid its colour circles in a narrow row; it no longer is (its colour now
+  follows the device, not the row's width). Were it one again, it would be
+  safe only because it always sits in a `.setting-group.mod-list` box, which
+  Obsidian exempts from those rules. A row outside such a box must not be a
+  container. `tests/calloutSettingRow.test.ts` leaves the row's layout to that
+  box, and the callout page tests check that every callout row is in one.
+
+- **`.dropdown` on a `<button>` is not Obsidian's dropdown.** The plugin's
+  dropdown fields wear app.css's own `.dropdown` class so Obsidian draws every
+  state of them (`ui/dropdownField.ts`). On a `<button>`, Obsidian's `button`,
+  `button:not(.clickable-icon)` and `button:hover` rules (0,1,1) outrank the
+  class (0,1,0) and repaint its face and padding, and the chevron then sits on
+  a grey button. The field is a `div` with `tabindex`, as Obsidian's own
+  combobox is. Nor may styles.css paint the field (no background, shadow,
+  border, padding, corners or height): that is how the old hand-made copy
+  drifted from Obsidian's look. `tests/dropdownField.test.ts` holds both.
+- **A dropdown has no width of its own.** It is as wide as its current words,
+  as Obsidian's `<select>` is. A fixed width on the field or on its row's
+  control column (`.setting-item-control`, a growing flex item in Obsidian)
+  brings back fields far wider than their words; "Callout format" was one,
+  stretched to `width: 100%` of a column that grew into the row's free room.
 
 ## A Style Settings class moves nothing you *key a cache on*
 
@@ -344,11 +365,59 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
   `requestFrameFor(el, …)` / `cancelFrame(handle)` in
   [`utils/elementFrame.ts`](../../src/utils/elementFrame.ts), which also keeps
   the window for the cancel (frame ids are per window).
+- **An observer belongs to a window, and a row is drawn by the wrong one.**
+  The same fact as the frame above, with a worse symptom. A `ResizeObserver`
+  hears only the elements of the window that made it. Obsidian draws a
+  settings row in the main window and moves it into the settings window
+  afterwards, so asked at draw time (`el.ownerDocument.defaultView`) the row's
+  window is the main one, and an observer made then watches a window it is not
+  in: measured in Obsidian 1.14.5, an observer on one element made by the
+  settings window heard every resize and one made by the main window heard
+  none. The callout rows' ids line was fitted once, when the page opened, and
+  never again, which looked like ids cut in half and a `+N` out of sight until
+  the page was drawn again. Make the observer with
+  `followWindow(el, start)` ([`utils/elementWindow.ts`](../../src/utils/elementWindow.ts)),
+  which starts it in the window that shows `el` and again in the new window,
+  after undoing the old, when Obsidian says (`onWindowMigrated`) the element
+  has moved. Test it in the real window, not in a headless page, where there
+  is only one: wrap `ResizeObserver` in both windows and list who made each
+  observer and where its elements are (the recipe is in
+  [Layout of a callout row § How it was checked](16-settings-ui-and-modals.md#one-line-each-and-where-the-colour-goes)),
+  and resize the window with `electronWindow.setSize`. `tests/support/fakeWindows.ts`
+  gives a suite a second window and an observer it can call.
+- **A declarative settings control must never use Obsidian's default
+  save.** `PluginSettingTab.setControlValue` writes `plugin.settings[key]` and
+  calls `plugin.saveData(plugin.settings)`, which here would overwrite
+  `data.json` with the settings alone (every callout and sync stamp gone). The
+  tab overrides `getControlValue`/`setControlValue` to go through the paused
+  guard and `registry.settingsChanged()`, whose change round repaints and
+  saves with `saveSettings()`
+  ([26 § Saving a control](26-declarative-settings.md#saving-a-control-never-savedata));
+  keep it that way, and never call `saveData` from a settings row.
 - **`EmbeddableMarkdownEditor` is an undocumented internal API and may
   change or disappear.** Every construction of it is wrapped in a
   `try/catch` with a full-fidelity static-render fallback
   (`LiveCalloutPreview`'s `buildFallback`). Don't add a second call site
   that assumes it will always succeed.
+
+## Everything drawn in the window slows the editor
+
+> [!WARNING]
+> **Every element drawn anywhere in the window slows every key press in the
+> editor, the ones off screen or in a sidebar included.** An arrow key makes
+> CodeMirror call `Selection.collapse`, which makes the browser bring style and
+> layout up to date, and that grows with the number of drawn elements. Find
+> callouts with 2,600 rows drawn (opening a note deep in its list draws every
+> row before it) made each key press about 2 ms slower, a quarter of a frame on
+> a 120 Hz screen, and the editor seemed to stick on the lines that enter or
+> leave a callout. `content-visibility`, `contain` and `visibility: hidden` did
+> not help; only `display: none` or a detached element did. So a list that can
+> grow past a page parks the groups far from the screen
+> (`ui/sidebarParking.ts`, [Vault discovery § Parking far
+> groups](11-vault-discovery.md#parking-far-groups)), and code that measures a
+> row in such a list calls `unparkGroupOf` first. Measure a change like this in
+> the live app (a trace and a CPU profile over real key presses) rather than
+> guessing: the time shows up inside `collapse`, not in any JavaScript of ours.
 
 ## Mobile-specific behaviour
 
@@ -361,7 +430,9 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
   [Render roles § the raw-syntax reveal](09-render-roles.md#the-raw-syntax-reveal-and-the-mousedown-freeze).
 - **`.is-mobile.theme-dark` repoints `--modal-background` onto
   `--background-secondary`** - this is precisely what broke the modal
-  surface tokens once and required the `color-mix()`-based re-derivation.
+  surface tokens once. A raised surface inside a window is
+  `--cs-surface-raised` (Obsidian's `--setting-items-background`, which steps
+  off the window there by itself), never a raw `--background-secondary`.
   See [Settings UI § two theme-aware surface tokens](16-settings-ui-and-modals.md#two-theme-aware-surface-tokens).
 - **`isDesktopOnly` is `false`** - any new feature must avoid Node/Electron-
   only APIs. The startup CSS-snapshot cache exists specifically to soften

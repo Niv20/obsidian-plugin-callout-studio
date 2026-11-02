@@ -1,37 +1,33 @@
 /**
- * settings/optionBox.ts — the option box every import and export window draws:
- * Import's source chooser, Export's format chooser, and the plugin import
- * window's two cards.
+ * settings/optionBox.ts — the answer card two kinds of window draw: the plugin
+ * import window's two cards, and the answers of both "Update your notes?"
+ * questions.
  *
  *   ┌──────────────────────────────────────────────────┐
- *   │ ┌──┐  Title  (👍 Recommended)                     │
- *   │ │▣ │  One line on what this option is or holds. › │
- *   │ └──┘                                              │
+ *   │ ( )  ▣  Title  (Recommended)          [ Upload… ] │
+ *   │         One line on what this option holds.       │
  *   └──────────────────────────────────────────────────┘
  *
- * One builder and one set of rules (`.cs-option-box` in styles.css), so the
- * three windows cannot drift apart again: the same icon tile, title line and
- * status line, the same pointer and keyboard handling, and the same hover and
- * focus ring. It is drawn as the settings lists draw a callout row — a raised,
- * borderless pill — so a chooser reads as part of the same plugin rather than
- * as a dialog of its own.
+ * Who calls it. pluginImport/pluginImportViews.ts and settings/noteQuestion.ts
+ * (the latter for NoteChangesModal and PaletteNotesModal).
  *
- * A box comes in two forms, told apart by whether it is given something to do:
+ * The main idea (findings S9-10 and S6-V2). A card is drawn like the radio
+ * cards Obsidian asks with when you set up a vault on a phone: an outline, the
+ * chosen card's outline in the accent colour, no fill and no hover. Its radio
+ * is Obsidian's own round one (`input[type=radio]`) at the start of the card,
+ * and the radios of one window share a `name`, so the group is one Tab stop and
+ * the arrow keys move the choice, as in any radio group. A click anywhere on
+ * the card chooses it too — except on a control of the card's own (a button, a
+ * text box), which does what it says instead. Until 2026-10-24 a card was a
+ * raised grey pill with an accent wash when chosen, and its "radio" was a
+ * hand-made dot with a check mark at the far end.
  *
- * - **A choice** (`onActivate`) — the whole box is the control, `role="button"`,
- *   and nothing on it takes a click of its own. It acts at once, and the chevron
- *   at its trailing edge says so. What the click *means* stays the window's.
- * - **A card** (no `onActivate`) — the box alone: no role, no focus stop, no
- *   chevron, no listeners. The plugin import window builds its two options on
- *   it, and adds what is its own to say — a radio dot, a button, a text box
- *   (pluginImport/pluginImportViews.ts). Both "Update your notes?" questions
- *   build their answers the same way, without the icon tile
- *   (settings/noteQuestion.ts); the callout editor's adds an id picker to one
- *   (settings/editor/NoteChangesModal.ts).
- *   {@link addOptionRadio} is the dot both of them use and
- *   {@link paintOptionRadio} how both of them show which card is chosen. A
- *   card's own control — the import's Upload button, the question's picker —
- *   sits at its trailing edge, just before the dot.
+ * {@link renderOptionBox} draws the card alone (no role, no focus stop, no
+ * listeners); {@link addOptionRadio} makes it one answer of a group;
+ * {@link paintOptionRadio} shows which answer is chosen. Import's source
+ * chooser and Export's format chooser drew their choices on this card too,
+ * until 2026-10-24; they are rows of Obsidian's setting groups now
+ * (settings/choiceRow.ts).
  */
 import { setIcon } from "obsidian";
 import { renderRecommendedBadge } from "./recommendedBadge";
@@ -51,15 +47,10 @@ export interface OptionBoxSpec {
 	desc: string;
 	/** The grey Recommended pill on the title line. */
 	recommended?: boolean;
-	/**
-	 * A click, Enter or Space on the box. Left out, the box is a card: it takes
-	 * no click and is not a focus stop.
-	 */
-	onActivate?: () => void;
 }
 
 export interface OptionBox {
-	/** The box itself; on a choice, also its role, focus stop and click target. */
+	/** The box itself. */
 	el: HTMLElement;
 	/** Its title, for a window that rewrites it in place. */
 	titleEl: HTMLElement;
@@ -72,14 +63,6 @@ export interface OptionBox {
 /** The column the boxes stack in; spacing is its gap, not each box's margin. */
 export function renderOptionList(parent: HTMLElement): HTMLElement {
 	return parent.createDiv({ cls: "cs-option-list" });
-}
-
-/**
- * A quiet caption over the boxes that follow it, for a list that holds two
- * kinds of choice — Import's own backup, then the other plugins.
- */
-export function renderOptionGroupLabel(list: HTMLElement, text: string): HTMLElement {
-	return list.createDiv({ cls: "cs-option-group-label", text });
 }
 
 export function renderOptionBox(parent: HTMLElement, spec: OptionBoxSpec): OptionBox {
@@ -98,98 +81,91 @@ export function renderOptionBox(parent: HTMLElement, spec: OptionBoxSpec): Optio
 		attr: { id: descId },
 	});
 
-	const box: OptionBox = { el, titleEl, descEl, describedBy: `${headId} ${descId}` };
-	const { onActivate } = spec;
-	if (!onActivate) return box;
-
-	// Named by its title line and described by its status line, rather than
-	// named by everything in it — and never with an `aria-label`, which
-	// Obsidian would pop up as a tooltip over the box.
-	el.setAttribute("role", "button");
-	el.setAttribute("aria-labelledby", headId);
-	el.setAttribute("aria-describedby", descId);
-	el.setAttribute("tabindex", "0");
-
-	// What a click does, shown rather than said. Decoration only — the box's
-	// role already says it, so the chevron takes no role or focus stop.
-	const mark = el.createDiv({
-		cls: "cs-option-box-mark",
-		attr: { "aria-hidden": "true" },
-	});
-	setIcon(mark, "chevron-right");
-
-	// Only a double-click's first click, and a held key's first press, count:
-	// the rest would act again on what the first already did — the file picker
-	// a second time, a second export.
-	el.addEventListener("click", (evt) => {
-		if (evt.detail > 1) return;
-		onActivate();
-	});
-	el.addEventListener("keydown", (evt) => {
-		if (evt.key !== "Enter" && evt.key !== " ") return;
-		// Claimed even when repeated, so a held Space never scrolls the window.
-		evt.preventDefault();
-		if (evt.repeat) return;
-		onActivate();
-	});
-	return box;
+	return { el, titleEl, descEl, describedBy: `${headId} ${descId}` };
 }
 
+/** What each radio was last painted as, so a refused choice can be put back. */
+const paintedChosen = new WeakMap<HTMLInputElement, boolean>();
+
 /**
- * Make a card one answer of a radio group: a dot at its trailing edge, empty
- * until the window paints its card `is-selected` and sets `aria-checked`.
+ * Make a card one answer of a radio group: Obsidian's own round radio at its
+ * leading edge, unchecked until the window paints its card chosen.
  *
- * The dot is the radio — named by the card's title line, described by its
- * status line — and the card around it is one large pointer target for the
- * same thing. The card cannot be the radio itself: a radio may hold no control
- * of its own, and a card can hold a button, a text box or a picker. A click on
- * one matching `exempt` does what that control says instead of choosing; left
- * out, every click on the card chooses it, a click into its picker included.
+ * @param box The card.
+ * @param group The `name` every radio of this window shares; it is what makes
+ *   them one group (one Tab stop, arrow keys between them).
+ * @param onChoose What choosing this answer does. The window either takes the
+ *   choice and repaints every card ({@link paintOptionRadio}) before it
+ *   returns, or refuses it (an empty card) and repaints nothing.
+ * @param exempt A selector for the card's own controls: a click on one of them
+ *   does what that control says instead of choosing. Left out, every click on
+ *   the card chooses it, a click into its picker included.
+ * @returns The radio.
  */
-export function addOptionRadio(box: OptionBox, onChoose: () => void, exempt?: string): HTMLElement {
+export function addOptionRadio(
+	box: OptionBox,
+	group: string,
+	onChoose: () => void,
+	exempt?: string,
+): HTMLInputElement {
 	const [headId, descId] = box.describedBy.split(" ");
-	const radio = box.el.createDiv({
+	const radio = createEl("input", {
 		cls: "cs-option-radio",
+		type: "radio",
 		attr: {
-			role: "radio",
-			"aria-checked": "false",
+			name: group,
+			// Named by the card's title line and described by its status line.
+			// Never an `aria-label`, which Obsidian would pop up as a tooltip.
 			"aria-labelledby": headId ?? "",
 			"aria-describedby": descId ?? "",
 		},
 	});
-	setIcon(radio, "check");
-	radio.addEventListener("keydown", (evt) => {
-		if (evt.key !== "Enter" && evt.key !== " ") return;
-		// Claimed even when repeated, so a held Space never scrolls the window.
-		evt.preventDefault();
-		if (!evt.repeat) onChoose();
+	// First in the card, before its icon and text, as Obsidian puts a radio.
+	box.el.insertBefore(radio, box.el.firstChild);
+
+	// A click on the radio, Space on it, or an arrow key moving the choice
+	// onto it: the browser has already checked it when `change` arrives.
+	radio.addEventListener("change", () => {
+		if (!radio.checked) return;
+		onChoose();
+		putBackRefusedChoice(radio);
 	});
 	box.el.addEventListener("click", (evt) => {
-		if (exempt && (evt.target as Element | null)?.closest(exempt)) return;
+		const target = evt.target as Element | null;
+		// The radio's own click becomes its `change`, above.
+		if (target === radio) return;
+		if (exempt && target?.closest(exempt)) return;
 		onChoose();
 	});
 	return radio;
 }
 
 /**
- * Show one radio card's state: `chosen` wears the accent ring and fills the
- * dot; `choosable` says a click would choose it (it has something to choose,
- * and is not chosen already); a card that is not `enabled` keeps its dot out
- * of the tab order and faded.
+ * Put every radio of `radio`'s group back to what it was last painted as. A
+ * window that took the choice has just repainted them, so this changes
+ * nothing; one that refused it has not, and the browser's check would
+ * otherwise stay on the answer that was not taken.
+ */
+function putBackRefusedChoice(radio: HTMLInputElement): void {
+	const list = radio.closest(".cs-option-list") ?? radio.parentElement;
+	if (!list) return;
+	for (const other of Array.from(list.querySelectorAll<HTMLInputElement>("input.cs-option-radio"))) {
+		other.checked = paintedChosen.get(other) ?? false;
+	}
+}
+
+/**
+ * Show one answer's state: `chosen` checks its radio and outlines its card in
+ * the accent colour; a card that is not `enabled` (it holds nothing yet) has
+ * its radio disabled, so the arrow keys pass over it.
  */
 export function paintOptionRadio(
 	box: OptionBox,
-	radio: HTMLElement,
-	state: { chosen: boolean; choosable: boolean; enabled: boolean },
+	radio: HTMLInputElement,
+	state: { chosen: boolean; enabled: boolean },
 ): void {
 	box.el.toggleClass("is-selected", state.chosen);
-	box.el.toggleClass("is-choosable", state.choosable);
-	radio.setAttribute("aria-checked", state.chosen ? "true" : "false");
-	if (state.enabled) {
-		radio.setAttribute("tabindex", "0");
-		radio.removeAttribute("aria-disabled");
-	} else {
-		radio.removeAttribute("tabindex");
-		radio.setAttribute("aria-disabled", "true");
-	}
+	radio.checked = state.chosen;
+	paintedChosen.set(radio, state.chosen);
+	radio.disabled = !state.enabled;
 }

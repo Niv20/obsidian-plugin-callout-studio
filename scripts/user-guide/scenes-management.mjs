@@ -5,24 +5,17 @@ import { ReplaceCalloutModal } from "../../src/utils/ReplaceCalloutModal.ts";
 import { NoteChangesModal } from "../../src/settings/editor/NoteChangesModal.ts";
 import { pendingNoteChangesFor } from "../../src/settings/editor/noteChanges.ts";
 import { noteChangeQuestion } from "../../src/settings/editor/noteChangeQuestion.ts";
-import { MenuCustomizationModal } from "../../src/settings/MenuCustomizationModal.ts";
-import { CommandBuilderModal } from "../../src/settings/CommandBuilderModal.ts";
 import { CommandEditorModal } from "../../src/settings/CommandEditorModal.ts";
 import { CustomCommandManager } from "../../src/editor/CustomCommandManager.ts";
 import { ImportSourceModal } from "../../src/settings/ImportSourceModal.ts";
 import { ExportFormatModal } from "../../src/settings/ExportFormatModal.ts";
 import { addItems } from "../../src/editor/contextmenu/items.ts";
-import { renderLanguageSection } from "../../src/settings/sections/LanguageSection.ts";
-import { createCalloutListsController } from "../../src/settings/sections/CalloutListsSection.ts";
-import { renderCalloutRow } from "../../src/settings/sections/CalloutRowRenderer.ts";
-import { freshPaging } from "../../src/settings/sections/calloutListsSignature.ts";
+import { MENU_PAGE } from "../../src/settings/declarative/menuPage.ts";
+import { COMMANDS_PAGE } from "../../src/settings/declarative/commandsPage.ts";
 import { registerLocale, setLocale, t } from "../../src/i18n/index.ts";
 import { es } from "../../src/i18n/es.ts";
-import { openModal, mountNote, mountSettings, sceneMeta } from "./fixture-host.mjs";
-
-function sectionContext(plugin) {
-	return { app: plugin.app, plugin, display() {}, registerDisposer() {} };
-}
+import { openModal, mountNote, mountSettings, settingsContext } from "./fixture-host.mjs";
+import { rowById } from "./settingsPage.mjs";
 
 function ensureProjectNote(plugin) {
 	if (!plugin.registry.has("project note")) {
@@ -64,7 +57,7 @@ function replaceCallout(plugin) {
 	input.value = "tip";
 	input.dispatchEvent(new Event("input", { bubbles: true }));
 	const tip = [...modal.modalEl.querySelectorAll(".callout-studio-replace-item")]
-		.find(row => row.querySelector(".callout-studio-replace-item-id")?.textContent === "tip");
+		.find(row => row.getAttribute("data-callout-id") === "tip");
 	if (!tip) throw new Error("Replacement scene needs the real Tip row");
 	tip.click();
 	return metadata;
@@ -120,7 +113,8 @@ function idMoveHere(plugin) {
 	input.value = "project";
 	input.dispatchEvent(new Event("input", { bubbles: true }));
 	input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
-	if (!editor.modalEl.querySelector(".cs-tag-error .cs-link-btn")) {
+	// A sentence that names another callout is drawn under the row's label, not under the field.
+	if (!editor.modalEl.querySelector(".cs-callout-ids-setting .cs-tag-message .cs-link-btn")) {
 		throw new Error("ID move scene needs the real move it here offer");
 	}
 	return metadata;
@@ -167,9 +161,10 @@ function contextCustomization(plugin) {
 	deletion.enabled = false;
 	headingItems.splice(headingItems.indexOf(deletion), 1);
 	headingItems.push(deletion);
-	return openModal(new MenuCustomizationModal(plugin.app, plugin), {
+	return mountSettings(plugin, {
+		path: [MENU_PAGE.page],
 		title: "Customize callout context menus",
-		description: "The actual MenuCustomizationModal renders its production toggles and drag handles. Delete section is disabled in the synthetic heading-menu configuration, exposing the disabled band and the real category reset arrow. The dark-mode window scrolls within its height limit.",
+		description: "The Customize right-click menu page as Obsidian draws it: each role's menu as a list with its icons, ✕ and drag handles. Delete section is hidden in the synthetic heading-menu configuration, so it appears under Hidden from the heading callout menu, and the heading list's real reset arrow is lit.",
 	});
 }
 
@@ -181,9 +176,10 @@ function commandManager(plugin) {
 	];
 	plugin.customCommands = new CustomCommandManager(plugin);
 	plugin.settings.disabledFixedCommands = ["callout-unwrap"];
-	return openModal(new CommandBuilderModal(plugin.app, plugin), {
+	return mountSettings(plugin, {
+		path: [COMMANDS_PAGE.page],
 		title: "Manage commands and keyboard shortcuts",
-		description: "The production CommandBuilderModal reads two example saved commands through the actual CustomCommandManager. Obsidian's fixture reports no assigned hotkeys, so the real shortcut chips read Blank; the built-in command list retains its production toggles and scrolling layout.",
+		description: "The Commands and shortcuts page as Obsidian draws it reads two example saved commands through the actual CustomCommandManager. Obsidian's fixture reports no assigned hotkeys, so the real shortcut chips read Blank; the built-in commands keep their production switches.",
 	});
 }
 
@@ -192,7 +188,17 @@ function chooseField(modal, name, label) {
 	const row = [...modal.modalEl.querySelectorAll(".setting-item")]
 		.find(el => el.querySelector(".setting-item-name")?.textContent === name);
 	if (!row) throw new Error(`Missing actual command field: ${name}`);
-	row.querySelector(".cs-combobox-control").click();
+	const plainChoice = row.querySelector(".cs-select-dropdown.cs-dropdown-field");
+	if (plainChoice) {
+		// A plain choice opens Obsidian's menu, which is added to <body>, not to the row.
+		plainChoice.click();
+		const item = [...document.querySelectorAll(".menu .menu-item")]
+			.find(el => el.querySelector(".menu-item-title")?.textContent === label);
+		if (!item) throw new Error(`Missing production command choice: ${label}`);
+		item.click();
+		return;
+	}
+	row.querySelector(".cs-combobox .cs-dropdown-field").click();
 	const option = [...row.querySelectorAll('[role="option"]')]
 		.find(el => (el.querySelector(".callout-studio-suggestion-name")?.textContent ?? el.textContent) === label);
 	if (!option) throw new Error(`Missing production command choice: ${label}`);
@@ -213,12 +219,26 @@ function commandEditor(plugin) {
 
 function languageSelector(plugin) {
 	return mountSettings(plugin, {
+		height: 560,
+		// The foot of the page, where the globe is.
+		boxes: ["danger-zone", "footer"],
 		title: "Choose the interface language",
-		description: "The production LanguageSection opens its real ListboxPopup containing every supported language under its native name. Only the language settings section is shown; the shorter dark-mode panel crops the scrollable language list after its first options.",
-		render(panel, ctx) {
-			renderLanguageSection(ctx, panel);
-			panel.style.height = "420px";
-			panel.querySelector(".cs-language-setting .cs-combobox-control").click();
+		description: "The globe tile in the settings' footer opens Obsidian's own menu listing every supported language under its native name, with a check mark beside the language shown. The dark-mode settings window crops the menu after its first options.",
+		after(harness, frame) {
+			const field = rowById(harness, "footer-tiles").querySelector(".cs-select-button");
+			field.click();
+			// Obsidian adds its menu to <body>. Keep the real menu, with its CSS,
+			// inside the exported frame, just under its field, and let the frame
+			// crop it as the window would.
+			const menuEl = document.querySelector("body > .menu");
+			if (!menuEl) throw new Error("The language field did not open Obsidian's menu");
+			const frameRect = frame.getBoundingClientRect();
+			const fieldRect = field.getBoundingClientRect();
+			frame.style.overflow = "hidden";
+			frame.appendChild(menuEl);
+			menuEl.style.position = "absolute";
+			menuEl.style.left = `${fieldRect.left - frameRect.left}px`;
+			menuEl.style.top = `${fieldRect.bottom - frameRect.top + 2}px`;
 		},
 	});
 }
@@ -227,23 +247,12 @@ function languageLocalized(plugin) {
 	registerLocale("es", es);
 	plugin.settings.language = "es";
 	setLocale("es");
-	const root = document.body.createDiv({ cls: "guide-language-panels", attr: { id: "guide-scene" } });
-	const ctx = sectionContext(plugin);
-	// These sections live at different positions in the settings tab. Separate
-	// frames make them two illustrative crops rather than one continuous page.
-	const languagePanel = root.createDiv({ cls: "callout-studio-settings guide-settings" });
-	renderLanguageSection(ctx, languagePanel);
-	const calloutsPanel = root.createDiv({ cls: "callout-studio-settings guide-settings" });
-	createCalloutListsController(ctx, {
-		paging: freshPaging(), onAddNewCallout: async () => {},
-		renderRow: (container, def, kind) => renderCalloutRow(ctx, container, def, kind, {
-			onEdit() {}, onOpenBuiltInMenu() {}, onOpenUserMenu() {},
-		}),
-	}).render(calloutsPanel);
-	return sceneMeta(
-		"Callout Studio in Spanish",
-		"Two separate settings crops are stacked with a visible gap: the saved Spanish language choice above and the translated callout-list section below. They are not adjacent sections of one settings page. Production components resolve their labels through the actual t() function and the repository's Spanish translation table, registered entirely offline. The real language-reset arrow shows the saved preference differs from the fixture's English Obsidian language.",
-	);
+	return mountSettings(plugin, {
+		title: "Callout Studio in Spanish",
+		// The foot of the page, where the language is chosen and the tiles sit.
+		boxes: ["import-export", "danger-zone", "footer"],
+		description: "The foot of the settings' main page in Spanish: production rows resolve their labels through the actual t() function and the repository's Spanish translation table, registered entirely offline. The row of icon tiles below them is the footer.",
+	});
 }
 
 export const scenes = {
@@ -255,11 +264,11 @@ export const scenes = {
 	"context-customization": contextCustomization,
 	"command-manager": commandManager,
 	"command-editor": commandEditor,
-	"import-source": plugin => openModal(new ImportSourceModal(sectionContext(plugin)), {
+	"import-source": plugin => openModal(new ImportSourceModal(settingsContext(plugin)), {
 		title: "Choose an import source",
 		description: "The actual ImportSourceModal renders Callout Studio's backup option followed by Callout Manager and Admonition under From another plugin. This chooser is displayed only; no file picker or import is activated.",
 	}),
-	"export-format": plugin => openModal(new ExportFormatModal(sectionContext(plugin)), {
+	"export-format": plugin => openModal(new ExportFormatModal(settingsContext(plugin)), {
 		title: "Choose an export format",
 		description: "The production ExportFormatModal displays its recommended JSON backup and CSS snippet choices with their actual labels and icons. The scene renders the chooser without downloading a file or writing a snippet.",
 	}),

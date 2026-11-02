@@ -29,9 +29,17 @@ export class ManualCalloutDiscovery {
 
 	constructor(private readonly host: ManualDiscoveryHost) {}
 
-	/** Repeated clicks join one operation; no timers, listeners, or startup scan. */
-	run(): Promise<number> {
-		this.inFlight ??= this.scan().finally(() => {
+	/**
+	 * Repeated clicks join one operation; no timers, listeners, or startup scan.
+	 *
+	 * @param beforeSave Awaited once the notes are read, before the new rows are
+	 *   built, saved and shown. Building and drawing hundreds of new rows holds
+	 *   the page for most of a second, so the caller clears its "Scanning…"
+	 *   notice here first. Only the call that starts the scan is heard; a call
+	 *   that joins it is not.
+	 */
+	run(beforeSave?: () => Promise<void>): Promise<number> {
+		this.inFlight ??= this.scan(beforeSave).finally(() => {
 			this.inFlight = null;
 			if (!this.destroyed) this.host.onSettled();
 		});
@@ -42,7 +50,7 @@ export class ManualCalloutDiscovery {
 		this.destroyed = true;
 	}
 
-	private async scan(): Promise<number> {
+	private async scan(beforeSave?: () => Promise<void>): Promise<number> {
 		const { app, registry, settingsWriter } = this.host;
 		if (this.destroyed || !this.host.canApply() || settingsWriter.isFrozen || settingsWriter.busy) {
 			throw new Error("Discovery cannot run while settings are unavailable or being edited");
@@ -60,13 +68,17 @@ export class ManualCalloutDiscovery {
 			app.vault.getAbstractFileByPath(entry.path) === entry.file &&
 			entry.file.path === entry.path && entry.file.stat.mtime === entry.mtime &&
 			entry.file.stat.size === entry.size;
-		const current = (): boolean => {
+		// What the new rows are built from and saved over: the settings and the theme.
+		const settingsCurrent = (): boolean => {
 			if (this.destroyed || !this.host.canApply() || snapshot(registry) !== before) return false;
-			// Check membership too: a new note arriving from sync means this scan
-			// no longer describes the current vault, even if old files are intact.
-			if (app.vault.getMarkdownFiles().length !== files.length || !files.every(unchanged)) return false;
 			const now = usableThemeIds(this.host.themeIds());
 			return now.size === themeIds.size && [...now].every((id) => themeIds.has(id));
+		};
+		const current = (): boolean => {
+			if (!settingsCurrent()) return false;
+			// Check membership too: a new note arriving from sync means this scan
+			// no longer describes the current vault, even if old files are intact.
+			return app.vault.getMarkdownFiles().length === files.length && files.every(unchanged);
 		};
 		for (const entry of files) {
 			if (this.destroyed || !this.host.canApply() || !unchanged(entry)) {
@@ -76,6 +88,17 @@ export class ManualCalloutDiscovery {
 			for (const id of scanStringForUnknownCallouts(content, known)) found.add(id);
 		}
 		if (!current()) throw new Error("Settings or notes changed during discovery");
+		// The caller's wait is its "Scanning…" notice staying up for a moment, not
+		// reading: a note that a sync service or another plugin changes meanwhile
+		// does not make what was read wrong, since a scan only adds types. So the
+		// notes are checked once, above, and from here on only the settings and
+		// the theme, which a change made during the wait still cancels the scan for.
+		let stillCurrent = current;
+		if (beforeSave) {
+			await beforeSave();
+			stillCurrent = settingsCurrent;
+			if (!stillCurrent()) throw new Error("Settings changed during discovery");
+		}
 
 		// Stage in an isolated registry: no CSS, commands, save listeners or
 		// partial results escape while the vault is still being read.
@@ -90,7 +113,7 @@ export class ManualCalloutDiscovery {
 		}
 		if (added.length === 0) return 0;
 		let published = 0;
-		const saved = await settingsWriter.commit(staged.toSaveData(), current, () => {
+		const saved = await settingsWriter.commit(staged.toSaveData(), stillCurrent, () => {
 			if (this.destroyed) return;
 			const latestFallback = fallbackSourceFor(registry, registry.settings.fallbackCalloutId);
 			registry.batch(() => {

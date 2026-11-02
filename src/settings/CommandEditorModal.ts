@@ -2,7 +2,8 @@
  * settings/CommandEditorModal.ts — Build or edit one custom command.
  *
  * A small form: which callout to use, which format to write, and — where the format
- * gives a real choice — the heading level, the action and the fold state.
+ * gives a real choice — the heading level, the action and the fold state, in one
+ * grey setting group, with the name the command will have in a second one below it.
  * Returns the draft to its caller, which owns the list and mints the identity;
  * this modal never touches settings itself.
  *
@@ -10,8 +11,8 @@
  * same way the palette editor handles its gradient rows: one sync function
  * decides visibility so the controls can never disagree about the format.
  */
-import { Modal } from "obsidian";
-import type { App } from "obsidian";
+import { Modal, Setting, SettingGroup } from "obsidian";
+import type { App, DisplayValueComponent } from "obsidian";
 import { t } from "../i18n";
 import { getLocale } from "../i18n";
 import type { CustomCommandDraft } from "../editor/CustomCommandManager";
@@ -34,7 +35,7 @@ import {
 import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import { sortCalloutsByDisplayName } from "../utils/sorting";
 import { committedDefinitions } from "../utils/usableCallouts";
-import { applyModalChrome, removeModalChrome } from "./modalChrome";
+import { addCancelButton, applyModalChrome, removeModalChrome } from "./modalChrome";
 import { buildCalloutRow, type CalloutRow } from "./command/calloutRow";
 import type { CalloutEditorPlugin } from "./editor/types";
 import { buildFormatRow, type FormatRow } from "./command/commandRoles";
@@ -78,8 +79,10 @@ export class CommandEditorModal extends Modal {
 	private formatRow?: FormatRow;
 	private foldRow?: FoldStateRow;
 	private calloutRow?: CalloutRow;
-	private previewEl?: HTMLElement;
-	private errorEl?: HTMLElement;
+	/** The "Command name" row: the generated name, and a duplicate said under it. */
+	private previewSetting?: Setting;
+	/** The read-only value at the end of that row, which shows the name. */
+	private previewValue?: DisplayValueComponent;
 	private saveBtnEl?: HTMLButtonElement;
 
 	constructor(
@@ -139,15 +142,23 @@ export class CommandEditorModal extends Modal {
 				: t("commandBuilder.newTitle"),
 		);
 
+		// It blocks Save, so it is said in Obsidian's warning colour (`.mod-warning`)
+		// rather than as a quiet empty state.
 		if (this.getChoices().length === 0) {
-			contentEl.createDiv({
-				cls: "callout-studio-empty-state",
+			contentEl.createEl("p", {
+				cls: "mod-warning",
 				text: t("commandBuilder.noCallouts"),
 			});
 		}
 
+		// The five choices sit together in one Obsidian setting group, the grey
+		// rounded box every other window of the plugin puts its rows in. The
+		// rows are built into the group's box (`listEl`), so each keeps taking
+		// a plain parent element.
+		const form = new SettingGroup(contentEl);
+		form.addClass("cs-editor-group");
 		this.calloutRow = buildCalloutRow(
-			contentEl,
+			form.listEl,
 			this.host,
 			() => this.getChoices(),
 			this.calloutId,
@@ -156,27 +167,25 @@ export class CommandEditorModal extends Modal {
 				this.syncVisibility();
 			},
 		);
-		this.formatRow = buildFormatRow(contentEl, (role) => {
+		this.formatRow = buildFormatRow(form.listEl, (role) => {
 			this.role = role;
 			this.syncVisibility();
 		});
-		this.headingRow = buildHeadingLevelRow(contentEl, this.headingLevel, (level) => {
+		this.headingRow = buildHeadingLevelRow(form.listEl, this.headingLevel, (level) => {
 			this.headingLevel = level;
 			this.syncVisibility();
 		});
-		this.actionRow = buildActionRow(contentEl, this.action, (action) => {
+		this.actionRow = buildActionRow(form.listEl, this.action, (action) => {
 			this.action = action;
 			this.syncVisibility();
 		});
-		this.foldRow = buildFoldStateRow(contentEl, this.fold, (fold) => {
+		this.foldRow = buildFoldStateRow(form.listEl, this.fold, (fold) => {
 			this.fold = fold;
 			this.syncVisibility();
 		});
 		this.buildPreview(contentEl);
 
-		footer
-			.createEl("button", { text: t("editor.cancel") })
-			.addEventListener("click", () => this.finish(false));
+		addCancelButton(footer, t("editor.cancel"), () => this.finish(false));
 		this.saveBtnEl = footer.createEl("button", {
 			text: t("commandBuilder.save"),
 			cls: "mod-cta",
@@ -210,17 +219,27 @@ export class CommandEditorModal extends Modal {
 		}
 	}
 
+	/**
+	 * The name the command will have (finding S8-15): **Command name**, and the
+	 * generated name under it, as Obsidian shows a value you cannot change
+	 * (`addDisplayValue`). A command the user already has is said under it,
+	 * through `setErrorMessage`, in Obsidian's warning colour.
+	 *
+	 * It is the result of the form above, so it gets a grey box of its own
+	 * rather than being one more row of the form's. It has no description line,
+	 * unlike the rows above it: the name is the line. `cs-command-name` lets the
+	 * stylesheet stack the row, so the name has the box's whole width, and draw
+	 * the value as the form's result rather than as Obsidian's muted one-line note.
+	 */
 	private buildPreview(parent: HTMLElement): void {
-		// The wrapper carries the divider above the card, and only it can —
-		// see `.cs-command-preview-row` in styles.css.
-		const row = parent.createDiv({ cls: "cs-command-preview-row" });
-		const box = row.createDiv({ cls: "cs-command-preview" });
-		box.createDiv({
-			cls: "cs-command-preview-label",
-			text: t("commandBuilder.preview"),
-		});
-		this.previewEl = box.createDiv({ cls: "cs-command-preview-name" });
-		this.errorEl = parent.createDiv({ cls: "cs-tag-error" });
+		const group = new SettingGroup(parent);
+		group.addClass("cs-editor-group");
+		this.previewSetting = new Setting(group.listEl)
+			.setName(t("commandBuilder.preview"))
+			.setClass("cs-command-name")
+			.addDisplayValue((value) => {
+				this.previewValue = value;
+			});
 	}
 
 	/** The draft as the form currently stands. */
@@ -267,19 +286,10 @@ export class CommandEditorModal extends Modal {
 		if (this.role !== "heading") this.headingRow?.dropdown.close();
 
 		const def = this.host.registry.get(this.calloutId);
-		if (this.previewEl) {
-			this.previewEl.setText(
-				def ? describeCommand(this.draft(), def) : "—",
-			);
-		}
-
-		const duplicate = this.isDuplicate();
-		if (this.errorEl) {
-			this.errorEl.setText(
-				duplicate ? t("commandBuilder.duplicate") : "",
-			);
-			this.errorEl.toggleClass("is-visible", duplicate);
-		}
+		this.previewValue?.setValue(def ? describeCommand(this.draft(), def) : "—");
+		this.previewSetting?.setErrorMessage(
+			this.isDuplicate() ? t("commandBuilder.duplicate") : null,
+		);
 
 		if (this.saveBtnEl) paintBlocked(this.saveBtnEl, this.saveBlockedReason());
 	}

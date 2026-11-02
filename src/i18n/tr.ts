@@ -37,8 +37,8 @@ export const tr: Record<string, string> = {
 	"portable.scanning": "Markdown notları okunuyor…",
 	"portable.progress": "Notlar okunuyor: {{done}} / {{total}}",
 	"portable.empty": "Dönüştürülebilecek başlık veya satır içi callout bulunamadı. Hiçbir şey değiştirilmeyecek.",
-	"portable.skipped": "Eksik veya desteklenmeyen {{count}} kullanım, elle inceleme için değiştirilmeden bırakıldı.",
 	"portable.confirmTitle": "Bu kasa kalıcı olarak dönüştürülsün mü?",
+	"portable.confirmSubtitle": "Otomatik yedek oluşturulmaz",
 	"portable.confirmBody": "{{files}} notta {{count}} kullanım dönüştürülsün ve {{links}} başlık bağlantısı güncellensin mi?\nBu işlem özgün dosyaları değiştirir ve Callout Studio'da geri alınamaz. Otomatik yedek oluşturulmaz. Önce kasanızı yedekleyin, açık notları kaydedin ve dönüşüm bitene kadar düzenlemeyi ve eşitlemeyi duraklatın.\nBir dosya değişirse veya yazma işlemi başarısız olursa dönüşüm durur. Dönüştürülmüş notlardaki değişiklikler korunur.",
 	"portable.confirmAction": "Kalıcı olarak dönüştür",
 	"portable.converting": "Seçilen değişiklikler dönüştürülüyor… Bu bölmeyi kapatmak dönüşümü durdurmaz.",
@@ -74,6 +74,7 @@ export const tr: Record<string, string> = {
 	"autocomplete.createNew": 'Oluştur "{{name}}"',
 	"metadataSuggest.finish": "Bitti",
 	"metadataSuggest.colors": "Renkler",
+	"metadataSuggest.yourWords": "Sözcükleriniz",
 	"metadataSuggest.useTyped": '"{{text}}" kullan',
 	"metadataSuggest.replaces": "{{word}} yerine geçer",
 	"metadataSuggest.themeAlso": "Temanız da bu kelimeyi biçimlendiriyor",
@@ -90,8 +91,8 @@ export const tr: Record<string, string> = {
 	"replaceModal.searchPlaceholder": "Callout ara",
 	"replaceModal.chooseFirstReplace": "Önce yerine geçecek callout'u seçin.",
 	"settings.fallbackTag": "Varsayılan",
-	"settings.fallbackTagAuto": "Otomatik varsayılan",
-	"settings.rescanVaultDesc": "Notlarınızda kullanılan ve bu listede henüz yer almayan callout türlerini ekler. Mevcut callout'larınız ve notlarınız değiştirilmez.",
+	"settings.fallbackTagAuto": "Otomatik",
+	"settings.rescanVaultDesc": "Notlarınızın kullandığı ve henüz bu listede olmayan callout türlerini ekler.",
 	"settings.rescanVaultHintAction": "Callout'ları tara",
 	"manualDiscovery.failed": "Tarama sonucu kaydedilmedi. Ayarların yazılabilir ve eşitlemenin tamamlanmış olduğundan emin olun; ardından Ayarlar → Callout türlerim → Callout'ları tara yolundan yeniden deneyin. Mevcut callout'lar değiştirilmedi.",
 	"manualDiscovery.scanning": "Taranıyor…",
@@ -99,7 +100,6 @@ export const tr: Record<string, string> = {
 		"Tarama tamamlandı: {{count}} yeni callout türü eklendi.",
 	"replaceModal.titleReplace": "Vault'ta değiştir",
 
-	"welcome.tooltip": "Callout Studio hakkında",
 	"welcome.title": "Callout Studio'ya hoş geldiniz!",
 	"welcome.tagline":
 		"Obsidian callout'larını oluşturmak, biçimlendirmek ve yönetmek için eksiksiz çözümünüz.",
@@ -107,7 +107,6 @@ export const tr: Record<string, string> = {
 		"{{plugins}} kullandığınızı fark ettik. Callout'larınızı içe aktarmak ister misiniz?",
 	"importBanner.action": "İçe aktar",
 	"importBanner.dismiss": "Kapat",
-	"welcome.previewTitle": "Aksiyon halinde görün",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio, özel bir simge, renkler ve ad ile callout'lar oluşturmanızı sağlar.\n\n" +
@@ -118,16 +117,18 @@ export const tr: Record<string, string> = {
 		"> [!{{id}}] Blok callout\n" +
 		"> Klasik callout zaten alışık olduğunuz aynı sözdizimiyle çalışır: `> [!type]`.\n\n" +
 		"Callout Studio'nun sunacağı çok daha fazlası var! [Daha fazla bilgi]({{repoUrl}}).\n",
+	"deleteModal.title": "callout sil",
 
-	"deleteModal.title": '"{{name}}" callout\'unu sil?',
 	"deleteModal.bodyInUse":
 		"Bu callout {{files}} dosyada {{count}} kez görünüyor.",
 	"deleteModal.notesUntouched":
 		"Bu yalnızca callout tanımını siler. Notlarınıza dokunulmaz, bu yüzden mevcut callout'lar yalnızca varsayılan stile döner.",
 	"deleteModal.fallbackTarget":
 		"Bu aynı zamanda varsayılan geri dönüş callout'unuz, bu yüzden kendi stili olmayan callout'lar {{fallback}} stiline geçecek.",
+	"deleteModal.subtitleFallback": "“{{name}}” · varsayılan yedek stiliniz",
+	"convertModal.title": "Düz metne dönüştür",
+	"convertModal.subtitle": "Kasanızdaki her “{{name}}”",
 	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
-	"convertModal.title": '"{{name}}" düz metne dönüştürülsün mü?',
 	"convertModal.explain":
 		"Her biri sıradan metne dönüşür: başlık ve içerik kalır, yalnızca callout biçimlendirmesi kalkar.",
 	"convertModal.typeStays": "Callout türünün kendisi listenizde kalır.",
@@ -139,14 +140,10 @@ export const tr: Record<string, string> = {
 	"deleteModal.keepsRowTheme":
 		"{{theme}} bu callout türünü tanımlıyor, bu yüzden kullanılabilir kalır ve görünümünü korur. Callout Studio yalnızca kasanızdaki notları değiştirir — temanıza ait hiçbir şeye dokunulmaz.",
 
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Callout türlerim",
 	"settings.builtInCallouts": "Yerleşik callout'lar",
 	"settings.contextMenu": "Bağlam menüsü",
-	"settings.keyboardShortcuts": "Komutlar",
 	"settings.language": "Dil",
-	"settings.languageDesc":
-		"Callout Studio görüntüleme dili. Varsayılan olarak Obsidian'ın arayüz dilini izler.",
 	"settings.importExport": "İçe aktar ve dışa aktar",
 	"settings.import": "İçe aktar…",
 	"settings.export": "Dışa aktar…",
@@ -162,6 +159,9 @@ export const tr: Record<string, string> = {
 	"settings.addNewCallout": "callout ekle",
 
 	"settings.noCalloutsNow": "Şu an özel callout yok.",
+	"settings.calloutCount": "{{count}} callout",
+	"settings.calloutCountOne": "1 callout",
+	"settings.searchCallouts": "Callout ara…",
 
 	"settings.editAria": "{{name}} düzenle",
 	"settings.moreRowActionsAria": "{{name}} için daha fazla eylem",
@@ -179,22 +179,17 @@ export const tr: Record<string, string> = {
 	"settings.colorSwatchAria": "Vurgu: {{accent}} · Arka plan: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Temanızdaki callout'lar",
-	"settings.themeCalloutsDesc":
-		"{{theme}} bunları sağlıyor veya yeniden biçimlendiriyor, bu yüzden Callout Studio bunları temanızın çizdiği haliyle bırakır ve yalnızca Block callout olarak sunar. Burada iki tür görünür: temanızın eklediği callout türleri ve görünümünü değiştirdiği yerleşik callout'lar. Temanızın eklediği callout türleri yalnızca tema etkinken listelenir.",
 	"settings.themeCalloutsDefaultTheme": "Temanız",
+	"settings.themeCalloutsEmpty": "{{theme}} şu anda hiçbir callout'u biçimlendirmiyor.",
 	"settings.themePreviewAria":
 		'"{{name}}" önizlemesi — temanızın nasıl çizdiğini görün',
 	"settings.builtInAllThemeStyled":
-		"{{theme}} tüm yerleşik callout'ları yeniden biçimlendiriyor, bu yüzden hepsi yukarıda listelenir ve Callout Studio bunlara dokunmaz. Kendi tasarımınızı yapmak için farklı bir ID ile bir callout ekleyin.",
+		"{{theme}} tüm yerleşik callout'ları biçimlendiriyor, bu yüzden Callout Studio hepsini olduğu gibi bırakır. Kendi tasarımınızı yapmak için farklı bir ID ile bir callout ekleyin.",
 	"settings.fallbackCallout": "Varsayılan geri dönüş callout'u",
 	"settings.fallbackCalloutDesc":
-		"Vault'unuzdaki tanınmayan callout türleri bu callout'un stilini devralır.",
+		"Bilinmeyen callout türleri bu stili devralır.",
 
-	"settings.globalStyleRegularTitle": "Blok callout'ları için genel stil",
-	"settings.globalStyleHeadingTitle": "Başlık callout'ları için genel stil",
-	"settings.globalStyleInlineTitle": "Satır içi callout'lar için genel stil",
 	"settings.border": "Kenarlıklar",
-	"settings.borderAll": "Tümü",
 	"settings.borderTop": "Üst",
 	"settings.borderRight": "Sağ",
 	"settings.borderBottom": "Alt",
@@ -204,14 +199,11 @@ export const tr: Record<string, string> = {
 	"settings.titleScale": "Başlık",
 	"settings.contentScale": "İçerik",
 	"settings.inlineTextScale": "Metin",
-	"settings.shapeGroup": "Şekil",
 	"settings.borderRadius": "Köşe yuvarlaklığı",
-	"settings.alignGroup": "Hizalama",
 	"settings.alignContent": "İçeriği başlıkla hizala",
 	"settings.headingSpacingGroup": "Başlık aralığı",
 	"settings.headingPadVertical": "Dikey aralık",
 	"settings.headingGap": "Başlıklar arası boşluk",
-	"settings.headingFoldGroup": "Katla",
 	"settings.headingFoldArrow": "Katlama okunu göster",
 	"settings.styleDemoName": "Örnek",
 	"settings.styleDemoInlineName": "Örnek",
@@ -223,21 +215,19 @@ export const tr: Record<string, string> = {
 	"settings.customPalettes": "Kaydedilmiş renk paletleri",
 	"settings.newPalette": "Yeni palet",
 	"settings.customPalettesEmpty": "Şu an kaydedilmiş palet yok.",
+	"settings.paletteCount": "{{count}} palet",
+	"settings.paletteCountOne": "1 palet",
 	"settings.editPaletteAria": "{{name}} paletini düzenle",
-	"settings.deletePaletteAria": "{{name}} paletini sil",
-	"settings.deletePaletteConfirm":
-		'"{{name}}" paletini sil?\nBu renkleri kullanan callout öğeleri etkilenmez.',
+	"settings.deletePaletteTitle": "Paleti sil",
+	"settings.deletePaletteBody":
+		'Bu renkleri kullanan callout öğeleri etkilenmez.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		"Üst verilerinde (\"{{key}}\") bu adı belirten callout'lar bunun yerine o adın yerleşik rengini alır. Notlarınız değişmez.",
 
 	"settings.customCommands": "Komutlar ve kısayol tuşları",
-	"settings.customCommandsDesc":
-		"Her Callout Studio komutunu ve bağlı olduğu kısayolu görün, en sık kullandığınız callout'lar için kendi komutlarınızı oluşturun. Varsayılan olarak kısayol atanmamıştır.",
-	"settings.customCommandsButton": "Komutları yönet",
+	"settings.customCommandsDesc": "Callout Studio'nun tüm komutları, kısayolları ve kendi komutlarınız.",
 
 	"commandBuilder.title": "Komutlar ve kısayollar",
-	"commandBuilder.desc":
-		"Obsidian'ın kısayol ayarlarında bir kısayol belirlemek veya değiştirmek için + düğmesini kullanın.",
 	"commandBuilder.builtIn": "Yerleşik komutlar",
 	"commandBuilder.toggleAria": "{{name}} komutunu aç veya kapat",
 	"commandBuilder.hotkeyBlank": "Boş",
@@ -247,9 +237,7 @@ export const tr: Record<string, string> = {
 	"commandBuilder.empty": "Henüz özel komut yok.",
 	"commandBuilder.unknownCommand": "bu komut",
 	"commandBuilder.editAria": "{{name}} düzenle",
-	"commandBuilder.deleteAria": "{{name}} sil",
-	"commandBuilder.deleteConfirm":
-		"{{name}} komutu silinsin mi? Ona atanmış kısayol varsa çalışmayı durduracak.",
+	"commandBuilder.deleteConfirm": "Ona atanmış tüm kısayollar çalışmayı durduracak.",
 	"commandBuilder.newTitle": "Yeni komut",
 	"commandBuilder.editTitle": "Komutu düzenle",
 	"commandBuilder.format": "Callout biçimi",
@@ -261,8 +249,9 @@ export const tr: Record<string, string> = {
 		"Bu biçim kapalı, bu yüzden siz tekrar açana kadar komut düz metin ekleyecek.",
 	"commandBuilder.roleThemeOwned":
 		"Temanız bu callout'u sağlıyor, bu yüzden yalnızca Block biçimi var.",
-	"commandBuilder.commandSuspended":
-		"Duraklatıldı: Temanız bu callout'u sağlıyor, bu yüzden yalnızca Block biçimi var. Tema bunu sağlamayı bıraktığında bu komut tekrar çalışır.",
+	"commandBuilder.commandSuspended": "Temanız bu callout'u sağladığı sürece duraklatıldı; bu durumda yalnızca blok biçimi vardır.",
+	"commandBuilder.pausedTag": "Tema tarafından duraklatıldı",
+	"commandBuilder.missingTag": "Callout eksik",
 	"commandBuilder.callout": "Callout türü",
 	"commandBuilder.calloutDesc": "Bu komutun ekleyeceği callout.",
 	"commandBuilder.headingLevel": "Başlık düzeyi",
@@ -292,10 +281,11 @@ export const tr: Record<string, string> = {
 
 	"settings.resetAll": "Sıfırla",
 	"settings.resetAllDesc":
-		"Tüm kullanıcı callout'larını siler, yerleşik callout'ları, global stilleri (kenarlıklar, yazı tipi ölçeği, şekil), kaydedilmiş renk paletlerini, sağ tık menüsü özelleştirmesini ve indirilen Material SVG'leri sıfırlar.",
+		"Tüm ayarları ve özelleştirmeleri varsayılanlarına geri yükler.",
 	"settings.resetAllButton": "Her şeyi sıfırla",
 	"notice.resetAllDone": "Her şey varsayılanlara sıfırlandı.",
 	"settings.resetIntro": "Callout Studio ile oluşturduğunuz her şeyi takdir etmek için bir an durun.",
+	"settings.resetSubtitleDefaults": "Ayarlarınız varsayılana döner",
 	"settings.resetDeletes": "Bunların hepsi silinmek üzere:",
 	"settings.resetRestores": "Bunlar varsayılanlara dönecek:",
 	"settings.resetItemCallouts": "{{count}} özel callout türü",
@@ -309,9 +299,10 @@ export const tr: Record<string, string> = {
 	"settings.resetItemHeading": "Başlık callout ayarları",
 	"settings.resetItemInline": "Satır içi callout ayarları",
 	"settings.resetItemThemeCalloutStyles": "Temanızın callout stilleri",
+	"settings.resetItemAutocomplete": "Otomatik tamamlama ve meta veri ayarları",
 	"settings.resetItemFallback": "Yedek stil",
 	"settings.resetItemIconLibraries": "Simge kitaplıklarının sırası ve gizli kitaplıklar",
-	"settings.resetAllConfirmAfter": "Merak etmeyin: sıfırlamadan önce mevcut kurulumunuzun bir yedeğini kaydederiz. Ayarlardaki Yedekler bölümünden istediğiniz zaman geri yükleyebilirsiniz.\nBir eşitleme hizmeti kullanıyorsanız, sıfırlama diğer cihazlarınıza da ulaşabilir.",
+	"settings.resetAllConfirmAfter": "Merak etmeyin: sıfırlamadan önce mevcut kurulumunuzun yedeğini kaydediyoruz. Ayarlardaki Önceki bir sürümü geri yükle seçeneğiyle istediğiniz zaman geri getirebilirsiniz.\nBir eşitleme hizmeti kullanıyorsanız sıfırlama diğer cihazlarınıza da ulaşabilir.",
 	"settings.resetNothing": "Sıfırlanacak bir şey yok: her şey zaten varsayılanlarda.",
 
 	"notice.customCommandMissingCallout":
@@ -395,13 +386,13 @@ export const tr: Record<string, string> = {
 	"editor.foldClosed": "Varsayılan olarak kapalı",
 	"editor.cancel": "İptal",
 	"editor.saveChanges": "Değişiklikleri kaydet",
-	"editor.saving": "Kaydediliyor…",
 	"editor.saveFailed": "Kaydetme tamamlanamadı. Bu düzenleyici hâlâ açıksa açık bırakın; depolamayı ve eşitlemeyi kontrol ettikten sonra yeniden deneyin. Bazı ayarlar veya not değişiklikleri kaydedilmiş olabilir.",
 	"editor.createCallout": "Callout oluştur",
 	"editor.nameRequired": "Callout oluşturmadan önce görünen ad gereklidir.",
 	"editor.noChangesToSave": "Herhangi bir değişiklik yapılmadı.",
-	"editor.downloadingIcon": "Simge indiriliyor",
 	"editor.idEmpty": "En az bir ID gereklidir",
+	"editor.idAlreadyHere": "Bu kimlik zaten var",
+	"editor.idTooLong": "Kimlik en fazla {{max}} karakter olabilir",
 	"editor.idExists": "Bu ID ile bir callout zaten mevcut",
 	"editor.idConflict": "Bu ID mevcut bir callout ile çakışıyor",
 	"editor.idDashConflict":
@@ -430,7 +421,7 @@ export const tr: Record<string, string> = {
 	"editor.loremIpsumShort":
 		"Hafif bir esinti ağaçların arasından geçiyor.",
 	"editor.sampleInlineText":
-		"İşte bir paragraf içinde satır içi bir [!{id}] hapı.",
+		"İşte bir paragraf içinde satır içi bir [!{id}]{{title}} hapı.",
 	"editor.previewReadOnly": "Canlı önizleme düzenlenemez",
 	"noteChanges.title": "Notlarınız güncellensin mi?",
 	"noteChanges.leave": "Olduğu gibi bırak",
@@ -463,7 +454,6 @@ export const tr: Record<string, string> = {
 	"palette.namePlaceholder": "Paletim",
 	"palette.nameExists": "Bu adla bir palet zaten var",
 	"palette.saveBlockedName": "Bu adla bir palet zaten var. Kaydetmek için farklı bir ad seçin.",
-	"palette.metadataName": "Callout üst verisinde: {{key}}",
 	"palette.metadataNameExists":
 		'Başka bir palet callout üst verisinde zaten "{{key}}" olarak yazılmış. Farklı bir ad seçin.',
 	"palette.metadataNameShared":
@@ -475,17 +465,15 @@ export const tr: Record<string, string> = {
 	"palette.renameNotesFailed":
 		"Bazı notlar güncellenemedi. Güncellenenler kaydedildi; geri kalanı hâlâ eski adı kullanıyor.",
 	"palette.baseColor": "Temel renk",
-	"palette.baseColorHint":
-		"Arka plan rengini otomatik olarak buna uyduracağız. İsterseniz {{link}} ile ayrı olarak kontrol edebilirsiniz.",
-	"palette.baseColorHintLink": "buraya tıklayarak",
+	"palette.colorViewAdvanced": "Her rengi ayrı ayrı ayarla",
+	"palette.colorViewSimple": "Tek bir temel renge geri dön",
 	"palette.advancedColors": "Renkler",
-	"palette.advancedColorsHint":
-		"{{mode}} modu için renkler düzenleniyor - diğer mod otomatik olarak güncellenir. Kontrol etmek için Obsidian temasını değiştirin.",
-	"palette.revertHint":
-		"Bunun yerine tek bir temel renk mi tercih edersiniz? {{link}}.",
-	"palette.revertHintLink": "Geri al",
-	"palette.lightMode": "Açık",
-	"palette.darkMode": "Koyu",
+	"palette.lightModeColors": "Açık mod renkleri",
+	"palette.darkModeColors": "Koyu mod renkleri",
+	"palette.modeColorsHintLight": "Bu değişiklikler yalnızca açık moda uygulanır. Koyu mod kendi renklerini korur.\nBunları düzenlemek için yukarıdaki ay düğmesine basın.",
+	"palette.modeColorsHintDark": "Bu değişiklikler yalnızca koyu moda uygulanır. Açık mod kendi renklerini korur.\nBunları düzenlemek için yukarıdaki güneş düğmesine basın.",
+	"palette.showLightMode": "Açık modu göster",
+	"palette.showDarkMode": "Koyu modu göster",
 	"palette.accentColor": "Vurgu rengi",
 	"palette.backgroundColorChannel": "Arka plan rengi",
 	"palette.textColorChannel": "Metin rengi",
@@ -556,6 +544,7 @@ export const tr: Record<string, string> = {
 	"iconPicker.searchMaterial": "Material simgelerini ara",
 	"iconPicker.searchEmoji": "Emoji ara",
 	"iconPicker.skinTone": "Ten rengi",
+	"iconPicker.skinToneDefault": "Varsayılan",
 	"iconPicker.allCategories": "Tüm kategoriler",
 	"iconPicker.noIconSelected": "Simge seçilmedi",
 	"iconPicker.chooseFirst": "Önce bir simge seçin.",
@@ -596,7 +585,6 @@ export const tr: Record<string, string> = {
 	"iconPicker.allSources": "Tüm kaynaklar",
 	"iconPicker.searchAllSources": "Tüm simge kaynaklarında ara",
 	"iconPicker.chooseSource": "Kaynak seç",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "Kullanılabilir kitaplıklar",
 	"iconPicker.librariesToDownload": "İndirilecek kitaplıklar",
 	"iconPicker.groupCurrent": "Geçerli simge",
@@ -749,6 +737,10 @@ export const tr: Record<string, string> = {
 	"iconPack.artworkRestored": "{{names}} için simge çizimleri indirildi.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio simge paketini diske kaydedemedi, bu nedenle bir sonraki seferde yeniden indirilmesi gerekecek. Seçtiğiniz simgeler hâlâ ayarlarınıza kaydedildi.",
+	"settings.colorsAndIcons": "Renkler ve simgeler",
+	"settings.iconLibrariesDesc": "Simge kitaplıklarını yeniden sırala ve ek kitaplıkları indir.",
+	"settings.iconLibrariesEditorOpen":
+		"Önce callout düzenleyicisindeki işinizi bitirin. Oradaki kaydedilmemiş simge, burada sildiğiniz bir kitaplıktan geliyor olabilir.",
 	"iconLibraries.manage": "Simge kitaplıklarını yönet",
 	"iconLibraries.title": "Simge kitaplıkları",
 	"iconLibraries.desc":
@@ -772,6 +764,7 @@ export const tr: Record<string, string> = {
 	"iconLibraries.inUseMore": "ve {{count}} tane daha",
 	"iconLibraries.inUseKeeps":
 		"Simgelerini korurlar — her simgenin bir kopyası ayarlarınızla birlikte kaydedilir. Daha sonra {{name}} kitaplığından yeni simgeler seçmek için kitaplığı yeniden indirin.",
+	"iconLibraries.resetSubtitle": "Eklentinin özgün kitaplıklarına dön",
 	"iconLibraries.resetConfirm":
 		"Bu işlem kitaplıkları eklentinin geldiği haline döndürür: varsayılan sıra, hiçbir şey gizli değil ve indirilen kitaplıkların hiçbiri yok. Şunlar silinecek:",
 	"iconLibraries.resetKeeps":
@@ -779,6 +772,9 @@ export const tr: Record<string, string> = {
 	"iconLibraries.resetButton": "Sıfırla",
 
 	// Icon licences & credits
+	"license.title": "Lisans",
+	"license.openSourceBeforeLink": "Callout Studio açık kaynaklıdır ve öyle kalacaktır. Lisansına ",
+	"license.openSourceLink": "buradan ulaşabilirsiniz",
 	"credits.title": "Simge lisansları ve katkılar",
 	"credits.introBeforeNotices":
 		"Callout Studio açık kaynak simge kitaplıkları kullanır; her kitaplığın lisansını, atıf bilgisini ve değişikliklerini aşağıda görüntüleyin veya ",
@@ -800,32 +796,53 @@ export const tr: Record<string, string> = {
 	"heading.toggleFold": "Katlamayı aç/kapat",
 
 	"settings.globalSettings": "Genel Callout Studio stil seçenekleri",
+	"settings.calloutStyle": "Genel stil",
+	"settings.menusAndCommands": "Menüler ve komutlar",
+	"settings.editorBox": "Düzenleyici",
+	"settings.autocompleteAndMetadata": "Otomatik tamamlama ve meta veri",
+	"settings.autocompleteAndMetadataDesc": "Bir callout yazarken açılan listeler ve | sonrasındaki meta veri.",
+	"settings.calloutAutocomplete": "Callout otomatik tamamlama",
+	"settings.calloutAutocompleteDesc": "[! yazdığınızda callout listesini gösterir.",
+	"settings.suggestThemeCallouts": "Temanızın callout'larını dahil et",
+	"settings.suggestThemeCalloutsDesc": "Temanızın eklediği callout'ları listeler.",
+	"settings.metadataPage": "Meta veri",
+	"settings.metadataPageDesc": "Bir callout'ta | sonrasındaki renkler ve sözcükler.",
+	"settings.metadataColors": "Meta veri renkleri",
+	"settings.metadataColorsDesc": "| sonrasındaki bir renk yalnızca o callout'u renklendirir, [!note|red] gibi.",
+	"settings.metadataAutocomplete": "Meta veri otomatik tamamlama",
+	"settings.metadataAutocompleteDesc": "Bir callout'ta | yazdığınızda renk ve sözcük listesini gösterir.",
+	"settings.suggestThemeMetadata": "Temanızın sözcüklerini dahil et",
+	"settings.suggestThemeMetadataDesc": "Temanızın tepki verdiği sözcükleri listeler.",
+	"settings.metadataWords": "Sözcükleriniz",
+	"settings.metadataWordsDesc": "| sonrasında önerilecek sözcükler; başka bir eklentinin okuduğu sözcükler gibi.",
+	"settings.metadataWordsPlaceholder": "Sözcük ekle",
+	"settings.addMetadataWord": "Sözcük ekle",
+	"settings.metadataWordAlreadyHere": "Bu sözcük listede zaten var",
+	"settings.metadataWordTooLong": "Bir sözcük en fazla {{max}} karakter olabilir",
+	"settings.maxMetadataWords": "En fazla {{max}} sözcük. Başka bir tane eklemek için birini silin.",
+	"settings.buildFailed": "Callout Studio ayarlarını çizemedi; Obsidian'ı yeniden başlatın, tekrar olursa bildirin.",
 	"settings.globalSettingsRegularDesc":
-		"Vault'unuzdaki her block callout'un kenarlığını, köşe yuvarlaklığını, yazı tipi ölçeğini ve hizalamasını ayarlayın.",
+		"Kenarlık, köşe yuvarlaklığı, yazı tipi ölçeği ve hizalama.",
 	"settings.globalSettingsHeadingDesc":
-		"Vault'unuzdaki her başlık callout'unun kenarlığını, şeklini ve dikey boşluğunu ayarlayın.",
+		"Kenarlık, şekil ve dikey boşluk.",
 	"settings.globalSettingsInlineDesc":
-		"Vault'unuzdaki her satır içi callout'un kenarlığını ve şeklini ayarlayın.",
-	"settings.globalSettingsCustomize": "Özelleştir",
+		"Kenarlık ve şekil.",
 	"settings.themeCalloutStyles": "Temanızın callout stillerini kullan",
-	"settings.themeCalloutStylesDesc":
-		"Açık: temanızın biçimlendirdiği callout'lar temanızın görünümünü korur.\nKapalı: Callout Studio her callout'u kendisi çizer ve temanızın callout stilleri kapatılır.",
+	"settings.themeCalloutStylesDesc": "Açıkken temanızın biçimlendirdiği callout'lar temanın görünümünü korur ve yalnızca blok callout olarak görünür. Kapalıyken Callout Studio tüm callout'ları çizer.",
 
-	"settings.calloutTypeRegular": "Blok callout",
-	"settings.calloutTypeHeading": "Başlık callout'u",
-	"settings.calloutTypeInline": "Satır içi callout",
+	"settings.calloutTypeRegular": "Blok callout stili",
+	"settings.calloutTypeHeading": "Başlık callout stili",
+	"settings.calloutTypeInline": "Satır içi callout stili",
 
-	"settings.customizeMenu": "Menü öğelerini özelleştir",
-	"settings.customizeMenuDesc":
-		"Her callout türü için hangi sağ tık eylemlerinin görüneceğini seçin ve sırasını değiştirin. Kaynak modunda ve Canlı Önizleme'de çalışır.",
-	"settings.customizeMenuButton": "Menü öğelerini özelleştir",
+	"settings.customizeMenuDesc": "Her callout türü için sağ tık eylemlerini seçin ve sıralayın.",
 	"menuCustomize.title": "Sağ tık menüsünü özelleştir",
-	"menuCustomize.desc":
-		"Eylemleri açıp kapatın ve yeniden sıralamak için tutamacı sürükleyin. Değişiklikler otomatik olarak kaydedilir.",
 	"menuCustomize.regular": "Blok callout",
 	"menuCustomize.heading": "Başlık callout'u",
 	"menuCustomize.inline": "Satır içi callout",
 	"menuCustomize.dragHandle": "Yeniden sıralamak için sürükleyin",
+	"menuCustomize.hiddenHeading": "Başlık callout menüsünden gizlenenler",
+	"menuCustomize.hiddenInline": "Satır içi callout menüsünden gizlenenler",
+	"menuCustomize.hiddenRegular": "Blok callout menüsünden gizlenenler",
 	"menuItem.createOrEdit": "Callout oluştur veya düzenle",
 	"menuItem.openSettings": "Ayarları aç",
 	"menuItem.copyMarkdown": "Markdown'ı kopyala",
@@ -837,10 +854,10 @@ export const tr: Record<string, string> = {
 	"confirm.ok": "Sil",
 	"confirm.cancel": "İptal",
 	"confirm.acknowledge": "Okudum ve anladım",
+	"confirm.subtitleName": "“{{name}}”",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Komutu sil",
-	"confirm.titleDeletePalette": "Paleti sil",
 	"confirm.titleDeleteImage": "Resmi sil",
 	"confirm.titleDeleteLibrary": "Simge kitaplığını sil",
 	"confirm.titleResetLibraries": "Simge kitaplıklarını sıfırla",
@@ -853,7 +870,6 @@ export const tr: Record<string, string> = {
 		"Vault dosyalarında {{count}} callout başlığı güncellendi: {{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated":
 		"Vault dosyalarında {{count}} callout'un katlama işareti güncellendi.",
-	"vault.replaceWith": "Şununla değiştir:",
 	"vault.confirmReplace": "Değiştir",
 	"vault.replacePromptInUse":
 		'"{{name}}" {{files}} dosyada {{count}} kez kullanılıyor. Onu değiştirmek için bir callout seçin:',
@@ -891,7 +907,6 @@ export const tr: Record<string, string> = {
 	"vaultStats.roleBlock": "Blok",
 	"vaultStats.roleHeading": "Başlık",
 	"vaultStats.roleInline": "Satır içi",
-	"portable.subtitle": "Callout Studio’yu kullanmayı bırakmadan önce hangi başlık ve satır içi callout’ların standart Markdown’a dönüştürüleceğini seçin.",
 	"portable.customize": "Özel değiştirme…",
 	"portable.editCustom": "Özel değiştirmeyi düzenle…",
 	"portable.restoreDefault": "Varsayılan değiştirmeyi geri yükle",
@@ -904,13 +919,13 @@ export const tr: Record<string, string> = {
 
 	"usage.title": "Callout’ları bul",
 	"usage.command": "Callout’ları bul",
-	"usage.subtitle": "Kasanızdaki callout’ları bulun ve kaynaklarına gidin.",
 	"usage.browse": "Göz at",
 	"usage.allTypes": "Tüm türler",
 	"usage.registeredCallouts": "Kayıtlı callout türleri",
 	"usage.unregisteredCallouts": "Kayıtlı olmayan callout türleri",
 	"usage.summary": "{{files}} dosyada {{count}} kullanım",
 	"usage.allRoles": "Tüm biçimler",
+	"usage.filterFormat": "Biçime göre filtrele",
 	"usage.failed": "Callout kullanımları güncellenemedi.",
 	"usage.loading": "Markdown notları taranıyor…",
 	"usage.partial": "Sonuçlar eksik: {{count}} okuma hatası.",
@@ -923,7 +938,6 @@ export const tr: Record<string, string> = {
 	"usage.missing": "Bu not artık mevcut değil. Sonuçlar güncelleniyor…",
 	"usage.changed": "Bu kullanım değişti veya yeni konumu belirsiz. Sonuçlar güncelleniyor…",
 	"usage.openFailed": "Bu callout kullanımı açılamadı.",
-	"usage.menuCount": "Callout’ları bul ({{count}})",
 	"usage.menuIncomplete": "Callout’ları bul — tarama tamamlanmadı",
 	"usage.menu": "Callout’ları bul",
 	"usage.closeSettings": "Callout sonuçlarını kenar çubuğunda görmek için Ayarlar bölümünü kapatın.",
@@ -1101,18 +1115,14 @@ export const tr: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Başlık {{length}} karakter; {{max}} karaktere kısaltıldı.",
 
-	"footer.prompt":
-		"Sorular, hatalar veya fikirler mi var? Sizden haber almayı çok isterim!{{break}} {{issue}} veya {{email}}.",
-	"footer.openIssue": "GitHub issue aç",
-	"footer.sendEmail": "bana e-posta gönder",
+	"footer.openIssue": "Issue aç",
 	"footer.sourceCode": "Kaynak kod",
-	"footer.contribute": "Katkıda bulun",
-	"footer.license": "Eklenti lisansı",
-	"footer.iconCredits": "Simge lisansları",
-	"settings.deletePaletteConfirmLinkedOne":
-		'"{{name}}" paleti silinsin mi?\n1 callout bunu kullanıyor. Renklerini korur ve daha sonra düzenleyicisindeki Renk satırından yeniden bağlayabilirsiniz.',
-	"settings.deletePaletteConfirmLinked":
-		'"{{name}}" paleti silinsin mi?\n{{count}} callout bunu kullanıyor. Renklerini korurlar ve daha sonra düzenleyicilerindeki Renk satırından yeniden bağlayabilirsiniz.',
+	"settings.about": "Hakkında",
+	"settings.version": "Sürüm",
+	"settings.deletePaletteBodyLinkedOne":
+		'1 callout bunu kullanıyor. Renklerini korur ve daha sonra düzenleyicisindeki Renk satırından yeniden bağlayabilirsiniz.',
+	"settings.deletePaletteBodyLinked":
+		'{{count}} callout bunu kullanıyor. Renklerini korurlar ve daha sonra düzenleyicilerindeki Renk satırından yeniden bağlayabilirsiniz.',
 	"notice.palettesMerged":
 		"Aynı renklere sahip {{count}} kayıtlı renk birleştirildi: {{names}}. Bunları kullanan callout'lar renklerini korur ve artık kalan renge bağlıdır.",
 	"editor.colorsDescDeleted":
@@ -1124,9 +1134,8 @@ export const tr: Record<string, string> = {
 		'Bu renkler "{{name}}" ile aynı. İki kayıtlı renk aynı olamaz — bir rengi değiştirin veya {{link}}.',
 	"palette.colorExistsUseLink": "mevcut olanı kullanın",
 	"locale.downloading": "Çeviri indiriliyor…",
+	"locale.downloaded": "Çeviri indirildi.",
 	"locale.notDownloaded": "{{name}} henüz indirilmedi",
-	"locale.notDownloadedDesc":
-		"Callout Studio, çeviri indirilene kadar İngilizce gösterir. Obsidian bir sonraki başlatıldığında tekrar deneyecek.",
 	"locale.retry": "Yeniden dene",
 	"locale.diskWriteFailed":
 		"Callout Studio çeviriyi diske kaydedemedi; bu nedenle bir dahaki sefere yeniden indirilmesi gerekecek.",
@@ -1139,6 +1148,7 @@ export const tr: Record<string, string> = {
 	"notice.exportCssEnabled":
 		"Bu snippet vault içinde açık. Callout Studio bu callout'ları zaten biçimlendiriyor ve snippet dışa aktarıldığı zamanki stili koruyor.",
 	"confirm.titleOverwriteSnippet": "CSS snippet'in üzerine yaz",
+	"confirm.subtitleOverwriteSnippet": "Callout Studio yazdığından beri düzenlendi",
 	"confirm.overwriteSnippet":
 		"Snippets klasöründeki CSS snippet, Callout Studio yazdıktan sonra değişti. Yeniden dışa aktarma dosyanın tamamını değiştirir.",
 	"confirm.overwriteSnippetOk": "Üzerine yaz",
@@ -1150,13 +1160,14 @@ export const tr: Record<string, string> = {
 	"export.formatCss": "Bağımsız CSS anlık görüntüsü",
 	"export.formatCssDesc":
 		"Callout Studio'nun çalışmadığı web siteleri veya vault'lar içindir. Yalnızca blok callout'larını kapsar ve değişikliklerden sonra yeniden dışa aktarılmalıdır.",
+	"export.formatCssAction": "Dışa aktar",
 	"quickInsert.readingViewHint": "Bu not okuma modunda açık, bu yüzden hiçbir şey eklenemez.",
 	"quickInsert.readingView": "Bir callout eklemek için kaynak moduna veya Canlı Önizleme'ye geçin.",
 	"quickInsert.noCursorHint": "Bu notta imleç yok, bu yüzden eklenecek bir yer yok.",
 	"quickInsert.noCursor": "Callout'u eklemek istediğiniz yere notta imleci yerleştirin, sonra tekrar deneyin.",
 	"notice.legacyDiscoveryArchiveFailed": "Yükseltme kurtarma kopyası tamamlanamadı. Önceki yerel keşif önbelleği ve başlangıç CSS'si değiştirilmeden korundu. Depolama alanının yazma izinlerini ve boş alanı kontrol edin, ardından yeniden denemek için Obsidian'ı yeniden başlatın.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "Duraklatıldı: callout eksik. Bu komutu geri yüklemek için onu bulun veya oluşturun, ya da başka bir tür seçmek için komutu düzenleyin.",
+	"commandBuilder.missingCallout": "Eksik callout'u yeniden oluşturana ya da başka birini seçene kadar duraklatıldı.",
 	"confirm.titleRestoreSettings": "Bu ayarları geri yükle",
 	"confirm.titleCreateSettingsFile": "Ayarlar dosyası oluştur",
 	"confirm.saveDisplayedSettings":
@@ -1246,9 +1257,11 @@ export const tr: Record<string, string> = {
 	"settings.resetNotSaved": "Sıfırlama gösteriliyor ancak henüz kaydedilemedi, bu nedenle ayarlar dosyanız hâlâ önceki kurulumu tutuyor. Callout Studio ayarlarındaki kaydetme durumunu kontrol edin.",
 	"confirm.titleResetEverything": "Her şeyi sıfırla",
 	"confirm.titleReplaceUnreadable": "Ayarlar dosyasını değiştir",
+	"confirm.subtitleReplaceUnreadable": "Önce birebir bir kopya kaydedilir",
 	"confirm.replaceUnreadable": "Mevcut dosyanın birebir bir kopyası önce eklentinin yedekler klasörüne kaydedilir. Dosya ardından burada gösterilen kurulumla değiştirilir ve senkronizasyon hizmetiniz onu diğer cihazlarınıza gönderir.",
 	"confirm.replaceUnreadableSalvage": "Mevcut dosyanın birebir bir kopyası önce eklentinin yedekler klasörüne kaydedilir. İçindeki ayarlar burada gösterilen kurulumla birleştirilir ve dosya, her cihazın onu tekrar okuyabilmesi için yeniden yazılır.",
 	"confirm.titleDiscardRecoveryCopy": "Kurtarma kopyasını at",
+	"confirm.subtitleDiscardRecoveryCopy": "Bu cihazda kaydetme duraklatıldı",
 	"confirm.discardRecoveryCopy":
 		"Bu cihazın kurtarma kopyası okunamıyor, bu nedenle kaydetme bu cihazda duraklatıldı. Bunun birebir bir kopyası önce eklentinin yedekler klasörüne kaydedilir. Ardından burada gösterilen kurulumla değiştirilir. Ayarlar dosyanız değiştirilmez.",
 	"vault.undoRewrite": "Geri al",
@@ -1446,7 +1459,7 @@ export const tr: Record<string, string> = {
 	"recovery.delete": "Sil",
 
 	// Version history
-	"saveStatus.guide.versions": "Kaydetme yeniden çalıştığında, sürüm geçmişinden önceki bir sürümü de geri yükleyebilirsiniz.",
+	"saveStatus.guide.versions": "Kaydetme yeniden çalıştığında, Önceki bir sürümü geri yükle seçeneğiyle kayıtlı bir sürüme de dönebilirsiniz.",
 	"saveStatus.goToVersions": "Sürüm geçmişine git",
 	"versions.title": "Sürüm geçmişi",
 	"versions.intro": "Callout Studio yapılandırmanızın sürümlerini otomatik olarak kaydeder.\nEski sürümler zamanla temizlenir.\nBir sürümü geri yüklemek, eşitlenen tüm cihazlarda mevcut yapılandırmanızı değiştirir.",
@@ -1466,13 +1479,14 @@ export const tr: Record<string, string> = {
 	"versions.reason.beforeImport": "İçe aktarmadan önce",
 	"versions.reason.beforeRepair": "Ayarlar dosyası onarılmadan önce",
 	"versions.restoreTitle": "Bu sürümü geri yükle",
-	"versions.restoreBody": "Mevcut yapılandırmanız {{when}} tarihli “{{name}}” ile değiştirilir ({{count}} fark).\nGeri dönebilmeniz için mevcut yapılandırmanız önce bir sürüm olarak kaydedilir.\nEşitleme hizmetiniz ardından geri yüklenen yapılandırmayı diğer cihazlarınıza gönderir.",
+	"versions.subtitle": "“{{name}}” · {{when}}",
+	"versions.restoreBody": "Mevcut kurulumunuz değiştirilecek ({{count}} fark).\nÖnce bir sürüm olarak kaydedilir, böylece ona geri dönebilirsiniz.\nSenkronizasyon hizmetiniz ardından geri yüklenen kurulumu diğer cihazlarınıza gönderir.",
 	"versions.restoreSame": "Bu sürüm mevcut yapılandırmanızla aynı, dolayısıyla geri yüklenecek bir şey yok.",
 	"versions.restored": "{{when}} tarihli “{{name}}” geri yüklendi.",
 	"versions.backupFailed": "Hiçbir şey geri yüklenmedi: mevcut yapılandırmanız önce bir sürüm olarak kaydedilemedi. Kullanılabilir depolama alanını kontrol edip yeniden deneyin.",
 	"versions.restoreFailed": "Sürüm geri yüklenemedi. Hiçbir şey değiştirilmedi.",
 	"versions.deleteTitle": "Bu sürümü sil",
-	"versions.deleteAvailableBody": "{{when}} tarihli “{{name}}” sürümü ve kullanılabilir tüm kopyaları kalıcı olarak silinecek.",
+	"versions.deleteAvailableBody": "Bu sürüm ve mevcut tüm kopyaları kalıcı olarak silinecek.",
 	"versions.deleteSyncedFiles": "Bu dosyaların silinmesi diğer cihazlarınıza eşitlenebilir. Bu cihazlardaki yerel kopyalar kalabilir.",
 	"versions.deleteFinal": "Bu işlem geri alınamaz. Mevcut yapılandırmanız etkilenmez.",
 	"versions.deleted": "{{when}} tarihli “{{name}}” silindi.",
@@ -1481,10 +1495,10 @@ export const tr: Record<string, string> = {
 	"versions.details.difference": "Mevcut kurulumunuzdan {{count}} fark",
 	"versions.details.differences": "Mevcut kurulumunuzdan {{count}} fark",
 	"versions.details.comparisonUnavailable": "Karşılaştırma kullanılamıyor",
-	"notice.unsavedChangesKept": "Bu cihazdaki bazı değişiklikler henüz kaydedilmemişti ve başka bir cihazdan gelen daha yeni ayarlar bunların yerini aldı. Sürümünüz önce kaydedildi: geri almak için Callout Studio ayarlarında sürüm geçmişini açın.",
-	"settings.versionHistory": "Sürüm geçmişi",
+	"notice.unsavedChangesKept": "Bu cihazdaki bazı değişiklikler henüz kaydedilmemişti ve başka bir cihazdan gelen daha yeni ayarlar bunların yerini aldı. Sürümünüz önce kaydedildi: geri almak için Callout Studio ayarlarında Önceki bir sürümü geri yükle seçeneğini açın.",
+	"settings.versionHistory": "Önceki bir sürümü geri yükle",
 	"settings.versions": "Önceki sürümler",
-	"settings.versionsDesc": "Callout Studio yapılandırmanızın sürümlerini otomatik olarak kaydeder.\nKarşılaştırın veya birine geri dönün.",
+	"settings.versionsDesc": "Mevcut kurulumunuzu daha önce kaydedilmiş bir sürümle değiştirin.",
 	"settings.versionsButton": "Sürümleri görüntüle",
 	"noteChanges.callouts": "{{count}} callout",
 	"noteChanges.calloutsOne": "1 callout",

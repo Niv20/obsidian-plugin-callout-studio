@@ -2,6 +2,8 @@
 
 There's a lot to explore in Callout Studio - from callout types and custom colors to icons, styling, and handy workflows. Dive into any topic that catches your eye, or start wherever you like.
 
+Every Callout Studio setting, and each of your own callouts, can be found from Obsidian's **Search settings…** field, at the top of Obsidian's settings. Choosing a result opens the right page and highlights the row.
+
 | Chapter                                                                    | What it covers                                                                                                                  |
 | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | [01 - The three callout types](01-the-three-callout-types.md)              | Use one callout type as a block, heading, or inline callout.                                                                    |
@@ -22,6 +24,7 @@ There's a lot to explore in Callout Studio - from callout types and custom color
 | [16 - Advanced heading callouts](16-advanced-heading-callouts.md)          | Use heading callouts in the Outline, links, and tables of contents.                                                             |
 | [17 - Theme integration](17-theme-integration.md)                          | Understand which callouts your theme controls, and how the windows follow it.                                                   |
 | [18 - Callout metadata](18-callout-metadata.md)                            | Color one callout with `[!type\|pink]`, combine words for your theme, and type them from the menu.                             |
+| [19 - The brush mascot](19-the-brush-mascot.md)                            | Meet the paintbrush that reacts in empty lists, searches, confirmations and notices.                                            |
 
 ---
 

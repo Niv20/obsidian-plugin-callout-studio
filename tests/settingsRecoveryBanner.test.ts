@@ -42,7 +42,7 @@ describe("missing settings recovery banner", () => {
 			await h.host.saveSettings();
 			assert.equal(container.querySelector(".cs-readonly-banner-title")?.textContent, "Saving is paused");
 			assert.deepEqual(container.querySelectorAll("button").map(button => button.textContent), ["Check again", "Restore these settings"]);
-			assert.equal(container.querySelector(".mod-warning"), null);
+			assert.equal(container.querySelector(".mod-destructive"), null);
 		} finally { dispose(); h.host.settingsWriter.destroy(); }
 	});
 	for (const recovered of [true, false]) {
@@ -53,7 +53,7 @@ describe("missing settings recovery banner", () => {
 				assert.deepEqual(h.labels(), ["Check again", restore]);
 				assert.equal(h.button("Check again").hasClass("mod-cta"), true, "checking is the first step");
 				assert.equal(h.button(restore).hasClass("mod-cta"), false);
-				assert.equal(h.container.querySelector(".mod-warning"), null);
+				assert.equal(h.container.querySelector(".mod-destructive"), null);
 			} finally { h.dispose(); }
 		});
 	}
@@ -123,7 +123,7 @@ describe("missing settings recovery banner", () => {
 	it("falls back to revised English when an existing translation only contains the old reset wording", async () => {
 		const locale = getLocale();
 		const original = Object.getOwnPropertyDescriptor(ConfirmModal.prototype, "confirm")!;
-		let confirmation: { title: string; message: string; confirmLabel: string; confirmClass: string } | undefined;
+		let confirmation: { title: string; message: string; confirmLabel: string; confirmKind: string } | undefined;
 		try {
 			registerLocale("test-old-recovery", {
 				"saveStatus.newFile": "Obsolete action", "confirm.titleStartFresh": "Obsolete title",
@@ -140,7 +140,7 @@ describe("missing settings recovery banner", () => {
 			assert.equal(await confirmFreshStart({} as App, null, async () => true, true), false);
 			assert.equal(confirmation?.title, en["confirm.titleRestoreSettings"]);
 			assert.equal(confirmation?.confirmLabel, "Restore these settings");
-			assert.equal(confirmation?.confirmClass, "mod-cta");
+			assert.equal(confirmation?.confirmKind, "cta");
 			// Plain words, the same safety facts: what is saved, what is backed up
 			// first, what reaches the other devices, and the last look for the file.
 			assert.equal(confirmation?.message, en["confirm.saveDisplayedSettings"]);
@@ -183,7 +183,7 @@ describe("the way out of an unreadable file", () => {
 			await settle();
 			assert.ok(h.container.textContent.includes(en["saveStatus.diagnosis.mergeMarkers"]!));
 			const replace = h.buttons().find(button => button.textContent === en["saveStatus.replaceUnreadable"]);
-			assert.ok(replace?.hasClass("mod-warning"));
+			assert.ok(replace?.hasClass("mod-destructive") && !replace.hasClass("mod-cta"), "the quiet red, not the solid one");
 		} finally { h.dispose(); }
 	});
 
@@ -219,7 +219,7 @@ describe("the way out of an unreadable file", () => {
 		const confirm = Object.getOwnPropertyDescriptor(ConfirmModal.prototype, "confirm")!;
 		const classes: string[] = [];
 		ConfirmModal.prototype.confirm = function (this: ConfirmModal) {
-			classes.push((this as unknown as { confirmClass: string }).confirmClass);
+			classes.push((this as unknown as { confirmKind: string }).confirmKind);
 			return Promise.resolve(true);
 		};
 		const h = unreadable("combined");
@@ -227,11 +227,11 @@ describe("the way out of an unreadable file", () => {
 			await settle();
 			const replace = h.buttons().find(button => button.textContent === en["saveStatus.replaceUnreadable"])!;
 			assert.ok(replace.hasClass("mod-cta"), "not red: nothing is lost");
-			assert.ok(!replace.hasClass("mod-warning"));
+			assert.ok(!replace.hasClass("mod-destructive"));
 			const tryAgain = h.buttons().find(button => button.textContent === en["saveStatus.tryAgain"])!;
 			assert.ok(!tryAgain.hasClass("mod-cta"), "one main button");
 			replace.fire("click"); await settle(); await settle();
-			assert.deepEqual(classes, ["mod-cta"], "and its confirmation is not a warning either");
+			assert.deepEqual(classes, ["cta"], "and its confirmation is not red either");
 			assert.deepEqual(h.calls, ["replace"]);
 		} finally { h.dispose(); Object.defineProperty(ConfirmModal.prototype, "confirm", confirm); }
 	});
@@ -240,7 +240,7 @@ describe("the way out of an unreadable file", () => {
 		const confirm = Object.getOwnPropertyDescriptor(ConfirmModal.prototype, "confirm")!;
 		const classes: string[] = [];
 		ConfirmModal.prototype.confirm = function (this: ConfirmModal) {
-			classes.push((this as unknown as { confirmClass: string }).confirmClass);
+			classes.push((this as unknown as { confirmKind: string }).confirmKind);
 			return Promise.resolve(false);
 		};
 		try {
@@ -249,11 +249,11 @@ describe("the way out of an unreadable file", () => {
 				try {
 					await settle();
 					const replace = h.buttons().find(button => button.textContent === en["saveStatus.replaceUnreadable"])!;
-					assert.ok(replace.hasClass("mod-warning"), cause);
+					assert.ok(replace.hasClass("mod-destructive") && !replace.hasClass("mod-cta"), cause);
 					replace.fire("click"); await settle();
 				} finally { h.dispose(); }
 			}
-			assert.deepEqual(classes, ["mod-warning", "mod-warning", "mod-warning", "mod-warning"]);
+			assert.deepEqual(classes, ["destructive", "destructive", "destructive", "destructive"]);
 		} finally { Object.defineProperty(ConfirmModal.prototype, "confirm", confirm); }
 	});
 
@@ -270,7 +270,7 @@ describe("the way out of an unreadable file", () => {
 			assert.deepEqual(h.calls, [], "the promise to keep everything no longer holds");
 			// The banner looked again, and now says what the file is.
 			assert.ok(h.container.textContent.includes(en["saveStatus.diagnosis.damaged"]!));
-			assert.ok(h.buttons().find(button => button.textContent === en["saveStatus.replaceUnreadable"])!.hasClass("mod-warning"));
+			assert.ok(h.buttons().find(button => button.textContent === en["saveStatus.replaceUnreadable"])!.hasClass("mod-destructive"));
 		} finally { h.dispose(); Object.defineProperty(ConfirmModal.prototype, "confirm", confirm); }
 	});
 

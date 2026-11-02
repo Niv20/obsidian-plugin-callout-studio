@@ -1,6 +1,7 @@
-import { Notice, type App } from "obsidian";
+import { type App } from "obsidian";
 import { t } from "../i18n";
 import { openCalloutOccurrences } from "./registerOccurrencesView";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 /**
  * Obsidian exposes no public close-settings API. Keep this optional host seam
@@ -14,5 +15,5 @@ export async function openOccurrencesFromSettings(app: App, ids: readonly string
 		if (typeof settings?.close === "function") { settings.close(); closed = true; }
 	} catch { /* Host version may not support this optional method. */ }
 	await openCalloutOccurrences(app, ids);
-	if (!closed) new Notice(t("usage.closeSettings"));
+	if (!closed) showNotice("info", t("usage.closeSettings"));
 }

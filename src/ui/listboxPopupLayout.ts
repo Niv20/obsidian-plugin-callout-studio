@@ -37,12 +37,24 @@ export function clearListboxMenuHeightCap(menuEl: HTMLElement): void {
 	});
 }
 
+/**
+ * Fit an open popup into the room around its field: cap its height to the
+ * larger side (below, or above when that has more room), and shift it sideways
+ * so it stays inside the window and every clipping box around it.
+ *
+ * The popup hangs from the field's END edge (`inset-inline-end: 0` in
+ * styles.css: the right in English, the left in Hebrew), because a field sits
+ * at the end of its row and the popup, at least as wide as the field, then
+ * opens toward the row's middle. `scrollEl` is the part that scrolls, when the
+ * popup holds more than its list (a picker's search box above it).
+ */
 export function syncListboxMenuHeightCap(
 	controlEl: HTMLElement,
 	menuEl: HTMLElement,
 	currentTeardown: (() => void) | undefined,
 	onResize: () => void,
 	clipEl?: HTMLElement,
+	scrollEl: HTMLElement = menuEl,
 ): (() => void) | undefined {
 	const doc = menuEl.ownerDocument;
 	const view = doc.defaultView;
@@ -79,23 +91,23 @@ export function syncListboxMenuHeightCap(
 	left += MENU_EDGE_GAP_PX;
 	right -= MENU_EDGE_GAP_PX;
 	if (Number.isFinite(right) && right > left) {
-		const width = Math.max(0, Math.min(rect.width, right - left));
+		// The width cap first: the popup's own width, read next, depends on it.
+		menuEl.setCssProps({ [MENU_MAX_WIDTH_VAR]: `${Math.floor(right - left)}px` });
+		const width = Math.max(0, Math.min(menuEl.getBoundingClientRect().width, right - left));
 		const rtl = view.getComputedStyle?.(controlEl).direction === "rtl";
-		const anchoredLeft = rtl ? rect.right - width : rect.left;
+		const anchoredLeft = rtl ? rect.left : rect.right - width;
 		const menuLeft = Math.max(left, Math.min(anchoredLeft, right - width));
-		menuEl.setCssProps({
-			[MENU_MAX_WIDTH_VAR]: `${Math.floor(right - left)}px`,
-			[MENU_OFFSET_X_VAR]: `${menuLeft - anchoredLeft}px`,
-		});
+		menuEl.setCssProps({ [MENU_OFFSET_X_VAR]: `${menuLeft - anchoredLeft}px` });
 	}
 	const below = Math.max(0, bottom - rect.bottom - COMBOBOX_MENU_OFFSET_PX);
 	const above = Math.max(0, rect.top - top - COMBOBOX_MENU_OFFSET_PX);
 	// scrollHeight retains the uncapped content height while the popup is
 	// scrolling. Using its rendered height instead makes a capped menu flip
-	// back and forth on each resize or surrounding scroll.
-	const border = Math.max(0, (menuEl.offsetHeight ?? 0) - menuEl.clientHeight);
+	// back and forth on each resize or surrounding scroll. Everything around
+	// the scrolling part (the edge, a search box) is added back.
+	const around = Math.max(0, (menuEl.offsetHeight ?? 0) - scrollEl.clientHeight);
 	const naturalHeight = Math.min(COMBOBOX_MAX_HEIGHT_PX,
-		(menuEl.scrollHeight || COMBOBOX_MAX_HEIGHT_PX) + border);
+		(scrollEl.scrollHeight || COMBOBOX_MAX_HEIGHT_PX) + around);
 	const opensAbove = naturalHeight > below && above > below;
 	menuEl.toggleClass("cs-dropdown-menu-above", opensAbove);
 	const triggerVisible = rect.bottom > top && rect.top < bottom;

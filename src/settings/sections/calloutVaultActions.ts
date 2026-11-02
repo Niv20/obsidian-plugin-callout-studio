@@ -24,7 +24,6 @@
  * the three keeps the type, and never implies anything of the theme's was
  * touched.
  */
-import { Notice } from "obsidian";
 import { ConfirmModal } from "../../utils/ConfirmModal";
 import { ReplaceCalloutModal } from "../../utils/ReplaceCalloutModal";
 import {
@@ -40,7 +39,8 @@ import { blockedWhilePaused } from "../pausedGuard";
 import { noticeWithUndo, noticeWithUndoAction } from "../rewriteUndoNotice";
 import { NoteRewriteJournal } from "../../utils/noteRewriteUndo";
 import type { CalloutDefinition, IconSvgCacheEntry } from "../../types";
-import type { SettingsSectionContext } from "./types";
+import type { SettingsContext } from "./types";
+import { showNotice } from "../../ui/mascot/mascotNotices";
 
 /**
  * Count the notes that use `def` right now, or null when some could not be
@@ -48,7 +48,7 @@ import type { SettingsSectionContext } from "./types";
  * never taken for "unused": for Delete that would skip the question.
  */
 async function countUsagesNow(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): Promise<{ fileCount: number; totalCount: number } | null> {
 	try {
@@ -69,7 +69,7 @@ export interface DeletedCallout {
 }
 
 export async function handleCalloutDelete(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): Promise<void> {
 	// While saving is paused the removal would be lost on restart: the type
@@ -98,11 +98,15 @@ export async function handleCalloutDelete(
 				fallback: fallback?.displayName ?? DEFAULT_SETTINGS.fallbackCalloutId,
 			}));
 		}
+		// Which one, in quotes; and when it is the default fallback, that too.
+		const subtitle = isFallback
+			? t("deleteModal.subtitleFallback", { name: def.displayName })
+			: t("confirm.subtitleName", { name: def.displayName });
 		const confirmed = await new ConfirmModal(
 			ctx.app,
-			t("deleteModal.title", { name: def.displayName }),
+			t("deleteModal.title"),
 			lines.join("\n"),
-		).confirm();
+		).withMascot(subtitle).confirm();
 		if (!confirmed) return;
 		// Saving can pause while the dialog is open.
 		if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
@@ -129,7 +133,7 @@ export async function handleCalloutDelete(
 	// Notes keep their `[!id]`, and they look different now: repaint them.
 	ctx.plugin.refreshCallouts();
 	if (deleted.wasFallback) refreshOccurrencesViewAppearance(ctx.plugin);
-	ctx.display();
+	ctx.redraw();
 	noticeWithUndoAction(t("notice.calloutDeleted", { name: current.displayName }), () => {
 		void restoreDeletedCallout(ctx, deleted);
 	});
@@ -137,7 +141,7 @@ export async function handleCalloutDelete(
 
 /** Undo for Delete: the type, its artwork, and its place as the fallback. */
 export async function restoreDeletedCallout(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	deleted: DeletedCallout,
 ): Promise<void> {
 	if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
@@ -170,11 +174,11 @@ export async function restoreDeletedCallout(
 	await ctx.plugin.saveSettings();
 	ctx.plugin.refreshCallouts();
 	if (deleted.wasFallback) refreshOccurrencesViewAppearance(ctx.plugin);
-	ctx.display();
+	ctx.redraw();
 }
 
 /** The confirmation's last line: who keeps the type once its uses are gone. */
-function typeStaysLine(ctx: SettingsSectionContext, def: CalloutDefinition): string {
+function typeStaysLine(ctx: SettingsContext, def: CalloutDefinition): string {
 	if (def.builtIn) return t("deleteModal.keepsRowBuiltIn");
 	// Named only when the theme is the reason the type survives. A callout of
 	// the user's own stays because nothing removes it, and blaming the theme —
@@ -185,7 +189,7 @@ function typeStaysLine(ctx: SettingsSectionContext, def: CalloutDefinition): str
 }
 
 export async function handleClearCalloutUsages(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): Promise<void> {
 	const usage = await countUsagesNow(ctx, def);
@@ -193,7 +197,7 @@ export async function handleClearCalloutUsages(
 
 	const confirmed = await new ConfirmModal(
 		ctx.app,
-		t("convertModal.title", { name: def.displayName }),
+		t("convertModal.title"),
 		[
 			t("deleteModal.bodyInUse", {
 				count: String(usage.totalCount),
@@ -203,7 +207,7 @@ export async function handleClearCalloutUsages(
 			typeStaysLine(ctx, def),
 		].join("\n"),
 		t("convertModal.confirm"),
-	).confirm();
+	).withMascot(t("convertModal.subtitle", { name: def.displayName })).confirm();
 	if (!confirmed) return;
 
 	const allIds = ctx.plugin.registry.vaultIdFormsFor(def);
@@ -212,18 +216,18 @@ export async function handleClearCalloutUsages(
 	try { result = await convertCalloutsToPlainTextInVault(ctx.app, allIds, true, journal); }
 	catch (error) {
 		console.warn("[callout-studio] converting callout usages was incomplete", error);
-		new Notice(t("notice.calloutDeleteIncomplete"), 10000);
+		showNotice("warning", t("notice.calloutDeleteIncomplete"));
 		return;
 	}
 	noticeWithUndo(ctx.app, t("vault.convertedToPlainText", {
 		blocks: String(result.blocks),
 		files: String(result.files),
 	}), journal);
-	ctx.display();
+	ctx.redraw();
 }
 
 export async function handleCalloutReplace(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): Promise<void> {
 	const allIds = ctx.plugin.registry.vaultIdFormsFor(def);
@@ -232,7 +236,7 @@ export async function handleCalloutReplace(
 		.getAll()
 		.filter((c) => c.id !== def.id);
 	if (otherCallouts.length === 0) {
-		new Notice(t("vault.noReplacementAvailable"));
+		showNotice("notFound", t("vault.noReplacementAvailable"));
 		return;
 	}
 
@@ -272,7 +276,7 @@ export async function handleCalloutReplace(
 		);
 		noticeWithUndo(ctx.app, t("vault.filesUpdated", { count: String(replaced) }), journal);
 	} else {
-		new Notice(t("vault.filesUpdated", { count: "0" }));
+		showNotice("success", t("vault.filesUpdated", { count: "0" }));
 	}
-	ctx.display();
+	ctx.redraw();
 }

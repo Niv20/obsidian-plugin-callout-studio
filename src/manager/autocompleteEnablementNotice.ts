@@ -1,4 +1,3 @@
-import { Notice } from "obsidian";
 import { t } from "../i18n";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import type { DeviceLocalStore } from "./DeviceLocalStore";
@@ -7,6 +6,7 @@ import {
 	acknowledgeAutocompleteEnablement,
 	hasAutocompleteEnablement,
 } from "./autocompleteEnablementMigration";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 interface AutocompleteEnablementHost {
 	registry: CalloutRegistry;
@@ -69,7 +69,7 @@ export function trackAutocompleteEnablement(
 		}
 		acknowledgeAutocompleteEnablement(host.registry);
 		if (!ready || !host.localState.hasPendingAutocompleteNotice) return;
-		new Notice(t("notice.autocompleteAlwaysEnabled"), 10000);
+		showNotice("info", t("notice.autocompleteAlwaysEnabled"));
 		host.localState.markAutocompleteNoticeSeen();
 		stop();
 	};

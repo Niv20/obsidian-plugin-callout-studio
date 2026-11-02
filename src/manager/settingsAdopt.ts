@@ -12,9 +12,9 @@ import { registryIsOwned } from "./registryOwnership";
 import { backUpBeforeAdoption } from "./settingsConflictBackup";
 import { stableKeyOrder } from "../utils/stableJson";
 import { unsavedChangesReplaced } from "./setupDifference";
-import { Notice } from "obsidian";
 import { t } from "../i18n";
 import type { SettingsRead } from "./settingsFile";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 export interface SettingsBootHost extends SettledSettingsFileHost {
 	registry: CalloutRegistry;
@@ -81,7 +81,12 @@ export interface ExternalReloadHost extends SettingsBootHost {
 	refreshThemeAppearance(): void;
 	customCommands: { syncAll(): void };
 	refreshCallouts(): void;
-	settingsTab?: { containerEl: { isConnected: boolean }; display(): void };
+	/**
+	 * Asked to draw itself again. Obsidian draws it only while it is the open
+	 * settings tab, on whichever of its pages is open, so the caller does not
+	 * check (a check of the tab's own element missed an open sub-page).
+	 */
+	settingsTab?: { update(): void };
 
 	registerDomEvent?: (
 		el: Document,
@@ -243,10 +248,10 @@ async function applyExternalSettings(
 	// A change made here that never reached the file lost to the incoming one.
 	// The backup above holds it; say so, since nothing else would.
 	if (lastSaved && unsavedChangesReplaced(lastSaved, before, merged) > 0) {
-		new Notice(t("notice.unsavedChangesKept"), 15000);
+		showNotice("warning", t("notice.unsavedChangesKept"));
 	}
 
 	host.refreshCallouts();
-	if (host.settingsTab?.containerEl.isConnected) host.settingsTab.display();
+	host.settingsTab?.update();
 	return true;
 }

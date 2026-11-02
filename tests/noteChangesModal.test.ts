@@ -146,11 +146,11 @@ function open(input: NoteChangesModalInput) {
 	let answer: NoteChoices | null | undefined;
 	void modal.ask().then((result) => { answer = result; });
 	const button = (label: string): FakeElement =>
-		modalEl.querySelectorAll(".cs-modal-footer button").find((el) => el.textContent === label)!;
+		modalEl.querySelectorAll(".modal-button-container button").find((el) => el.textContent === label)!;
 	const cards = () => contentEl.querySelectorAll(".cs-option-box");
 	return {
 		titleEl, contentEl,
-		buttons: () => modalEl.querySelectorAll(".cs-modal-footer button").map((el) => el.textContent),
+		buttons: () => modalEl.querySelectorAll(".modal-button-container button").map((el) => el.textContent),
 		answer: async () => { await setImmediate(); return answer; },
 		changes: () => contentEl.querySelectorAll(".cs-note-change-list li").map((li) => li.textContent),
 		lines: () => contentEl.querySelectorAll(".cs-note-change-line").map(lineText),
@@ -219,7 +219,7 @@ describe("the window", () => {
 		assert.equal(h.desc(change), "Every old ID in your notes becomes [!insight].");
 		// Only this callout's own ids, its main id first: never another callout.
 		const dropdown = change.querySelector(".cs-select-dropdown") as unknown as HTMLElement;
-		assert.deepEqual(dropdownOptions(dropdown).map((row) => row.textContent), ["insight", "thought"]);
+		assert.deepEqual(dropdownOptions(dropdown).map((item) => item.title), ["insight", "thought"]);
 		pickDropdown(dropdown, "thought");
 		assert.equal(h.desc(change), "Every old ID in your notes becomes [!thought].");
 		assert.deepEqual(h.chosen(), [t("noteChanges.changeTo")]);
@@ -236,12 +236,12 @@ describe("the window", () => {
 		assert.equal(h.lines()[0], "You removed these IDs: test, dfgdf, sss.");
 	});
 
-	it("puts the dropdown at the card's trailing edge, just before the dot", () => {
+	it("starts the card with its radio and puts the dropdown at its trailing edge", () => {
 		const idea = def({ id: "idea", displayName: "Idea", aliases: ["test", "thought"] });
 		const h = open(modalInput(idea, form({ calloutId: "idea", displayName: "Idea", aliases: ["thought"] }),
 			stats({ test: { uses: tally(1, "a.md") } })));
 		const parts = h.cards()[1]!.children.map((child) => child.className.split(" ")[0]);
-		assert.deepEqual(parts, ["cs-option-box-text", "cs-note-change-target", "cs-option-radio"]);
+		assert.deepEqual(parts, ["cs-option-radio", "cs-option-box-text", "cs-note-change-target"]);
 	});
 
 	it("follows a rename back to the main id, titles and all", async () => {

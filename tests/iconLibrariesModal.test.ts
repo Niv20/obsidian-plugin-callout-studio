@@ -34,7 +34,7 @@ import {
 } from "../src/settings/iconpicker/IconLibrariesModal";
 import { ConfirmModal } from "../src/utils/ConfirmModal";
 import type { CalloutDefinition, CalloutIcon, IconPackId, IconSourceId } from "../src/types";
-import { parseRules, ruleFor, valueOf } from "./support/cssInjectorHarness";
+import { parseRules } from "./support/cssInjectorHarness";
 import { asEl, el, FakeElement, installFakeDom } from "./support/fakeDom";
 import { Notice } from "./support/obsidianStub";
 import { readRepoFile } from "./support/sourceScan";
@@ -165,6 +165,16 @@ function mount(options: Options = {}) {
 
 	const list = (): FakeElement => content.querySelector(".cs-icon-library-list")!;
 	const rows = (): FakeElement[] => list().querySelectorAll(".cs-icon-library-row");
+	/** One group: the window marks each with `data-cs-group`. */
+	const groupEl = (group: "available" | "download" | "hidden"): FakeElement => {
+		const found = content.querySelector(".cs-icon-library-list")!.children
+			.find((child) => child.dataset.csGroup === group);
+		assert.ok(found, `no ${group} group`);
+		return found;
+	};
+	/** The rows in one group's box. */
+	const groupRows = (group: "available" | "download" | "hidden"): FakeElement[] =>
+		groupEl(group).querySelectorAll(".cs-icon-library-row");
 	const row = (id: IconSourceId): FakeElement => {
 		const found = rows().find((r) => r.dataset.csItemId === id);
 		assert.ok(found, `no row for ${id}`);
@@ -176,10 +186,14 @@ function mount(options: Options = {}) {
 		finishDownload: () => finishDownload(),
 		saves: () => saves,
 		closedWith: () => closedWith,
-		above: () => rows().filter((r) => !r.hasClass("is-disabled")).map((r) => r.dataset.csItemId),
-		below: () => rows().filter((r) => r.hasClass("is-disabled")).map((r) => r.dataset.csItemId),
+		/** The libraries in one group, top to bottom. */
+		inGroup: (group: "available" | "download" | "hidden") => groupRows(group).map((r) => r.dataset.csItemId),
+		/** The group element, with its heading and its box. */
+		group: groupEl,
+		above: () => groupRows("available").map((r) => r.dataset.csItemId),
+		below: () => [...groupRows("download"), ...groupRows("hidden")].map((r) => r.dataset.csItemId),
 		button: (id: IconSourceId): FakeElement => row(id).querySelector(".cs-icon-library-action")!,
-		reset: (): FakeElement => content.querySelector(".cs-icon-library-heading")!.querySelector(".clickable-icon")!,
+		reset: (): FakeElement => content.querySelector(".cs-icon-library-reset")!,
 		/** Let the window finish reading the disk and subscribe to the store. */
 		settle: () => setImmediate(),
 	};
@@ -263,77 +277,74 @@ describe("Icon libraries — the description", () => {
 	});
 });
 
-describe("Icon libraries — the headings", () => {
-	// The same words as the Choose source menu's headings, from the same keys,
-	// so the window and the menu cannot drift apart.
-	const heading = (h: ReturnType<typeof mount>): FakeElement =>
-		h.content.querySelector(".cs-icon-library-heading")!;
-	const captions = (h: ReturnType<typeof mount>): string[] =>
-		h.list().querySelectorAll(".cs-menu-band-caption").map((caption) => caption.textContent);
+describe("Icon libraries — the groups", () => {
+	// Three Obsidian setting groups (finding S4-13). The first two headings are
+	// the Choose source menu's, from the same keys, so the window and the menu
+	// cannot drift apart.
+	type Group = "available" | "download" | "hidden";
+	const headingOf = (h: ReturnType<typeof mount>, group: Group): string | undefined =>
+		h.group(group).querySelector(".setting-item-heading")?.querySelector(".setting-item-name")?.textContent;
+	const shown = (h: ReturnType<typeof mount>, group: Group): boolean => !h.group(group).hasClass("cs-hidden");
 	const EVERYTHING: IconPackId[] = [
 		"tabler-outline", "tabler-filled", "octicons", "fa-solid", "fa-regular", "fa-brands",
 		"rpg-awesome", "simple-icons",
 	];
 
-	it("heads the list with Available libraries, in the Choose source menu's words", async () => {
-		const h = mount();
+	it("are three Obsidian list groups under the description, headed in the Choose source menu's words", async () => {
+		const h = mount({ hidden: ["emoji"] });
 		try {
 			await h.settle();
-			assert.equal(heading(h).querySelector(".setting-item-name")!.textContent, t("iconPicker.librariesAvailable"));
+			assert.deepEqual(h.list().children.map((child) => child.dataset.csGroup), ["available", "download", "hidden"]);
+			for (const group of ["available", "download", "hidden"] as const) {
+				assert.ok(h.group(group).hasClass("setting-group"), `${group} is an Obsidian group`);
+				assert.ok(h.group(group).hasClass("mod-list"), `${group} uses Obsidian's list layout`);
+			}
+			assert.equal(headingOf(h, "available"), t("iconPicker.librariesAvailable"));
 			assert.equal(t("iconPicker.librariesAvailable"), "Available libraries");
-			// Directly above the list, below the description.
+			assert.equal(headingOf(h, "download"), t("iconPicker.librariesToDownload"));
+			assert.equal(t("iconPicker.librariesToDownload"), "Libraries to download");
+			assert.equal(headingOf(h, "hidden"), t("iconLibraries.librariesHidden"));
+			assert.equal(t("iconLibraries.librariesHidden"), "Hidden libraries");
+			// Below the description.
 			const order = h.content.children;
-			assert.ok(order.indexOf(heading(h)) > order.indexOf(h.content.querySelector(".setting-item-description")!));
-			assert.equal(order.indexOf(heading(h)) + 1, order.indexOf(h.list()));
+			assert.ok(order.indexOf(h.list()) > order.indexOf(h.content.querySelector(".setting-item-description")!));
 		} finally { h.modal.onClose(); }
 	});
 
-	it("puts the reset arrow on the Available libraries row, level with the heading", async () => {
+	it("puts the reset arrow at the end of the Available libraries heading", async () => {
 		const h = mount({ ready: ["octicons"] });
 		try {
 			await h.settle();
-			const arrows = heading(h).querySelectorAll(".clickable-icon");
+			const arrows = h.group("available").querySelector(".setting-item-heading")!.querySelectorAll(".clickable-icon");
 			assert.equal(arrows.length, 1);
 			assert.equal(arrows[0], h.reset());
-			assert.equal(h.reset().hasClass("cs-hidden"), false, "something differs, so it shows");
+			assert.equal(h.reset().hasClass("cs-reset-idle"), false, "something differs, so it shows");
 		} finally { h.modal.onClose(); }
 	});
 
-	it("keeps the heading, and the arrow's place on it, when nothing is left to download", async () => {
+	it("keeps Available libraries and its arrow when nothing is left to download, and shows no empty group", async () => {
 		const h = mount({ ready: EVERYTHING });
 		try {
 			await h.settle();
-			assert.ok(heading(h), "still there");
+			assert.ok(shown(h, "available"));
+			assert.equal(shown(h, "download"), false);
+			assert.equal(shown(h, "hidden"), false);
 			assert.deepEqual(h.below(), []);
-			assert.deepEqual(captions(h), []);
-			assert.ok(heading(h).querySelector(".clickable-icon"), "the arrow has its row");
+			assert.ok(h.reset(), "the arrow keeps its heading");
 		} finally { h.modal.onClose(); }
 	});
 
-	it("captions the libraries still to download, in the Choose source menu's words", async () => {
+	it("lists the libraries still to download in a group of their own", async () => {
 		const h = mount();
 		try {
 			await h.settle();
-			assert.deepEqual(captions(h), [t("iconPicker.librariesToDownload")]);
-			assert.equal(t("iconPicker.librariesToDownload"), "Libraries to download");
-			// The line between the bands, then the caption, then the first of them.
-			const children = h.list().children;
-			const line = children.findIndex((child) => child.hasClass("cs-menu-band-divider"));
-			assert.ok(children[line + 1]!.hasClass("cs-menu-band-caption"));
-			assert.equal(children[line + 2]!.dataset.csItemId, "tabler");
+			assert.ok(shown(h, "download"));
+			assert.deepEqual(h.inGroup("download"), ["tabler", "octicons", "fa", "rpg-awesome", "simple-icons"]);
+			assert.equal(shown(h, "hidden"), false, "nothing is hidden");
 		} finally { h.modal.onClose(); }
 	});
 
-	it("leaves the caption out once every library is on the device", async () => {
-		const h = mount({ ready: EVERYTHING });
-		try {
-			await h.settle();
-			assert.deepEqual(captions(h), []);
-			assert.equal(h.list().querySelectorAll(".cs-menu-band-divider").length, 0, "and no line either");
-		} finally { h.modal.onClose(); }
-	});
-
-	it("brings the caption back the moment a library is deleted", async () => {
+	it("brings Libraries to download back the moment a library is deleted", async () => {
 		const h = mount({ ready: EVERYTHING });
 		try {
 			await h.settle();
@@ -341,52 +352,47 @@ describe("Icon libraries — the headings", () => {
 				h.button("octicons").fire("click");
 				await h.settle();
 			});
-			assert.deepEqual(captions(h), [t("iconPicker.librariesToDownload")]);
-			assert.deepEqual(h.below(), ["octicons"]);
+			assert.ok(shown(h, "download"));
+			assert.deepEqual(h.inGroup("download"), ["octicons"]);
 		} finally { h.modal.onClose(); }
 	});
 
-	it("lists a hidden library under a caption of its own, never under Libraries to download", async () => {
+	it("lists a hidden library in Hidden libraries, never under Libraries to download", async () => {
 		const h = mount({ hidden: ["emoji"] });
 		try {
 			await h.settle();
-			assert.deepEqual(captions(h), [t("iconPicker.librariesToDownload"), t("iconLibraries.librariesHidden")]);
-			assert.equal(t("iconLibraries.librariesHidden"), "Hidden libraries");
-			// Those to download first, in catalog order, and the hidden one after them.
-			assert.deepEqual(h.below(), ["tabler", "octicons", "fa", "rpg-awesome", "simple-icons", "emoji"]);
-			// Each group starts with the line and its caption.
-			const children = h.list().children;
-			const hiddenAt = children.findIndex((child) => child.textContent === t("iconLibraries.librariesHidden"));
-			assert.ok(children[hiddenAt - 1]!.hasClass("cs-menu-band-divider"));
-			assert.equal(children[hiddenAt + 1]!.dataset.csItemId, "emoji");
+			assert.deepEqual(h.inGroup("download"), ["tabler", "octicons", "fa", "rpg-awesome", "simple-icons"]);
+			assert.deepEqual(h.inGroup("hidden"), ["emoji"]);
+			assert.ok(shown(h, "hidden"));
 		} finally { h.modal.onClose(); }
 	});
 
-	it("captions only the hidden libraries when nothing is left to download", async () => {
+	it("shows only Hidden libraries when nothing is left to download", async () => {
 		const h = mount({ ready: EVERYTHING, hidden: ["emoji", "material"] });
 		try {
 			await h.settle();
-			assert.deepEqual(captions(h), [t("iconLibraries.librariesHidden")]);
-			assert.deepEqual(h.below(), ["material", "emoji"], "in catalog order");
+			assert.equal(shown(h, "download"), false);
+			assert.deepEqual(h.inGroup("hidden"), ["material", "emoji"], "in catalog order");
 		} finally { h.modal.onClose(); }
 	});
 
-	it("moves a library between the captions as it is hidden and shown", async () => {
+	it("moves a library between the groups as it is hidden and shown", async () => {
 		const h = mount();
 		try {
 			await h.settle();
-			assert.deepEqual(captions(h), [t("iconPicker.librariesToDownload")]);
+			assert.equal(shown(h, "hidden"), false);
 			h.button("emoji").fire("click");
-			assert.deepEqual(captions(h), [t("iconPicker.librariesToDownload"), t("iconLibraries.librariesHidden")]);
+			assert.deepEqual(h.inGroup("hidden"), ["emoji"]);
+			assert.ok(shown(h, "hidden"));
 			h.button("emoji").fire("click");
-			assert.deepEqual(captions(h), [t("iconPicker.librariesToDownload")]);
+			assert.equal(shown(h, "hidden"), false);
 			assert.ok(h.above().includes("emoji"));
 		} finally { h.modal.onClose(); }
 	});
 });
 
-describe("Icon libraries — the two bands", () => {
-	it("lists what the picker offers above the line in its order, then those to download, then the hidden", async () => {
+describe("Icon libraries — the rows", () => {
+	it("lists what the picker offers first in its order, then those to download, then the hidden", async () => {
 		const h = mount({
 			ready: ["octicons"],
 			order: ["image", "octicons", "lucide", "tabler", "material", "emoji", "fa", "rpg-awesome", "simple-icons"],
@@ -397,12 +403,20 @@ describe("Icon libraries — the two bands", () => {
 			assert.deepEqual(h.above(), ["image", "octicons", "lucide", "material"]);
 			assert.deepEqual(h.below(), ["tabler", "fa", "rpg-awesome", "simple-icons", "emoji"],
 				"to download in catalog order, then hidden in catalog order");
-			// One line between the bands, as its own element — and one more where
-			// the hidden libraries start under their own caption.
-			const children = h.list().children;
-			const line = children.findIndex((child) => child.hasClass("cs-menu-band-divider"));
-			assert.equal(line, 4);
-			assert.equal(children.filter((child) => child.hasClass("cs-menu-band-divider")).length, 2);
+		} finally { h.modal.onClose(); }
+	});
+
+	it("is an Obsidian setting row: the emblem, the name, the line under it, then the button", async () => {
+		const h = mount();
+		try {
+			await h.settle();
+			const r = h.row("lucide");
+			assert.ok(r.hasClass("setting-item"));
+			assert.ok(r.children[0]!.hasClass("setting-item-icon"), "the emblem comes first");
+			assert.equal(r.querySelector(".setting-item-name")!.textContent, t("iconPicker.lucide"));
+			const action = h.button("lucide");
+			assert.ok(action.closest(".setting-item-control"), "the button is in the row's control");
+			assert.equal(action.tagName.toLowerCase(), "div", "an Obsidian extra button, the handle's size on a phone");
 		} finally { h.modal.onClose(); }
 	});
 
@@ -420,17 +434,18 @@ describe("Icon libraries — the two bands", () => {
 		} finally { h.modal.onClose(); }
 	});
 
-	it("gives a handle only to the rows above the line", async () => {
+	it("gives a handle only to the rows of Available libraries, at the very end", async () => {
 		const h = mount();
 		try {
 			await h.settle();
 			for (const id of h.above()) {
-				assert.ok(h.row(id as IconSourceId).querySelector(".cs-drag-handle"), `${id} can move`);
+				const r = h.row(id as IconSourceId);
+				const handle = r.querySelector(".cs-drag-handle");
+				assert.ok(handle, `${id} can move`);
+				assert.equal(r.children.at(-1), handle, `${id}'s handle ends the row`);
 			}
 			for (const id of h.below()) {
-				const r = h.row(id as IconSourceId);
-				assert.equal(r.querySelector(".cs-drag-handle"), null, `${id} has no handle`);
-				assert.ok(r.querySelector(".cs-drag-handle-spacer"), `${id} keeps the handle's room`);
+				assert.equal(h.row(id as IconSourceId).querySelector(".cs-drag-handle"), null, `${id} has no handle`);
 			}
 		} finally { h.modal.onClose(); }
 	});
@@ -439,7 +454,7 @@ describe("Icon libraries — the two bands", () => {
 		const h = mount({ ready: ["octicons"] });
 		try {
 			await h.settle();
-			const meta = (id: IconSourceId) => h.row(id).querySelector(".cs-icon-library-meta")?.textContent;
+			const meta = (id: IconSourceId) => h.row(id).querySelector(".setting-item-description")?.textContent;
 			assert.match(meta("octicons") ?? "", /375\u00a0KB/, "number and unit kept on one line");
 			assert.match(meta("lucide") ?? "", new RegExp(t("iconLibraries.noDownload")));
 			assert.match(meta("material") ?? "", new RegExp(t("iconLibraries.perIcon")));
@@ -693,14 +708,15 @@ describe("Icon libraries — the order", () => {
 		} finally { h.modal.onClose(); }
 	});
 
-	it("saves a drag above the line", async () => {
+	it("saves a drag in Available libraries", async () => {
 		const h = mount();
 		try {
 			await h.settle();
-			const list = h.list();
+			// The drag happens in the Available box.
+			const list = h.group("available").querySelector(".setting-items")!;
 			asEl(list).setPointerCapture = () => {};
 			asEl(list).releasePointerCapture = () => {};
-			for (const r of h.rows()) {
+			for (const r of list.children) {
 				Object.assign(r, { instanceOf: (ctor: typeof Object) => r instanceof ctor });
 				Object.defineProperty(r, "nextElementSibling", {
 					get: () => list.children[list.children.indexOf(r) + 1] ?? null,
@@ -727,7 +743,7 @@ describe("Icon libraries — the order", () => {
 		const h = mount();
 		try {
 			await h.settle();
-			assert.equal(h.reset().hasClass("cs-hidden"), true);
+			assert.equal(h.reset().hasClass("cs-reset-idle"), true);
 		} finally { h.modal.onClose(); }
 	});
 });
@@ -738,7 +754,7 @@ describe("Icon libraries — the reset arrow", () => {
 		try {
 			await h.settle();
 			const reset = h.reset();
-			assert.equal(reset.hasClass("cs-hidden"), false);
+			assert.equal(reset.hasClass("cs-reset-idle"), false);
 			await withConfirm(true, async (asked) => {
 				reset.fire("click");
 				await h.settle();
@@ -746,7 +762,7 @@ describe("Icon libraries — the reset arrow", () => {
 			});
 			assert.deepEqual(h.settings.iconLibraries, { order: [], hidden: [] });
 			assert.deepEqual(h.above(), ["lucide", "material", "emoji", "image"]);
-			assert.equal(reset.hasClass("cs-hidden"), true);
+			assert.equal(reset.hasClass("cs-reset-idle"), true);
 			assert.equal(h.saves(), 1);
 			assert.deepEqual(h.deleted, []);
 		} finally { h.modal.onClose(); }
@@ -756,7 +772,7 @@ describe("Icon libraries — the reset arrow", () => {
 		const h = mount({ ready: ["octicons"] });
 		try {
 			await h.settle();
-			assert.equal(h.reset().hasClass("cs-hidden"), false);
+			assert.equal(h.reset().hasClass("cs-reset-idle"), false);
 		} finally { h.modal.onClose(); }
 	});
 
@@ -784,7 +800,7 @@ describe("Icon libraries — the reset arrow", () => {
 			assert.deepEqual(h.settings.iconLibraries, { order: [], hidden: [] });
 			assert.deepEqual(h.above(), ["lucide", "material", "emoji", "image"],
 				"only what ships with the plugin is left on offer");
-			assert.equal(h.reset().hasClass("cs-hidden"), true, "back to how the plugin came");
+			assert.equal(h.reset().hasClass("cs-reset-idle"), true, "back to how the plugin came");
 		} finally { h.modal.onClose(); }
 	});
 
@@ -876,7 +892,7 @@ describe("Icon libraries — the reset arrow", () => {
 			assert.equal(String(Notice.last?.message), t("iconLibraries.deleteFailed", { name: t("iconPicker.tabler") }));
 			assert.ok(h.above().includes("tabler"), "its files are still here");
 			assert.ok(h.below().includes("octicons"));
-			assert.equal(h.reset().hasClass("cs-hidden"), false, "so there is still something to reset");
+			assert.equal(h.reset().hasClass("cs-reset-idle"), false, "so there is still something to reset");
 		} finally { h.modal.onClose(); }
 	});
 
@@ -968,9 +984,12 @@ function withLayout(h: Harness, view = VIEW): () => void {
 	h.content.getBoundingClientRect = () => rect(0, view);
 	const original = Object.getOwnPropertyDescriptor(FakeElement.prototype, "getBoundingClientRect")!;
 	FakeElement.prototype.getBoundingClientRect = function (this: FakeElement): DOMRect {
-		if (!this.hasClass("cs-menu-row")) return (original.value as () => DOMRect).call(this);
-		const at = this.parentElement!.children.indexOf(this);
-		const top = LIST_TOP + at * ROW - h.content.scrollTop;
+		if (!this.hasClass("cs-icon-library-row")) return (original.value as () => DOMRect).call(this);
+		// Every row in display order, across the three groups, and two rows'
+		// height for each group heading above it (its 24px gap, its words).
+		const at = h.rows().indexOf(this);
+		const group = h.list().children.indexOf(this.closest(".cs-icon-library-group")!);
+		const top = LIST_TOP + (at + 2 * group) * ROW - h.content.scrollTop;
 		return rect(top, top + ROW);
 	};
 	return () => {
@@ -1216,83 +1235,46 @@ describe("Icon libraries — everything else leaves the scroll alone", () => {
 	});
 });
 
-describe("Icon libraries — the lines and captions slide with their rows", () => {
-	// A rebuild matches each child of the list to its old self by key, to slide it
-	// from where it was. A row has its library; a line and a caption must have a
-	// key too, or all of them share one and every one slides from the last one's
-	// place — the "Libraries to download" caption flew in from the bottom.
-	it("gives each caption and each line a key of its own", async () => {
-		const h = mount({ hidden: ["emoji"] });
-		try {
-			await h.settle();
-			const keys = h.list().children
-				.filter((child) => child.hasClass("cs-menu-band-caption") || child.hasClass("cs-menu-band-divider"))
-				.map((child) => child.dataset.csBandKey);
-			assert.equal(keys.length, 4, "a line and a caption over each of the two groups below the line");
-			assert.ok(keys.every((key) => key !== undefined && key !== ""));
-			assert.equal(new Set(keys).size, keys.length, "no two share one");
-			assert.ok(h.rows().every((row) => row.dataset.csBandKey === undefined), "a row is keyed by its library alone");
-		} finally { h.modal.onClose(); }
-	});
-});
-
-describe("Icon libraries — the list is rebuilt in one step", () => {
+describe("Icon libraries — each group is rebuilt in one step", () => {
 	// The one thing about scrolling the fake DOM can show: a rebuild that first
-	// empties the list lets the browser lay the page out with part of it gone —
-	// as it does, to blur the focused button being removed — and the window's
-	// scroll offset is clamped to the top for good. Only a single swap of the
-	// whole list never presents that state.
-	it("swaps every row in at once instead of emptying the list first", async () => {
+	// empties a box lets the browser lay the page out with part of it gone — as
+	// it does, to blur the focused button being removed — and the window's
+	// scroll offset is clamped to the top for good. Only a single swap of each
+	// box never presents that state.
+	it("swaps every box's rows in at once instead of emptying it first", async () => {
 		const h = mount();
 		try {
 			await h.settle();
-			const list = h.list();
+			const boxes = (["available", "download", "hidden"] as const)
+				.map((group) => h.group(group).querySelector(".setting-items")!);
 			let emptied = 0;
 			const swaps: number[] = [];
-			const empty = list.empty.bind(list);
-			list.empty = () => {
-				emptied++;
-				empty();
-			};
-			const replace = list.replaceChildren.bind(list);
-			list.replaceChildren = (...nodes) => {
-				swaps.push(nodes.length);
-				replace(...nodes);
-			};
+			for (const box of boxes) {
+				const empty = box.empty.bind(box);
+				box.empty = () => {
+					emptied++;
+					empty();
+				};
+				const replace = box.replaceChildren.bind(box);
+				box.replaceChildren = (...nodes) => {
+					swaps.push(nodes.length);
+					replace(...nodes);
+				};
+			}
 			h.button("emoji").fire("click");
-			assert.equal(emptied, 0, "the list is never emptied on its own");
-			assert.deepEqual(swaps, [list.children.length], "one swap, carrying every row, caption and line");
+			assert.equal(emptied, 0, "no box is ever emptied on its own");
+			assert.deepEqual(swaps, boxes.map((box) => box.children.length), "one swap per box, carrying all its rows");
 		} finally { h.modal.onClose(); }
 	});
 });
 
-describe("Icon libraries — the headings' size", () => {
-	const css = readRepoFile("styles.css");
-
-	it("is a section heading's, which is what Built-in commands is: Obsidian's own variable", () => {
-		// Obsidian sizes every setting heading with `--setting-group-heading-size`,
-		// so reading it keeps the three captions level with that heading wherever
-		// it is set — by a theme, or by the phone's own, smaller step.
-		const rule = ruleFor(css, ".cs-icon-libraries .cs-icon-library-heading .setting-item-name, .cs-menu-band-caption");
-		assert.match(valueOf(rule, "font-size") ?? "", /^var\(--setting-group-heading-size\b/);
-		assert.equal(valueOf(rule, "line-height"), "var(--line-height-tight)", "and its line height");
-		// Its weight and colour too, and no capitals or letter-spacing of their own.
-		assert.match(valueOf(rule, "font-weight") ?? "", /^var\(--setting-group-heading-weight\b/);
-		assert.match(valueOf(rule, "color") ?? "", /^var\(--setting-group-heading-color\b/);
-		assert.equal(valueOf(rule, "text-transform"), undefined);
-		assert.equal(valueOf(rule, "letter-spacing"), undefined);
-	});
-
-	it("measures against a heading nothing in the stylesheet resizes", () => {
-		// The premise of the test above: Built-in commands is a plain heading row,
-		// so its size is Obsidian's. Give it a size of its own and the two must be
-		// brought level again — this is where to find out.
-		const source = readRepoFile("src/settings/CommandBuilderModal.ts");
-		assert.match(source, /\.setName\(t\("commandBuilder\.builtIn"\)\)\s*\.setHeading\(\)/);
-		const resized = parseRules(css)
-			.filter((r) => r.selector.includes("cs-command-builder") && /heading|setting-item-name/.test(r.selector))
-			.filter((r) => r.props.includes("font-size"))
+describe("Icon libraries — the headings are Obsidian's", () => {
+	it("leaves the group headings to Obsidian: no size, weight or colour of the plugin's", () => {
+		const css = readRepoFile("styles.css");
+		const own = parseRules(css)
+			.filter((r) => r.selector.includes("cs-icon-library") && /heading|setting-item-name/.test(r.selector))
+			.filter((r) => ["font-size", "font-weight", "color"].some((prop) => r.props.includes(prop)))
 			.map((r) => r.selector);
-		assert.deepEqual(resized, []);
+		assert.deepEqual(own, []);
 	});
 });

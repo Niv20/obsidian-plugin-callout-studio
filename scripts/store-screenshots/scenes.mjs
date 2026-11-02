@@ -8,6 +8,7 @@ import { setLocale } from "../../src/i18n/index.ts";
 import { CalloutEditor } from "../../src/settings/CalloutEditor.ts";
 import { IconPicker } from "../../src/settings/iconpicker/IconPickerModal.ts";
 import { getAllColorPalettes } from "../../src/utils/colorPalettes.ts";
+import { CALLOUT_PAGES } from "../../src/settings/declarative/calloutPages.ts";
 import {
 	makeHost,
 	mountNote,
@@ -48,12 +49,10 @@ function seedPersonalCallouts(plugin) {
 
 function settings(plugin) {
 	seedPersonalCallouts(plugin);
-	// This is the same persisted disclosure state a user reaches by expanding
-	// the lists. All 13 built-ins remain in the scrollable production panel.
-	plugin.localState.isExpanded = () => true;
 	return mountSettings(plugin, {
+		path: [CALLOUT_PAGES.mine],
 		title: "All your callouts. One creative space.",
-		description: "The production settings list shows Idea, Meeting, and Research with two IDs each above all thirteen expanded built-in callouts, with their actual color swatches and editing controls.",
+		description: "The My callout types settings page lists Idea, Meeting, and Research with two IDs each, with their actual color swatches and editing controls.",
 	});
 }
 
@@ -147,7 +146,7 @@ async function icons(plugin) {
 		title: "Find the perfect icon.",
 		description: "The actual icon picker displays the locally installed Lucide library with Lightbulb selected, its source picker, search, icon grid, and Confirm action. No icon library is downloaded.",
 	});
-	await waitFor(() => modal.modalEl.querySelector(".icon-picker-grid.is-loaded .icon-picker-cell"), "Lucide icon grid");
+	await waitFor(() => modal.modalEl.querySelector(".icon-picker-grid .icon-picker-cell"), "Lucide icon grid");
 	await waitFor(() => modal.modalEl.querySelector(".icon-picker-cell.is-selected"), "selected lightbulb");
 	return metadata;
 }

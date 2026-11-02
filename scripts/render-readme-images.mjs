@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 import { loadObsidianAssets } from "./user-guide/obsidian-assets.mjs";
 import { exportSvg } from "./user-guide/vector-exporter.mjs";
+import { guideRuntimeOptions } from "./user-guide/guideRuntime.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(import.meta.url);
@@ -17,7 +18,7 @@ mkdirSync(output, { recursive: true });
 const { outputFiles } = await build({
 	entryPoints: [path.join(root, "scripts/readme/scene.mjs")], bundle: true,
 	write: false, format: "iife", globalName: "readmeScene",
-	alias: { obsidian: path.join(root, "scripts/user-guide/obsidian-runtime.ts") },
+	...guideRuntimeOptions(root),
 });
 const layout = `
 body { margin:0; background:transparent; }
@@ -79,15 +80,17 @@ try {
 		const frame = [...original.children].find(element => element.localName === "rect" && element.getAttribute("fill") === "#252329");
 		if (!frame) throw new Error("The reference settings window is missing");
 		const x = Number(frame.getAttribute("x")), y = Number(frame.getAttribute("y"));
-		const width = Number(frame.getAttribute("width"));
-		// Preserve the native partial bottom row so the scrollable list visibly continues.
+		const width = Number(frame.getAttribute("width")), height = Number(frame.getAttribute("height"));
 		const nodes = [...original.children].slice([...original.children].indexOf(frame));
 		const content = nodes.map(element => new XMLSerializer().serializeToString(element)).join("");
-		const scale = 944 / width;
-		return `<svg xmlns="http://www.w3.org/2000/svg" width="960" height="681" viewBox="0 0 960 681" role="img" aria-labelledby="title description"><title id="title">Callout Studio settings</title><desc id="description">The settings window with Idea, Meeting, and Research above Obsidian's built-in callouts. Transparent background; no surrounding workspace.</desc><g transform="translate(8 8) scale(${scale}) translate(${-x} ${-y})">${content}</g></svg>\n`;
+		// The window keeps 8px of transparent margin on every side, and the
+		// canvas is as tall as the window comes out.
+		const scale = 944 / width, canvasHeight = Math.ceil(height * scale + 16);
+		const artwork = `<svg xmlns="http://www.w3.org/2000/svg" width="960" height="${canvasHeight}" viewBox="0 0 960 ${canvasHeight}" role="img" aria-labelledby="title description"><title id="title">Callout Studio settings</title><desc id="description">The My callout types settings page lists Idea, Meeting, and Research with their IDs, color swatches and editing controls. Transparent background; no surrounding workspace.</desc><g transform="translate(8 8) scale(${scale}) translate(${-x} ${-y})">${content}</g></svg>\n`;
+		return { svg: artwork, canvasHeight };
 	}, readFileSync(path.join(root, "assets/store-screenshots/desktop/svg/01-settings.svg"), "utf8"));
-	await validate(page, settings, [960, 681]);
-	writeFileSync(path.join(output, "01-settings.svg"), settings);
+	await validate(page, settings.svg, [960, settings.canvasHeight]);
+	writeFileSync(path.join(output, "01-settings.svg"), settings.svg);
 	await page.addStyleTag({ content: appCss });
 	await page.addStyleTag({ content: readFileSync(path.join(root, "styles.css"), "utf8") });
 	await page.addStyleTag({ content: layout });
@@ -110,5 +113,5 @@ try {
 	assert.deepEqual(network, [], "README artwork attempted network access");
 	assert.deepEqual(errors, [], "README artwork has browser errors");
 	writeFileSync(path.join(output, "02-syntax.svg"), syntax);
-	console.log(`README SVGs: settings 960 × 681; syntax 1080 × 666 (${Math.round(Buffer.byteLength(syntax) / 1024)} KiB)`);
+	console.log(`README SVGs: settings 960 × ${settings.canvasHeight}; syntax 1080 × 666 (${Math.round(Buffer.byteLength(syntax) / 1024)} KiB)`);
 } finally { await browser.close(); }

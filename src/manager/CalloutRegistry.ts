@@ -319,7 +319,7 @@ export class CalloutRegistry {
 		// `paletteId` onto a row is a rewrite of the stored definitions like any
 		// other, so it flushes; un-flushed the adoption was simply re-derived on
 		// every launch. The flag is raised here rather than inside the pass
-		// because the settings caller (CustomPalettesSection) saves for itself.
+		// because the settings caller (paletteFlows) saves for itself.
 		if (this.adoptOrphansMatchingPalettes() > 0) {
 			this.pendingLoadMigrationSave = true;
 		}
@@ -1599,6 +1599,19 @@ export class CalloutRegistry {
 	}
 
 	/**
+	 * The preview definition, but only when it is a demo standing on an id of
+	 * its own — the palette editor's stand-in callout. A preview that shadows a
+	 * real callout is not one: its rules replace that callout's, in the place
+	 * the callout holds in the stylesheet, so they cannot be lifted out of it.
+	 * `CSSInjector` keeps a demo's rules in a sheet of their own (see
+	 * `PreviewLayer`) and asks here for the one that qualifies.
+	 */
+	getDemoPreview(): CalloutDefinition | null {
+		if (!this.previewIsDemo || this.previewShadowedDef !== null) return null;
+		return this.getPreviewDefinition();
+	}
+
+	/**
 	 * Like `get`, but sees through the transient live-preview shadow: if `id`
 	 * is the one currently being drafted in the callout editor, returns the
 	 * real callout it is shadowing (or undefined if nothing was there) instead
@@ -1696,8 +1709,11 @@ export class CalloutRegistry {
 		this.settings.inlineCallouts = structuredClone(
 			DEFAULT_SETTINGS.inlineCallouts,
 		);
-		// The hidden switch (no settings UI; `data.json` only) goes back too:
-		// a reset that left a hand-made "off" behind would look like a bug.
+		// Both dropdowns on, the user's metadata words gone, metadata
+		// colours on.
+		this.settings.suggestions = structuredClone(
+			DEFAULT_SETTINGS.suggestions,
+		);
 		this.settings.metadataColors = structuredClone(
 			DEFAULT_SETTINGS.metadataColors,
 		);

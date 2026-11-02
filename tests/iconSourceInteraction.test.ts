@@ -34,23 +34,24 @@ function mount(sources: () => MenuLibraries = () => EVERYTHING_HERE, value: Pick
 		countFor: () => 12,
 		onPick: (id) => committed.push(id),
 	});
-	const input = host.querySelector(".cs-combobox-input")!;
+	// A select-only picker: its field is the combobox, and keeps the focus.
+	const field = host.querySelector(".cs-dropdown-field")!;
 	const menu = host.querySelector(".cs-combobox-menu")!;
-	input.focus();
-	input.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
+	field.focus();
+	field.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
 	const rows = menu.querySelectorAll(".icon-picker-source-menu-item");
 	return {
-		popup, input, menu, rows, committed, keymap, doc,
+		popup, field, menu, rows, committed, keymap, doc,
 		modalCloses: () => modalCloses,
 		key: (key: string) => {
 			let prevented = false;
 			let stopped = false;
-			const event = { key, target: input,
+			const event = { key, target: field,
 				preventDefault: () => { prevented = true; },
 				stopPropagation: () => { stopped = true; },
 			};
 			const handled = keymap.handle(event as unknown as KeyboardEvent);
-			if (handled !== false && !stopped) input.fire("keydown", event);
+			if (handled !== false && !stopped) field.fire("keydown", event);
 			return { prevented, stopped };
 		},
 		destroy: () => {
@@ -68,12 +69,12 @@ describe("icon library pointer navigation", () => {
 			assert.equal(h.keymap.scopes.length, 2);
 			assert.deepEqual(h.key("Escape"), { prevented: true, stopped: true });
 			assert.equal(h.modalCloses(), 0);
-			assert.equal(h.input.getAttribute("aria-expanded"), "false");
-			assert.equal(h.doc.activeElement, h.input);
+			assert.equal(h.field.getAttribute("aria-expanded"), "false");
+			assert.equal(h.doc.activeElement, h.field);
 			assert.equal(h.keymap.scopes.length, 1, "closing restores the original modal scope");
 			assert.deepEqual(h.key("Escape"), { prevented: true, stopped: false });
 			assert.equal(h.modalCloses(), 1, "the next Escape reaches the containing modal");
-			h.input.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
+			h.field.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
 			assert.equal(h.keymap.scopes.length, 2, "reopening adds only one temporary menu scope");
 			assert.deepEqual(h.key("Escape"), { prevented: true, stopped: true });
 			assert.equal(h.modalCloses(), 1, "reopening registers the source menu again");
@@ -91,9 +92,9 @@ describe("icon library pointer navigation", () => {
 				assert.ok(all.classList.contains("is-active"));
 				(exit === "row" ? all : h.menu).fire("mouseleave");
 				assert.ok(h.rows.every((row) => !row.classList.contains("is-active")));
-				assert.equal(h.input.getAttribute("aria-activedescendant"), null);
+				assert.equal(h.field.getAttribute("aria-activedescendant"), null);
 				assert.equal(h.rows[1]?.getAttribute("aria-selected"), "true");
-				assert.equal(h.input.getAttribute("aria-expanded"), "true");
+				assert.equal(h.field.getAttribute("aria-expanded"), "true");
 			} finally { h.destroy(); }
 		});
 	}
@@ -106,9 +107,9 @@ describe("icon library pointer navigation", () => {
 			h.rows[0]!.fire("mouseleave");
 			h.menu.fire("mouseleave");
 			assert.ok(h.rows[1]?.classList.contains("is-active"));
-			assert.equal(h.input.getAttribute("aria-activedescendant"), h.rows[1]?.id);
+			assert.equal(h.field.getAttribute("aria-activedescendant"), h.rows[1]?.id);
 			h.key("Escape");
-			assert.equal(h.input.getAttribute("aria-expanded"), "false");
+			assert.equal(h.field.getAttribute("aria-expanded"), "false");
 		} finally { h.destroy(); }
 	});
 
@@ -127,7 +128,7 @@ describe("icon library pointer navigation", () => {
 			assert.ok(all.classList.contains("is-active"));
 			assert.ok(!lucide.classList.contains("is-active"));
 			assert.equal(h.rows.filter((row) => row.classList.contains("is-active")).length, 1);
-			assert.equal(h.input.getAttribute("aria-activedescendant"), all.id);
+			assert.equal(h.field.getAttribute("aria-activedescendant"), all.id);
 			assert.equal(lucide.getAttribute("aria-selected"), "true");
 		} finally { h.destroy(); }
 	});
@@ -146,12 +147,12 @@ describe("icon library pointer navigation", () => {
 	it("commits a source through the shared listbox and retains its rich menu rows", () => {
 		const h = mount();
 		try {
-			assert.equal(h.popup.inputEl.readOnly, true);
+			assert.equal(h.popup.inputEl, null, "no search box: the rows are few");
 			assert.ok(h.rows[1]?.querySelector(".icon-picker-source-menu-item-emblem"));
 			h.rows[0]!.fire("click");
 			assert.deepEqual(h.committed, ["all"]);
-			assert.equal(h.input.getAttribute("aria-expanded"), "false");
-			h.input.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
+			assert.equal(h.field.getAttribute("aria-expanded"), "false");
+			h.field.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
 			assert.equal(h.menu.querySelectorAll(".icon-picker-source-menu-item")[0]
 				?.getAttribute("aria-selected"), "true");
 		} finally { h.destroy(); }
@@ -270,12 +271,12 @@ describe("icon library menu — the line counting libraries to download", () => 
 			assert.ok(last.hasClass("is-active"), "End stops on the last library");
 			h.key("ArrowDown");
 			assert.ok(last.hasClass("is-active"), "and so does going past it");
-			assert.equal(h.input.getAttribute("aria-activedescendant"), last.id);
+			assert.equal(h.field.getAttribute("aria-activedescendant"), last.id);
 			assert.ok(!line.hasClass("is-active"));
 
 			line.dispatchEvent({ type: "click", bubbles: true });
 			assert.deepEqual(h.committed, []);
-			assert.equal(h.input.getAttribute("aria-expanded"), "true", "the menu stays open");
+			assert.equal(h.field.getAttribute("aria-expanded"), "true", "the menu stays open");
 		} finally { h.destroy(); }
 	});
 
@@ -304,7 +305,7 @@ describe("icon library menu — the edited icon's library when the picker does n
 		const h = mount(() => EDITING_TABLER, "tabler");
 		try {
 			h.key("Escape");
-			assert.equal((h.input as unknown as HTMLInputElement).value, t("iconPicker.tabler"));
+			assert.equal(h.field.querySelector(".cs-dropdown-field-label")?.textContent, t("iconPicker.tabler"));
 			assert.equal(h.popup.value, "tabler");
 		} finally { h.destroy(); }
 	});
@@ -315,7 +316,7 @@ describe("icon library menu — the edited icon's library when the picker does n
 			const [current, search, libraries] = groups(h.menu);
 			assert.equal(must(current, "current").querySelector(".cs-combobox-group-label")?.textContent, t("iconPicker.groupDeleted"));
 			assert.deepEqual(must(current, "current").querySelectorAll(".cs-source-name").map((n) => n.textContent), [t("iconPicker.tabler")]);
-			assert.ok(must(current, "current").querySelector(".cs-source-check"), "it is the library on screen");
+			assert.ok(must(current, "current").querySelector(".cs-combobox-check"), "it is the library on screen");
 			assert.equal(must(search, "search").querySelector(".cs-combobox-group-label")?.textContent, t("iconPicker.groupSearch"));
 			assert.equal(must(libraries, "libraries").querySelectorAll(".cs-source-name").length, 4);
 			assert.ok(h.rows[0]?.hasClass("is-active"), "the menu opens on it");
@@ -351,10 +352,10 @@ describe("icon library menu — the edited icon's library when the picker does n
 				.find((row) => row.textContent.includes(t("iconPicker.lucide"))), "Lucide row");
 			lucide.fire("click");
 			assert.deepEqual(h.committed, ["lucide"]);
-			h.input.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
+			h.field.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
 			const [current] = groups(h.menu);
 			const tabler = must(must(current, "current").querySelector(".icon-picker-source-menu-item") ?? undefined, "Tabler row");
-			assert.equal(tabler.querySelector(".cs-source-check"), null, "no longer the one on screen");
+			assert.equal(tabler.querySelector(".cs-combobox-check"), null, "no longer the one on screen");
 			tabler.fire("click");
 			assert.deepEqual(h.committed, ["lucide", "tabler"]);
 		} finally { h.destroy(); }
@@ -372,7 +373,7 @@ describe("icon library menu — the edited icon's library when the picker does n
 			h.popup.setItems();
 			const labels = h.menu.querySelectorAll(".cs-combobox-group-label").map((el) => el.textContent);
 			assert.deepEqual(labels, [t("iconPicker.groupSearch"), t("iconPicker.groupLibraries")]);
-			const checked = h.menu.querySelectorAll(".cs-source-check").map((check) => check.parentElement?.textContent ?? "");
+			const checked = h.menu.querySelectorAll(".cs-combobox-check").map((check) => check.parentElement?.textContent ?? "");
 			assert.equal(checked.length, 1);
 			assert.ok(checked[0]?.includes(t("iconPicker.tabler")), "downloaded from its prompt, it is still the one chosen");
 		} finally { h.destroy(); }

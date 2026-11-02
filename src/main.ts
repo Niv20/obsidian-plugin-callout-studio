@@ -10,7 +10,7 @@ import type { SettingsAdoptionOptions } from "./manager/settingsAdopt";
  * Keep this file focused on lifecycle only — all feature logic lives in
  * the sub-modules under manager/, editor/, settings/, etc.
  */
-import { Notice, Platform, Plugin } from "obsidian";
+import { Platform, Plugin, type App, type PluginManifest } from "obsidian";
 import type { CalloutIcon, CalloutRenderRole, PluginSettings } from "./types";
 import { CalloutRegistry } from "./manager/CalloutRegistry";
 import { CSSInjector } from "./manager/CSSInjector";
@@ -31,7 +31,6 @@ import { registerPausedRecheck } from "./manager/pausedRecheck";
 import { registerPausedIndicator } from "./settings/pausedIndicator";
 import { ReloadQueue } from "./manager/reloadQueue";
 import { registerThemeAppearance } from "./manager/theme/themeAppearanceSync";
-import { registerDefaultThemeClass } from "./manager/theme/defaultThemeClass";
 import { registerThemeCalloutsOff, type ThemeCalloutsOff } from "./manager/theme/themeCalloutsOff";
 import { removeLegacyStartupSnippet } from "./manager/legacyStartupSnippet";
 import { runLaunchSequence } from "./manager/launchSequence";
@@ -72,6 +71,7 @@ import {
 	refreshOccurrencesViewLocale,
 } from "./usage/registerOccurrencesView";
 import { registerPortableConversionView, refreshPortableConversionViewLocale } from "./portable/registerPortableConversionView";
+import { showNotice } from "./ui/mascot/mascotNotices";
 
 /**
  * How long the startup entrance animation window stays open. Long enough to
@@ -108,8 +108,22 @@ export default class CalloutStudioPlugin extends Plugin {
 	private reloads!: ReloadQueue;
 	private linkSuggestDecorator!: LinkSuggestDecorator;
 
-	get settings(): PluginSettings {
-		return this.registry.settings;
+	/**
+	 * The live settings object, always read through the registry, because
+	 * adopting another device's `data.json` replaces `registry.settings`.
+	 *
+	 * Obsidian 1.13 declares `Plugin.settings` as a plain property. TypeScript
+	 * forbids overriding a property with an accessor (TS2611), so the getter is
+	 * installed per instance in the constructor and only the type lives here.
+	 */
+	declare settings: PluginSettings;
+
+	constructor(app: App, manifest: PluginManifest) {
+		super(app, manifest);
+		Object.defineProperty(this, "settings", {
+			get: (): PluginSettings => this.registry.settings,
+			configurable: true,
+		});
 	}
 
 	/** Backwards-compatible accessor used by SettingsTab/CalloutEditor. */
@@ -136,9 +150,6 @@ export default class CalloutStudioPlugin extends Plugin {
 
 	async onload() {
 		registerUiIcons(this);
-		// Before the first await, so no window can open ahead of the light
-		// palette's gate being set (or deliberately left unset, under a theme).
-		registerDefaultThemeClass(this);
 		startMaterialFontLoader();
 		// Mobile and mid-session loads animate over an already visible UI.
 		// Capture visibility before any await.
@@ -193,12 +204,12 @@ export default class CalloutStudioPlugin extends Plugin {
 		// appearance and link; explain the missing palette names after locale setup.
 		const paletteMerges = this.registry.takePaletteMerges();
 		if (paletteMerges.length > 0) {
-			new Notice(
+			showNotice(
+				"success",
 				t("notice.palettesMerged", {
 					count: paletteMerges.length,
 					names: paletteMerges.map((m) => m.from).join(", "),
 				}),
-				10000,
 			);
 		}
 
@@ -394,8 +405,8 @@ export default class CalloutStudioPlugin extends Plugin {
 	 */
 	applyLocaleChange(): void {
 		this.refreshMissingSettingsNotice();
-		// Only repaint settings while they are on screen.
-		if (this.settingsTab?.containerEl.isConnected) this.settingsTab.display();
+		// Obsidian draws the tab again only while it is on screen.
+		this.settingsTab?.update();
 		refreshFixedCommandNames(this, this.commandDeps());
 		refreshOccurrencesViewLocale(this);
 		refreshPortableConversionViewLocale(this);
@@ -479,8 +490,9 @@ export default class CalloutStudioPlugin extends Plugin {
 		await this.saveSettings();
 	}
 
-	runVaultScan(): Promise<number> {
-		return this.discovery.run();
+	/** @see ManualCalloutDiscovery.run */
+	runVaultScan(beforeSave?: () => Promise<void>): Promise<number> {
+		return this.discovery.run(beforeSave);
 	}
 
 	onIconCacheChange(cb: () => void): () => void {

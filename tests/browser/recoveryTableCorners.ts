@@ -84,7 +84,7 @@ export async function mountRecoveryTableFixture(): Promise<void> {
 	}
 	// The shared module stub intentionally draws no icons. Give controls the
 	// same SVG box as Obsidian so this remains a representative layout fixture.
-	for (const parent of Array.from(report.querySelectorAll(".cs-disclosure-chevron, .cs-recovery-preview-fold"))) {
+	for (const parent of Array.from(report.querySelectorAll(".collapse-icon, .cs-recovery-preview-fold"))) {
 		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("class", "svg-icon"); svg.setAttribute("viewBox", "0 0 24 24");
 		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");

@@ -19,8 +19,8 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import { processImportedJSON } from "../src/settings/sections/DataManagementSection";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import { processImportedJSON } from "../src/settings/sections/backupImport";
+import type { SettingsContext } from "../src/settings/sections/types";
 import type { CalloutDefinition, CustomPalette } from "../src/types";
 import { bakePaletteColors, customPaletteToColorPalette } from "../src/utils/colorPalettes";
 import { definition } from "./support/discoveryHarness";
@@ -64,8 +64,8 @@ async function importInto(target: CalloutRegistry, source: CalloutRegistry): Pro
 			saveSettings: () => Promise.resolve(),
 			refreshRenderModes: () => {}, ensureIconArtworkFor: () => Promise.resolve(),
 		},
-		display: () => {},
-	} as unknown as SettingsSectionContext;
+		redraw: () => {},
+	} as unknown as SettingsContext;
 	try {
 		await processImportedJSON(ctx, new File([source.exportToJSONv2()], "backup.json", { type: "application/json" }));
 	} finally { confirm.restore(); }

@@ -8,8 +8,8 @@ import {
 import { ADMONITION_IMPORT } from "../src/settings/pluginImport/admonitionImportSource";
 import { CALLOUT_MANAGER_IMPORT } from "../src/settings/pluginImport/calloutManagerImportSource";
 import { probeVault } from "../src/settings/pluginImport/pluginImportSource";
-import { processImportedJSON } from "../src/settings/sections/DataManagementSection";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import { processImportedJSON } from "../src/settings/sections/backupImport";
+import type { SettingsContext } from "../src/settings/sections/types";
 import { t } from "../src/i18n";
 import { ImportReportModal } from "../src/utils/ImportReportModal";
 import {
@@ -110,7 +110,7 @@ describe("untrusted import resource budgets", () => {
 		const report = stubReport();
 		let reads = 0;
 		try {
-			await processImportedJSON({ app: {} } as SettingsSectionContext, {
+			await processImportedJSON({ app: {} } as SettingsContext, {
 				size: MAX_IMPORT_BYTES + 1,
 				text: () => { reads++; return Promise.resolve("[]"); },
 			} as File);

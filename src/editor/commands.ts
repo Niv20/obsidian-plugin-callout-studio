@@ -112,6 +112,7 @@ function buildFixedCommand(
 						plugin.autoComplete.triggerNow(
 							editor,
 							plugin.app.workspace.getActiveFile(),
+							true,
 						);
 					}
 				},
@@ -125,6 +126,7 @@ function buildFixedCommand(
 						plugin.autoComplete.triggerNow(
 							editor,
 							plugin.app.workspace.getActiveFile(),
+							true,
 						);
 					}
 				},

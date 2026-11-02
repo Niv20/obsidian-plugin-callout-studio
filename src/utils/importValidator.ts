@@ -1124,7 +1124,7 @@ function validateCalloutArray(
 			// The whole background block is spelled out — `undefined` included —
 			// rather than attached only when the file carries a value. An import
 			// onto an id that already exists lands through
-			// `registry.update(def.id, def)` (see DataManagementSection), which
+			// `registry.update(def.id, def)` (see backupImport), which
 			// merges `{ ...existing, ...partial }`, and a key that isn't there
 			// clears nothing. Attaching conditionally meant importing a
 			// transparent callout over a coloured one left the old hexes

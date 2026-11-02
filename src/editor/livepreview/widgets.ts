@@ -399,7 +399,7 @@ export class CalloutContentPillWidget extends WidgetType {
 		// reading view has and a CodeMirror widget does not. Without this the
 		// same payload would come out unstyled here and styled there. The class
 		// is the one this plugin's other MarkdownRenderer hosts already use
-		// (GlobalStyleModal's gap demo, LiveCalloutPreview's fallback), and the
+		// (stylePreview.ts's spacing demo, LiveCalloutPreview's fallback), and the
 		// unwrap guard keeps block content out, so only inline rules can apply.
 		el.classList.add("markdown-rendered");
 

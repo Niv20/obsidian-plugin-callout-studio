@@ -40,6 +40,8 @@ Thank you all for helping make Callout Studio better!
 
 ## Install
 
+Callout Studio needs Obsidian 1.13.4 or later.
+
 [Obsidian community directory](https://community.obsidian.md/plugins/callout-studio): Find Callout Studio's listing and add it to Obsidian. You can also open **Settings → Community plugins → Browse**, search for **Callout Studio**, and select **Install**, then **Enable**.
 
 [Manual installation](docs/internals-docs/20-build-test-release.md#manual-installation-from-a-release): Instructions for downloading a release and installing its files in your vault.
@@ -64,4 +66,4 @@ Thank you all for helping make Callout Studio better!
 
 [License](LICENSE): Callout Studio's code is available under a permissive license, with no attribution required. One informal request, which is not a license term: please do not repackage the code and publish it as a new plugin in Obsidian's Community Plugins directory. You are welcome to reuse it, learn from it, and build on it in other ways.
 
-[Third-party notices](docs/THIRD-PARTY-NOTICES.md): Full license texts and credits for the icon libraries, which are separate works and retain their own licenses. You can also select **Icon licenses & credits** at the bottom of the plugin settings. Brand logos, from Simple Icons and Font Awesome Brands among others, remain trademarks of their owners, and some carry a license of their own; both are covered here.
+[Third-party notices](docs/THIRD-PARTY-NOTICES.md): Full license texts and credits for the icon libraries, which are separate works and retain their own licenses. You can also press the **License** icon in the row of small icons at the bottom of the plugin settings. Brand logos, from Simple Icons and Font Awesome Brands among others, remain trademarks of their owners, and some carry a license of their own; both are covered here.

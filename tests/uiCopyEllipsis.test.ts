@@ -39,11 +39,11 @@ import { pluginSourceFiles, report } from "./support/sourceScan";
  * in `…`.
  */
 const ASKS_NEXT: readonly string[] = [
-	"settings.import", // opens "Import from": which source?
-	"settings.export", // opens "Export as": which format?
+	"settings.import", // opens "Import from": which source? (and a plugin's own import window: what data?)
+	"settings.export", // opens "Export as": which format? (and the backup's save dialog: where?)
 	"import.upload", // opens the file picker
 	"import.replace", // the same button once a file is staged
-	"settings.replaceAction", // opens "Replace with:": which callout?
+	"settings.replaceAction", // opens "Replace in vault": which callout?
 	"portable.customize", // starts the inline editor: what text?
 	"portable.editCustom", // the same, for a replacement that is already custom
 ];
@@ -57,7 +57,6 @@ const IN_PROGRESS: readonly string[] = [
 	"locale.downloading",
 	"portable.scanning",
 	"portable.converting",
-	"editor.saving",
 	"iconPack.downloading",
 	"iconLibraries.downloading",
 	"iconLibraries.deleting",
@@ -74,6 +73,7 @@ const IN_PROGRESS: readonly string[] = [
 const PLACEHOLDER: readonly string[] = [
 	"replaceModal.searchPlaceholder",
 	"calloutPicker.placeholder",
+	"settings.searchCallouts",
 	"editor.paletteSearchPlaceholder",
 	"import.cmPlaceholder",
 ];
@@ -114,14 +114,9 @@ const STAYS_PLAIN: Readonly<Record<string, string>> = {
 	"saveStatus.discardRecoveryCopy": "only a confirmation follows",
 
 	// A window that is itself the destination.
-	"settings.versionsButton": "opens the window it names",
 	"portable.review": "opens the review it names",
-	"settings.customCommandsButton": "opens a manager",
-	"iconLibraries.manage": "opens a manager",
 	"iconPicker.manageLibraries": "opens a manager",
-	"settings.customizeMenuButton": "opens a settings window",
-	"settings.globalSettingsCustomize": "opens a settings window",
-	"footer.iconCredits": "opens a read-only window",
+	"license.title": "opens a read-only window",
 	"contextMenu.openSettings": "opens settings",
 	"usage.menu": "opens the Find callouts view",
 	"saveStatus.goToVersions": "navigates, asks nothing",
@@ -133,6 +128,7 @@ const STAYS_PLAIN: Readonly<Record<string, string>> = {
 	"settings.rescanVaultHintAction": "acts at once",
 	"import.pasteButton": "acts at once",
 	"iconPack.download": "acts at once",
+	"export.formatCssAction": "writes the snippet at once; at most a yes/no about overwriting follows",
 
 	// The last step of a dialog: nothing follows it.
 	"vault.confirmReplace": "the dialog's own final step",

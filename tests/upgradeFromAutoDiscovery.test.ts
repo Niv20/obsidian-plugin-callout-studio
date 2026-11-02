@@ -47,8 +47,7 @@ describe("upgrade from released automatic-discovery versions", () => {
 			assert.equal(h.registry.get("unclaimed"), undefined);
 			assert.equal(h.state.noteReads, 0);
 			assert.equal(h.registry.toSaveData().version, 5);
-			assert.equal(h.localState.isExpanded("user"), false);
-			assert.deepEqual(Object.keys(JSON.parse(h.local.get(LOCAL_KEY)!) as Record<string, unknown>).sort(), ["initialized", "listsExpanded", "v", "welcomeSeen"]);
+			assert.deepEqual(Object.keys(JSON.parse(h.local.get(LOCAL_KEY)!) as Record<string, unknown>).sort(), ["initialized", "v", "welcomeSeen"]);
 			h.css.persist("new live CSS");
 			assert.equal(h.local.get(CURRENT_CSS_KEY), "new live CSS");
 			assert.equal(h.local.get(CSS_KEY), ORIGINAL_CSS);
@@ -100,7 +99,7 @@ describe("legacy cleanup requires a durable verified recovery copy", () => {
 		it(`keeps original discovery and CSS when ${fault} occurs`, async () => {
 			const h = upgradeHarness(legacy.legacyLocalRaw); h.state[fault] = true;
 			await silence(async () => { assert.equal((await h.archive()).kind, "failed"); });
-			h.localState.markInitialized(); h.localState.setExpanded("theme", false);
+			h.localState.markInitialized(); h.localState.setQuickInsertSource("theme");
 			h.css.persist("would erase original styles");
 			assert.equal(h.local.get(LOCAL_KEY), legacy.legacyLocalRaw);
 			assert.equal(h.local.get(CSS_KEY), ORIGINAL_CSS);

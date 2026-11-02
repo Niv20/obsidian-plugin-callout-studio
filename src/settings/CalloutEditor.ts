@@ -1,7 +1,3 @@
-import { recoverEditorSaving } from "./editor/recoverEditorSaving";
-import { renderSaveStatusBanner } from "./saveStatusBanner";
-import { addFieldResetButton } from "./editor/fieldResetButton";
-import { addBuiltInIdReset, builtInDefaultIds } from "./editor/builtInIdReset";
 /**
  * settings/CalloutEditor.ts — Modal dialog for creating and editing callouts.
  *
@@ -11,7 +7,7 @@ import { addBuiltInIdReset, builtInDefaultIds } from "./editor/builtInIdReset";
  * real-Obsidian live preview via LiveCalloutPreview. Save logic is delegated to
  * CalloutEditorSave; validation to CalloutEditorValidation.
  */
-import { Modal, Notice, Setting, setIcon } from "obsidian";
+import { Modal, Setting, SettingGroup, setIcon } from "obsidian";
 import type { TextComponent, ToggleComponent } from "obsidian";
 import type {
 	BgGradient,
@@ -28,6 +24,10 @@ import {
 import { IconPicker } from "./iconpicker";
 import { LiveCalloutPreview } from "./LiveCalloutPreview";
 import { PREVIEW_PLACEHOLDER_ID } from "../constants";
+import { recoverEditorSaving } from "./editor/recoverEditorSaving";
+import { renderSaveStatusBanner } from "./saveStatusBanner";
+import { addFieldResetButton } from "./editor/fieldResetButton";
+import { addBuiltInIdReset, builtInDefaultIds } from "./editor/builtInIdReset";
 import {
 	bgGradientsEqual,
 	bgTintFor,
@@ -47,8 +47,8 @@ import {
 } from "../utils/colorPalettes";
 import { t } from "../i18n";
 import { sanitizeCalloutIdInput } from "../utils/calloutId";
-import { TagInput } from "../ui/TagInput";
-import { appendDropdownCaret } from "../ui/dropdownControl";
+import { TagInput, wide } from "../ui/TagInput";
+import { SelectDropdown } from "../ui/selectDropdown";
 import { renderInlineLinkHint } from "../ui/inlineLinkHint";
 import { resolveCurrentModeColors } from "../ui/ColorCircles";
 import { PaletteEditorModal } from "./PaletteEditorModal";
@@ -71,7 +71,7 @@ import { EditorSaveSession } from "./editor/EditorSaveSession";
 import { askNoteChanges } from "./editor/askNoteChanges";
 import { idOwnership, type IdMove } from "./editor/idMoves";
 import type { NoteChoices } from "./editor/noteChanges";
-import type { TagMessage } from "../ui/TagInput";
+import type { TagMessage, TagRefusal } from "../ui/TagInput";
 import {
 	hasAuthoredBackground,
 	hasAuthoredTextColors,
@@ -80,9 +80,11 @@ import { definitionIconAdjustFields } from "./editor/definitionIconAdjust";
 import { findUserImage } from "../icons/packs/userImages";
 import { describeIcon } from "../icons/describeIcon";
 import { iconsEqual } from "../icons/lucideId";
-import { createControlGroup } from "./styleControls";
 import { renderIconAdjustGroup } from "./editor/iconAdjustGroup";
-import { applyModalChrome, removeModalChrome } from "./modalChrome";
+import { settingGroupEl } from "../ui/settingGroupEl";
+import { setSettingError } from "../ui/settingError";
+import { setButtonBusy } from "../ui/busyButton";
+import { addCancelButton, applyModalChrome, removeModalChrome } from "./modalChrome";
 import { autofocusOnDesktop } from "./modalAutofocus";
 import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
 import { activeThemeName } from "../manager/theme/customCssApi";
@@ -90,6 +92,7 @@ import { patternMatches } from "../manager/theme/themeClaimLookup";
 import type { PatternOp } from "../manager/theme/themeCalloutScan";
 import { calloutIdentity, obsidianCalloutAttrId } from "../utils/calloutId";
 import { cancelFrame, requestFrameFor, type FrameHandle } from "../utils/elementFrame";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 // Derive a callout ID from the display name. Spaces are preserved (the ID may
 // be a human-readable, multi-word label like "multi word callout"); the shared
@@ -315,7 +318,6 @@ export class CalloutEditor extends Modal {
 	private editorOpen = false;
 	private initialSnapshot: string = "";
 	private initialStyleSnapshot: string = "";
-	private removePopupOutsideClickListener: (() => void) | null = null;
 	/** The Color row's picker; holds a document listener until destroyed. */
 	private palettePicker: PaletteCombobox | null = null;
 
@@ -410,9 +412,12 @@ export class CalloutEditor extends Modal {
 		contentEl.empty();
 		contentEl.addClass("callout-studio-editor");
 		// Standard window shell; the extra class carries only this editor's
-		// width and the panel measurements taken against it.
-		this.modalEl.addClass("callout-studio-editor-modal");
-		const footerEl = applyModalChrome(this, { footer: true, wide: true });
+		// width and the panel measurements taken against it. `mod-lg` is
+		// Obsidian's mark for a large form: on a phone it opens as a
+		// full-height sheet with rounded top corners, as Obsidian's own large
+		// forms do (it changes nothing on a computer or a tablet).
+		this.modalEl.addClass("callout-studio-editor-modal", "mod-lg");
+		const footerEl = applyModalChrome(this, { footer: true });
 
 		// Hold incoming settings while this editor owns a draft.
 		this.plugin.settingsEditOpen = true;
@@ -433,51 +438,64 @@ export class CalloutEditor extends Modal {
 			: t("editor.newCallout");
 		this.setTitle(editorTitle);
 
+		// The four rows that describe the callout — Display name, Callout IDs,
+		// Color and Icon — sit together in one box without a heading, the way an
+		// Obsidian settings page opens with its general rows (`SettingGroup`;
+		// finding S5-15). The preview and the adjustments follow below it.
+		const general = new SettingGroup(contentEl);
+		general.addClass("cs-editor-group");
+
 		// Display Name
-		new Setting(contentEl)
+		const nameSetting = new Setting(general.listEl)
 			.setName(t("editor.displayName"))
 			.setDesc(
 				this.isBuiltIn
 					? t("editor.displayNameBuiltIn")
 					: t("editor.displayNameDesc"),
-			)
-			.addText((text) => {
+			);
+		if (this.isBuiltIn) {
+			// A built-in's name is fixed (Obsidian declares it), so it is shown
+			// inside a field-shaped box that cannot be focused or clicked. It
+			// is not stored in `nameTextInput`: nothing may ever edit it.
+			nameSetting.addText((text) => {
+				text.inputEl.addClass("cs-text-control");
+				text.setValue(this.displayName).setDisabled(true);
+			});
+		} else {
+			nameSetting.addText((text) => {
 				this.nameTextInput = text;
 				text.inputEl.addClass("cs-text-control");
 				text.setPlaceholder(t("editor.displayNamePlaceholder")).setValue(this.displayName);
-				if (this.isBuiltIn) {
-					text.setDisabled(true);
-				} else {
-					text.onChange((value) => {
-						this.displayName = value;
-						// The pinned primary ID mirrors the name; only that
-						// slot is replaced — other IDs are never touched.
-						const newPinned = generateId(value);
-						if (newPinned) {
-							this.calloutId = newPinned;
-							this.hasHadCalloutId = true;
-							this.idsTagInput?.setPinnedTag(newPinned);
-						} else if (!value.trim()) {
-							// Name fully cleared: drop the pinned slot
-							// (aliases stay).
-							this.calloutId = "";
-							this.idsTagInput?.setPinnedTag(null);
-						}
-						// else: the name holds only characters the ID
-						// sanitizer strips (e.g. emoji) — keep the current
-						// pinned primary rather than orphaning the row.
-						if (this.idsTagInput) {
-							const pinned = this.idsTagInput.getPinnedTag();
-							this.aliases = this.idsTagInput
-								.getTags()
-								.filter((tag) => tag !== pinned);
-						}
-						this.updateIdWarning();
-						this.updatePreview();
-						this.updateSaveState();
-					});
-				}
+				text.onChange((value) => {
+					this.displayName = value;
+					// The pinned primary ID mirrors the name; only that
+					// slot is replaced — other IDs are never touched.
+					const newPinned = generateId(value);
+					if (newPinned) {
+						this.calloutId = newPinned;
+						this.hasHadCalloutId = true;
+						this.idsTagInput?.setPinnedTag(newPinned);
+					} else if (!value.trim()) {
+						// Name fully cleared: drop the pinned slot
+						// (aliases stay).
+						this.calloutId = "";
+						this.idsTagInput?.setPinnedTag(null);
+					}
+					// else: the name holds only characters the ID
+					// sanitizer strips (e.g. emoji) — keep the current
+					// pinned primary rather than orphaning the row.
+					if (this.idsTagInput) {
+						const pinned = this.idsTagInput.getPinnedTag();
+						this.aliases = this.idsTagInput
+							.getTags()
+							.filter((tag) => tag !== pinned);
+					}
+					this.updateIdWarning();
+					this.updatePreview();
+					this.updateSaveState();
+				});
 			});
+		}
 
 		// The pristine shipped row gates every field-level built-in reset.
 		const originalDef = this.builtInDefault;
@@ -486,7 +504,7 @@ export class CalloutEditor extends Modal {
 		let syncIdsRevert = (): void => undefined;
 		// Callout IDs (primary + aliases) — unified tag input
 		const initialIds = [this.calloutId, ...this.aliases].filter(Boolean);
-		const idsSetting = new Setting(contentEl)
+		const idsSetting = new Setting(general.listEl)
 			.setName(t("editor.calloutIds"))
 			.setClass("cs-callout-ids-setting")
 			.setDesc(
@@ -502,15 +520,19 @@ export class CalloutEditor extends Modal {
 				}),
 			);
 
-		// Error element lives in the left description area
-		const idsErrorEl = idsSetting.descEl.createDiv();
+		// A short error goes under the field, where Obsidian shows a rejected
+		// value (`setErrorMessage`, finding S5-V1). A long one — a sentence that
+		// names a callout or a theme — is marked `wide(...)` and goes under the
+		// label with the notes, which are not problems, just worth knowing.
+		const idsNoteEl = idsSetting.descEl.createDiv();
 
 		this.idsTagInput = new TagInput(idsSetting.controlEl, {
 			initialTags: initialIds,
 			initialPinnedTag:
 				!this.isBuiltIn && this.calloutId ? this.calloutId : undefined,
 			placeholder: t("editor.calloutIdsPlaceholder"),
-			errorEl: idsErrorEl,
+			noteEl: idsNoteEl,
+			showFieldError: (message) => setSettingError(idsSetting, message),
 			// A saved custom alias must stay removable on the next open. Only the
 			// identifiers Obsidian itself ships are permanent.
 			readonlyTags: originalDef ? defaultIds : undefined,
@@ -569,7 +591,7 @@ export class CalloutEditor extends Modal {
 				const taken = this.takenIdMessage(tag, () => this.idsTagInput?.addTagUnchecked(tag));
 				if (taken) return taken;
 				return clash
-					? t("editor.idDashConflict", { other: clash })
+					? wide(t("editor.idDashConflict", { other: clash }))
 					: t("editor.idConflict");
 			},
 		});
@@ -606,19 +628,17 @@ export class CalloutEditor extends Modal {
 		// Standard setting row (matching Display name / Callout IDs / Icon).
 		// The palette dropdown is built further down — after the live preview
 		// exists, since selecting a palette refreshes it — and lands here.
-		// The class is what lets styles.css pin this row's control column to the
-		// form's shared control width, so the revert button below shortens the
-		// dropdown instead of pushing it left off the shared right edge.
-		const colorSetting = new Setting(contentEl)
+		// The picker is as wide as its palette's name, as every dropdown is,
+		// and the revert button below follows it at the row's end.
+		const colorSetting = new Setting(general.listEl)
 			.setName(t("editor.colors"))
-			.setClass("cs-color-setting")
 			.setDesc(t("editor.colorsDesc"));
 
 		// Icon
 		// `cs-row-inline` keeps the tile beside the label on the phone instead
 		// of on a full-width row of its own — the tile is a fixed 44px box, so
 		// the row below it would be mostly empty. See the class in styles.css.
-		const iconSetting = new Setting(contentEl)
+		const iconSetting = new Setting(general.listEl)
 			.setName(t("editor.icon"))
 			.setClass("cs-row-inline")
 			.setDesc(this.getIconLabel());
@@ -764,7 +784,13 @@ export class CalloutEditor extends Modal {
 					// repaints them in the next frame.
 					this.previewColorOverride === null,
 				);
-				this.plugin.cssInjector.inject(false);
+				// A new callout's draft is a lone demo, so a step rewrites only
+				// its own small sheet instead of the whole stylesheet; editing
+				// an existing callout shadows a real one and takes the full
+				// pass, as it always did (see CSSInjector.repaintDemoPreview).
+				// The icon can change here, which is not CSS, so the preview
+				// pane is swept for it.
+				this.plugin.cssInjector.repaintDemoPreview(previewCol);
 				this.scheduleNoteDecorationRefresh();
 			},
 			onDestroy: () => {
@@ -797,29 +823,29 @@ export class CalloutEditor extends Modal {
 		this.syncIconAdjust();
 
 		// ── Picture section ──
-		// Only a picture has anything to say here, so the box hides itself for
-		// every other icon rather than showing a switch that does nothing.
-		// Same group chrome as the Align box in the global style popup, so the
-		// toggle row gets the same padding instead of Obsidian's modal default
-		// (which zeroes it and pins the label to the box edge).
-		const pictureBox = createControlGroup(
-			adjustCol,
-			t("editor.picture"),
-			"cs-layout-group",
-		);
-		new Setting(pictureBox)
-			.setName(t("iconPicker.customRecolor"))
-			.addToggle((toggle) => {
-				this.recolorToggle = toggle;
-				toggle.onChange((value: boolean) => {
-					// Straight onto the icon, which the save flow and the dirty
-					// check already carry — so this stages like every other field
-					// here, and Cancel puts it back.
-					this.icon = { ...this.icon, recolor: value };
-					syncIconRevert();
-					this.updatePreview();
-				});
+		// Only a picture has anything to say here, so the group hides itself
+		// for every other icon rather than showing a switch that does nothing.
+		// An Obsidian `SettingGroup` with a heading, like the adjustment groups
+		// above it.
+		const pictureGroup = new SettingGroup(adjustCol)
+			.setHeading(t("editor.picture"))
+			.addClass("cs-editor-group")
+			.addSetting((setting) => {
+				setting
+					.setName(t("iconPicker.customRecolor"))
+					.addToggle((toggle) => {
+						this.recolorToggle = toggle;
+						toggle.onChange((value: boolean) => {
+							// Straight onto the icon, which the save flow and the
+							// dirty check already carry — so this stages like every
+							// other field here, and Cancel puts it back.
+							this.icon = { ...this.icon, recolor: value };
+							syncIconRevert();
+							this.updatePreview();
+						});
+					});
 			});
+		const pictureBox = settingGroupEl(pictureGroup);
 		this.syncPictureBox = () => {
 			const picture =
 				!this.hideIcon && this.icon.type === "image"
@@ -1283,21 +1309,6 @@ export class CalloutEditor extends Modal {
 		const foldControl = foldSection.createDiv({
 			cls: "callout-studio-fold-control",
 		});
-		const foldDropdown = foldControl.createDiv({
-			cls: "cs-palette-dropdown cs-fold-dropdown",
-		});
-		const foldTrigger = foldDropdown.createEl("button", {
-			cls: "cs-palette-trigger cs-fold-trigger cs-dropdown-control",
-			attr: { type: "button", "aria-haspopup": "listbox" },
-		});
-		const foldTriggerLabel = foldTrigger.createSpan({
-			cls: "cs-palette-trigger-label",
-		});
-		appendDropdownCaret(foldTrigger);
-		const foldMenu = foldDropdown.createDiv({
-			cls: "cs-palette-menu cs-palette-menu-up cs-fold-menu cs-scrollable-dropdown-menu cs-palette-menu-hidden",
-			attr: { role: "listbox", tabindex: "-1" },
-		});
 		const foldOptions: {
 			value: "off" | "open" | "closed";
 			label: string;
@@ -1308,123 +1319,21 @@ export class CalloutEditor extends Modal {
 		];
 		const currentFoldState = (): "off" | "open" | "closed" =>
 			!this.foldable ? "off" : this.defaultFolded ? "closed" : "open";
-		const getFoldLabel = (): string =>
-			foldOptions.find((opt) => opt.value === currentFoldState())
-				?.label ?? t("editor.foldOff");
-		foldTriggerLabel.setText(getFoldLabel());
-
-		let foldMenuOpen = false;
-		const readFoldState = () => ({
-			foldable: this.foldable,
-			defaultFolded: this.defaultFolded,
-			previewFoldCollapsed: this.previewFoldCollapsed,
-		});
-		let foldStateBeforeMenu: ReturnType<typeof readFoldState> | null = null;
-		const applyFoldState = (
-			value: "off" | "open" | "closed",
-			persist: boolean,
-		): void => {
-			if (value === "off") {
-				this.foldable = false;
-				this.defaultFolded = false;
-				this.previewFoldCollapsed = false;
-			} else {
-				this.foldable = true;
+		// Obsidian's dropdown and menu, as every plain choice (ui/selectDropdown.ts).
+		new SelectDropdown(foldControl, t("editor.foldable"))
+			.setOptions(foldOptions)
+			.setValue(currentFoldState())
+			.onChange((value) => {
+				this.foldable = value !== "off";
 				this.defaultFolded = value === "closed";
 				this.previewFoldCollapsed = value === "closed";
-			}
-			this.updatePreview();
-			if (persist) foldStateBeforeMenu = null;
-		};
-		const restoreFoldPreview = (): void => {
-			if (!foldStateBeforeMenu) return;
-			this.foldable = foldStateBeforeMenu.foldable;
-			this.defaultFolded = foldStateBeforeMenu.defaultFolded;
-			this.previewFoldCollapsed =
-				foldStateBeforeMenu.previewFoldCollapsed;
-			foldStateBeforeMenu = null;
-			this.updatePreview();
-		};
-		const closeFoldMenu = (): void => {
-			if (!foldMenuOpen) return;
-			foldMenuOpen = false;
-			foldMenu.addClass("cs-palette-menu-hidden");
-			foldTrigger.removeClass("is-open");
-			restoreFoldPreview();
-		};
-		const selectFoldState = (value: "off" | "open" | "closed"): void => {
-			const opt = foldOptions.find((item) => item.value === value);
-			if (!opt) return;
-
-			applyFoldState(opt.value, true);
-			foldTriggerLabel.setText(opt.label);
-			this.updateSaveState();
-			closeFoldMenu();
-		};
-		const buildFoldMenu = (): void => {
-			foldMenu.empty();
-			for (const opt of foldOptions) {
-				const item = foldMenu.createDiv({
-					cls: `cs-palette-menu-item${
-						currentFoldState() === opt.value ? " is-selected" : ""
-					}`,
-					attr: { role: "option" },
-				});
-				item.createSpan({
-					cls: "cs-palette-menu-item-label",
-					text: opt.label,
-				});
-				item.addEventListener("mouseenter", () => {
-					applyFoldState(opt.value, false);
-				});
-				item.addEventListener("click", () =>
-					selectFoldState(opt.value),
-				);
-			}
-		};
-		const openFoldMenu = (): void => {
-			if (foldMenuOpen) return;
-			palettePicker.close();
-			foldMenuOpen = true;
-			foldStateBeforeMenu = readFoldState();
-			buildFoldMenu();
-			foldMenu.removeClass("cs-palette-menu-hidden");
-			foldTrigger.addClass("is-open");
-			foldMenu.focus();
-		};
-		foldTrigger.addEventListener("click", () => {
-			if (foldMenuOpen) closeFoldMenu();
-			else openFoldMenu();
-		});
-		foldMenu.addEventListener("keydown", (ev) => {
-			if (ev.key === "Escape") {
-				ev.preventDefault();
-				closeFoldMenu();
-			}
-		});
-		// Close the fold popup when clicking outside it. The palette picker
-		// keeps its own outside-click (see ListboxPopup), so this no longer has
-		// to know where that one lives.
-		const popupOutsideClick = (ev: MouseEvent): void => {
-			const target = ev.target as Node | null;
-			if (!target) return;
-			if (foldDropdown.contains(target)) return;
-			closeFoldMenu();
-		};
-		this.removePopupOutsideClickListener?.();
-		activeDocument.addEventListener("click", popupOutsideClick);
-		this.removePopupOutsideClickListener = () => {
-			activeDocument.removeEventListener("click", popupOutsideClick);
-		};
+				this.updatePreview();
+				this.updateSaveState();
+			});
 		// Action buttons — the chrome's pinned bottom bar
 		const buttonContainer = footerEl;
 
-		const cancelBtn = buttonContainer.createEl("button", {
-			text: t("editor.cancel"),
-		});
-		cancelBtn.addEventListener("click", () => {
-			this.close();
-		});
+		addCancelButton(buttonContainer, t("editor.cancel"), () => this.close());
 
 		const saveBtn = buttonContainer.createEl("button", {
 			text: this.existingId
@@ -1455,11 +1364,11 @@ export class CalloutEditor extends Modal {
 	}
 
 	/**
-	 * One role's icon-adjustment box. The controls themselves live in
-	 * `editor/iconAdjustGroup.ts`, shared with the theme callout preview, which
-	 * offers this trio and nothing else.
+	 * One role's icon-adjustment group (an Obsidian `SettingGroup`). The
+	 * controls themselves live in `editor/iconAdjustGroup.ts`; this only hands
+	 * them the role's slice of the form state and, for a built-in, its defaults.
 	 *
-	 * Returns the box so the caller can hide it when the callout draws no icon.
+	 * Returns the group so the caller can hide it when the callout draws no icon.
 	 */
 	private renderIconAdjustGroup(
 		parent: HTMLElement,
@@ -1654,21 +1563,21 @@ export class CalloutEditor extends Modal {
 	 * "move it here" records the move and calls `onMove`. See ./editor/idMoves
 	 * for what may move.
 	 */
-	private takenIdMessage(id: string, onMove: () => void): TagMessage | null {
+	private takenIdMessage(id: string, onMove: () => void): TagRefusal | null {
 		const owner = idOwnership(this.plugin.registry, id, this.existingId);
 		switch (owner.kind) {
 			case "free":
 				return null;
 			case "theme":
-				return t("editor.idFromTheme", {
+				return wide(t("editor.idFromTheme", {
 					theme: activeThemeName(this.plugin.app) ?? t("settings.themeCalloutsDefaultTheme"),
-				});
+				}));
 			case "stock":
-				return t("editor.idBuiltInStock", { id, name: owner.owner.displayName });
+				return wide(t("editor.idBuiltInStock", { id, name: owner.owner.displayName }));
 			case "main":
-				return t("editor.idOwnedByMain", { id, name: owner.owner.displayName });
+				return wide(t("editor.idOwnedByMain", { id, name: owner.owner.displayName }));
 			case "movable":
-				return (el) => {
+				return wide((el) => {
 					const line = renderInlineLinkHint(el, {
 						textKey: "editor.idOwnedBy",
 						linkKey: "editor.idMoveHere",
@@ -1684,7 +1593,7 @@ export class CalloutEditor extends Modal {
 					// typed id again, and the message would be redrawn from under
 					// the pointer before the click lands — as the + guards itself.
 					line.querySelector("button")?.addEventListener("mousedown", (evt) => evt.preventDefault());
-				};
+				});
 		}
 	}
 
@@ -1719,8 +1628,11 @@ export class CalloutEditor extends Modal {
 		// For existing: enable if valid AND has changes
 		const enabled = !this.saveSession.busy && (this.existingId ? hasChanges && isValid : isValid);
 		this.isSaveActionEnabled = enabled;
-		this.saveBtn.disabled = this.saveSession.busy;
-		this.saveBtn.textContent = t(this.saveSession.busy ? "editor.saving" : this.existingId ? "editor.saveChanges" : "editor.createCallout");
+		// While a save runs, the button keeps its words and its size and shows
+		// Obsidian's own small spinner, instead of the old "Saving…" label
+		// (finding S5-V3).
+		setButtonBusy(this.saveBtn, this.saveSession.busy);
+		this.saveBtn.textContent = t(this.existingId ? "editor.saveChanges" : "editor.createCallout");
 		this.saveBtn.setAttribute("aria-disabled", enabled ? "false" : "true");
 		this.saveBtn.toggleClass("cs-btn-disabled", !enabled);
 	}
@@ -1735,37 +1647,37 @@ export class CalloutEditor extends Modal {
 			requireDisplayName &&
 			!this.displayName.trim()
 		) {
-			new Notice(t("editor.nameRequired"));
+			showNotice("blocked", t("editor.nameRequired"));
 			return;
 		}
 
 		if (this.existingId && !hasChanges) {
-			new Notice(t("editor.noChangesToSave"));
+			showNotice("upToDate", t("editor.noChangesToSave"));
 			return;
 		}
 
 		if (!this.calloutId) {
-			new Notice(t("editor.idEmpty"));
+			showNotice("blocked", t("editor.idEmpty"));
 			return;
 		}
 
 		if (!this.canUseCalloutId(this.calloutId, "primary")) {
-			new Notice(t("editor.idConflict"));
+			showNotice("blocked", t("editor.idConflict"));
 			return;
 		}
 		const primaryClash = this.findAttrIdCollision(this.calloutId);
 		if (primaryClash) {
-			new Notice(t("editor.idDashConflict", { other: primaryClash }));
+			showNotice("blocked", t("editor.idDashConflict", { other: primaryClash }));
 			return;
 		}
 		for (const alias of this.aliases) {
 			if (!this.canUseCalloutId(alias, "alias")) {
-				new Notice(t("editor.idConflict"));
+				showNotice("blocked", t("editor.idConflict"));
 				return;
 			}
 			const aliasClash = this.findAttrIdCollision(alias);
 			if (aliasClash) {
-				new Notice(t("editor.idDashConflict", { other: aliasClash }));
+				showNotice("blocked", t("editor.idDashConflict", { other: aliasClash }));
 				return;
 			}
 		}
@@ -1848,11 +1760,13 @@ export class CalloutEditor extends Modal {
 			// over another's extra id — the message says how.
 			this.idsTagInput.showExternalError(
 				this.themeSuppliesId(this.calloutId)
-					? t("editor.idFromTheme", {
-							theme:
-								activeThemeName(this.plugin.app) ??
-								t("settings.themeCalloutsDefaultTheme"),
-						})
+					? wide(
+							t("editor.idFromTheme", {
+								theme:
+									activeThemeName(this.plugin.app) ??
+									t("settings.themeCalloutsDefaultTheme"),
+							}),
+						)
 					: this.takenIdMessage(this.calloutId, () => {
 							this.updateIdWarning();
 							this.updatePreview();
@@ -1870,7 +1784,7 @@ export class CalloutEditor extends Modal {
 		const fuzzy = this.themeFuzzyClaim(this.calloutId);
 		if (fuzzy) {
 			this.idsTagInput.showExternalError(
-				t("editor.idThemePattern", { pattern: fuzzy }),
+				wide(t("editor.idThemePattern", { pattern: fuzzy })),
 			);
 			return;
 		}
@@ -1884,7 +1798,7 @@ export class CalloutEditor extends Modal {
 			const clash = this.findAttrIdCollision(id);
 			if (clash) {
 				this.idsTagInput.showExternalError(
-					t("editor.idDashConflict", { other: clash }),
+					wide(t("editor.idDashConflict", { other: clash })),
 				);
 				return;
 			}
@@ -1912,13 +1826,15 @@ export class CalloutEditor extends Modal {
 			const theme =
 				activeThemeName(this.plugin.app) ?? t("settings.themeCalloutsDefaultTheme");
 			this.idsTagInput.showExternalError(
-				obsidianNames.length > 0
-					? t("editor.namesFromThemeAndObsidian", {
-							theme,
-							names: list(themeNames),
-							stock: list(obsidianNames),
-						})
-					: t("editor.namesFromTheme", { theme, names: list(themeNames) }),
+				wide(
+					obsidianNames.length > 0
+						? t("editor.namesFromThemeAndObsidian", {
+								theme,
+								names: list(themeNames),
+								stock: list(obsidianNames),
+							})
+						: t("editor.namesFromTheme", { theme, names: list(themeNames) }),
+				),
 			);
 			return;
 		}
@@ -2058,7 +1974,11 @@ export class CalloutEditor extends Modal {
 		return [
 			`## [!${id}] ${name}`,
 			"",
-			t("editor.sampleInlineText").replace("{id}", id),
+			// Functions, not strings, as the replacements: a string replacement
+			// reads `$&`, `$$` and `` $` `` in the name as patterns.
+			t("editor.sampleInlineText")
+				.replace("{id}", () => id)
+				.replace("{title}", () => name),
 			"",
 			`> [!${id}]${mark} ${name}`,
 			`> ${t("editor.loremIpsumShort")}`,
@@ -2284,8 +2204,6 @@ export class CalloutEditor extends Modal {
 		this.updatePreviewFrame = cancelFrame(this.updatePreviewFrame);
 		this.preview?.destroy();
 		this.preview = null;
-		this.removePopupOutsideClickListener?.();
-		this.removePopupOutsideClickListener = null;
 		this.palettePicker?.destroy();
 		this.palettePicker = null;
 		if (this.resolve) {
@@ -2295,7 +2213,7 @@ export class CalloutEditor extends Modal {
 		this.contentEl.empty();
 		// The button bar is a sibling of contentEl, so emptying that misses it.
 		removeModalChrome(this);
-		this.modalEl.removeClass("callout-studio-editor-modal");
+		this.modalEl.removeClass("callout-studio-editor-modal", "mod-lg");
 		// A pending save still owns its definition while it finishes note work.
 		this.plugin.settingsEditOpen = this.saveSession.busy;
 	}

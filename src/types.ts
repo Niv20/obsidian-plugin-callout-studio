@@ -112,6 +112,13 @@ declare module "obsidian" {
 		setting: {
 			open(): void;
 			openTabById(id: string): ObsidianSettingTab | null;
+			/**
+			 * Open settings tab `tabId` on one of its pages: `pagePath` is the
+			 * page ids from the tab down (empty for the tab's own page). Since
+			 * 1.13; optional because it is not in the typings, so every caller
+			 * checks for it (settings/declarative/jumpToRow.ts).
+			 */
+			openPagePath?(tabId: string, pagePath: string[]): unknown;
 		};
 		hotkeyManager?: {
 			printHotkeyForCommand?(commandId: string): string;
@@ -622,8 +629,37 @@ export interface LegacyPopupSettings extends ContextMenuSettings {
 	animation?: "fade" | "slide" | "scale" | "none";
 }
 
+/**
+ * Kept only for older builds. 2.14.1–2.18 read this group and turn a saved
+ * `false` back into `true` (with a notice), so the real switches live in
+ * {@link SuggestionSettings} instead, under a key those builds carry along
+ * untouched.
+ */
 export interface AutocompleteSettings {
 	readonly enabled: true;
+}
+
+/**
+ * The two dropdowns that open while a callout is typed, each on its own: the
+ * callout types after `[!` (Settings → Editor), and the metadata words after
+ * `[!type|` (Settings → Editor → Metadata).
+ *
+ * A top-level key of its own, not fields inside `autocomplete`: a released
+ * build rebuilds that group from scratch and would drop anything new in it,
+ * while a top-level key it does not know is kept as it is
+ * (`manager/foreignFields.ts`).
+ */
+export interface SuggestionSettings {
+	/** The `[!` dropdown. Off, it opens only when a command asks for a type. */
+	callouts: boolean;
+	/** The active theme's own callouts among the types. */
+	themeCallouts: boolean;
+	/** The dropdown after `|`. */
+	metadata: boolean;
+	/** The words the active theme reacts to, in that dropdown. */
+	themeMetadata: boolean;
+	/** Words of the user's own, offered first in that dropdown. */
+	metadataWords: string[];
 }
 
 export interface IconSourceSettings {
@@ -753,24 +789,12 @@ export interface GlobalStyleSettings {
 	inline: InlineFrameStyleSettings;
 }
 
-/**
- * Whether each of the settings tab's four collapsible sections is expanded:
- * the three callout lists — theme, user, built-in, keyed the same way as
- * `RowKind` (`settings/sections/rowOwnership.ts`) — plus `palettes` for the
- * Saved color palettes section. Persisted so a section the user folded away
- * stays folded across a settings-tab visit and a plugin reload.
- */
-export interface CalloutListsFoldState {
-	theme: boolean;
-	user: boolean;
-	builtin: boolean;
-	palettes: boolean;
-}
-
 export interface PluginSettings {
 	globalStyle: GlobalStyleSettings;
 	contextMenu: ContextMenuSettings;
 	autocomplete: AutocompleteSettings;
+	/** What the `[!` and `|` dropdowns offer, and whether they open. */
+	suggestions: SuggestionSettings;
 	iconSources: IconSourceSettings;
 	/** Order and visibility of the libraries in Pick an icon. */
 	iconLibraries: IconLibrarySettings;
@@ -781,10 +805,9 @@ export interface PluginSettings {
 	/**
 	 * Colouring one callout from its own metadata — `> [!mark|pink]` paints
 	 * that callout pink while every other `mark` keeps its colour (see
-	 * `utils/calloutMetadata.ts`). Always on, and deliberately without settings
-	 * UI: the switch exists so the feature can be turned off by hand in
-	 * `data.json`, the way `inlineCallouts.allowContent` can. Off emits none of
-	 * its CSS, offers no colours after `|`, and leaves PDF export alone.
+	 * `utils/calloutMetadata.ts`). On by default; the switch is on the
+	 * Autocomplete and metadata page. Off emits none of its CSS, offers no colours after
+	 * `|`, and leaves PDF export alone.
 	 */
 	metadataColors: RoleToggleSettings;
 	/**

@@ -14,27 +14,28 @@
 import type { Menu } from "obsidian";
 import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
-import type { SettingsSectionContext } from "./types";
+import type { SettingsContext } from "./types";
 import { addConvertUsesItem, addDeleteItem, addReplaceItem } from "./rowOwnership";
 import { addUsageMenuItem } from "../../usage/usageMenuItem";
-import { openCalloutRowMenu } from "./calloutRowMenu";
+import { openCalloutRowMenu, type RowMenuTrigger } from "./calloutRowMenu";
 import { addDuplicateItem } from "./duplicateCallout";
 import { applyDefaultFallbackStyle } from "./fallbackStyleAction";
 import { ROW_MENU_SECTION } from "./rowMenuSections";
 import { handleBuiltInReset } from "./builtInResetAction";
 
+/** Open a built-in callout row's menu, from its ⋮ button or a right-click. */
 export async function openBuiltInRowMenu(
-	ctx: SettingsSectionContext,
-	event: MouseEvent,
+	ctx: SettingsContext,
+	trigger: RowMenuTrigger,
 	def: CalloutDefinition,
 ): Promise<void> {
-	return openCalloutRowMenu(ctx, event, (menu) => buildBuiltInRowMenu(menu, ctx, def));
+	return openCalloutRowMenu(ctx, trigger, (menu) => buildBuiltInRowMenu(menu, ctx, def));
 }
 
 /** Find callouts ‖ Replace · Convert ‖ Reset to default, when modified. */
 export function buildBuiltInRowMenu(
 	menu: Menu,
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): void {
 	const usage = addUsageMenuItem(menu, ctx.app, ctx.plugin.registry.vaultIdFormsFor(def));
@@ -55,12 +56,13 @@ export function buildBuiltInRowMenu(
 	// No Delete: Obsidian keeps declaring a built-in, so the type cannot go.
 }
 
+/** Open one of the user's own callout rows' menu, from its ⋮ button or a right-click. */
 export async function openRowMenu(
-	ctx: SettingsSectionContext,
-	event: MouseEvent,
+	ctx: SettingsContext,
+	trigger: RowMenuTrigger,
 	def: CalloutDefinition,
 ): Promise<void> {
-	return openCalloutRowMenu(ctx, event, (menu) => buildUserRowMenu(menu, ctx, def));
+	return openCalloutRowMenu(ctx, trigger, (menu) => buildUserRowMenu(menu, ctx, def));
 }
 
 /**
@@ -69,7 +71,7 @@ export async function openRowMenu(
  */
 export function buildUserRowMenu(
 	menu: Menu,
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): void {
 	const usage = addUsageMenuItem(menu, ctx.app, ctx.plugin.registry.vaultIdFormsFor(def));

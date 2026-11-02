@@ -34,5 +34,5 @@ export async function retryMissingSettingsRecovery(host: ExternalReloadHost, opt
 	}
 	initialDisplays.delete(host);
 	host.refreshThemeAppearance(); host.customCommands.syncAll(); host.refreshCallouts();
-	if (host.settingsTab?.containerEl.isConnected) host.settingsTab.display();
+	host.settingsTab?.update();
 }

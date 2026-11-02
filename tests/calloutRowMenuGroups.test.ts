@@ -27,7 +27,7 @@ import { buildBuiltInRowMenu, buildUserRowMenu } from "../src/settings/sections/
 import { buildThemeRowMenu } from "../src/settings/sections/themeRowActions";
 import { applyDefaultFallbackStyle } from "../src/settings/sections/fallbackStyleAction";
 import { ROW_MENU_SECTION } from "../src/settings/sections/rowMenuSections";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import type { SettingsContext } from "../src/settings/sections/types";
 import { getCalloutOccurrenceIndex } from "../src/usage/occurrenceService";
 import type { CalloutDefinition } from "../src/types";
 import { t } from "../src/i18n";
@@ -35,7 +35,8 @@ import { stableKeyOrder } from "../src/utils/stableJson";
 import { Menu, Notice, type MenuItemRecord } from "./support/obsidianStub";
 import { definition } from "./support/discoveryHarness";
 import { savingWriter } from "./support/importSafetyStubs";
-import { fakeDom, FakeElement, type FakeDocumentFragment } from "./support/fakeDom";
+import { fakeDom, type FakeDocumentFragment } from "./support/fakeDom";
+import { noticeButton } from "./support/noticeButton";
 
 fakeDom.light();
 
@@ -53,12 +54,12 @@ function vault(notes: Record<string, string>) {
 	registry.add(definition({ id: "owned", displayName: "Owned" }));
 	const writer = savingWriter();
 	const ctx = {
-		app, display: () => {}, registerDisposer: () => {},
+		app, redraw: () => {}, registerDisposer: () => {},
 		plugin: {
 			app, registry, settings: registry.settings, settingsWriter: writer,
 			saveSettings: () => Promise.resolve(), refreshCallouts: () => {},
 		},
-	} as unknown as SettingsSectionContext;
+	} as unknown as SettingsContext;
 	const index = getCalloutOccurrenceIndex(app);
 	return {
 		app, registry, ctx, index, writer,
@@ -71,7 +72,7 @@ function vault(notes: Record<string, string>) {
 	};
 }
 
-type Build = (menu: ObsidianMenu, ctx: SettingsSectionContext, def: CalloutDefinition) => void;
+type Build = (menu: ObsidianMenu, ctx: SettingsContext, def: CalloutDefinition) => void;
 
 function open(h: ReturnType<typeof vault>, build: Build, id: string): Menu {
 	const menu = new Menu();
@@ -102,7 +103,7 @@ function groups(menu: Menu): string[][] {
 	return drawn.map((group) => group.labels);
 }
 
-const find = (count: number): string => t("usage.menuCount", { count });
+const find = (count: number): string => `${t("usage.menu")} ${count}`;
 const REPLACE = t("settings.replaceAction");
 const CONVERT = t("settings.convertUsesAction");
 const DUPLICATE = t("settings.duplicateAction");
@@ -207,13 +208,9 @@ describe("a count that lands after the menu opened", () => {
 	});
 });
 
-/** Press the Undo link in the most recent notice. */
+/** Press the Undo button in the most recent notice. */
 async function undo(): Promise<void> {
-	const message = Notice.last?.message as FakeDocumentFragment | undefined;
-	const link = message?.childNodes.find((node): node is FakeElement =>
-		node instanceof FakeElement && node.hasClass("cs-notice-action"));
-	assert.ok(link, "the notice offers no Undo");
-	link.fire("click", { type: "click", preventDefault: () => {} });
+	noticeButton(Notice.last).fire("click", { type: "click", preventDefault: () => {} });
 	for (let i = 0; i < 5; i++) await setImmediate();
 }
 

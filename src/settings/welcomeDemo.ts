@@ -47,10 +47,10 @@ export const WELCOME_DEMO_DARK = "#A78BFA";
 /**
  * The splash's demo definition.
  *
- * Deliberately shaped like `GlobalStyleModal.buildDemoDefinition()` — same
- * "not a real row" fields — and different in three places: its own id, the
- * colour (violet, not the popups' neutral gray) and the icon (the plugin's own
- * `PLUGIN_ICON_ID`, not the popups' solid square).
+ * Deliberately shaped like the style pages' demo (`demoDefinition()` in
+ * stylePreview.ts) — same "not a real row" fields — and different in three
+ * places: its own id, the colour (violet, not the style pages' neutral gray)
+ * and the icon (the plugin's own `PLUGIN_ICON_ID`, not their solid square).
  *
  * `foldable: false` because a splash that can be collapsed into a bare header
  * has stopped demonstrating anything.

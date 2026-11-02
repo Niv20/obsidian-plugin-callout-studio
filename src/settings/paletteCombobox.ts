@@ -68,13 +68,8 @@ export class PaletteCombobox {
 			emptyText: (query) => t("editor.paletteNoMatches", { query }),
 			itemsFor: (query) => this.matching(query),
 			renderRow: (rowEl, entry) => {
-				// The row's layout — flex, centred, gapped — lives on
-				// `cs-palette-menu-item`, and it has to be added here: the popup
-				// gives every row only `cs-combobox-option`, which carries state
-				// colours and no layout. Without this the swatch and the name
-				// stack as two blocks and the label's `flex: 1` floats free of
-				// any flex parent, which is what made this menu look smeared.
-				rowEl.addClass("cs-palette-menu-item");
+				// The row's own layout (`.cs-combobox-option`) sets the circles
+				// and the name side by side; the name takes the room left.
 				renderColorCircles(rowEl, resolveCurrentModeColors(entry.palette), {
 					size: 16,
 				});
@@ -126,7 +121,7 @@ export class PaletteCombobox {
 		this.popup.setSelected(id, label);
 	}
 
-	/** Draw the swatch left of the field, from the form's own colours. */
+	/** Draw the swatch before the field's words, from the form's own colours. */
 	renderLead(colors: Parameters<typeof renderColorCircles>[1]): void {
 		this.popup.leadEl.empty();
 		renderColorCircles(this.popup.leadEl, colors, { size: 16 });

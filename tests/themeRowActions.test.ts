@@ -27,6 +27,7 @@
  * put something actionable.
  */
 import assert from "node:assert";
+import { Setting } from "obsidian";
 import { describe, it } from "node:test";
 import { installFakeDom } from "./support/fakeDom";
 import { pluginSourceFiles, readRepoFile } from "./support/sourceScan";
@@ -64,7 +65,7 @@ function fakeCtx(registry: CalloutRegistry, themeIds: string[]) {
 	let displayed = 0;
 	const ctx = {
 		app: {} as never,
-		display: () => {
+		redraw: () => {
 			displayed++;
 		},
 		registerDisposer: () => {},
@@ -93,42 +94,44 @@ function fakeCtx(registry: CalloutRegistry, themeIds: string[]) {
 
 describe("a theme row is not editable", () => {
 	it("renders a preview button and a ⋯, and no editor", async () => {
-		const { renderCalloutRow } = await import(
+		const { drawCalloutRow } = await import(
 			"../src/settings/sections/CalloutRowRenderer"
 		);
 		const registry = vaultWithThemeRow();
 		const { ctx } = fakeCtx(registry, ["recite"]);
 		const host = createDiv();
 
-		renderCalloutRow(ctx, host, registry.get("recite")!, "theme", {
+		drawCalloutRow(ctx, new Setting(host), registry.get("recite")!, "theme", {
 			onEdit: () => assert.fail("a theme row must not open the editor"),
 			onOpenBuiltInMenu: () => assert.fail("wrong menu"),
 			onOpenUserMenu: () => assert.fail("wrong menu"),
 		});
 
 		// Same two controls, same two places, as every other row in the tab —
-		// but the eye makes the read-only action explicit.
+		// but the eye makes the read-only action explicit. Both are Obsidian's
+		// icon buttons in the setting row's controls (S2-14).
+		assert.ok(host.querySelector(".setting-item.cs-callout-row"), "an Obsidian setting row");
 		assert.strictEqual(host.querySelectorAll(".callout-studio-more-btn").length, 1);
 		assert.strictEqual(
-			host.querySelectorAll(".callout-studio-row-buttons button").length,
+			host.querySelectorAll(".setting-item-control .clickable-icon").length,
 			2,
 		);
 		assert.match(
 			readRepoFile("src/settings/sections/themeRowActions.ts"),
-			/addRowButton\(\s*buttonsEl,\s*"eye"/,
+			/\.setIcon\("eye"\)/,
 			"the theme-only preview action must use a view icon",
 		);
 	});
 
 	it("still gives a user row its pencil and its ⋯", async () => {
-		const { renderCalloutRow } = await import(
+		const { drawCalloutRow } = await import(
 			"../src/settings/sections/CalloutRowRenderer"
 		);
 		const registry = vaultWithThemeRow({ source: "user" });
 		const { ctx } = fakeCtx(registry, []);
 		const host = createDiv();
 		let edited = false;
-		renderCalloutRow(ctx, host, registry.get("recite")!, "user", {
+		drawCalloutRow(ctx, new Setting(host), registry.get("recite")!, "user", {
 			onEdit: () => {
 				edited = true;
 			},
@@ -137,17 +140,46 @@ describe("a theme row is not editable", () => {
 		});
 		assert.strictEqual(host.querySelectorAll(".callout-studio-more-btn").length, 1);
 		const buttons = host.querySelectorAll<HTMLElement>(
-			".callout-studio-row-buttons button",
+			".setting-item-control .clickable-icon",
 		);
 		assert.strictEqual(buttons.length, 2);
 		buttons[0]?.dispatchEvent({ type: "click" } as unknown as Event);
 		assert.strictEqual(edited, true, "the pencil really opens the editor");
 	});
 
+	it("opens a row's menu from its ⋮ under the button, and from a right-click at the pointer", async () => {
+		// A right-click anywhere on a callout row opens the same menu as its ⋮,
+		// as on Obsidian's Community plugins rows (finding S2-12).
+		const { drawCalloutRow } = await import(
+			"../src/settings/sections/CalloutRowRenderer"
+		);
+		const registry = vaultWithThemeRow({ source: "user" });
+		const { ctx } = fakeCtx(registry, []);
+		const host = createDiv();
+		const opened: Array<{ kind: string; x?: number; y?: number }> = [];
+		drawCalloutRow(ctx, new Setting(host), registry.get("recite")!, "user", {
+			onEdit: () => {},
+			onOpenBuiltInMenu: () => assert.fail("a user row opens the user menu"),
+			onOpenUserMenu: (trigger) => {
+				opened.push(trigger.kind === "pointer"
+					? { kind: trigger.kind, x: trigger.x, y: trigger.y }
+					: { kind: trigger.kind });
+			},
+		});
+		host.querySelector<HTMLElement>(".callout-studio-more-btn")!
+			.dispatchEvent({ type: "click" } as unknown as Event);
+		let prevented = false;
+		host.querySelector<HTMLElement>(".cs-callout-row")!.dispatchEvent({
+			type: "contextmenu", clientX: 40, clientY: 12, preventDefault: () => { prevented = true; },
+		} as unknown as Event);
+		assert.deepStrictEqual(opened, [{ kind: "button" }, { kind: "pointer", x: 40, y: 12 }]);
+		assert.strictEqual(prevented, true, "the browser's own menu stays away");
+	});
+
 	it("shows the theme's colours, never the ones stored on the row", async () => {
 		// The row carries #336699. Nothing paints it while the theme owns the
 		// id, so a swatch showing it would name a colour that is not on screen.
-		const { renderCalloutRow } = await import(
+		const { drawCalloutRow } = await import(
 			"../src/settings/sections/CalloutRowRenderer"
 		);
 		const registry = vaultWithThemeRow();
@@ -165,7 +197,7 @@ describe("a theme row is not editable", () => {
 		);
 		const { ctx } = fakeCtx(registry, ["recite"]);
 		const host = createDiv();
-		renderCalloutRow(ctx, host, registry.get("recite")!, "theme", {
+		drawCalloutRow(ctx, new Setting(host), registry.get("recite")!, "theme", {
 			onEdit: () => {},
 			onOpenBuiltInMenu: () => {},
 			onOpenUserMenu: () => {},
@@ -177,28 +209,36 @@ describe("a theme row is not editable", () => {
 		assert.ok(label.includes("rgb(1, 2, 3)"), label);
 		assert.ok(label.includes("rgb(4, 5, 6)"), label);
 		assert.ok(!label.includes("#336699"), "never the stored accent");
+		// A row too narrow for the circles paints its icon with the same two colours.
+		const row = host.querySelector<HTMLElement>(".cs-callout-row");
+		assert.strictEqual(row?.style.getPropertyValue("--cs-row-accent"), "rgb(1, 2, 3)");
+		assert.strictEqual(row?.style.getPropertyValue("--cs-row-bg"), "rgb(4, 5, 6)");
 	});
 
 	it("shows no swatch at all when the theme has not been measured", async () => {
 		// Better an empty slot than a confident wrong colour.
-		const { renderCalloutRow } = await import(
+		const { drawCalloutRow } = await import(
 			"../src/settings/sections/CalloutRowRenderer"
 		);
 		const registry = vaultWithThemeRow();
 		const { ctx } = fakeCtx(registry, ["recite"]);
 		const host = createDiv();
-		renderCalloutRow(ctx, host, registry.get("recite")!, "theme", {
+		drawCalloutRow(ctx, new Setting(host), registry.get("recite")!, "theme", {
 			onEdit: () => {},
 			onOpenBuiltInMenu: () => {},
 			onOpenUserMenu: () => {},
 		});
 		assert.strictEqual(host.querySelector(".callout-studio-row-colors"), null);
+		// Nor does a narrow row paint its icon with a colour nobody measured.
+		const row = host.querySelector<HTMLElement>(".cs-callout-row");
+		assert.strictEqual(row?.style.getPropertyValue("--cs-row-accent"), "");
+		assert.strictEqual(row?.style.getPropertyValue("--cs-row-bg"), "");
 	});
 });
 
 describe("the retired personal-CSS handoff", () => {
 	it("leaves a Studio row showing its stored icon and colours", async () => {
-		const { renderCalloutRow } = await import(
+		const { drawCalloutRow } = await import(
 			"../src/settings/sections/CalloutRowRenderer"
 		);
 		const registry = vaultWithThemeRow({ source: "user" });
@@ -208,7 +248,7 @@ describe("the retired personal-CSS handoff", () => {
 		});
 		const { ctx } = fakeCtx(registry, []);
 		const host = createDiv();
-		renderCalloutRow(ctx, host, rowDef, "user", {
+		drawCalloutRow(ctx, new Setting(host), rowDef, "user", {
 			onEdit: () => {},
 			onOpenBuiltInMenu: () => {},
 			onOpenUserMenu: () => {},
@@ -348,12 +388,12 @@ describe("a theme row carries nothing it cannot act on", () => {
 		id: string,
 		themeIds: string[],
 	) => {
-		const { renderCalloutRow } = await import(
+		const { drawCalloutRow } = await import(
 			"../src/settings/sections/CalloutRowRenderer"
 		);
 		const { ctx } = fakeCtx(registry, themeIds);
 		const host = createDiv();
-		renderCalloutRow(ctx, host, registry.get(id)!, "theme", {
+		drawCalloutRow(ctx, new Setting(host), registry.get(id)!, "theme", {
 			onEdit: () => {},
 			onOpenBuiltInMenu: () => {},
 			onOpenUserMenu: () => {},
@@ -470,7 +510,7 @@ describe("the theme preview window writes nothing", () => {
 		assert.match(en, /To customize, create a new callout/);
 	});
 
-	it("collapses only the theme preview's final blank line", () => {
+	it("collapses a preview's final blank line only where it opts in (the theme preview, the style pages' preview)", () => {
 		const modal = readRepoFile("src/settings/ThemeCalloutPreviewModal.ts");
 		assert.match(
 			modal,
@@ -487,8 +527,11 @@ describe("the theme preview window writes nothing", () => {
 		const optInFiles = pluginSourceFiles()
 			.filter((file) => file.text.includes("collapseTrailingBlankLine:"))
 			.map((file) => file.path);
+		// The style pages' preview opts in too, to stay short (stylePreview.ts);
+		// the callout editor's preview does not, and keeps its blank line.
 		assert.deepStrictEqual(optInFiles, [
 			"src/settings/ThemeCalloutPreviewModal.ts",
+			"src/settings/stylePreview.ts",
 		]);
 		assert.match(
 			readRepoFile("styles.css"),

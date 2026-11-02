@@ -22,7 +22,7 @@
  * `LOCALE_FILES` maps the first onto the second, which is why picking Norwegian
  * or Hong Kong Chinese downloads nothing new when the file is already there.
  */
-import { getLanguage, requireApiVersion } from "obsidian";
+import { getLanguage } from "obsidian";
 import { en } from "./en";
 import type { LocaleFileId } from "./localeManifest";
 
@@ -167,9 +167,6 @@ export function isLocaleRegistered(code: string): boolean {
 	return owns(locales, code);
 }
 
-type MomentLike = { locale: () => string };
-type WindowWithMoment = Window & { moment?: MomentLike };
-
 /**
  * Codes an older Obsidian may have saved, renamed the way Obsidian renames
  * them for moment. Czech is `cs` in Obsidian's list now; a `cz` left behind
@@ -181,12 +178,10 @@ const OBSIDIAN_LEGACY_CODES: Record<string, string> = { cz: "cs" };
 /**
  * The language Obsidian's own interface is set to, lowercased.
  *
- * `getLanguage()` (Obsidian 1.8.7) reads that setting itself. Before it the
- * only signal was moment's global locale, which Obsidian points at the same
- * language on launch, but which any plugin may re-point for its own date
- * formats: Calendar's "Override locale" does. As the source, that made
- * "follow Obsidian" follow Calendar, and the picker name a language Obsidian
- * is not in, so moment is now only the fallback for versions without the API.
+ * `getLanguage()` reads that setting itself. It is never moment's global
+ * locale: Obsidian points moment at the same language on launch, but any
+ * plugin may re-point it for its own date formats (Calendar's "Override
+ * locale" does), and "follow Obsidian" would then follow Calendar.
  *
  * Never throws. This runs inside `onload` before anything is registered, so a
  * failure here would cost every callout its styling, not just the language.
@@ -194,9 +189,7 @@ const OBSIDIAN_LEGACY_CODES: Record<string, string> = { cz: "cs" };
 function obsidianLocale(): string {
 	let lang: string | undefined;
 	try {
-		lang = requireApiVersion("1.8.7")
-			? getLanguage()
-			: (window as WindowWithMoment).moment?.locale();
+		lang = getLanguage();
 	} catch {
 		lang = undefined;
 	}

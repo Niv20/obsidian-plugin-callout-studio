@@ -10,12 +10,13 @@ import type { App } from "obsidian";
 import { ConfirmModal } from "../../src/utils/ConfirmModal";
 
 /**
- * Answer every confirmation with `answer`, recording each dialog's title and
- * confirm label. A function answers as the dialog closes, so a suite can change
+ * Answer every confirmation with `answer`, recording each dialog's title,
+ * subtitle (null without the mascot) and confirm label. A function answers as the dialog closes, so a suite can change
  * the world while it was open.
  */
 export function stubConfirm(answer: boolean | (() => boolean) = true): {
 	asked: string[];
+	subtitles: (string | null)[];
 	labels: (string | undefined)[];
 	acknowledgements: (string | undefined)[];
 	messages: (string | DocumentFragment)[];
@@ -24,6 +25,7 @@ export function stubConfirm(answer: boolean | (() => boolean) = true): {
 	const saved = Object.getOwnPropertyDescriptor(ConfirmModal.prototype, "confirm");
 	if (!saved) throw new Error("ConfirmModal.confirm is missing");
 	const asked: string[] = [];
+	const subtitles: (string | null)[] = [];
 	const labels: (string | undefined)[] = [];
 	const acknowledgements: (string | undefined)[] = [];
 	const messages: (string | DocumentFragment)[] = [];
@@ -31,15 +33,16 @@ export function stubConfirm(answer: boolean | (() => boolean) = true): {
 		configurable: true,
 		writable: true,
 		value(this: ConfirmModal) {
-			const dialog = this as unknown as { title: string; message: string | DocumentFragment; confirmLabel?: string; acknowledgement?: string };
+			const dialog = this as unknown as { title: string; subtitle: string | null; message: string | DocumentFragment; confirmLabel?: string; acknowledgement?: string };
 			asked.push(dialog.title);
+			subtitles.push(dialog.subtitle);
 			labels.push(dialog.confirmLabel);
 			acknowledgements.push(dialog.acknowledgement);
 			messages.push(dialog.message);
 			return Promise.resolve(typeof answer === "function" ? answer() : answer);
 		},
 	});
-	return { asked, labels, acknowledgements, messages, restore: () => Object.defineProperty(ConfirmModal.prototype, "confirm", saved) };
+	return { asked, subtitles, labels, acknowledgements, messages, restore: () => Object.defineProperty(ConfirmModal.prototype, "confirm", saved) };
 }
 
 /** A vault whose adapter keeps files, backups included, in memory. */

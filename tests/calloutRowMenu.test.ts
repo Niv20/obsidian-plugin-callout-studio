@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { rowMenuHarness, settleMenu } from "./support/calloutRowMenuHarness";
 import { fakeDom } from "./support/fakeDom";
+import { isRowMenuActive } from "../src/settings/sections/calloutRowMenu";
 
 type Harness = ReturnType<typeof rowMenuHarness>;
 
@@ -12,7 +13,12 @@ describe("callout row menu lifetime", () => {
 		const opening = h.open();
 		assert.equal(h.builds(), 1, "a ready menu does not yield before showing");
 		assert.equal(h.menu().shown, true);
-		assert.equal(h.menu().showEvent, h.event);
+		// Under the ⋮ button, as Obsidian opens "More options": tied to the
+		// button, at its bottom edge, its own width, lined up with its end.
+		assert.equal(h.menu().parentEl, h.anchor as unknown as HTMLElement);
+		assert.deepEqual(h.menu().showPosition && {
+			overlap: h.menu().showPosition?.overlap, left: h.menu().showPosition?.left,
+		}, { overlap: true, left: true });
 		assert.equal(h.reads(), 1);
 		await opening;
 		h.cleanup();
@@ -32,6 +38,23 @@ describe("callout row menu lifetime", () => {
 			h.cleanup();
 		});
 	}
+
+	it("counts as active from the press until it closes, the wait for its counts included", async () => {
+		// The settings page holds its redraws while a row menu is active
+		// (settings/declarative/treeUpdater.ts): a redraw takes the ⋮ away, and
+		// the menu would close with it.
+		const h = rowMenuHarness();
+		const app = h.app as never;
+		assert.equal(isRowMenuActive(app), false);
+		const opening = h.open();
+		assert.equal(isRowMenuActive(app), true, "while it waits for the counts");
+		await h.ready();
+		await opening;
+		assert.equal(isRowMenuActive(app), true, "while it is shown");
+		h.scroll(h.outer);
+		assert.equal(isRowMenuActive(app), false);
+		h.cleanup();
+	});
 
 	it("closes for an outer ancestor as well as the callout list", async () => {
 		const h = rowMenuHarness();
@@ -214,7 +237,8 @@ describe("callout row menu lifetime", () => {
 		await second;
 		assert.equal(h.builds(), 1);
 		const oldMenu = h.menu();
-		await h.open();
+		// Another row's ⋮ (the same button again would close its own menu).
+		await h.open(undefined, h.otherTrigger);
 		assert.equal(oldMenu.shown, false);
 		assert.equal(oldMenu.hideCalls, 1);
 		assert.equal(h.menu().shown, true);
@@ -288,7 +312,7 @@ describe("callout row menu lifetime", () => {
 		await h.open();
 		const oldMenu = h.menu();
 		oldMenu.delayHideCallback = true;
-		await h.open();
+		await h.open(undefined, h.otherTrigger);
 		const newMenu = h.menu();
 		assert.equal(oldMenu.shown, false);
 		assert.equal(newMenu.shown, true);
@@ -307,6 +331,32 @@ describe("callout row menu lifetime", () => {
 		await h.ready();
 		await assert.rejects(h.open(() => { throw new Error("menu builder failed"); }), /menu builder failed/);
 		h.assertClean();
+		h.cleanup();
+	});
+});
+
+describe("where a callout row's menu opens", () => {
+	it("closes, rather than reopens, on a second press of its ⋮ button", async () => {
+		// Obsidian marks the button `has-active-menu` while its menu is open and
+		// closes the menu itself on the press; the opener must not build a
+		// second menu on top (the old close-and-reopen flicker).
+		const h = rowMenuHarness();
+		await h.ready();
+		await h.open();
+		assert.ok(h.anchor.hasClass("has-active-menu"));
+		await h.open();
+		assert.equal(h.builds(), 1, "no second menu");
+		assert.equal(h.menus().length, 1);
+		h.cleanup();
+	});
+
+	it("opens a right-click's menu at the pointer, not tied to the row", async () => {
+		const h = rowMenuHarness();
+		await h.ready();
+		await h.open(undefined, { kind: "pointer", row: h.row as unknown as HTMLElement, x: 140, y: 64 });
+		const menu = h.menu();
+		assert.deepEqual(menu.showPosition, { x: 140, y: 64 });
+		assert.equal(menu.parentEl, undefined, "a right-clicked row is not the menu's button");
 		h.cleanup();
 	});
 });

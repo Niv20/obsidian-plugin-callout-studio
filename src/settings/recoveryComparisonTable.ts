@@ -24,8 +24,8 @@
 import { setIcon, type Component } from "obsidian";
 import { t } from "../i18n";
 import type { RecoveryItem, RecoveryReport, RecoverySection, RecoverySideName } from "./recoveryModel";
-import { keepHeadingInPlace } from "./sections/foldAnchor";
-import { appendHeadingCount } from "../ui/headingCount";
+import { keepHeadingInPlace } from "../ui/foldAnchor";
+import { appendFaintCount } from "../ui/faintCount";
 
 /** Give the loading state and input events a turn between batches. */
 export function yieldRecoveryRender(component: Component, delay = 0): Promise<void> {
@@ -46,15 +46,19 @@ function sectionTable(parent: HTMLElement, section: RecoverySection, component: 
 	for (const cls of ["is-number", "is-item", "is-side", "is-side"]) columns.createEl("col", { cls });
 	const head = table.createEl("thead");
 	const heading = head.createEl("tr", { cls: "cs-recovery-section-row" }).createEl("th", {
-		cls: "cs-recovery-section-heading cs-collapsible-heading",
+		cls: "cs-recovery-section-heading",
 		attr: { colspan: "4", scope: "colgroup" },
 	});
 	const toggle = heading.createEl("button", { cls: "cs-recovery-section-toggle", attr: { type: "button", "aria-expanded": "true" } });
-	setIcon(toggle.createSpan({ cls: "cs-disclosure-chevron", attr: { "aria-hidden": "true" } }), "chevron-right");
+	// Obsidian's own fold triangle (finding S9-12), as its file explorer and
+	// Sync's version list draw it: app.css sizes `.collapse-icon` and turns it
+	// to point along the title while it carries `is-collapsed`.
+	const fold = toggle.createSpan({ cls: "collapse-icon", attr: { "aria-hidden": "true" } });
+	setIcon(fold, "right-triangle");
 	toggle.createSpan({ cls: "cs-recovery-section-title", text: section.title });
 	// Its own flex item rather than inside the title, so a title cut short
 	// with an ellipsis still shows how many changes it holds.
-	appendHeadingCount(toggle, section.items.length);
+	appendFaintCount(toggle, section.items.length);
 	const labels = head.createEl("tr", { cls: "cs-recovery-column-row" });
 	labels.createEl("th", { cls: "cs-recovery-column-number", text: t("recovery.details.column.number"), attr: { scope: "col" } });
 	labels.createEl("th", { cls: "cs-recovery-column-item", text: t("recovery.details.column.item"), attr: { scope: "col" } });
@@ -66,6 +70,7 @@ function sectionTable(parent: HTMLElement, section: RecoverySection, component: 
 		const collapsed = !table.hasClass("is-collapsed");
 		table.toggleClass("is-collapsed", collapsed);
 		heading.toggleClass("is-collapsed", collapsed);
+		fold.toggleClass("is-collapsed", collapsed);
 		toggle.setAttribute("aria-expanded", String(!collapsed));
 	}));
 	return table;

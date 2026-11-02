@@ -1,14 +1,27 @@
-import { Notice, type Menu } from "obsidian";
+/**
+ * settings/sections/duplicateCallout.ts — Duplicate, in a callout row's ⋮ menu.
+ *
+ * Who calls it. The row menus of the user's own callouts (CalloutRowActions.ts)
+ * and of the theme's (themeRowActions.ts) add the item.
+ *
+ * The main idea. The copy is written to the settings file first and joins the
+ * registry only once that write has succeeded, so a failed save never leaves a
+ * callout on screen that is not on disk. Then the settings show the new row
+ * (`revealCallout`: My callout types, flashed).
+ */
+import { type Menu } from "obsidian";
 import { t } from "../../i18n";
 import { createDuplicateCalloutDefinition, displayNameIdentity } from "../../manager/duplicateCalloutDefinition";
 import { stableKeyOrder } from "../../utils/stableJson";
 import type { CalloutDefinition } from "../../types";
-import type { SettingsSectionContext } from "./types";
+import type { SettingsContext } from "./types";
 import { ROW_MENU_SECTION } from "./rowMenuSections";
+import { showNotice } from "../../ui/mascot/mascotNotices";
 
+/** Add Duplicate to a row's menu; built-in callouts have none. */
 export function addDuplicateItem(
 	menu: Menu,
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): void {
 	if (def.builtIn || def.source === "builtin" || def.source === "theme") return;
@@ -21,7 +34,7 @@ export function addDuplicateItem(
 
 /** Keep the candidate out of the live registry until its settings write succeeds. */
 export async function handleCalloutDuplicate(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	id: string,
 ): Promise<void> {
 	const { plugin } = ctx;
@@ -54,11 +67,11 @@ export async function handleCalloutDuplicate(
 		if (!saved || !published) throw new Error("The duplicate could not be committed");
 		plugin.refreshCallouts();
 		if (ctx.revealCallout) ctx.revealCallout(candidate);
-		else ctx.display();
-		new Notice(t("notice.calloutDuplicated", { name: candidate.displayName }));
+		else ctx.redraw();
+		showNotice("success", t("notice.calloutDuplicated", { name: candidate.displayName }));
 	} catch (error) {
 		console.error("[Callout Studio] callout duplication failed", error);
-		new Notice(t("notice.calloutDuplicateFailed"));
+		showNotice("problem", t("notice.calloutDuplicateFailed"));
 		// A failure after publication leaves a valid row on disk and in the
 		// registry. Keep that durable row and refresh it. On an in-flight ID
 		// conflict, reconcile disk with the newer local edit.
@@ -68,7 +81,7 @@ export async function handleCalloutDuplicate(
 		}
 		if (published) {
 			plugin.refreshCallouts();
-			ctx.display();
+			ctx.redraw();
 		}
 	}
 }

@@ -11,10 +11,11 @@
  * modal with a line of prose per row rather than a menu: the backup leaves the
  * vault through the browser's download dialog, while the snippet is written
  * *into* the vault. Both handlers live here, so "everything Export does" is one
- * file. Each format is one option box (settings/optionBox.ts) — the same box
- * Import's source chooser and the plugin import window draw.
+ * file. Each format is a row with its own button (settings/choiceRow.ts), in
+ * one of Obsidian's setting groups, as Import's source chooser draws its
+ * sources.
  */
-import { Modal, Notice } from "obsidian";
+import { Modal, SettingGroup } from "obsidian";
 import { t } from "../i18n";
 import { ConfirmModal } from "../utils/ConfirmModal";
 import {
@@ -23,29 +24,31 @@ import {
 	type SnippetExportOutcome,
 } from "../manager/cssSnippetExport";
 import { applyModalChrome } from "./modalChrome";
-import { renderOptionBox, renderOptionList, type OptionBoxSpec } from "./optionBox";
-import type { SettingsSectionContext } from "./sections/types";
+import { addChoiceRow, type ChoiceRowSpec } from "./choiceRow";
+import type { SettingsContext } from "./sections/types";
 import { downloadText } from "../utils/downloadText";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 export class ExportFormatModal extends Modal {
-	constructor(private readonly ctx: SettingsSectionContext) {
+	constructor(private readonly ctx: SettingsContext) {
 		super(ctx.app);
 	}
 
 	onOpen(): void {
 		this.modalEl.addClass("callout-studio-export-format-modal");
-		// No footer: every box here IS the action.
+		// No footer: each row's button is the action.
 		applyModalChrome(this);
 		this.setTitle(t("export.chooseFormat"));
 
-		const list = renderOptionList(this.contentEl);
-
-		const formats: OptionBoxSpec[] = [
+		const group = new SettingGroup(this.contentEl);
+		const formats: ChoiceRowSpec[] = [
 			{
 				icon: "paintbrush",
 				title: t("export.formatJson"),
 				desc: t("export.formatJsonDesc"),
 				recommended: true,
+				// "…": the browser's save dialog asks where the file goes.
+				buttonText: t("settings.export"),
 				onActivate: () => {
 					this.close();
 					exportCalloutsJSON(this.ctx);
@@ -55,11 +58,14 @@ export class ExportFormatModal extends Modal {
 				icon: "file-code",
 				title: t("export.formatCss"),
 				desc: t("export.formatCssDesc"),
+				// No "…": the snippet is written at once (only a yes/no about
+				// overwriting an older one can follow).
+				buttonText: t("export.formatCssAction"),
 				onActivate: () => {
-					// Close first, like every other chooser box here — the
+					// Close first, like the other choice here — the
 					// snippet path can raise a confirmation of its own, and
 					// stacking it under a window on its way out steals focus.
-					// A double-click's second click never gets here (the box
+					// A double-click's second click never gets here (the button
 					// counts only the first), and a second export started any
 					// other way is stopped one layer down, by cssSnippetExport's
 					// in-flight guard.
@@ -69,7 +75,7 @@ export class ExportFormatModal extends Modal {
 			},
 		];
 
-		for (const format of formats) renderOptionBox(list, format);
+		for (const format of formats) addChoiceRow(group, format);
 	}
 
 	onClose(): void {
@@ -82,7 +88,7 @@ export class ExportFormatModal extends Modal {
  * role toggles, palettes, user images), handed to the browser's download
  * dialog so it lands wherever the user keeps their files.
  */
-function exportCalloutsJSON(ctx: SettingsSectionContext): void {
+function exportCalloutsJSON(ctx: SettingsContext): void {
 	downloadText(ctx.plugin.registry.exportToJSONv2(), "callout-studio-export.json");
 }
 
@@ -92,14 +98,14 @@ function exportCalloutsJSON(ctx: SettingsSectionContext): void {
  * Everything about *what* is written and *whether* to overwrite lives in
  * `cssSnippetExport`; this is only the part that has to talk to the user.
  */
-async function exportCalloutsCSS(ctx: SettingsSectionContext): Promise<void> {
+async function exportCalloutsCSS(ctx: SettingsContext): Promise<void> {
 	const outcome = await exportCssSnippet(ctx.app, ctx.plugin, () =>
 		new ConfirmModal(
 			ctx.app,
 			t("confirm.titleOverwriteSnippet"),
 			t("confirm.overwriteSnippet"),
 			t("confirm.overwriteSnippetOk"),
-		).confirm(),
+		).withMascot(t("confirm.subtitleOverwriteSnippet")).confirm(),
 	);
 	announce(ctx, outcome);
 }
@@ -110,24 +116,24 @@ async function exportCalloutsCSS(ctx: SettingsSectionContext): Promise<void> {
  * here, so the enabled copy can only ever hold an older version of them.
  */
 function announce(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	outcome: SnippetExportOutcome,
 ): void {
 	switch (outcome.status) {
 		case "created":
-			new Notice(t("notice.exportedCssCreated", { path: outcome.path }));
+			showNotice("success", t("notice.exportedCssCreated", { path: outcome.path }));
 			break;
 		case "updated":
-			new Notice(t("notice.exportedCssUpdated", { path: outcome.path }));
+			showNotice("success", t("notice.exportedCssUpdated", { path: outcome.path }));
 			break;
 		case "unchanged":
-			new Notice(t("notice.exportedCssUnchanged"));
+			showNotice("upToDate", t("notice.exportedCssUnchanged"));
 			break;
 		case "empty":
-			new Notice(t("notice.exportCssEmpty"));
+			showNotice("notFound", t("notice.exportCssEmpty"));
 			return;
 		case "failed":
-			new Notice(t("notice.exportCssFailed"));
+			showNotice("problem", t("notice.exportCssFailed"));
 			return;
 		case "cancelled":
 			// The confirmation dialog was the whole interaction; saying
@@ -135,6 +141,6 @@ function announce(
 			return;
 	}
 	if (isSnippetEnabled(ctx.app)) {
-		new Notice(t("notice.exportCssEnabled"));
+		showNotice("info", t("notice.exportCssEnabled"));
 	}
 }

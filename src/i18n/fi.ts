@@ -18,6 +18,7 @@ export const fi: Record<string, string> = {
 	"autocomplete.createNew": 'Luo "{{name}}"',
 	"metadataSuggest.finish": "Valmis",
 	"metadataSuggest.colors": "Värit",
+	"metadataSuggest.yourWords": "Omat sanasi",
 	"metadataSuggest.useTyped": 'Käytä "{{text}}"',
 	"metadataSuggest.replaces": "Korvaa sanan {{word}}",
 	"metadataSuggest.themeAlso": "Teemasi tyylittelee myös tätä sanaa",
@@ -33,8 +34,8 @@ export const fi: Record<string, string> = {
 	"replaceModal.searchPlaceholder": "Hae callouteja",
 	"replaceModal.chooseFirstReplace": "Valitse ensin callout, jolla se korvataan.",
 	"settings.fallbackTag": "Oletus",
-	"settings.fallbackTagAuto": "Automaattinen oletus",
-	"settings.rescanVaultDesc": "Lisää muistiinpanoissasi käytetyt callout-tyypit, joita ei vielä ole tässä luettelossa. Nykyisiä calloutejasi ja muistiinpanojasi ei muuteta.",
+	"settings.fallbackTagAuto": "Autom.",
+	"settings.rescanVaultDesc": "Lisää ne calloutit, joita muistiinpanosi käyttävät ja jotka eivät vielä ole tässä luettelossa.",
 	"settings.rescanVaultHintAction": "Etsi callouteja",
 	"manualDiscovery.failed": "Löydettyjä callouteja ei tallennettu. Varmista, että asetuksiin voi kirjoittaa ja että synkronointi on valmis. Yritä sitten uudelleen kohdasta Asetukset → Omat callout-tyypit → Etsi callouteja. Olemassa olevia callouteja ei korvattu.",
 	"manualDiscovery.scanning": "Skannataan…",
@@ -42,7 +43,6 @@ export const fi: Record<string, string> = {
 		"Skannaus valmis: lisätty {{count}} uutta callout-tyyppiä.",
 	"replaceModal.titleReplace": "Korvaa holvissa",
 
-	"welcome.tooltip": "Tietoja Callout Studiosta",
 	"welcome.title": "Tervetuloa Callout Studioon!",
 	"welcome.tagline":
 		"Täydellinen ratkaisusi Obsidian-callouttien luomiseen, tyylittelyyn ja hallintaan.",
@@ -50,7 +50,6 @@ export const fi: Record<string, string> = {
 		"Huomasimme, että käytät {{plugins}}. Haluaisitko tuoda callouttisi?",
 	"importBanner.action": "Tuo",
 	"importBanner.dismiss": "Hylkää",
-	"welcome.previewTitle": "Näe se toiminnassa",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studion avulla voit luoda callouteja mukautetulla kuvakkeella, väreillä ja nimellä.\n\n" +
@@ -61,16 +60,18 @@ export const fi: Record<string, string> = {
 		"> [!{{id}}] Lohko-callout\n" +
 		"> Klassinen callout toimii täsmälleen samalla syntaksilla, johon olet jo tottunut: `> [!type]`.\n\n" +
 		"Callout Studiolla on paljon muutakin tarjottavaa! [Lue lisää]({{repoUrl}}).\n",
+	"deleteModal.title": "Poista callout",
 
-	"deleteModal.title": 'Poistetaanko callout "{{name}}"?',
 	"deleteModal.bodyInUse":
 		"Tämä callout esiintyy {{count}} kertaa {{files}} tiedostossa.",
 	"deleteModal.notesUntouched":
 		"Tämä poistaa vain calloutin määrityksen. Muistiinpanoihisi ei kosketa, joten olemassa olevat calloutit vain palaavat oletustyyliin.",
 	"deleteModal.fallbackTarget":
 		"Se on myös oletusvaracalloutisi, joten calloutit, joilla ei ole omaa tyyliä, vaihtuvat tyyliin {{fallback}}.",
+	"deleteModal.subtitleFallback": "”{{name}}” · oletusvaratyylisi",
+	"convertModal.title": "Muunna tavalliseksi tekstiksi",
+	"convertModal.subtitle": "Jokainen ”{{name}}” holvissasi",
 	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
-	"convertModal.title": 'Muunnetaanko "{{name}}" tavalliseksi tekstiksi?',
 	"convertModal.explain":
 		"Jokaisesta tulee tavallista tekstiä: otsikko ja sisältö säilyvät, vain calloutin muotoilu poistuu.",
 	"convertModal.typeStays": "Itse callout-tyyppi pysyy luettelossasi.",
@@ -83,14 +84,10 @@ export const fi: Record<string, string> = {
 	"deleteModal.keepsRowTheme":
 		"{{theme}} määrittää tämän callout-tyypin, joten se pysyy käytettävissä ja säilyttää ulkoasunsa. Callout Studio muuttaa vain holvisi muistiinpanoja — mikään teemaasi kuuluva ei muutu.",
 
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Omat callout-tyypit",
 	"settings.builtInCallouts": "Sisäänrakennetut calloutit",
 	"settings.contextMenu": "Kontekstivalikko",
-	"settings.keyboardShortcuts": "Komennot",
 	"settings.language": "Kieli",
-	"settings.languageDesc":
-		"Callout Studion näyttökieli. Seuraa oletuksena Obsidianin käyttöliittymän kieltä.",
 	"settings.importExport": "Tuo ja vie",
 	"settings.import": "Tuo…",
 	"settings.export": "Vie…",
@@ -104,6 +101,9 @@ export const fi: Record<string, string> = {
 		"{{count}} callout-tyyppiä tuotu; {{overwritten}} olemassa olevaa merkintää ylikirjoitettu.",
 	"settings.addNewCallout": "lisää callout",
 	"settings.noCalloutsNow": "Ei mukautettuja callouteja tällä hetkellä.",
+	"settings.calloutCount": "{{count}} calloutia",
+	"settings.calloutCountOne": "1 callout",
+	"settings.searchCallouts": "Hae callouteja…",
 	"settings.editAria": "Muokkaa {{name}}",
 	"settings.moreRowActionsAria": "Lisää toimintoja kohteelle {{name}}",
 	"settings.replaceAction": "Korvaa holvissa…",
@@ -120,22 +120,17 @@ export const fi: Record<string, string> = {
 
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Teemasi calloutit",
-	"settings.themeCalloutsDesc":
-		"{{theme}} tarjoaa tai muotoilee nämä uudelleen, joten Callout Studio jättää ne täsmälleen sellaisiksi kuin teemasi piirtää ne, ja tarjoaa niitä vain lohko-callouteina. Molemmat tyypit näkyvät tässä: teemasi lisäämät callout-tyypit ja sisäänrakennetut calloutit, joiden ulkoasun se korvaa. Teemasi lisäämät callout-tyypit näkyvät luettelossa vain, kun teema on käytössä.",
 	"settings.themeCalloutsDefaultTheme": "Teemasi",
+	"settings.themeCalloutsEmpty": "{{theme}} ei tyylittele tällä hetkellä yhtään calloutia.",
 	"settings.themePreviewAria":
 		'Esikatsele "{{name}}" — näe, miten teemasi piirtää sen',
 	"settings.builtInAllThemeStyled":
-		"{{theme}} muotoilee jokaisen sisäänrakennetun calloutin uudelleen, joten ne kaikki näkyvät yllä eikä Callout Studio koske niihin. Jos haluat suunnitella oman, lisää callout eri tunnuksella.",
+		"{{theme}} tyylittelee jokaisen sisäänrakennetun calloutin, joten Callout Studio jättää ne kaikki ennalleen. Jos haluat suunnitella oman, lisää callout eri tunnuksella.",
 
 	"settings.fallbackCallout": "Oletus-varausCallout",
 	"settings.fallbackCalloutDesc":
-		"Holvisi tuntemattomat callout-tyypit perivät tämän calloutin tyylin.",
-	"settings.globalStyleRegularTitle": "Block-calloutien yleistyyli",
-	"settings.globalStyleHeadingTitle": "Otsikko-calloutien yleistyyli",
-	"settings.globalStyleInlineTitle": "Rivinsisäisten calloutien yleistyyli",
+		"Tuntemattomat callout-tyypit perivät tämän tyylin.",
 	"settings.border": "Reunat",
-	"settings.borderAll": "Kaikki",
 	"settings.borderTop": "Ylä",
 	"settings.borderRight": "Oikea",
 	"settings.borderBottom": "Ala",
@@ -145,14 +140,11 @@ export const fi: Record<string, string> = {
 	"settings.titleScale": "Otsikko",
 	"settings.contentScale": "Sisältö",
 	"settings.inlineTextScale": "Teksti",
-	"settings.shapeGroup": "Muoto",
 	"settings.borderRadius": "Kulmien pyöristys",
-	"settings.alignGroup": "Tasaus",
 	"settings.alignContent": "Tasaa sisältö otsikon kanssa",
 	"settings.headingSpacingGroup": "Otsikon väli",
 	"settings.headingPadVertical": "Pystysuuntainen väli",
 	"settings.headingGap": "Otsikoiden välinen tila",
-	"settings.headingFoldGroup": "Kutistaminen",
 	"settings.headingFoldArrow": "Näytä kutistamisnuoli",
 	"settings.styleDemoName": "Esimerkki",
 	"settings.styleDemoInlineName": "Esimerkki",
@@ -164,19 +156,17 @@ export const fi: Record<string, string> = {
 	"settings.newPalette": "Uusi paletti",
 	"settings.customPalettesEmpty":
 		"Ei tallennettuja paletteja tällä hetkellä.",
+	"settings.paletteCount": "{{count}} palettia",
+	"settings.paletteCountOne": "1 paletti",
 	"settings.editPaletteAria": "Muokkaa palettia {{name}}",
-	"settings.deletePaletteAria": "Poista paletti {{name}}",
-	"settings.deletePaletteConfirm":
-		'Poistetaanko paletti "{{name}}"?\nSen värejä käyttävät callout-tyypit eivät muutu.',
+	"settings.deletePaletteTitle": "Poista paletti",
+	"settings.deletePaletteBody":
+		'Sen värejä käyttävät callout-tyypit eivät muutu.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Calloutit, jotka mainitsevat sen metatiedoissaan ("{{key}}"), saavat sen sijaan tämän nimisen sisäänrakennetun värin. Muistiinpanojasi ei muuteta.',
 	"settings.customCommands": "Komennot ja pikanäppäimet",
-	"settings.customCommandsDesc":
-		"Näytä jokainen Callout Studion komento ja sen pikanäppäin, ja luo omia komentoja eniten käyttämillesi callouteille. Oletuksena ei ole määritetty pikanäppäimiä.",
-	"settings.customCommandsButton": "Hallinnoi komentoja",
+	"settings.customCommandsDesc": "Kaikki Callout Studion komennot, niiden pikanäppäimet ja omat komentosi.",
 	"commandBuilder.title": "Komennot ja pikanäppäimet",
-	"commandBuilder.desc":
-		"Aseta tai vaihda pikanäppäin Obsidianin pikanäppäinasetuksista +-painikkeella.",
 	"commandBuilder.builtIn": "Sisäänrakennetut komennot",
 	"commandBuilder.toggleAria": "Ota {{name}} käyttöön tai pois käytöstä",
 	"commandBuilder.hotkeyBlank": "Tyhjä",
@@ -186,9 +176,7 @@ export const fi: Record<string, string> = {
 	"commandBuilder.empty": "Ei vielä mukautettuja komentoja.",
 	"commandBuilder.unknownCommand": "tämä komento",
 	"commandBuilder.editAria": "Muokkaa {{name}}",
-	"commandBuilder.deleteAria": "Poista {{name}}",
-	"commandBuilder.deleteConfirm":
-		"Poistetaanko komento {{name}}? Sille asetettu pikanäppäin lakkaa toimimasta.",
+	"commandBuilder.deleteConfirm": "Sille määritetty pikanäppäin lakkaa toimimasta.",
 	"commandBuilder.newTitle": "Uusi komento",
 	"commandBuilder.editTitle": "Muokkaa komentoa",
 	"commandBuilder.format": "Callout-muoto",
@@ -228,15 +216,17 @@ export const fi: Record<string, string> = {
 
 	"commandBuilder.roleThemeOwned":
 		"Teemasi tarjoaa tämän calloutin, joten sillä on vain lohkomuoto.",
-	"commandBuilder.commandSuspended":
-		"Keskeytetty: teemasi tarjoaa tämän calloutin, joten sillä on vain lohkomuoto. Tämä komento toimii taas, kun teema lakkaa tarjoamasta sitä.",
+	"commandBuilder.commandSuspended": "Keskeytetty, kun teemasi tarjoaa tämän calloutin; sillä on silloin vain lohkomuoto.",
+	"commandBuilder.pausedTag": "Teeman keskeyttämä",
+	"commandBuilder.missingTag": "Callout puuttuu",
 
 	"settings.resetAll": "Palauta",
 	"settings.resetAllDesc":
-		"Poistaa kaikki käyttäjän calloutit, palauttaa sisäänrakennetut calloutit, yleiset tyylit, tallennetut väripaletit, hiiren kakkospainikkeen valikon mukautukset ja ladatut Material-SVG:t.",
+		"Palauttaa kaikki asetukset ja mukautukset oletusarvoihin.",
 	"settings.resetAllButton": "Palauta kaikki",
 	"notice.resetAllDone": "Kaikki on palautettu oletuksiksi.",
 	"settings.resetIntro": "Pysähdy hetkeksi arvostamaan kaikkea, minkä olet rakentanut Callout Studiolla.",
+	"settings.resetSubtitleDefaults": "Asetuksesi palaavat oletusarvoihin",
 	"settings.resetDeletes": "Kaikki tämä on poistumassa:",
 	"settings.resetRestores": "Nämä palautuvat oletuksiin:",
 	"settings.resetItemCallouts": "{{count}} mukautettu(a) callout-tyyppi(ä)",
@@ -250,9 +240,10 @@ export const fi: Record<string, string> = {
 	"settings.resetItemHeading": "Otsikko-calloutien asetukset",
 	"settings.resetItemInline": "Rivinsisäisten calloutien asetukset",
 	"settings.resetItemThemeCalloutStyles": "Teemasi calloutien tyylit",
+	"settings.resetItemAutocomplete": "Automaattisen täydennyksen ja metatietojen asetukset",
 	"settings.resetItemFallback": "Varatyyli",
 	"settings.resetItemIconLibraries": "Kuvakekirjastojen järjestys ja piilotetut kirjastot",
-	"settings.resetAllConfirmAfter": "Ei huolta: ennen palautusta tallennamme varmuuskopion nykyisestä kokoonpanostasi. Voit palauttaa sen milloin tahansa asetusten Varmuuskopiot-osiosta.\nJos käytät synkronointipalvelua, palautus voi siirtyä myös muille laitteillesi.",
+	"settings.resetAllConfirmAfter": "Ei huolta: ennen nollausta tallennamme varmuuskopion nykyisistä asetuksistasi. Voit palauttaa sen milloin tahansa asetusten kohdasta Palauta aiempi versio.\nJos käytät synkronointipalvelua, nollaus voi siirtyä myös muille laitteillesi.",
 	"settings.resetNothing": "Ei mitään palautettavaa: kaikki on jo oletuksissa.",
 	"notice.customCommandMissingCallout":
 		"Tämän komennon callout-tyyppiä ei enää ole.",
@@ -334,13 +325,13 @@ export const fi: Record<string, string> = {
 	"editor.foldClosed": "Kiinni oletuksena",
 	"editor.cancel": "Peruuta",
 	"editor.saveChanges": "Tallenna muutokset",
-	"editor.saving": "Tallennetaan…",
 	"editor.saveFailed": "Tallennusta ei voitu viimeistellä. Jos tämä muokkain on yhä auki, pidä se auki ja yritä uudelleen tarkistettuasi tallennustilan ja synkronoinnin. Osa asetuksista tai muistiinpanojen päivityksistä on voitu jo tallentaa.",
 	"editor.createCallout": "Luo callout",
 	"editor.nameRequired": "Näyttönimi vaaditaan ennen calloutin luomista.",
 	"editor.noChangesToSave": "Muutoksia ei tehty.",
-	"editor.downloadingIcon": "Ladataan kuvaketta",
 	"editor.idEmpty": "Vähintään yksi tunnus vaaditaan",
+	"editor.idAlreadyHere": "Tämä tunniste on jo olemassa",
+	"editor.idTooLong": "Tunnisteessa saa olla enintään {{max}} merkkiä",
 	"editor.idExists": "Callout tällä tunnuksella on jo olemassa",
 	"editor.idConflict":
 		"Tämä tunnus on ristiriidassa olemassa olevan calloutin kanssa",
@@ -371,7 +362,7 @@ export const fi: Record<string, string> = {
 	"editor.loremIpsumShort":
 		"Kevyt tuuli liikuttaa puiden oksia.",
 	"editor.sampleInlineText":
-		"Tässä on upotettu [!{id}] -pilleri kappaleen sisällä.",
+		"Tässä on upotettu [!{id}]{{title}} -pilleri kappaleen sisällä.",
 	"editor.previewReadOnly": "Live-esikatselua ei voi muokata",
 	"noteChanges.title": "Päivitetäänkö muistiinpanosi?",
 	"noteChanges.leave": "Jätä ne ennalleen",
@@ -404,7 +395,6 @@ export const fi: Record<string, string> = {
 	"palette.namePlaceholder": "Oma paletti",
 	"palette.nameExists": "Tämän niminen paletti on jo olemassa",
 	"palette.saveBlockedName": "Tämän niminen paletti on jo olemassa. Tallenna se valitsemalla toinen nimi.",
-	"palette.metadataName": "Calloutin metatiedoissa: {{key}}",
 	"palette.metadataNameExists":
 		'Toinen paletti on jo kirjoitettu calloutin metatietoihin muodossa "{{key}}". Valitse toinen nimi.',
 	"palette.metadataNameShared":
@@ -416,16 +406,15 @@ export const fi: Record<string, string> = {
 	"palette.renameNotesFailed":
 		"Joitakin muistiinpanoja ei voitu päivittää. Päivitetyt on tallennettu; loput käyttävät yhä vanhaa nimeä.",
 	"palette.baseColor": "Perusväri",
-	"palette.baseColorHint":
-		"Sovitamme taustavärin automaattisesti siihen. Jos haluat, voit hallita sitä erikseen {{link}}.",
-	"palette.baseColorHintLink": "napsauttamalla tätä",
+	"palette.colorViewAdvanced": "Aseta jokainen väri erikseen",
+	"palette.colorViewSimple": "Palaa yhteen peruväriin",
 	"palette.advancedColors": "Värit",
-	"palette.advancedColorsHint":
-		"Muokataan {{mode}}-tilan värejä – toinen tila päivittyy automaattisesti. Vaihda Obsidianin teemaa tarkistaaksesi sen.",
-	"palette.revertHint": "Haluatko mieluummin yhden peruvärin? {{link}}.",
-	"palette.revertHintLink": "Palauta",
-	"palette.lightMode": "Vaalea",
-	"palette.darkMode": "Tumma",
+	"palette.lightModeColors": "Vaalean tilan värit",
+	"palette.darkModeColors": "Tumman tilan värit",
+	"palette.modeColorsHintLight": "Nämä muutokset koskevat vain vaaleaa tilaa. Tumma tila säilyttää omat värinsä.\nMuokkaa niitä painamalla yllä olevaa kuupainiketta.",
+	"palette.modeColorsHintDark": "Nämä muutokset koskevat vain tummaa tilaa. Vaalea tila säilyttää omat värinsä.\nMuokkaa niitä painamalla yllä olevaa aurinkopainiketta.",
+	"palette.showLightMode": "Näytä vaalea tila",
+	"palette.showDarkMode": "Näytä tumma tila",
 	"palette.accentColor": "Korostusväri",
 	"palette.backgroundColorChannel": "Taustaväri",
 	"palette.textColorChannel": "Tekstin väri",
@@ -496,6 +485,7 @@ export const fi: Record<string, string> = {
 	"iconPicker.searchMaterial": "hae Material-kuvakkeita",
 	"iconPicker.searchEmoji": "Hae emojeja",
 	"iconPicker.skinTone": "Ihonsävy",
+	"iconPicker.skinToneDefault": "Oletus",
 	"iconPicker.allCategories": "Kaikki kategoriat",
 	"iconPicker.noIconSelected": "Kuvaketta ei valittu",
 	"iconPicker.chooseFirst": "Valitse ensin kuvake.",
@@ -536,7 +526,6 @@ export const fi: Record<string, string> = {
 	"iconPicker.allSources": "Kaikki lähteet",
 	"iconPicker.searchAllSources": "Hae kaikista kuvakelähteis",
 	"iconPicker.chooseSource": "Valitse lähde",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "Saatavilla olevat kirjastot",
 	"iconPicker.librariesToDownload": "Ladattavat kirjastot",
 	"iconPicker.groupCurrent": "Nykyinen kuvake",
@@ -691,6 +680,10 @@ export const fi: Record<string, string> = {
 		"Kuvakkeiden grafiikka ladattiin kohteille {{names}}.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio ei voinut tallentaa kuvakepakettia levylle, joten se on ladattava uudelleen ensi kerralla. Valitsemasi kuvakkeet on silti tallennettu asetuksiisi.",
+	"settings.colorsAndIcons": "Värit ja kuvakkeet",
+	"settings.iconLibrariesDesc": "Järjestä kuvakekirjastot uudelleen ja lataa lisää kirjastoja.",
+	"settings.iconLibrariesEditorOpen":
+		"Lopeta ensin työ callout-editorissa. Sen tallentamaton kuvake voi olla peräisin kirjastosta, jonka poistat täällä.",
 	"iconLibraries.manage": "Hallitse kuvakekirjastoja",
 	"iconLibraries.title": "Kuvakekirjastot",
 	"iconLibraries.desc":
@@ -714,6 +707,7 @@ export const fi: Record<string, string> = {
 	"iconLibraries.inUseMore": "ja {{count}} muuta",
 	"iconLibraries.inUseKeeps":
 		"Ne säilyttävät kuvakkeensa — kopio jokaisesta tallennetaan asetustesi mukana. Jos haluat myöhemmin valita uusia kuvakkeita kirjastosta {{name}}, lataa se uudelleen.",
+	"iconLibraries.resetSubtitle": "Takaisin lisäosan alkuperäisiin kirjastoihin",
 	"iconLibraries.resetConfirm":
 		"Tämä palauttaa kirjastot siihen tilaan, jossa lisäosa tuli: oletusjärjestys, ei piilotettuja kirjastoja eikä yhtään ladattua kirjastoa. Nämä poistetaan:",
 	"iconLibraries.resetKeeps":
@@ -721,6 +715,9 @@ export const fi: Record<string, string> = {
 	"iconLibraries.resetButton": "Palauta",
 
 	// Icon licences & credits
+	"license.title": "Lisenssi",
+	"license.openSourceBeforeLink": "Callout Studio on avointa lähdekoodia, ja se pysyy sellaisena. Sen lisenssin löydät ",
+	"license.openSourceLink": "täältä",
 	"credits.title": "Kuvakkeiden lisenssit ja kiitokset",
 	"credits.introBeforeNotices":
 		"Callout Studio käyttää avoimen lähdekoodin kuvakekirjastoja; katso alta kunkin kirjaston lisenssi, tekijämerkinnät ja tehdyt muutokset, tai lue ",
@@ -739,30 +736,51 @@ export const fi: Record<string, string> = {
 	"contextMenu.deleteSection": "Poista otsikko-osio",
 	"heading.toggleFold": "Vaihda taitto",
 	"settings.globalSettings": "Callout Studion yleiset tyyliasetukset",
+	"settings.calloutStyle": "Yleistyyli",
+	"settings.menusAndCommands": "Valikot ja komennot",
+	"settings.editorBox": "Editori",
+	"settings.autocompleteAndMetadata": "Automaattinen täydennys ja metatiedot",
+	"settings.autocompleteAndMetadataDesc": "Luettelot, jotka avautuvat, kun kirjoitat calloutin, sekä metatiedot |-merkin jälkeen.",
+	"settings.calloutAutocomplete": "Calloutien automaattinen täydennys",
+	"settings.calloutAutocompleteDesc": "Näyttää luettelon callouteista, kun kirjoitat [!.",
+	"settings.suggestThemeCallouts": "Sisällytä teemasi calloutit",
+	"settings.suggestThemeCalloutsDesc": "Luettelee calloutit, jotka teemasi lisää.",
+	"settings.metadataPage": "Metatiedot",
+	"settings.metadataPageDesc": "Värit ja sanat |-merkin jälkeen calloutissa.",
+	"settings.metadataColors": "Metatietojen värit",
+	"settings.metadataColorsDesc": "|-merkin jälkeinen väri värittää vain sen calloutin, kuten [!note|red].",
+	"settings.metadataAutocomplete": "Metatietojen automaattinen täydennys",
+	"settings.metadataAutocompleteDesc": "Näyttää luettelon väreistä ja sanoista, kun kirjoitat calloutissa |.",
+	"settings.suggestThemeMetadata": "Sisällytä teemasi sanat",
+	"settings.suggestThemeMetadataDesc": "Luettelee sanat, joihin teemasi reagoi.",
+	"settings.metadataWords": "Omat sanasi",
+	"settings.metadataWordsDesc": "Sanat, joita ehdotetaan |-merkin jälkeen, esimerkiksi toisen lisäosan lukemat.",
+	"settings.metadataWordsPlaceholder": "Lisää sana",
+	"settings.addMetadataWord": "Lisää sana",
+	"settings.metadataWordAlreadyHere": "Tämä sana on jo luettelossa",
+	"settings.metadataWordTooLong": "Sanassa saa olla enintään {{max}} merkkiä",
+	"settings.maxMetadataWords": "Enintään {{max}} sanaa. Poista yksi, jotta voit lisätä toisen.",
+	"settings.buildFailed": "Callout Studio ei voinut piirtää asetuksiaan; käynnistä Obsidian uudelleen ja ilmoita asiasta, jos ongelma toistuu.",
 	"settings.globalSettingsRegularDesc":
-		"Säädä jokaisen holvisi lohko-calloutin reunaa, pyöristystä, fonttiskaalaa ja tasausta.",
+		"Reuna, pyöristys, fonttiskaala ja tasaus.",
 	"settings.globalSettingsHeadingDesc":
-		"Säädä jokaisen holvisi otsikko-calloutin reunaa, muotoa ja pystysuuntaista väliä.",
+		"Reuna, muoto ja pystysuuntainen väli.",
 	"settings.globalSettingsInlineDesc":
-		"Säädä jokaisen holvisi rivinsisäisen calloutin reunaa ja muotoa.",
-	"settings.globalSettingsCustomize": "Mukauta",
+		"Reuna ja muoto.",
 	"settings.themeCalloutStyles": "Käytä teemasi calloutien tyylejä",
-	"settings.themeCalloutStylesDesc":
-		"Päällä: calloutit, joita teemasi muotoilee, säilyttävät teemasi ulkoasun.\nPois: Callout Studio piirtää kaikki calloutit itse, ja teemasi calloutien tyylit on poistettu käytöstä.",
-	"settings.calloutTypeRegular": "Lohkocallout",
-	"settings.calloutTypeHeading": "Otsikko-callout",
-	"settings.calloutTypeInline": "Rivinsisäinen callout",
-	"settings.customizeMenu": "Mukauta valikon kohteita",
-	"settings.customizeMenuDesc":
-		"Valitse, mitkä hiiren kakkospainikkeen toiminnot näkyvät kullekin callout-tyypille, ja järjestä ne uudelleen. Toimii lähdetilassa ja Live Preview -tilassa.",
-	"settings.customizeMenuButton": "Mukauta valikon kohteita",
+	"settings.themeCalloutStylesDesc": "Kun päällä, teemasi tyylittelemät calloutit säilyttävät sen ulkoasun ja näkyvät vain lohkocalloutteina. Kun pois päältä, Callout Studio piirtää kaikki calloutit.",
+	"settings.calloutTypeRegular": "Lohkocalloutin tyyli",
+	"settings.calloutTypeHeading": "Otsikko-calloutin tyyli",
+	"settings.calloutTypeInline": "Rivinsisäisen calloutin tyyli",
+	"settings.customizeMenuDesc": "Valitse ja järjestä hiiren oikean painikkeen toiminnot kullekin calloutin tyypille.",
 	"menuCustomize.title": "Mukauta hiiren kakkospainikkeen valikkoa",
-	"menuCustomize.desc":
-		"Ota toimintoja käyttöön tai pois käytöstä ja järjestä niitä uudelleen vetämällä kahvasta. Muutokset tallennetaan automaattisesti.",
 	"menuCustomize.regular": "Lohkocallout",
 	"menuCustomize.heading": "Otsikko-callout",
 	"menuCustomize.inline": "Rivinsisäinen callout",
 	"menuCustomize.dragHandle": "Vedä järjestääksesi uudelleen",
+	"menuCustomize.hiddenHeading": "Piilotettu otsikkocalloutien valikosta",
+	"menuCustomize.hiddenInline": "Piilotettu rivinsisäisten calloutien valikosta",
+	"menuCustomize.hiddenRegular": "Piilotettu lohkocalloutien valikosta",
 	"menuItem.createOrEdit": "Luo tai muokkaa calloutia",
 	"menuItem.openSettings": "Avaa asetukset",
 	"menuItem.copyMarkdown": "Kopioi Markdown",
@@ -773,10 +791,10 @@ export const fi: Record<string, string> = {
 	"confirm.ok": "Poista",
 	"confirm.cancel": "Peruuta",
 	"confirm.acknowledge": "Olen lukenut ja ymmärtänyt",
+	"confirm.subtitleName": "”{{name}}”",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Poista komento",
-	"confirm.titleDeletePalette": "Poista paletti",
 	"confirm.titleDeleteImage": "Poista kuva",
 	"confirm.titleDeleteLibrary": "Poista kuvakekirjasto",
 	"confirm.titleResetLibraries": "Palauta kuvakekirjastot",
@@ -788,7 +806,6 @@ export const fi: Record<string, string> = {
 		"{{count}} callout-otsikko(a) päivitetty holvin tiedostoissa: {{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated":
 		"Päivitettiin {{count}} calloutin taittomerkki holvin tiedostoissa.",
-	"vault.replaceWith": "Korvaa:",
 	"vault.confirmReplace": "Korvaa",
 	"vault.replacePromptInUse":
 		'"{{name}}" on käytössä {{count}} kertaa {{files}} tiedostossa. Valitse callout, jolla se korvataan:',
@@ -864,8 +881,8 @@ export const fi: Record<string, string> = {
 	"portable.scanning": "Luetaan Markdown-muistiinpanoja…",
 	"portable.progress": "Luetaan muistiinpanoja: {{done}}/{{total}}",
 	"portable.empty": "Sopivia otsikoiden tai tekstin sisäisiä callouteja ei löytynyt. Mitään ei muuteta.",
-	"portable.skipped": "{{count}} keskeneräistä tai tukematonta esiintymää jätettiin ennalleen käsin tarkistettaviksi.",
 	"portable.confirmTitle": "Muunna tämä holvi pysyvästi?",
+	"portable.confirmSubtitle": "Automaattista varmuuskopiota ei luoda",
 	"portable.confirmBody": "Muunna {{count}} esiintymää ja päivitä {{links}} otsikkolinkkiä {{files}} muistiinpanossa?\nTämä muuttaa alkuperäisiä tiedostoja, eikä sitä voi kumota Callout Studiossa. Automaattista varmuuskopiota ei luoda. Varmuuskopioi holvi ensin, tallenna avoimet muistiinpanot ja keskeytä muokkaus sekä synkronointi muunnoksen ajaksi.\nJos tiedosto muuttuu tai kirjoittaminen epäonnistuu, muunnos pysähtyy. Jo muunnetut muistiinpanot säilyvät muutettuina.",
 	"portable.confirmAction": "Muunna pysyvästi",
 	"portable.converting": "Muunnetaan valittuja muutoksia… Tämän paneelin sulkeminen ei pysäytä muunnosta.",
@@ -880,7 +897,6 @@ export const fi: Record<string, string> = {
 	"portable.blockedEditing": "Viimeistele ensin korvaajan muokkaus: tallenna painamalla Enter tai hylkää painamalla Esc.",
 	"portable.blockedNothingSelected": "Valitse vähintään yksi korvaaja muunnettavaksi.",
 	"settings.maintenance": "Vaara-alue",
-	"portable.subtitle": "Valitse, mitkä otsikoiden ja tekstin sisäiset calloutit muunnetaan tavalliseksi Markdowniksi ennen Callout Studion käytön lopettamista.",
 	"portable.customize": "Mukautettu korvaus…",
 	"portable.editCustom": "Muokkaa mukautettua korvausta…",
 	"portable.restoreDefault": "Palauta oletuskorvaus",
@@ -893,13 +909,13 @@ export const fi: Record<string, string> = {
 
 	"usage.title": "Etsi calloutit",
 	"usage.command": "Etsi calloutit",
-	"usage.subtitle": "Etsi calloutit holvistasi ja siirry niiden lähteeseen.",
 	"usage.browse": "Selaa",
 	"usage.allTypes": "Kaikki tyypit",
 	"usage.registeredCallouts": "Rekisteröidyt calloutit",
 	"usage.unregisteredCallouts": "Rekisteröimättömät calloutit",
 	"usage.summary": "{{count}} esiintymää {{files}} tiedostossa",
 	"usage.allRoles": "Kaikki muodot",
+	"usage.filterFormat": "Suodata muodon mukaan",
 	"usage.failed": "Callout-esiintymiä ei voitu päivittää.",
 	"usage.loading": "Skannataan Markdown-muistiinpanoja…",
 	"usage.partial": "Tulokset ovat puutteelliset: {{count}} lukuvirhettä.",
@@ -912,7 +928,6 @@ export const fi: Record<string, string> = {
 	"usage.missing": "Tätä muistiinpanoa ei enää ole. Päivitetään tuloksia…",
 	"usage.changed": "Tämä esiintymä on muuttunut tai siirtynyt paikkaan, jota ei voi määrittää yksiselitteisesti. Päivitetään tuloksia…",
 	"usage.openFailed": "Tätä callout-esiintymää ei voitu avata.",
-	"usage.menuCount": "Etsi calloutit ({{count}})",
 	"usage.menuIncomplete": "Etsi calloutit — skannaus kesken",
 	"usage.menu": "Etsi calloutit",
 	"usage.closeSettings": "Sulje asetukset, jotta näet callout-tulokset sivupaneelissa.",
@@ -1093,18 +1108,14 @@ export const fi: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Otsikko on {{length}} merkkiä; se lyhennettiin {{max}} merkkiin.",
 
-	"footer.prompt":
-		"Kysymyksiä, virheitä tai ideoita? Kuulen niistä mielelläni!{{break}} {{issue}} tai {{email}}.",
-	"footer.openIssue": "Avaa GitHub-issue",
-	"footer.sendEmail": "lähetä minulle sähköpostia",
+	"footer.openIssue": "Avaa issue",
 	"footer.sourceCode": "Lähdekoodi",
-	"footer.contribute": "Osallistu",
-	"footer.license": "Lisäosan lisenssi",
-	"footer.iconCredits": "Kuvakkeiden lisenssit",
-	"settings.deletePaletteConfirmLinkedOne":
-		'Poistetaanko paletti "{{name}}"?\n1 callout käyttää sitä. Se säilyttää värinsä, ja voit yhdistää sen myöhemmin uudelleen editorin Väririviltä.',
-	"settings.deletePaletteConfirmLinked":
-		'Poistetaanko paletti "{{name}}"?\n{{count}} calloutia käyttää sitä. Ne säilyttävät värinsä, ja voit yhdistää ne myöhemmin uudelleen minkä tahansa editorinsa Väririviltä.',
+	"settings.about": "Tietoja",
+	"settings.version": "Versio",
+	"settings.deletePaletteBodyLinkedOne":
+		'1 callout käyttää sitä. Se säilyttää värinsä, ja voit yhdistää sen myöhemmin uudelleen editorin Väririviltä.',
+	"settings.deletePaletteBodyLinked":
+		'{{count}} calloutia käyttää sitä. Ne säilyttävät värinsä, ja voit yhdistää ne myöhemmin uudelleen minkä tahansa editorinsa Väririviltä.',
 	"notice.palettesMerged":
 		"Yhdistettiin {{count}} tallennettua väriä, joilla oli samat värit: {{names}}. Niitä käyttävät calloutit säilyttävät värinsä ja ovat nyt linkitetty jäljelle jääneeseen väriin.",
 	"editor.colorsDescDeleted":
@@ -1116,9 +1127,8 @@ export const fi: Record<string, string> = {
 		'Nämä värit ovat samat kuin "{{name}}". Kaksi tallennettua väriä ei voi olla sama — muuta yhtä väriä tai {{link}}.',
 	"palette.colorExistsUseLink": "käytä olemassa olevaa",
 	"locale.downloading": "Ladataan käännöstä…",
+	"locale.downloaded": "Käännös ladattu.",
 	"locale.notDownloaded": "{{name}} ei ole vielä ladattu",
-	"locale.notDownloadedDesc":
-		"Callout Studio näyttää englanninkielisenä, kunnes käännös voidaan ladata. Se yrittää uudelleen, kun Obsidian käynnistetään seuraavan kerran.",
 	"locale.retry": "Yritä uudelleen",
 	"locale.diskWriteFailed":
 		"Callout Studio ei voinut tallentaa käännöstä levylle, joten se on ladattava uudelleen seuraavalla kerralla.",
@@ -1131,6 +1141,7 @@ export const fi: Record<string, string> = {
 	"notice.exportCssEnabled":
 		"Tämä katkelma on käytössä tässä vaultissa. Callout Studio tyylittelee nämä calloutit jo, ja katkelma säilyttää vientihetken tyylin.",
 	"confirm.titleOverwriteSnippet": "Korvaa CSS-katkelma",
+	"confirm.subtitleOverwriteSnippet": "Muokattu sen jälkeen, kun Callout Studio kirjoitti sen",
 	"confirm.overwriteSnippet":
 		"Snippets-kansiossa oleva CSS-katkelma on muuttunut sen jälkeen, kun Callout Studio kirjoitti sen. Uusi vienti korvaa koko tiedoston.",
 	"confirm.overwriteSnippetOk": "Korvaa",
@@ -1142,13 +1153,14 @@ export const fi: Record<string, string> = {
 	"export.formatCss": "Erillinen CSS-tilannekuva",
 	"export.formatCssDesc":
 		"Verkkosivustoille tai vaulteihin, joissa Callout Studio ei ole käynnissä. Kattaa vain lohkocalloutit, ja se on vietävä uudelleen muutosten jälkeen.",
+	"export.formatCssAction": "Vie",
 	"quickInsert.readingViewHint": "Tämä muistiinpano on avoinna lukutilassa, joten mitään ei voida lisätä.",
 	"quickInsert.readingView": "Vaihda lähdetilaan tai Live Previewiin lisätäksesi calloutin.",
 	"quickInsert.noCursorHint": "Tässä muistiinpanossa ei ole kohdistinta, joten lisäämiselle ei ole paikkaa.",
 	"quickInsert.noCursor": "Aseta kohdistin muistiinpanoon kohtaan, johon haluat lisätä calloutin, ja yritä uudelleen.",
 	"notice.legacyDiscoveryArchiveFailed": "Päivityksen palautuskopion luominen ei onnistunut. Aiempi paikallinen etsintävälimuisti ja käynnistyksen CSS säilyivät ennallaan. Tarkista kirjoitus- ja tallennustilan käyttöoikeudet sekä vapaa tila, käynnistä sitten Obsidian uudelleen ja yritä uudelleen.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "Keskeytetty: callout puuttuu. Etsi tai luo se palauttaaksesi tämän komennon, tai muokkaa komentoa valitaksesi toisen tyypin.",
+	"commandBuilder.missingCallout": "Keskeytetty, kunnes luot puuttuvan calloutin uudelleen tai valitset toisen.",
 	"confirm.titleRestoreSettings": "Palauta nämä asetukset",
 	"confirm.titleCreateSettingsFile": "Luo asetustiedosto",
 	"confirm.saveDisplayedSettings":
@@ -1235,9 +1247,11 @@ export const fi: Record<string, string> = {
 	"settings.resetNotSaved": "Palautus näkyy, mutta sitä ei vielä voitu tallentaa, joten asetustiedostossasi on yhä edellinen kokonaisuus. Tarkista tallennuksen tila Callout Studion asetuksista.",
 	"confirm.titleResetEverything": "Palauta kaikki",
 	"confirm.titleReplaceUnreadable": "Korvaa asetustiedosto",
+	"confirm.subtitleReplaceUnreadable": "Tarkka kopio tallennetaan ensin",
 	"confirm.replaceUnreadable": "Tarkka kopio nykyisestä tiedostosta tallennetaan ensin lisäosan varmuuskopiokansioon. Tiedosto korvataan sitten tässä näkyvällä kokonaisuudella, ja synkronointipalvelusi lähettää sen muille laitteillesi.",
 	"confirm.replaceUnreadableSalvage": "Tarkka kopio nykyisestä tiedostosta tallennetaan ensin lisäosan varmuuskopiokansioon. Sen sisältämät asetukset yhdistetään tässä näkyvään kokonaisuuteen, ja tiedosto kirjoitetaan uudelleen, jotta jokainen laite voi taas lukea sen.",
 	"confirm.titleDiscardRecoveryCopy": "Hylkää palautuskopio",
+	"confirm.subtitleDiscardRecoveryCopy": "Tallennus on keskeytetty tällä laitteella",
 	"confirm.discardRecoveryCopy": "Tämän laitteen palautuskopiota ei voida lukea, joten tallennus on keskeytetty tällä laitteella. Siitä tallennetaan ensin tarkka kopio lisäosan varmuuskopiokansioon. Se korvataan sitten tässä näkyvällä kokonaisuudella. Asetustiedostoosi ei kosketa.",
 	"vault.undoRewrite": "Kumoa",
 	"vault.undoRestored": "{{count}} muistiinpanoa palautettu.",
@@ -1434,7 +1448,7 @@ export const fi: Record<string, string> = {
 	"recovery.delete": "Poista",
 
 	// Version history
-	"saveStatus.guide.versions": "Kun tallennus toimii taas, voit myös palauttaa aiemman version versiohistoriasta.",
+	"saveStatus.guide.versions": "Kun tallennus toimii taas, voit myös palata tallennettuun versioon kohdassa Palauta aiempi versio.",
 	"saveStatus.goToVersions": "Siirry versiohistoriaan",
 	"versions.title": "Versiohistoria",
 	"versions.intro": "Callout Studio tallentaa kokoonpanosi versiot automaattisesti.\nVanhoja versioita poistetaan ajan myötä.\nVersion palauttaminen korvaa nykyisen kokoonpanosi kaikilla synkronoiduilla laitteilla.",
@@ -1454,13 +1468,14 @@ export const fi: Record<string, string> = {
 	"versions.reason.beforeImport": "Ennen tuontia",
 	"versions.reason.beforeRepair": "Ennen asetustiedoston korjaamista",
 	"versions.restoreTitle": "Palauta tämä versio",
-	"versions.restoreBody": "Nykyinen kokoonpanosi korvataan versiolla ”{{name}}”, ajankohdalta {{when}} ({{count}} eroa).\nNykyinen kokoonpanosi tallennetaan ensin versiona, jotta voit palata siihen.\nSynkronointipalvelu lähettää sitten palautetun kokoonpanon muille laitteillesi.",
+	"versions.subtitle": "”{{name}}” · {{when}}",
+	"versions.restoreBody": "Nykyinen asetuksesi korvataan ({{count}} eroa).\nSe tallennetaan ensin versiona, joten voit palata siihen.\nSynkronointipalvelusi lähettää sitten palautetun asetuksen muille laitteillesi.",
 	"versions.restoreSame": "Tämä versio on sama kuin nykyinen kokoonpanosi, joten mitään palautettavaa ei ole.",
 	"versions.restored": "Palautettiin ”{{name}}”, ajankohdalta {{when}}.",
 	"versions.backupFailed": "Mitään ei palautettu: nykyistä kokoonpanoasi ei voitu ensin tallentaa versiona. Tarkista vapaa tallennustila ja yritä uudelleen.",
 	"versions.restoreFailed": "Versiota ei voitu palauttaa. Mitään ei muutettu.",
 	"versions.deleteTitle": "Poista tämä versio",
-	"versions.deleteAvailableBody": "Versio ”{{name}}” ajalta {{when}} ja kaikki sen saatavilla olevat kopiot poistetaan pysyvästi.",
+	"versions.deleteAvailableBody": "Se ja kaikki sen saatavilla olevat kopiot poistetaan pysyvästi.",
 	"versions.deleteSyncedFiles": "Näiden tiedostojen poistaminen voi synkronoitua muihin laitteisiisi. Näiden laitteiden paikalliset kopiot voivat säilyä.",
 	"versions.deleteFinal": "Tätä ei voi kumota. Nykyiseen kokoonpanoosi ei vaikuteta.",
 	"versions.deleted": "Poistettiin ”{{name}}”, ajankohdalta {{when}}.",
@@ -1469,10 +1484,10 @@ export const fi: Record<string, string> = {
 	"versions.details.difference": "{{count}} ero nykyisiin asetuksiisi",
 	"versions.details.differences": "{{count}} eroa nykyisiin asetuksiisi",
 	"versions.details.comparisonUnavailable": "Vertailu ei ole käytettävissä",
-	"notice.unsavedChangesKept": "Joitakin tämän laitteen muutoksia ei ollut vielä tallennettu, ja toisen laitteen uudemmat asetukset korvasivat ne. Versiosi tallennettiin ensin: avaa versiohistoria Callout Studion asetuksista palauttaaksesi sen.",
-	"settings.versionHistory": "Versiohistoria",
+	"notice.unsavedChangesKept": "Joitakin tämän laitteen muutoksia ei ollut vielä tallennettu, ja toisen laitteen uudemmat asetukset korvasivat ne. Versiosi tallennettiin ensin: avaa Palauta aiempi versio Callout Studion asetuksista saadaksesi sen takaisin.",
+	"settings.versionHistory": "Palauta aiempi versio",
 	"settings.versions": "Aiemmat versiot",
-	"settings.versionsDesc": "Callout Studio tallentaa kokoonpanosi versiot automaattisesti.\nVertaile niitä tai palaa johonkin niistä.",
+	"settings.versionsDesc": "Korvaa nykyinen asetuksesi aiemmin tallennetulla versiolla.",
 	"settings.versionsButton": "Näytä versiot",
 	"noteChanges.callouts": "{{count}}",
 	"noteChanges.calloutsOne": "1",
