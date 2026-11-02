@@ -193,9 +193,27 @@ jobs:
             # and lowered by the same 32 KiB in the Clean Sweep that deleted
             # the old page: the settings Obsidian draws ship at 2,348,600
             # bytes, which leaves about 6.4 KiB of headroom.
+            # Raised by 20 KiB for the brush mascot (src/ui/mascot/): the
+            # engine that draws the paintbrush icon's face frame by frame, its
+            # twenty animations as data, and the places that show it (empty
+            # lists, searches, confirmations, notices) - 21.6 KB, which puts
+            # the build at 2,370,199 bytes and leaves about 5.4 KiB of headroom.
+            # Raised by 8 KiB for the pointer playing with the brush (blink and
+            # look when it comes near, a spring-and-matrix dent where it is
+            # pressed, a ring of paint, three more animations: ouch, angry and
+            # notice), Version history as a page of the settings with its
+            # restored timeline, and a long menu that scrolls with the wheel
+            # instead of by the mouse's position - 6.6 KB over the build before
+            # them, which puts it at 2,380,334 bytes with about 3.5 KiB of
+            # headroom.
+            # Raised by 20 KiB for the Autocomplete and metadata page (the two
+            # suggestion lists, the metadata colours and the metadata words,
+            # with the tag input they are typed into), the palette editor's
+            # light and dark colour views and the license box - the build
+            # was 2,399,025 bytes, which leaves about 5.2 KiB of headroom.
             - name: Check bundle size
               run: |
-                  limit=2355200  # 2 MiB + 252 KiB
+                  limit=2404352  # 2 MiB + 300 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"
