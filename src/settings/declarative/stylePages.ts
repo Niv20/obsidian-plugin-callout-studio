@@ -44,8 +44,6 @@ import {
 	TITLE_SCALE_SLIDER,
 	type StyleSliderDef,
 } from "../styleSpecs";
-import { iconLibrariesRow } from "./mainPageGroups";
-import { palettesPage } from "./palettesPage";
 import { disabledWhilePaused } from "./pausedGuards";
 import type { PersistentPart } from "./persistentParts";
 import { boxResetButton, paintBoxReset } from "./rowParts";
@@ -71,8 +69,8 @@ const ROLE_TEXT: Record<CalloutRenderRole, { name: LocaleKey; desc: LocaleKey }>
 const SIDES: (keyof BorderSidesSettings)[] = ["top", "right", "bottom", "left"];
 
 /**
- * The main page's Callout style box: the three style pages, the saved
- * palettes, and Manage icon libraries.
+ * The main page's Global styling box: the three style pages. (The saved
+ * palettes row is in the Colors and icons box above it: settingsTree.ts.)
  */
 export function calloutStyleGroup(ctx: TreeContext): CsGroup {
 	return {
@@ -83,8 +81,6 @@ export function calloutStyleGroup(ctx: TreeContext): CsGroup {
 			stylePage(ctx, "heading"),
 			stylePage(ctx, "inline"),
 			stylePage(ctx, "regular"),
-			palettesPage(ctx),
-			iconLibrariesRow(ctx),
 		],
 	};
 }

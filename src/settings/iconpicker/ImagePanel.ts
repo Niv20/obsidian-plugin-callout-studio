@@ -8,7 +8,7 @@
  * a branch in the file whose whole point is not having any, so this is a
  * separate panel that reuses IconGrid — the part that genuinely is shared.
  */
-import { Notice, setIcon } from "obsidian";
+import { setIcon } from "obsidian";
 import type { App } from "obsidian";
 import type { CalloutDefinition, CalloutIcon, UserImageIcon } from "../../types";
 import type { IconEntry } from "../../icons/types";
@@ -28,6 +28,8 @@ import { IconGrid } from "./IconGrid";
 import { t } from "../../i18n";
 import { autofocusOnDesktop } from "../modalAutofocus";
 import { createSearchField } from "../../ui/searchField";
+import { KeptMascot, SearchMascot } from "../../ui/mascot/mascotPlaces";
+import { showNotice } from "../../ui/mascot/mascotNotices";
 
 /**
  * Draws cells straight from the pack, like PackPanel's own preview resolver:
@@ -52,6 +54,9 @@ export interface ImagePanelHost {
 	selectedIcon(): CalloutIcon | null;
 }
 
+/** How long the grid waits for the mascot's jump before showing the first picture. */
+const CELEBRATION_BEFORE_GRID_MS = 650;
+
 export class ImagePanel {
 	private readonly toolbarEl: HTMLElement;
 	private readonly bodyEl: HTMLElement;
@@ -60,6 +65,14 @@ export class ImagePanel {
 	/** The selected picture, if this source owns the current selection. */
 	private activeId: string | null = null;
 	private disposed = false;
+	/**
+	 * The brush mascot of the empty collection: it says hello, is excited while
+	 * a file is dragged over the panel, and jumps for joy when the first one is
+	 * added.
+	 */
+	private readonly emptyMascot = new KeptMascot("large");
+	/** The brush mascot of a search that found nothing: sad, and looking around while typing. */
+	private readonly searchMascot = new SearchMascot();
 
 	constructor(
 		private readonly container: HTMLElement,
@@ -82,6 +95,8 @@ export class ImagePanel {
 
 	dispose(): void {
 		this.disposed = true;
+		this.emptyMascot.detach();
+		this.searchMascot.hide();
 		this.container.empty();
 	}
 
@@ -92,6 +107,10 @@ export class ImagePanel {
 			renderCellAction: (cellHost, entry) => this.renderDeleteButton(cellHost, entry),
 			renderEmpty: (host) => {
 				host.addClass("icon-picker-image-empty");
+				this.emptyMascot.attach(host, "start");
+				// Waiting for the first picture, friendly rather than a still icon: it
+				// says hello (and is excited while a file is dragged over, enableDrop).
+				this.emptyMascot.setMood(this.container.hasClass("is-drop-target") ? "excited" : "hello");
 				host.createDiv("icon-picker-image-empty-title").setText(
 					t("iconPicker.customEmptyTitle"),
 				);
@@ -133,6 +152,7 @@ export class ImagePanel {
 			onChange: (query) => {
 				this.query = query;
 				this.refresh();
+				this.searchMascot.typed();
 			},
 		});
 
@@ -172,18 +192,23 @@ export class ImagePanel {
 			if (!ev.dataTransfer?.types.includes("Files")) return;
 			ev.preventDefault();
 			this.container.addClass("is-drop-target");
+			// Over the empty collection, the mascot can hardly wait.
+			if (this.emptyMascot.shown) this.emptyMascot.setMood("excited");
 		});
 		this.container.addEventListener("dragleave", (ev) => {
 			// Moving between children fires dragleave on the parent; only a
 			// pointer that has actually left the panel should clear the state.
 			if (this.container.contains(ev.relatedTarget as Node | null)) return;
 			this.container.removeClass("is-drop-target");
+			// Back to saying hello, if the empty collection is what is on screen.
+			this.emptyMascot.setMood(this.emptyMascot.shown ? "hello" : null);
 		});
 		this.container.addEventListener("drop", (ev) => {
 			const files = Array.from(ev.dataTransfer?.files ?? []);
 			if (files.length === 0) return;
 			ev.preventDefault();
 			this.container.removeClass("is-drop-target");
+			this.emptyMascot.setMood(null);
 			void this.addFiles(files);
 		});
 	}
@@ -210,13 +235,13 @@ export class ImagePanel {
 		for (const file of files) {
 			const name = userImageNameFromFilename(file.name);
 			if (taken.has(normalizeUserImageName(name))) {
-				new Notice(t("iconPicker.customDuplicate", { name }));
+				showNotice("blocked", t("iconPicker.customDuplicate", { name }));
 				continue;
 			}
 
 			const result = await importImageFile(file);
 			if (!result.ok) {
-				new Notice(t(result.reason, { name: file.name }));
+				showNotice("blocked", t(result.reason, { name: file.name }));
 				continue;
 			}
 
@@ -224,6 +249,14 @@ export class ImagePanel {
 			added.push(result.image);
 		}
 		if (this.disposed || added.length === 0) return;
+
+		// The first picture in an empty collection: the mascot jumps for joy, and
+		// the grid that shows the picture waits for the jump (it takes the mascot away).
+		if (this.emptyMascot.shown) {
+			void this.emptyMascot.play("celebrate");
+			await new Promise<void>((resolve) => window.setTimeout(resolve, CELEBRATION_BEFORE_GRID_MS));
+			if (this.disposed) return;
+		}
 
 		this.host.saveImages([...this.host.images(), ...added]);
 		// Land on the first new picture, so it is previewed and confirmable
@@ -246,10 +279,12 @@ export class ImagePanel {
 		// "No pictures yet" and "nothing matches that search" are different
 		// situations, and the grid's own empty text only knows the first.
 		if (images.length === 0 && this.query.trim().length > 0) {
-			this.grid?.showMessage((host) =>
-				host.setText(t("iconPicker.noResults")),
-			);
+			this.grid?.showMessage((host) => {
+				host.setText(t("iconPicker.noResults"));
+				this.searchMascot.showEmpty(host);
+			});
 		} else {
+			this.searchMascot.hide();
 			this.grid?.setEntries(images.map((image) => this.entryFor(image)));
 		}
 	}
@@ -329,10 +364,8 @@ export class ImagePanel {
 				(def) => def.icon.type === "image" && def.icon.value === image.id,
 			).length;
 
+		// The heading names the image; the message says only what deleting it costs.
 		const message = createFragment();
-		message.createEl("p", {
-			text: t("iconPicker.customDeleteConfirm", { name: image.name }),
-		});
 		if (inUse > 0) {
 			// Obsidian's warning line, as its own "Delete file?" names a note's
 			// backlinks.
@@ -346,7 +379,7 @@ export class ImagePanel {
 			this.host.app,
 			t("confirm.titleDeleteImage"),
 			message,
-		).confirm();
+		).withMascot(t("confirm.subtitleName", { name: image.name })).confirm();
 		if (!confirmed || this.disposed) return;
 
 		this.host.saveImages(

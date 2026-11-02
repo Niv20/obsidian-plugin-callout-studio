@@ -1,7 +1,6 @@
 /**
  * settings/declarative/mainPageGroups.ts — the boxes at the foot of the main
- * settings page (Import and export, Danger zone) and the Manage icon libraries
- * row.
+ * settings page (Import and export, Danger zone).
  *
  * Who calls it. The settings tab, when it builds its tree.
  *
@@ -19,11 +18,10 @@
 import { t } from "../../i18n";
 import { ExportFormatModal } from "../ExportFormatModal";
 import { ImportSourceModal } from "../ImportSourceModal";
-import { openIconLibrariesWindow } from "../iconpicker/openIconLibraries";
 import { confirmAndResetEverything } from "../resetEverything";
 import { openPortableConversionFromSettings } from "../../portable/registerPortableConversionView";
 import { buttonRow, pausedReason } from "./rowParts";
-import type { CsAction, CsGroup, TreeContext } from "./types";
+import type { CsGroup, TreeContext } from "./types";
 import { VERSION_HISTORY_PAGE, versionHistoryRow } from "./versionHistoryPage";
 
 /** The rows other parts of the settings jump to, by name. */
@@ -95,20 +93,5 @@ export function dangerZoneGroup(ctx: TreeContext): CsGroup {
 				onClick: () => confirmAndResetEverything(ctx),
 			}),
 		],
-	};
-}
-
-/**
- * Manage icon libraries, as a row of the settings, so that searching the
- * settings for "icon" finds the window. It opens the same window as Pick an
- * icon's Manage libraries button.
- */
-export function iconLibrariesRow(ctx: TreeContext): CsAction {
-	return {
-		id: "icon-libraries",
-		name: t("iconLibraries.manage"),
-		// The libraries' names, which are not words to translate.
-		aliases: ["Lucide", "Tabler", "Font Awesome", "Material", "Octicons", "RPG Awesome", "Simple Icons", "emoji"],
-		action: () => { void openIconLibrariesWindow(ctx.plugin); },
 	};
 }

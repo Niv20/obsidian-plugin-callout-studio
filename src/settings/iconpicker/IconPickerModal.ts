@@ -16,7 +16,7 @@ import type {
 	UserImageIcon,
 } from "../../types";
 import type { IconVariantState } from "../../icons/types";
-import { ICON_SOURCE_IDS, getSource, packFor } from "../../icons/registry";
+import { getSource, packFor } from "../../icons/registry";
 import type { IconService } from "../../icons/IconService";
 import {
 	isDownloaded,
@@ -42,7 +42,8 @@ import {
 } from "./allSources";
 import { PackPanel } from "./PackPanel";
 import { ImagePanel } from "./ImagePanel";
-import { IconLibrariesModal } from "./IconLibrariesModal";
+import { openIconLibraries } from "./openIconLibraries";
+import { loadSourceCounts } from "./sourceCounts";
 import {
 	alignIconPickerRows,
 	mountIconSourcePicker,
@@ -288,18 +289,8 @@ export class IconPicker extends Modal {
 	}
 
 	private async loadSourceCounts(generation: number): Promise<void> {
-		for (const id of ICON_SOURCE_IDS) {
-			try {
-				const index = await getSource(id).loadIndex();
-				if (generation !== this.openGeneration) return;
-				this.sourceCounts.set(id, index.entries.length);
-			} catch (e) {
-				if (generation !== this.openGeneration) return;
-				// A source that cannot describe itself simply shows no count.
-				console.warn(`[CalloutStudio] could not count icons in "${id}"`, e);
-			}
-		}
-		this.sourcePicker?.setItems();
+		const finished = await loadSourceCounts(this.sourceCounts, () => generation === this.openGeneration);
+		if (finished) this.sourcePicker?.setItems();
 	}
 
 	/**
@@ -316,24 +307,23 @@ export class IconPicker extends Modal {
 	 */
 	private async openLibraries(): Promise<void> {
 		const generation = this.openGeneration;
-		// A library downloaded in an earlier session reads as missing until its
-		// file has been read back, which the picker does as it opens. Pressing
-		// Manage libraries first would list a library the person already has
-		// under "to download" — so wait for the same read, free once done.
-		await this.plugin.icons.packs.loadAllFromDisk();
-		if (generation !== this.openGeneration) return;
-		const offeredBefore = new Set(this.pooledSources());
-		const shownBefore = this.panelContents();
-		const changed = await new IconLibrariesModal({
-			app: this.plugin.app,
-			settings: this.plugin.settings,
-			saveSettings: () => this.plugin.saveSettings(),
-			settingsWriter: this.plugin.settingsWriter,
-			registry: this.plugin.registry,
-			icons: this.plugin.icons,
+		let offeredBefore = new Set<IconSourceId>();
+		let shownBefore = "";
+		// The window reads the pack files back before it opens (a library
+		// downloaded in an earlier session reads as missing until then, and
+		// pressing Manage libraries first would list it under "to download").
+		// What the picker shows is taken once that is done, so the comparison
+		// below sees only what the window changed.
+		const changed = await openIconLibraries(this.plugin, {
 			countFor: (id) => this.sourceCount(id),
 			editing: this.editedCallout(),
-		}).openAndWait();
+			beforeOpen: () => {
+				if (generation !== this.openGeneration) return false;
+				offeredBefore = new Set(this.pooledSources());
+				shownBefore = this.panelContents();
+				return true;
+			},
+		});
 		if (!changed || generation !== this.openGeneration) return;
 
 		const offered = new Set(this.pooledSources());

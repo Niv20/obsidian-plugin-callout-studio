@@ -100,15 +100,20 @@ function idle(button: ButtonLike): boolean {
 }
 
 describe("the Callout style box", () => {
-	it("opens the three role pages, Heading first, then the saved palettes and the icon libraries", () => {
+	it("opens the three role pages, Heading first", () => {
 		const { harness } = drawStyle(fakePlugin().plugin);
 		assert.deepEqual(box(harness, STYLE_PAGES.box).children.map((r) => r.def.name), [
 			t("settings.calloutTypeHeading"),
 			t("settings.calloutTypeInline"),
 			t("settings.calloutTypeRegular"),
-			t("settings.customPalettes"),
-			t("iconLibraries.manage"),
 		]);
+	});
+
+	it("has no row for the icon libraries: Pick an icon's Manage libraries is the one way in", () => {
+		const { harness } = drawStyle(fakePlugin().plugin);
+		const names = box(harness, STYLE_PAGES.box).children.map((r) => r.def.name);
+		assert.ok(!names.includes(t("iconLibraries.title")));
+		assert.ok(!names.includes(t("iconLibraries.manage")));
 	});
 
 	it("is how the settings search finds each control", () => {

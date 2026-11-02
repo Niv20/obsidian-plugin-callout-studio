@@ -123,10 +123,24 @@ describe("the settings tab as a tree", () => {
 	it("lays the main page out in its boxes, in order", () => {
 		const { harness } = drawTab();
 		assert.deepEqual(harness.rendered.map((box) => box.def.id), [
-			"banners", "callouts", "callout-style", "menus-and-commands",
+			"banners", "callouts", "colors-and-icons", "callout-style", "menus-and-commands",
 			"import-export", "danger-zone", "footer",
 		]);
 		assert.equal(harness.rendered[0]!.groupEl.isShown(), false, "no notices, so no box");
+	});
+
+	it("keeps what callouts are drawn from together, under the callouts and before the global styling", () => {
+		const { harness } = drawTab();
+		const box = (id: string) => harness.rendered.find((candidate) => candidate.def.id === id)!;
+		const rowsOf = (id: string): (string | undefined)[] => box(id).children.map((row) => row.def.name);
+		// The saved palettes (a page) and the icon libraries (a row that opens the
+		// window Pick an icon opens too) - the two things a callout's color and icon come from.
+		assert.equal(box("colors-and-icons").def.heading, t("settings.colorsAndIcons"));
+		assert.deepEqual(rowsOf("colors-and-icons"), [t("settings.customPalettes"), t("iconLibraries.title")]);
+		// The first box is the callouts and the fallback, no longer the palettes.
+		assert.equal(rowsOf("callouts").includes(t("settings.customPalettes")), false);
+		assert.ok(rowsOf("callouts").includes(t("settings.fallbackCallout")));
+		assert.ok(rowsOf("callouts").includes(t("settings.myCalloutTypes")));
 	});
 
 	it("marks every box, at every depth, with the plugin's box class and keeps the classes it had", () => {

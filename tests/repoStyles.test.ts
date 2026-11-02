@@ -252,7 +252,6 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-import-issue", // one problem's row in the import report; tests count the rows by it
 		"cs-import-issue-field", // the field a problem is about; Obsidian's .setting-item-description code draws it
 		"cs-import-report-group", // one entry's group in the import report; Obsidian's SettingGroup draws it
-		"cs-portable-custom-badge", // a test hook; Obsidian's .flair.mod-flat paints the Custom tag
 		"cs-occurrences-summary", // view-specific lookup; Obsidian's .search-results-result-count supplies the presentation
 		"cs-occurrences-file", // per-view hook; shared cs-sidebar-file supplies the layout
 		"cs-portable-file", // per-view hook; shared cs-sidebar-file supplies the layout

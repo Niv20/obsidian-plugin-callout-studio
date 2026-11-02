@@ -1,8 +1,8 @@
 /**
  * settings/declarative/palettesPage.ts — the Saved color palettes page.
  *
- * Who calls it. The settings tab, for the row that opens the page (in the
- * Callout style box of the main page).
+ * Who calls it. The settings tab, for the row that opens the page (the first
+ * row of the Colors and icons box of the main page, settingsTree.ts).
  *
  * The main idea. The page is one of Obsidian's lists (`type: "list"`), which
  * gives every palette Obsidian's ✕ (and the Delete key), a + that adds one,
@@ -15,6 +15,7 @@
  * why and do nothing, and ✎ is dimmed and says why when pressed.
  */
 import { t } from "../../i18n";
+import { emptyListState } from "../../ui/mascot/mascotPlaces";
 import type { CustomPalette } from "../../types";
 import {
 	createPalette,
@@ -51,7 +52,7 @@ function paletteList(ctx: TreeContext, palettes: readonly CustomPalette[]): CsLi
 	return {
 		type: "list",
 		id: PALETTES_PAGE.list,
-		emptyState: t("settings.customPalettesEmpty"),
+		emptyState: emptyListState(t("settings.customPalettesEmpty"), t("settings.newPalette")),
 		addItem: {
 			name: t("settings.newPalette"),
 			action: refuseWhilePaused(writer, () => { void createPalette(ctx, redraw); }),

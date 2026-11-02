@@ -2,16 +2,23 @@
  * settings/iconpicker/IconLibrariesModal.ts — the **Manage icon libraries**
  * window.
  *
- * Opened from the button beside Pick an icon's library menu. Three Obsidian
- * setting groups (`SettingGroup`: a heading over one rounded box of rows, thin
- * lines between the rows, 24px between the groups; finding S4-13), the way
- * Obsidian's own settings show a list:
+ * One window with two doors, both opened through openIconLibraries.ts: the
+ * **Manage libraries** button beside Pick an icon's library menu, and the
+ * **Icon libraries** row of the settings (Colors and icons box,
+ * declarative/iconLibrariesRow.ts). It is a window, never a page, so the two
+ * doors cannot show two copies of one list. (A page of the settings was tried;
+ * it could only be reached from the picker, whose window covers the settings,
+ * and closing that window would lose the icon being chosen.)
+ *
+ * Three Obsidian setting groups (`SettingGroup`: a heading over one rounded
+ * box of rows, thin lines between the rows, 24px between the groups;
+ * finding S4-13), the way Obsidian's own settings show a list:
  *
  * - **Available libraries** — the libraries the picker offers, in the order it
  *   offers them. Dragging a row's handle (or ↑/↓ on it) reorders the menu, and
  *   the reset arrow sits at the end of the heading.
  * - **Libraries to download** — the ones this device lacks, in catalog order
- *   (the menu lists those too, so a library can be fetched from there as well).
+ *   (the menu only counts those, so this is where a library is fetched).
  * - **Hidden libraries** — the built-in libraries the person took out of the
  *   picker. The menu does not list those at all, and calling them "to
  *   download" would be wrong, since there is nothing to fetch. The group shows
@@ -88,7 +95,10 @@ import { formatIconCount } from "./sourceMenuPresentation";
 import { askDeleteLibrary, askResetLibraries } from "./iconLibraryQuestions";
 import { showNotice } from "../../ui/mascot/mascotNotices";
 
-/** What the window needs from the plugin; the icon picker hands it over. */
+/**
+ * What the window needs from the plugin; its two doors hand it over
+ * (openIconLibraries.ts).
+ */
 export interface IconLibrariesHost {
 	app: App;
 	settings: PluginSettings;
@@ -101,13 +111,15 @@ export interface IconLibrariesHost {
 		getUserImages(): readonly UserImageIcon[];
 	};
 	icons: Pick<IconService, "packs" | "deleteLibrary">;
-	/** How many icons a library offers, once the picker has counted. */
+	/** How many icons a library offers, once they have been counted (sourceCounts.ts). */
 	countFor(id: IconSourceId): number | undefined;
 	/**
 	 * The callout the picker is choosing an icon for, whose icon the editor
 	 * holds unsaved. The registry cannot know it, yet deleting a library it
 	 * uses has to ask, and its drawings have to be kept, like any saved
-	 * callout's. Absent when the picker is not opened for a callout.
+	 * callout's. Absent when the picker is not opened for a callout, and when
+	 * the window is opened from the settings, whose row refuses while an editor
+	 * is open (declarative/iconLibrariesRow.ts).
 	 */
 	editing?: EditedCallout;
 }

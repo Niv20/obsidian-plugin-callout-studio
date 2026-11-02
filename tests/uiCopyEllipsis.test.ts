@@ -115,7 +115,6 @@ const STAYS_PLAIN: Readonly<Record<string, string>> = {
 
 	// A window that is itself the destination.
 	"portable.review": "opens the review it names",
-	"iconLibraries.manage": "opens a manager",
 	"iconPicker.manageLibraries": "opens a manager",
 	"license.title": "opens a read-only window",
 	"contextMenu.openSettings": "opens settings",

@@ -2830,6 +2830,14 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	align-content: center;
 }
 
+/* "No icons match your search" is centred the same way: in the middle of the
+   height the panel has, not at the top of it. (`IconGrid` marks the body empty
+   while it draws that line.) */
+.icon-picker-pack-panel > .icon-picker-body.icon-picker-grid-empty > .icon-picker-grid {
+	flex-grow: 1;
+	align-content: center;
+}
+
 /* The trademark notice and the credit line, held at the bottom of the panel
    by the free space above them. Their own top margins remain the least gap to
    the grid. */
@@ -3186,13 +3194,21 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 
 .icon-picker-image-panel .icon-picker-body {
 	position: relative;
+	display: flex;
+	flex-direction: column;
 	flex: 1;
 	min-height: 120px;
 }
 
+/* A search among the pictures that finds nothing says so in the middle of the
+   height the panel has, as the empty collection does and as a library's panel
+   does. */
+.icon-picker-image-panel .icon-picker-grid.has-message {
+	flex-grow: 1;
+	align-content: center;
+}
+
 .icon-picker-image-panel .icon-picker-body.icon-picker-grid-empty {
-	display: flex;
-	flex-direction: column;
 	justify-content: center;
 }
 
@@ -3948,6 +3964,16 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	display: none;
 }
 
+/* The emblem, the text and the button share the row's centre line, as in
+   Obsidian's own icon rows (`.setting-group.mod-list .setting-item`), rather
+   than hanging from the top as a plain setting row has them: the emblem would
+   otherwise sit beside the name alone, high above the middle of a two-line
+   row. Not on a phone, where the row is a column and `center` would centre
+   the control sideways. */
+body:not(.is-phone) .cs-choice-row {
+	align-items: center;
+}
+
 /* ─── Option boxes ────────────────────────────────────────────── */
 /* The plugin import window's two cards and the answers of "Update your
    notes?" all draw it with settings/optionBox.ts, so they look alike: a
@@ -4030,7 +4056,8 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 .cs-option-box-head {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: center;
+	/* Baseline, so the Recommended tag stands as it does after a row name. */
+	align-items: baseline;
 	gap: 0.25rem 0.5rem;
 }
 .cs-option-box-title {
@@ -4338,6 +4365,23 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
    goes. */
 .cs-option-box-head > .cs-recommended-badge {
 	margin-inline-start: 0;
+}
+
+/* Where a tag stands against the words beside it. Obsidian's `.flair.mod-flat`
+   is `vertical-align: top`, which hangs the tag from the top of the line: in a
+   row name (the export chooser's backup) it rode about 3px above the name, and
+   in the cards' flex title line, centred by its box, its capitals still read
+   high. Both now do what a callout row's "Default" tag does (see
+   `.cs-fallback-tag` above): sit on the name's baseline, raised 1px, with 1px
+   of vertical padding so a flex line is no taller than its title. The same goes
+   for the "Custom" tag of a conversion row, which is a flair inside a text
+   line. The selectors repeat `.flair.mod-flat` because Obsidian's own
+   `vertical-align` rule is (0,2,0): a lone class loses to it. */
+.flair.mod-flat.cs-recommended-badge,
+.flair.mod-flat.cs-portable-custom-badge {
+	vertical-align: baseline;
+	padding-block: 1px;
+	top: -1px;
 }
 
 /* ── Icon licenses & credits modal ───────────────────────────── */

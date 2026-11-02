@@ -15,7 +15,10 @@
  *   My callout types ›                     calloutPages.ts
  *   Built-in callouts ›                    calloutListPage.ts
  *   Default fallback callout               generalRows.ts
- *   Callout style                          stylePages.ts (with palettesPage.ts)
+ *   Colors and icons
+ *     Saved color palettes ›               palettesPage.ts
+ *     Icon libraries (opens a window)      iconLibrariesRow.ts
+ *   Global styling                         stylePages.ts
  *   Menus and commands                     menuPage.ts, commandsPage.ts
  *   Import and export, Danger zone         mainPageGroups.ts
  *   (the footer: language, About, links)   footerGroup.ts
@@ -31,14 +34,20 @@ import { myCalloutsPage } from "./calloutPages";
 import { commandsPage } from "./commandsPage";
 import { footerGroup } from "./footerGroup";
 import { fallbackRow } from "./generalRows";
+import { iconLibrariesRow } from "./iconLibrariesRow";
 import { dangerZoneGroup, importExportGroup } from "./mainPageGroups";
 import { menuPage } from "./menuPage";
+import { palettesPage } from "./palettesPage";
 import { PLUGIN_BOX_CLASS } from "./rowParts";
 import { calloutStyleGroup } from "./stylePages";
 import type { CsGroup, CsItem, CsRender, TreeContext } from "./types";
 
 /** The ids of the main page's own boxes (the others are named in their modules). */
-export const MAIN_PAGE_BOXES = { callouts: "callouts", menus: "menus-and-commands" } as const;
+export const MAIN_PAGE_BOXES = {
+	callouts: "callouts",
+	colorsAndIcons: "colors-and-icons",
+	menus: "menus-and-commands",
+} as const;
 
 /**
  * The tab's tree.
@@ -52,6 +61,7 @@ export function settingsTree(ctx: TreeContext, visitRow: CsRender): CsItem[] {
 	const tree: CsItem[] = [
 		{ ...banners, items: [visitRow, ...(banners.items ?? [])] },
 		calloutsBox(ctx),
+		colorsAndIconsBox(ctx),
 		calloutStyleGroup(ctx),
 		menusBox(ctx),
 		importExportGroup(ctx),
@@ -77,6 +87,21 @@ function calloutsBox(ctx: TreeContext): CsGroup {
 			builtInCalloutsPage(ctx),
 			fallbackRow(ctx),
 		],
+	};
+}
+
+/**
+ * Colors and icons: what a callout is drawn from, apart from its own
+ * definition. The saved palettes are a page, as ever; the icon libraries are a
+ * row that opens the window Pick an icon opens too, so the one window has two
+ * doors and no second copy on a page.
+ */
+function colorsAndIconsBox(ctx: TreeContext): CsGroup {
+	return {
+		type: "group",
+		id: MAIN_PAGE_BOXES.colorsAndIcons,
+		heading: t("settings.colorsAndIcons"),
+		items: [palettesPage(ctx), iconLibrariesRow(ctx)],
 	};
 }
 

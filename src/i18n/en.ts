@@ -531,6 +531,12 @@ export const en: Record<string, string> = {
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. {{callout}} Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
 	"settings.previewTitle": "Preview",
 
+	// Settings — the Colors and icons box: Saved color palettes and Icon libraries
+	"settings.colorsAndIcons": "Colors and icons",
+	"settings.iconLibrariesDesc": "Reorder and download additional icon libraries.",
+	"settings.iconLibrariesEditorOpen":
+		"Finish with the callout editor first. Its unsaved icon could come from a library you delete here.",
+
 	// Settings — Saved color palettes
 	"settings.customPalettes": "Saved color palettes",
 	"settings.newPalette": "New palette",
@@ -1253,7 +1259,8 @@ export const en: Record<string, string> = {
 	"iconPack.diskWriteFailed":
 		"Callout Studio could not save the icon pack to disk, so it will need downloading again next time. The icons you pick are still saved with your settings.",
 
-	// Icon libraries window (the button beside Pick an icon's library menu)
+	// Icon libraries window (the button beside Pick an icon's library menu, and
+	// the Icon libraries row of the settings, which opens the same window)
 	"iconLibraries.manage": "Manage icon libraries",
 	"iconLibraries.title": "Icon libraries",
 	"iconLibraries.desc":
