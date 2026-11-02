@@ -1777,6 +1777,41 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	min-width: 0;
 }
 
+/* A short error about the IDs field ("This ID already exists", "Maximum 10 IDs.
+   Delete one to add another.") is a child of the ROW, not of the control column
+   (`ui/settingError.ts` lifts it there): in the column, which is only as wide as
+   the field, the longer ones broke into two lines. Here it is a line of its own
+   across the whole row, under the label and the field together.
+
+   The row wraps so that line can fall below. The label column therefore gets a
+   flex-basis of 0 (it still grows into whatever the field leaves, exactly as
+   before): at `auto` its basis is the width of its description on one line,
+   and label + field would no longer fit side by side, so the field would wrap
+   too. In the stacked layouts (phone, a narrow container) the row is a column
+   and none of this wraps anything; `width: 100%` is what stretches the line
+   there, where Obsidian's `align-items: flex-start` would shrink it to its
+   text. Its margin takes the row's gap down to 8px: close enough to read as
+   belonging to the field, with room to breathe above the pills (4px, what the
+   line had inside the control, sat too tight against them). */
+.callout-studio-editor .cs-callout-ids-setting {
+	flex-wrap: wrap;
+}
+
+.callout-studio-editor .cs-callout-ids-setting > .setting-item-info {
+	flex: 1 1 0;
+}
+
+.callout-studio-editor .cs-callout-ids-setting > .setting-item-error {
+	flex: 0 0 100%;
+	width: 100%;
+	margin-block-start: calc(var(--size-4-2) - var(--size-4-3));
+}
+
+/* A phone modal's rows are 16px apart, not 12. */
+.is-phone .callout-studio-editor .cs-callout-ids-setting > .setting-item-error {
+	margin-block-start: calc(var(--size-4-2) - var(--size-4-4));
+}
+
 /* The IDs control is taller than its text field once chips wrap underneath it.
    Obsidian normally centres an ExtraButton against that whole column, which
    makes the reset arrow drift downward as aliases are added. Pin it to the top
@@ -2304,6 +2339,13 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 .cs-meta-suggestion-heading:not(:first-child) {
 	margin-top: var(--size-2-3);
 	padding-top: var(--size-2-3);
+	border-top: var(--border-width) solid var(--background-modifier-border);
+}
+
+/* The same line above Use "…", which belongs to none of the groups: under a
+   theme's words it read as the theme's last word. */
+.cs-meta-suggestion-separator {
+	margin-block: var(--size-2-3);
 	border-top: var(--border-width) solid var(--background-modifier-border);
 }
 
@@ -3321,19 +3363,50 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	max-width: 100%;
 }
 
-/* The IDs field's note, under the label: "On save, "test" moves here from
-   Abstract." Not a problem — more description — so the description's muted
-   colour, and nothing at all while there is none. The field's errors are not
-   drawn here: they go under the field, through Obsidian's setErrorMessage
-   (TagInput, finding S5-V1). */
+/* Settings → Editor → Autocomplete → Your words: the same field, for words.
+   It is kept BESIDE the row's controls, not in them (autocompletePage.ts): a
+   redraw empties the controls, and a field kept beside them never moves, so a
+   pill or the field keeps the focus. The empty controls column goes, and the
+   field stands where the controls would: at the row's end beside the name,
+   and under it at full width where Obsidian stacks a narrow row (its own
+   `@container (max-width: 400px)`, a phone). */
+.cs-metadata-words-setting > .setting-item-control:empty {
+	display: none;
+}
+
+.cs-metadata-words-setting > .cs-tag-wrapper {
+	flex: 0 0 auto;
+}
+
+@container (max-width: 400px) {
+	.cs-metadata-words-setting > .cs-tag-wrapper {
+		width: 100%;
+	}
+}
+
+/* What the IDs field says under the label, in two lines. The first is the
+   note: "On save, "test" moves here from Abstract." Not a problem — more
+   description — so the description's muted colour. The second, `.cs-tag-message`,
+   is a long message about a problem ("test" is an ID of Abstract. You can move
+   it here.), in the warning colour, in the wide column rather than the field's
+   narrow one. Short errors are not drawn here: they go under the field, through
+   Obsidian's setErrorMessage (TagInput, finding S5-V1). A line with nothing in
+   it takes no room. */
 .cs-tag-note {
-	margin-top: var(--size-4-1);
 	color: var(--text-muted);
 	font-size: var(--font-ui-smaller);
 }
 
-.cs-tag-note:empty {
+.cs-tag-note > div {
+	margin-top: var(--size-4-1);
+}
+
+.cs-tag-note > div:empty {
 	display: none;
+}
+
+.cs-tag-note > .cs-tag-message {
+	color: var(--text-error);
 }
 
 /* The + does not take a slice of this row — it is absolutely positioned over

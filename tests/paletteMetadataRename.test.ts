@@ -74,7 +74,7 @@ describe("which words mean something else too", () => {
 	});
 
 	it("knows a styling word in any case the stylesheet would match", () => {
-		const sources = [{ label: "Dune", words: [{ word: "Rot", placement: "spaced" as const, guards: null }] }];
+		const sources = [{ label: "Dune", origin: "theme" as const, words: [{ word: "Rot", placement: "spaced" as const, guards: null }] }];
 		assert.ok(isStylingWord("rot", sources));
 		assert.ok(!isStylingWord("blau", sources));
 	});

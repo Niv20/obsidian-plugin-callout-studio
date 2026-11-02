@@ -33,6 +33,12 @@ import { foldMetadataCase } from "../../utils/calloutMetadata";
 export interface MetadataWordSource {
 	/** The theme's or the snippet's name, as Obsidian shows it. */
 	label: string;
+	/**
+	 * Where the words come from. The catalog gives only `theme` and
+	 * `snippet`; `user` is the list the user typed in Settings → Editor → Metadata,
+	 * which the `|` dropdown puts in front of them.
+	 */
+	origin: "theme" | "snippet" | "user";
 	words: ThemeMetadataWord[];
 }
 
@@ -75,7 +81,7 @@ export class ThemeMetadataCatalog {
 		const theme = activeThemeName(this.app);
 		if (theme && !off) {
 			const words = scanMetadataWords(themeCss(this.app));
-			if (words.length > 0) sources.push({ label: theme, words });
+			if (words.length > 0) sources.push({ label: theme, origin: "theme", words });
 		}
 		const names = enabledSnippetNames(this.app);
 		snippetCss.forEach((css, i) => {
@@ -83,7 +89,7 @@ export class ThemeMetadataCatalog {
 			if (label === SNIPPET_BASENAME) return;
 			const words = scanMetadataWords(css);
 			if (words.length === 0) return;
-			sources.push({ label, words });
+			sources.push({ label, origin: "snippet", words });
 			for (const { word } of words) reserved.add(foldMetadataCase(word));
 		});
 		this.sources = sources;

@@ -1696,8 +1696,11 @@ export class CalloutRegistry {
 		this.settings.inlineCallouts = structuredClone(
 			DEFAULT_SETTINGS.inlineCallouts,
 		);
-		// The hidden switch (no settings UI; `data.json` only) goes back too:
-		// a reset that left a hand-made "off" behind would look like a bug.
+		// Both dropdowns on, the user's metadata words gone, metadata
+		// colours on.
+		this.settings.suggestions = structuredClone(
+			DEFAULT_SETTINGS.suggestions,
+		);
 		this.settings.metadataColors = structuredClone(
 			DEFAULT_SETTINGS.metadataColors,
 		);

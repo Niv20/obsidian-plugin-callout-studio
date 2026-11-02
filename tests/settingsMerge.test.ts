@@ -65,6 +65,7 @@ const FIELD_KIND: Record<keyof PluginSettings, "value" | "list"> = {
 	globalStyle: "value",
 	contextMenu: "value",
 	autocomplete: "value",
+	suggestions: "value",
 	iconSources: "value",
 	iconLibraries: "value",
 	headingCallouts: "value",
@@ -180,6 +181,10 @@ const EXPECTED_LEAVES: string[] = [
 	"language",
 	"metadataColors.enabled",
 	"quickInsertSource",
+	"suggestions.callouts",
+	"suggestions.metadata",
+	"suggestions.themeCallouts",
+	"suggestions.themeMetadata",
 	"themeCalloutStyles.enabled",
 	"welcomeSeen",
 ];

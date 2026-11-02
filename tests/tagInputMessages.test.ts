@@ -2,21 +2,23 @@
  * tests/tagInputMessages.test.ts — where the IDs field says things (finding
  * S5-V1).
  *
- * Errors go under the field, through the row's `setErrorMessage` as Obsidian
- * shows a rejected value: the refusal of what is typed (which stays, with the
- * typed text, until the text changes), an offer with a way forward (the
- * editor's "move it here"), and the lasting errors the editor sets. Notes go
- * under the label. The field is wired here exactly as the editor wires it.
+ * A short error goes under the field, through the row's `setErrorMessage` as
+ * Obsidian shows a rejected value: the refusal of what is typed (which stays,
+ * with the typed text, until the text changes) and the lasting errors the
+ * editor sets. A long one — marked `wide(...)`, like the editor's "move it
+ * here" offer, which names another callout — goes under the label, in the wide
+ * column, with the notes. The two places show their own message together. The
+ * field is wired here exactly as the editor wires it.
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { Setting } from "obsidian";
 import { asEl, fakeDom, type FakeElement } from "./support/fakeDom";
 import { t } from "../src/i18n";
-import { TagInput, type TagMessage } from "../src/ui/TagInput";
+import { TagInput, wide, type TagRefusal } from "../src/ui/TagInput";
 import { setSettingError } from "../src/ui/settingError";
 
-function setup(validate: (tag: string) => TagMessage | null = () => null) {
+function setup(validate: (tag: string) => TagRefusal | null = () => null, maxTags?: number) {
 	fakeDom.document.body.empty();
 	const added: string[] = [];
 	const setting = new Setting(asEl(fakeDom.document.body));
@@ -25,6 +27,7 @@ function setup(validate: (tag: string) => TagMessage | null = () => null) {
 		onChange: () => undefined,
 		onTagAdded: (tag) => added.push(tag),
 		validate,
+		maxTags,
 		noteEl,
 		showFieldError: (message) => setSettingError(setting, message),
 	});
@@ -40,16 +43,20 @@ function setup(validate: (tag: string) => TagMessage | null = () => null) {
 		const line = setting.errorEl as unknown as FakeElement | null;
 		return row.hasClass("is-invalid") && line ? line.textContent : "";
 	};
-	const note = (): string => (noteEl as unknown as FakeElement).textContent;
-	return { tags, input, type, enter, row, setting, fieldError, note, added };
+	/** The note under the label: the first of the two lines in `noteEl`. */
+	const note = (): string => (noteEl as unknown as FakeElement).children[0]?.textContent ?? "";
+	/** The long message under the label, or "" while there is none. */
+	const wideEl = (): FakeElement => (noteEl as unknown as FakeElement).querySelector(".cs-tag-message")!;
+	const wideMessage = (): string => wideEl().textContent;
+	return { tags, input, type, enter, row, setting, fieldError, note, wideEl, wideMessage, added };
 }
 
 /** An offer the way the editor draws one: words, and a button. */
-function offer(onPress: () => void): TagMessage {
-	return (el) => {
+function offer(onPress: () => void): TagRefusal {
+	return wide((el) => {
 		el.createSpan({ text: t("editor.idOwnedBy", { id: "test", name: "Abstract", link: "" }) });
 		el.createEl("button", { text: t("editor.idMoveHere") }).addEventListener("click", onPress);
-	};
+	});
 }
 
 describe("TagInput — what the IDs field says, and where", () => {
@@ -68,6 +75,28 @@ describe("TagInput — what the IDs field says, and where", () => {
 		assert.equal(h.row.hasClass("is-invalid"), false);
 	});
 
+	it("draws the error as a line of the whole row, not inside the field's narrow column", () => {
+		const h = setup();
+		const line = (): FakeElement => h.setting.errorEl as unknown as FakeElement;
+		const controlEl = h.setting.controlEl as unknown as FakeElement;
+		const settingEl = h.setting.settingEl as unknown as FakeElement;
+
+		// A plain refusal, then a renderer: the same element each time, always a
+		// child of the row itself.
+		h.tags.setTags(["one"]);
+		h.type("one");
+		h.enter();
+		assert.equal(line().parentElement, settingEl);
+		assert.equal(controlEl.querySelector(".setting-item-error"), null);
+		assert.equal(line().textContent, t("editor.idAlreadyHere"));
+
+		const first = line();
+		setSettingError(h.setting, (el) => el.createSpan({ text: "with a link" }));
+		assert.equal(line(), first);
+		assert.equal(line().parentElement, settingEl);
+		assert.equal(line().textContent, "with a link");
+	});
+
 	it("says a duplicate in words from the translations", () => {
 		const h = setup();
 		h.tags.setTags(["one"]);
@@ -76,18 +105,71 @@ describe("TagInput — what the IDs field says, and where", () => {
 		assert.equal(h.fieldError(), t("editor.idAlreadyHere"));
 	});
 
-	it("shows an offer, with its button, over the lasting error, and puts the error back when the text changes", () => {
+	it("shows an offer, with its button, under the label while the short lasting error stays under the field", () => {
 		let pressed = 0;
 		const h = setup((tag) => (tag === "test" ? offer(() => { pressed++; }) : null));
 		h.tags.showExternalError("At least one ID is required");
 		assert.equal(h.fieldError(), "At least one ID is required");
+		assert.equal(h.wideMessage(), "");
 		h.type("test");
 		h.enter();
-		assert.match(h.fieldError(), /is an ID of Abstract/);
-		(h.setting.errorEl as unknown as FakeElement).querySelector("button")!.fire("click");
+		assert.match(h.wideMessage(), /is an ID of Abstract/);
+		assert.equal(h.fieldError(), "At least one ID is required", "a short message keeps its own place");
+		h.wideEl().querySelector("button")!.fire("click");
 		assert.equal(pressed, 1);
 		h.type("tes");
+		assert.equal(h.wideMessage(), "");
 		assert.equal(h.fieldError(), "At least one ID is required");
+	});
+
+	it("draws a wide sentence that is only words under the label, not under the field", () => {
+		// "…is the main ID of X. To use it here, delete X first." names a callout.
+		const h = setup(() => wide("\"test\" is the main ID of Abstract. To use it here, delete Abstract first."));
+		h.type("test");
+		h.enter();
+		assert.equal(h.input.value, "test", "the refused id stays, to be corrected");
+		assert.match(h.wideMessage(), /main ID of Abstract/);
+		assert.equal(h.fieldError(), "");
+		h.type("tes");
+		assert.equal(h.wideMessage(), "");
+	});
+
+	it("says a lasting wide error under the label, and a lasting short one under the field", () => {
+		const h = setup();
+		h.tags.showExternalError(wide("The theme already supplies a callout with this ID."));
+		assert.match(h.wideMessage(), /theme already supplies/);
+		assert.equal(h.fieldError(), "");
+		h.tags.showExternalError("At least one ID is required");
+		assert.equal(h.wideMessage(), "");
+		assert.equal(h.fieldError(), "At least one ID is required");
+		h.tags.clearExternalError();
+		assert.equal(h.fieldError(), "");
+	});
+
+	it("says the field is full under it, even beside a note under the label", () => {
+		// Found by hand: the tenth id arrived by "move it here", and the editor's
+		// "On save, … moves here" note replaced the "Maximum … IDs" line, leaving
+		// a disabled field with no reason given.
+		fakeDom.document.body.empty();
+		const setting = new Setting(asEl(fakeDom.document.body));
+		const noteEl = setting.descEl.createDiv();
+		let field: TagInput | null = null;
+		field = new TagInput(setting.controlEl, {
+			maxTags: 2,
+			noteEl,
+			showFieldError: (message) => setSettingError(setting, message),
+			onChange: () => field?.showExternalNote('On save, "test" moves here from Abstract.'),
+		});
+		field.addTagUnchecked("one");
+		field.addTagUnchecked("test");
+		const row = setting.settingEl as unknown as FakeElement;
+		const line = setting.errorEl as unknown as FakeElement;
+		assert.match((noteEl as unknown as FakeElement).textContent, /moves here from Abstract/);
+		assert.equal(row.hasClass("is-invalid") ? line.textContent : "", t("editor.maxIds", { max: 2 }));
+		// Room again: the line goes, the note stays.
+		field.setTags(["one"]);
+		field.showExternalNote('On save, "test" moves here from Abstract.');
+		assert.equal(row.hasClass("is-invalid"), false);
 	});
 
 	it("keeps the offer's button when a blur commits the same id again", () => {
@@ -96,11 +178,10 @@ describe("TagInput — what the IDs field says, and where", () => {
 		const h = setup(() => offer(() => undefined));
 		h.type("test");
 		h.enter();
-		const line = h.setting.errorEl as unknown as FakeElement;
-		const before = line.querySelector("button");
+		const before = h.wideEl().querySelector("button");
 		h.input.fire("blur");
 		assert.ok(before);
-		assert.equal(line.querySelector("button"), before);
+		assert.equal(h.wideEl().querySelector("button"), before);
 	});
 
 	it("adds a moved id without asking again, clearing the typed text and the offer", () => {
@@ -112,6 +193,7 @@ describe("TagInput — what the IDs field says, and where", () => {
 		assert.deepEqual(h.added, ["test"]);
 		assert.equal(h.input.value, "");
 		assert.equal(h.fieldError(), "");
+		assert.equal(h.wideMessage(), "");
 	});
 
 	it("keeps the note the parent sets while a tag is added, under the label", () => {

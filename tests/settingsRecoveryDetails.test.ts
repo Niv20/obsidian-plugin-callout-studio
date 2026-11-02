@@ -142,7 +142,7 @@ describe("earlier setup detail reports", () => {
 		const h = await render(everySection());
 		try {
 			assert.deepEqual(sections(h.root),
-				["user", "builtin", "iconSources", "fallback", "palettes", "style", "contextMenu", "commands", "language", "other"]);
+				["user", "builtin", "fallback", "palettes", "iconSources", "style", "contextMenu", "commands", "language", "other"]);
 			for (const section of h.root.querySelectorAll("[data-recovery-section]")) {
 				assert.equal(section.tagName.toLowerCase(), "table");
 				const toggle = section.querySelector("thead .cs-recovery-section-toggle");

@@ -3,9 +3,10 @@
  * which order.
  *
  * A comparison is split into the sections of the settings page, in the order
- * the page shows them: the callout types first, then the custom icons and
- * picker defaults that belong to the callout editor, then the fallback
- * callout, palettes, global style, context menu, commands and language.
+ * the page shows them: the callout types and the fallback callout first, then
+ * what callouts are drawn from - the palettes, the custom icons and the picker
+ * defaults (the Colors and icons box) - then global style, the Autocomplete and
+ * metadata page, context menu, commands and language.
  * Anything this version does not know goes last, under "Other settings".
  *
  * A section holds items. An item is one thing a person would name — a callout
@@ -16,7 +17,7 @@
  * recoveryValues.ts; recoveryComparisonTable.ts only lays the result out.
  */
 import type { Component } from "obsidian";
-import { getLocale, t } from "../i18n";
+import { getLocale, t, type LocaleKey } from "../i18n";
 import { effectiveCallouts, type SetupCalloutComparison, type SetupChange, type SetupDetails } from "../manager/setupDetails";
 import { canonical } from "../manager/syncTree";
 import type { CalloutDefinition, CalloutRenderRole, PluginData } from "../types";
@@ -34,7 +35,7 @@ import { renderRecoveryHeadingPreview, renderRecoveryInlinePreview } from "./rec
 import {
 	MATERIAL_STYLES, isRecord, renderAliases, renderBorderSides, renderCalloutRef, renderChoice, renderColor, renderEm,
 	renderGeneric, renderGradient, renderIcon, renderIconAdjust, renderLanguage, renderMaterialWeight, renderOnOff,
-	renderPaletteRef, renderPx, renderScale, renderText, renderYesNo, type RecoverySide,
+	renderPaletteRef, renderPx, renderScale, renderText, renderYesNo, type RecoverySide, type ValueRenderer,
 } from "./recoveryValues";
 
 /** The icon and its visibility come first, as in the callout editor. */
@@ -170,6 +171,48 @@ function themeCalloutStyleItems(change: SetupChange | undefined): RecoveryItem[]
 		: [];
 }
 
+/** A field of the Autocomplete and metadata page: the saved key, the row's name, how its value is drawn. */
+type NamedFieldSpec = readonly [key: string, label: LocaleKey, render: ValueRenderer];
+
+/**
+ * {@link groupFields}, labelled with the settings rows' own names: the saved
+ * keys (`themeMetadata`, …) mean nothing to someone choosing a version. A
+ * group that is new or gone as a whole is one field, named `groupLabel`.
+ */
+function namedFields(change: SetupChange | undefined, groupLabel: string, specs: readonly NamedFieldSpec[]): RecoveryField[] {
+	if (!change) return [];
+	if (change.fields.some(field => field.path.length === 0)) {
+		return groupFields(change, []).map(field => ({ ...field, label: groupLabel }));
+	}
+	return specs.flatMap(([key, label, render]) =>
+		groupFields(change, [[key, render]], { unknown: false }).map(field => ({ ...field, label: t(label) })));
+}
+
+/**
+ * The Autocomplete and metadata page's settings, as the page lays them out:
+ * the list after `[!` and its theme switch, then the metadata colours and the
+ * list after `|`. A `suggestions` group that is new or gone as a whole is one
+ * field, under the first.
+ */
+function editorItems(suggestions: SetupChange | undefined, metadataColors: SetupChange | undefined): RecoveryItem[] {
+	const whole = suggestions?.fields.some(field => field.path.length === 0) ?? false;
+	const fields = [
+		...namedFields(suggestions, t("settings.resetItemAutocomplete"), [
+			["callouts", "settings.calloutAutocomplete", renderOnOff],
+			["themeCallouts", "settings.suggestThemeCallouts", renderOnOff],
+		]),
+		...namedFields(metadataColors, t("settings.metadataColors"), [["enabled", "settings.metadataColors", renderOnOff]]),
+		...(whole ? [] : namedFields(suggestions, "", [
+			["metadata", "settings.metadataAutocomplete", renderOnOff],
+			["themeMetadata", "settings.suggestThemeMetadata", renderOnOff],
+			["metadataWords", "settings.metadataWords", renderGeneric],
+		])),
+	];
+	return fields.length
+		? [{ key: "autocompleteAndMetadata", kind: "changed", title: t("settings.autocompleteAndMetadata"), fields }]
+		: [];
+}
+
 function iconSourceItems(change: SetupChange | undefined): RecoveryItem[] {
 	const fields = groupFields(change, [
 		["materialStyleDefault", renderChoice(MATERIAL_STYLES)],
@@ -208,8 +251,8 @@ function otherItems(changes: readonly SetupChange[], handled: ReadonlySet<string
 
 /** Settings groups with a section of their own; everything else is "Other settings". */
 const HANDLED_GROUPS: ReadonlySet<string> = new Set(["userImages", "iconSources", "iconLibraries", "fallbackCalloutId",
-	"customPalettes", "globalStyle", "headingCallouts", "inlineCallouts", "themeCalloutStyles", "contextMenu", "customCommands",
-	"disabledFixedCommands", "language"]
+	"customPalettes", "globalStyle", "headingCallouts", "inlineCallouts", "themeCalloutStyles", "suggestions", "metadataColors",
+	"contextMenu", "customCommands", "disabledFixedCommands", "language"]
 	.map(name => `settings:${name}`));
 
 /** Every difference restoring would make, grouped and ordered as the settings page is. */
@@ -222,10 +265,6 @@ export function recoveryReport(details: SetupDetails): RecoveryReport {
 	const sections: RecoverySection[] = [
 		{ id: "user", title: t("settings.myCalloutTypes"), items: calloutItems(details, sides, false) },
 		{ id: "builtin", title: t("settings.builtInCallouts"), items: calloutItems(details, sides, true) },
-		{ id: "images", title: t("iconPicker.custom"), items: imageItems(group("userImages"), sides) },
-		{ id: "iconSources", title: t("recovery.details.section.iconSources"), items: [
-			...iconSourceItems(group("iconSources")), ...iconLibraryItems(group("iconLibraries")),
-		] },
 		{ id: "fallback", title: t("settings.fallbackCallout"), items: singleValueItem(group("fallbackCalloutId"), "fallback",
 			t("settings.fallbackCallout"), (parent, value, which, component) => {
 				renderCalloutRef(parent, value, sides[which]);
@@ -233,9 +272,15 @@ export function recoveryReport(details: SetupDetails): RecoveryReport {
 				if (def) renderRecoveryPreview(parent.createDiv({ cls: "cs-recovery-side-preview" }), sides[which].data, def, component);
 			}) },
 		{ id: "palettes", title: t("settings.customPalettes"), items: paletteItems(group("customPalettes"), sides) },
+		{ id: "images", title: t("iconPicker.custom"), items: imageItems(group("userImages"), sides) },
+		{ id: "iconSources", title: t("recovery.details.section.iconSources"), items: [
+			...iconSourceItems(group("iconSources")), ...iconLibraryItems(group("iconLibraries")),
+		] },
 		{ id: "style", title: t("settings.globalSettings"), items: [
 			...styleItems(changes, sides), ...themeCalloutStyleItems(group("themeCalloutStyles")),
 		] },
+		{ id: "editor", title: t("settings.editorBox"),
+			items: editorItems(group("suggestions"), group("metadataColors")) },
 		{ id: "contextMenu", title: t("settings.contextMenu"), items: contextMenuItems(group("contextMenu")) },
 		{ id: "commands", title: t("settings.customCommands"), items: [
 			...customCommandItems(group("customCommands"), sides), ...builtInCommandItems(group("disabledFixedCommands"), sides),

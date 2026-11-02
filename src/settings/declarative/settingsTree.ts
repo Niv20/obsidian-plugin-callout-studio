@@ -19,8 +19,10 @@
  *     Saved color palettes ›               palettesPage.ts
  *     Icon libraries (opens a window)      iconLibrariesRow.ts
  *   Global styling                         stylePages.ts
- *   Menus and commands                     menuPage.ts, commandsPage.ts
- *   Import and export, Danger zone         mainPageGroups.ts
+ *   Editor                                 autocompletePage.ts, menuPage.ts,
+ *                                            commandsPage.ts
+ *   Import and export                      mainPageGroups.ts
+ *   Danger zone                            mainPageGroups.ts
  *   (the footer: language, About, links)   footerGroup.ts
  *
  * Every box of the finished tree, at every depth, also carries the plugin's own
@@ -28,6 +30,7 @@
  * plugin's rows on.
  */
 import { t } from "../../i18n";
+import { autocompletePage } from "./autocompletePage";
 import { bannersGroup } from "./bannerRows";
 import { builtInCalloutsPage, themeCalloutsPage } from "./calloutListPage";
 import { myCalloutsPage } from "./calloutPages";
@@ -105,13 +108,18 @@ function colorsAndIconsBox(ctx: TreeContext): CsGroup {
 	};
 }
 
-/** Menus and commands: the right-click menu's page and the commands' page. */
+/**
+ * Editor: what helps while a note is written — the Autocomplete and
+ * metadata page (the lists after `[!` and `|`, the metadata colours), the
+ * right-click menu, the commands. (Its id is from when the box was called
+ * Menus and commands; ids never change.)
+ */
 function menusBox(ctx: TreeContext): CsGroup {
 	return {
 		type: "group",
 		id: MAIN_PAGE_BOXES.menus,
-		heading: t("settings.menusAndCommands"),
-		items: [menuPage(ctx), commandsPage(ctx)],
+		heading: t("settings.editorBox"),
+		items: [autocompletePage(ctx), menuPage(ctx), commandsPage(ctx)],
 	};
 }
 

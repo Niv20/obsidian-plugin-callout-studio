@@ -11,19 +11,25 @@
  * pinned tag (the name-linked primary ID: always rendered first, not
  * removable, replaced in place via setPinnedTag), and configurable max length
  * / max count from constants.ts.
- * Used by CalloutEditor for the unified IDs + aliases field.
+ * Used by CalloutEditor for the unified IDs + aliases field, and by
+ * Settings → Editor → Metadata for the user's own metadata words (with its own
+ * rules and wording: `sanitize`, `separators`, `messages`).
  *
  * A refused tag stays in the field, so it can be corrected — or acted on: a
  * refusal may carry a way forward (the editor's "move it here" for an id
  * another callout has), drawn as a {@link TagMessage} renderer instead of a
  * plain string.
  *
- * Where messages appear (finding S5-V1). Errors go UNDER THE FIELD, where
- * Obsidian shows a rejected value (`Setting.setErrorMessage`, in its warning
- * colour, with no animation): the refusal of what is typed — which stays until
- * the typed text changes — and the lasting errors the editor sets ("At least
- * one ID is required"). Notes, which are not problems ("On save, "test"
- * moves here…"), go UNDER THE LABEL in the muted colour, as more description.
+ * Where messages appear (finding S5-V1). A short message about what was typed
+ * ("This ID already exists") goes UNDER THE FIELD, where Obsidian shows a
+ * rejected value (`Setting.setErrorMessage`, in its warning colour, with no
+ * animation), and stays until the typed text changes. A long one — a sentence
+ * that names another callout, a theme or Obsidian, like `"test" is an ID of
+ * Abstract. You can move it here.` — goes UNDER THE LABEL, in the wide column
+ * beside the field, because in the field's narrow one it wrapped into a tall
+ * strip. The caller marks such a message with {@link wide}. One of the two is
+ * shown at a time. Notes, which are not problems ("On save, "test" moves
+ * here…"), go UNDER THE LABEL too, in the muted colour, as more description.
  */
 import { setIcon } from "obsidian";
 import { MAX_TAGS_COUNT } from "../constants";
@@ -40,6 +46,51 @@ import { showNotice } from "./mascot/mascotNotices";
  */
 export type TagMessage = string | ((el: HTMLElement) => void);
 
+/** A message for the wide column under the label; see {@link wide}. */
+export interface WideTagMessage {
+	wide: TagMessage;
+}
+
+/** What `validate` and the lasting errors may say: a message, or a wide one. */
+export type TagRefusal = TagMessage | WideTagMessage;
+
+/**
+ * Mark `message` as a long one: it is drawn under the label, in the wide
+ * column, instead of under the field. For sentences that name something.
+ */
+export function wide(message: TagMessage): WideTagMessage {
+	return { wide: message };
+}
+
+function isWide(message: TagRefusal): message is WideTagMessage {
+	return typeof message === "object";
+}
+
+/**
+ * What the field says about its own tags. The defaults talk about callout
+ * IDs; another list (the metadata words in Settings → Editor → Metadata) passes
+ * its own.
+ */
+export interface TagInputMessages {
+	/** The + button's name. */
+	add: string;
+	/** The typed tag is already in the list. */
+	duplicate: string;
+	/** The typed tag is longer than `max` characters. */
+	tooLong: (max: number) => string;
+	/** The list holds `max` tags and takes no more. */
+	full: (max: number) => string;
+}
+
+function idMessages(): TagInputMessages {
+	return {
+		add: t("editor.addId"),
+		duplicate: t("editor.idAlreadyHere"),
+		tooLong: (max) => t("editor.idTooLong", { max }),
+		full: (max) => t("editor.maxIds", { max }),
+	};
+}
+
 /**
  * A tag-input component: type text, press Enter or click + to add a tag.
  * Tags are displayed in a separate row below the input field, each as an
@@ -51,12 +102,17 @@ export class TagInput {
 	/** Overlay at the field's trailing edge; hosts the + and its text fade. */
 	private addSlotEl: HTMLElement;
 	private addBtnEl: HTMLButtonElement;
-	/** Under the label: where a lasting note is drawn. */
+	/** Under the label: holds the two lines below. */
 	private noteEl: HTMLElement;
+	/** The first line: the lasting note, in the muted colour. */
+	private noteTextEl: HTMLElement;
+	/** The second line: a wide message about a problem, in the warning colour. */
+	private wideMessageEl: HTMLElement;
 	/** Under the field: draws an error there, or clears it (`null`). */
 	private showFieldError: (message: TagMessage | null) => void;
-	/** What `showFieldError` last drew, so an unchanged message is not redrawn. */
+	/** What each place last drew, so an unchanged message is not redrawn. */
 	private shownFieldMessage: TagMessage | null = null;
+	private shownWideMessage: TagMessage | null = null;
 	private tagsRowEl: HTMLElement;
 	private tags: string[] = [];
 	/** The name-linked primary ID: always first in `tags`, never removable. */
@@ -64,18 +120,26 @@ export class TagInput {
 	private onChange: (tags: string[]) => void;
 	private onTagAdded?: (tag: string) => void;
 	private onInput?: (value: string) => void;
-	private validate?: (tag: string) => TagMessage | null;
+	private validate?: (tag: string) => TagRefusal | null;
 	/** Optional per-tag character cap. When undefined, IDs are unlimited. */
 	private maxLength: number | undefined;
 	private maxTags: number;
 	private placeholder: string;
 	private readonlyTags: Set<string>;
+	/** Turns typed text into a tag (`""`: nothing to add). */
+	private sanitize: (raw: string) => string;
+	/** What parts typed or pasted text into several tags; see the option. */
+	private separators: RegExp | undefined;
+	private messages: TagInputMessages;
 	/** The lasting message, and whether it is a note rather than an error. */
-	private lasting: { message: TagMessage; note: boolean } | null = null;
+	private lasting: { message: TagRefusal; note: boolean } | null = null;
 	/** Why the typed text was refused, in plain words; gone when the text changes. */
 	private typedError: string | null = null;
-	/** A refusal with a way forward, shown over `lasting` until the input changes. */
-	private offer: TagMessage | null = null;
+	/**
+	 * A refusal that is more than plain words — a way forward, or a wide
+	 * sentence — shown over `lasting` until the input changes.
+	 */
+	private offer: TagRefusal | null = null;
 	/** The tag the offer is about. */
 	private offerFor: string | null = null;
 
@@ -92,28 +156,42 @@ export class TagInput {
 			/** Fired on every keystroke in the input field, with the raw value. */
 			onInput?: (value: string) => void;
 			/**
-			 * Null if ok. A string is an error that fades; a renderer is an offer
-			 * that stays until the typed text changes — see {@link TagMessage}.
+			 * Null if ok. A string is a short refusal; a renderer or a
+			 * {@link wide} message is drawn as an offer. Either stays until the
+			 * typed text changes — see {@link TagMessage}.
 			 */
-			validate?: (tag: string) => TagMessage | null;
+			validate?: (tag: string) => TagRefusal | null;
 			/** Max characters per tag */
 			maxLength?: number;
 			/** Max number of tags */
 			maxTags?: number;
 			/**
-			 * Where lasting notes go — the caller places it, e.g. in the setting's
-			 * description, under the label. Without one, the field makes its own.
+			 * Where the note and the wide messages go — the caller places it, e.g.
+			 * in the setting's description, under the label. Without one, the
+			 * field makes its own, under the pills.
 			 */
 			noteEl?: HTMLElement;
 			/**
-			 * Draws an error under the field, or clears it on `null`. The editor
-			 * passes its row's `setErrorMessage` (see `ui/settingError.ts`).
+			 * Draws a short error under the field, or clears it on `null`. The
+			 * editor passes its row's `setErrorMessage` (see `ui/settingError.ts`).
 			 * Without one, the field draws Obsidian's error line itself, under
 			 * the pills.
 			 */
 			showFieldError?: (message: TagMessage | null) => void;
 			/** Tags that cannot be removed (no × button rendered) */
 			readonlyTags?: string[];
+			/** Turns typed text into a tag. Callout IDs' rules when left out. */
+			sanitize?: (raw: string) => string;
+			/**
+			 * For tags that cannot hold a space: the characters that part
+			 * them. Typing one commits what is typed, as Enter does, and a
+			 * paste is split on them. Left out (IDs, which may hold spaces),
+			 * only Enter and a comma commit, and a paste splits on commas and
+			 * line breaks.
+			 */
+			separators?: RegExp;
+			/** What the field says; the callout-ID wording when left out. */
+			messages?: TagInputMessages;
 		},
 	) {
 		this.tags = [...(opts.initialTags ?? [])];
@@ -133,6 +211,9 @@ export class TagInput {
 		this.maxTags = opts.maxTags ?? MAX_TAGS_COUNT;
 		this.placeholder = opts.placeholder ?? "";
 		this.readonlyTags = new Set(opts.readonlyTags ?? []);
+		this.sanitize = opts.sanitize ?? sanitizeCalloutIdInput;
+		this.separators = opts.separators;
+		this.messages = opts.messages ?? idMessages();
 
 		// Wrapper: input row → tags row
 		this.wrapperEl = parentEl.createDiv({ cls: "cs-tag-wrapper" });
@@ -161,7 +242,7 @@ export class TagInput {
 		this.addSlotEl = inputRow.createDiv({ cls: "cs-tag-add-slot" });
 		this.addBtnEl = this.addSlotEl.createEl("button", {
 			cls: "cs-tag-add-btn",
-			attr: { type: "button", "aria-label": t("editor.addId") },
+			attr: { type: "button", "aria-label": this.messages.add },
 		});
 		setIcon(this.addBtnEl, "plus");
 		// Keep focus in the field on click. Without this the mousedown blurs the
@@ -180,9 +261,11 @@ export class TagInput {
 		// Tags row (below input)
 		this.tagsRowEl = this.wrapperEl.createDiv({ cls: "cs-tag-row" });
 
-		// The two message places (see the module comment).
+		// The message places (see the module comment).
 		this.noteEl = opts.noteEl ?? this.wrapperEl.createDiv();
 		this.noteEl.addClass("cs-tag-note");
+		this.noteTextEl = this.noteEl.createDiv();
+		this.wideMessageEl = this.noteEl.createDiv({ cls: "cs-tag-message" });
 		this.showFieldError =
 			opts.showFieldError ?? this.ownFieldErrorLine(this.wrapperEl);
 
@@ -195,8 +278,9 @@ export class TagInput {
 		this.updateInputState();
 
 		this.inputEl.addEventListener("keydown", (e) => {
-			// Space is intentionally NOT a commit key — IDs may contain spaces.
-			if (e.key === "Enter" || e.key === ",") {
+			// Space is NOT a commit key for IDs, which may contain spaces; a
+			// list with `separators` commits on those too.
+			if (e.key === "Enter" || e.key === "," || this.isSeparatorKey(e.key)) {
 				e.preventDefault();
 				this.commitInput();
 			} else if (
@@ -222,7 +306,7 @@ export class TagInput {
 			// Say so at once when the typing reaches the cap (if one is set).
 			const cap = this.maxLength;
 			if (cap !== undefined && this.inputEl.value.length >= cap) {
-				this.typedError = t("editor.idTooLong", { max: cap });
+				this.typedError = this.messages.tooLong(cap);
 			}
 			this.paintMessages();
 		});
@@ -232,18 +316,24 @@ export class TagInput {
 		});
 
 		// Handle paste with multiple comma/newline separated values. Spaces are
-		// kept (IDs may contain them) — only commas and line breaks split tags.
+		// kept for IDs (they may contain them) — only commas and line breaks
+		// split those; a list with `separators` splits on them instead.
 		this.inputEl.addEventListener("paste", (e) => {
 			e.preventDefault();
 			const text = e.clipboardData?.getData("text") ?? "";
 			const parts = text
-				.split(/[,\n\r]+/)
+				.split(this.separators ?? /[,\n\r]+/)
 				.map((p) => p.trim())
 				.filter(Boolean);
 			for (const part of parts) {
 				this.addTag(part);
 			}
 		});
+	}
+
+	/** Whether `key` is one character the list's `separators` match. */
+	private isSeparatorKey(key: string): boolean {
+		return this.separators !== undefined && key.length === 1 && this.separators.test(key);
 	}
 
 	/**
@@ -262,13 +352,17 @@ export class TagInput {
 			this.inputEl.disabled = true;
 			this.addBtnEl.disabled = true;
 			this.inputEl.placeholder = "";
-			this.showPersistentError(t("editor.maxIds", { max: this.maxTags }));
 		} else {
 			this.inputEl.disabled = false;
 			this.addBtnEl.disabled = false;
 			this.inputEl.placeholder = this.placeholder;
-			this.clearPersistentError();
 		}
+		// The caller's lasting message is about the tags as they were; the
+		// caller sets it again in `onChange`. The "full" message is not kept
+		// anywhere: `paintMessages` reads it off the tag count, so nothing the
+		// caller sets can wipe it, and it cannot outlive the count.
+		this.lasting = null;
+		this.paintMessages();
 		this.syncAddButton();
 	}
 
@@ -287,38 +381,52 @@ export class TagInput {
 	}
 
 	/**
-	 * Draw both message places from the current state. Every change to a
-	 * message ends here, so the two places can never disagree with the state.
+	 * Draw the message places from the current state. Every change to a
+	 * message ends here, so they can never disagree with the state.
 	 *
-	 * Under the field, one message, in this order: an offer (a refusal with a
-	 * way forward), a lasting error, then the plain refusal of what is typed.
-	 * Under the label, the lasting note, if any.
+	 * The candidates, in order: an offer (a refusal with a way forward, or a
+	 * wide one), the lasting error the caller set, the "full" message while
+	 * there is no room for another tag, then the plain refusal of what is
+	 * typed. Each place shows the first candidate that belongs to it, so a
+	 * wide message under the label and a short one under the field can show
+	 * together. A wide message is drawn under the label, any other under the
+	 * field. The lasting note, if any, is drawn under the label too.
 	 */
 	private paintMessages(): void {
 		const lastingError = this.lasting && !this.lasting.note ? this.lasting.message : null;
-		const fieldMessage = this.offer ?? lastingError ?? this.typedError;
+		const full = this.tags.length >= this.maxTags ? this.messages.full(this.maxTags) : null;
+		const candidates = [this.offer, lastingError, full, this.typedError].filter(
+			(message): message is TagRefusal => message !== null,
+		);
+		const wideCandidate = candidates.find(isWide);
+		const fieldMessage = candidates.find((message): message is TagMessage => !isWide(message)) ?? null;
+		const wideMessage = wideCandidate ? wideCandidate.wide : null;
+
 		// Redrawing an unchanged offer would swap its button for a new one
 		// under a tap that is still landing, so only a change is drawn.
 		if (fieldMessage !== this.shownFieldMessage) {
 			this.shownFieldMessage = fieldMessage;
 			this.showFieldError(fieldMessage);
 		}
+		if (wideMessage !== this.shownWideMessage) {
+			this.shownWideMessage = wideMessage;
+			this.drawMessage(this.wideMessageEl, wideMessage);
+		}
 
 		const note = this.lasting?.note ? this.lasting.message : null;
-		this.noteEl.empty();
-		if (typeof note === "string") this.noteEl.setText(note);
-		else if (note) note(this.noteEl);
+		this.drawMessage(this.noteTextEl, note !== null && isWide(note) ? note.wide : note);
+	}
+
+	/** Replace what `el` shows with `message` (none clears it). */
+	private drawMessage(el: HTMLElement, message: TagMessage | null): void {
+		el.empty();
+		if (typeof message === "string") el.setText(message);
+		else if (message) message(el);
 	}
 
 	/** Set the lasting message (an error, or a note) and redraw. */
-	private showPersistentError(msg: TagMessage, note = false): void {
+	private showPersistentError(msg: TagRefusal, note = false): void {
 		this.lasting = { message: msg, note };
-		this.paintMessages();
-	}
-
-	/** Clear the lasting message and redraw. */
-	private clearPersistentError(): void {
-		this.lasting = null;
 		this.paintMessages();
 	}
 
@@ -327,7 +435,7 @@ export class TagInput {
 	 * a blur does that — keeps the offer already drawn: redrawing it would swap
 	 * its button for a new one under a tap that is still landing.
 	 */
-	private showOffer(tag: string, message: TagMessage): void {
+	private showOffer(tag: string, message: TagRefusal): void {
 		if (this.offer && this.offerFor === tag) return;
 		this.offer = message;
 		this.offerFor = tag;
@@ -356,9 +464,20 @@ export class TagInput {
 	private commitInput(): void {
 		const raw = this.inputEl.value.trim();
 		if (!raw) return;
-		// A refused id stays where it was typed, so it can be corrected — or
-		// moved here — rather than typed again from memory.
-		if (this.addTag(raw) === "refused") return;
+		// A list with separators takes several at once ("wide no-title"): a
+		// phone keyboard may not report the space as a key of its own.
+		const parts = this.separators
+			? raw.split(this.separators).filter((part) => part !== "")
+			: [raw];
+		for (let i = 0; i < parts.length; i++) {
+			// A refused tag stays where it was typed, so it can be corrected —
+			// or moved here — rather than typed again from memory. So do the
+			// ones typed after it.
+			if (this.addTag(parts[i] ?? "") === "refused") {
+				if (i > 0) this.inputEl.value = parts.slice(i).join(" ");
+				return;
+			}
+		}
 		this.inputEl.value = "";
 		this.syncAddButton();
 	}
@@ -371,18 +490,18 @@ export class TagInput {
 	private addTag(raw: string): "added" | "refused" | "ignored" {
 		if (this.tags.length >= this.maxTags) return "ignored";
 
-		const tag = sanitizeCalloutIdInput(raw);
+		const tag = this.sanitize(raw);
 		if (!tag) return "ignored";
 
 		// Check max length (only when a cap is configured)
 		if (this.maxLength !== undefined && tag.length > this.maxLength) {
-			this.refuseTyped(t("editor.idTooLong", { max: this.maxLength }));
+			this.refuseTyped(this.messages.tooLong(this.maxLength));
 			return "refused";
 		}
 
 		// Check duplicate within current tags
 		if (this.tags.includes(tag)) {
-			this.refuseTyped(t("editor.idAlreadyHere"));
+			this.refuseTyped(this.messages.duplicate);
 			return "refused";
 		}
 
@@ -573,6 +692,11 @@ export class TagInput {
 		else this.inputEl.focus();
 	}
 
+	/** The whole field — the input, the pills and its message lines — in one element. */
+	get el(): HTMLElement {
+		return this.wrapperEl;
+	}
+
 	getTags(): string[] {
 		return [...this.tags];
 	}
@@ -625,7 +749,7 @@ export class TagInput {
 	}
 
 	/** Show an error from external code (e.g. "At least one ID is required") */
-	showExternalError(msg: TagMessage): void {
+	showExternalError(msg: TagRefusal): void {
 		this.showPersistentError(msg);
 	}
 
@@ -641,8 +765,6 @@ export class TagInput {
 	clearExternalError(): void {
 		if (!this.lasting) return;
 		this.lasting = null;
-		// Re-check input state (max tags might need its own lasting error);
-		// it redraws the messages either way.
-		this.updateInputState();
+		this.paintMessages();
 	}
 }

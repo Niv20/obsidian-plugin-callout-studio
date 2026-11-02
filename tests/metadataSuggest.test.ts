@@ -76,7 +76,7 @@ function rows(
 		calloutId: opts.calloutId ?? "mark",
 		themeOwned: opts.themeOwned ?? false,
 		colors: metadataColorEntries(opts.palettes ?? []),
-		sources: opts.words ? [{ label: "Fixture theme", words: opts.words }] : [],
+		sources: opts.words ? [{ label: "Fixture theme", origin: "theme", words: opts.words }] : [],
 		locale: "en",
 	});
 }
@@ -113,8 +113,8 @@ describe("buildMetadataSuggestions — rows and their order", () => {
 			themeOwned: true,
 			colors: [],
 			sources: [
-				{ label: "Theme", words: [word("zeta"), word("alpha")] },
-				{ label: "Snippet", words: [word("mid"), word("beta")] },
+				{ label: "Theme", origin: "theme", words: [word("zeta"), word("alpha")] },
+				{ label: "Snippet", origin: "snippet", words: [word("mid"), word("beta")] },
 			],
 			locale: "en",
 		});
@@ -159,7 +159,7 @@ describe("buildMetadataSuggestions — rows and their order", () => {
 		assert.ok(!got.some((l) => l.split(">")[0] === "pink"), "the colour already there is not offered");
 	});
 
-	it("offers no colour on a callout the theme owns", () => {
+	it("offers no colour where the callout is drawn as plain text", () => {
 		const got = labels(rows("⎸", { themeOwned: true, words: [word("wide")] }));
 		assert.deepStrictEqual(got, ["theme:wide"]);
 	});
@@ -217,8 +217,8 @@ describe("buildMetadataSuggestions — rows and their order", () => {
 			themeOwned: true,
 			colors: [],
 			sources: [
-				{ label: "Theme", words: [word("wide"), word("wider")] },
-				{ label: "Snippet", words: [word("wild")] },
+				{ label: "Theme", origin: "theme", words: [word("wide"), word("wider")] },
+				{ label: "Snippet", origin: "snippet", words: [word("wild")] },
 			],
 			locale: "en",
 		});
@@ -419,34 +419,46 @@ describe("CalloutMetadataSuggest — a name the theme claims", () => {
 		return h.meta.getSuggestions(ctx as never).some((r) => r.kind === "color");
 	};
 
-	it("offers no colour for that name's block callout, which the theme draws", () => {
-		// Quote stays ours: the theme names `quote` but not the `цитата` the
-		// user added. A colour on `> [!quote|…]` would never paint.
+	it("offers colours for that name's block callout, which the theme draws", () => {
+		// The theme names `quote` but not the `цитата` the user added. The
+		// stylesheet colours both: a block callout the theme draws gets its
+		// frame, title and icon repainted (metadataColorCSS.ts).
 		const h = harness();
 		h.registry.update("quote", { aliases: ["cite", "цитата"] });
 		h.registry.setThemeOwnedIds(new Set(["quote"]));
 		assert.strictEqual(h.registry.themeOwns(h.registry.get("quote")!), false);
 
-		assert.strictEqual(offersColours(h, "> [!quote|⎸"), false);
+		assert.strictEqual(offersColours(h, "> [!quote|⎸"), true);
 		assert.strictEqual(offersColours(h, "> [!цитата|⎸"), true);
 		assert.strictEqual(offersColours(h, "## [!quote|⎸]"), true, "the heading is ours");
 	});
 
-	it("agrees with the stylesheet on a stock alias however it is typed", () => {
+	it("offers colours on a stock alias however it is typed", () => {
 		// `[!Cite]`, `[!CITE]` and `[!cite ]` all render as data-callout="cite",
-		// which Obsidian draws while the theme claims Quote's id - the metadata
-		// colours stay off it, so offering one would write a word that never
-		// paints. GitHub-style `[!IMPORTANT]` is the common case.
+		// which Obsidian draws while the theme claims Quote's id. GitHub-style
+		// `[!IMPORTANT]` is the common case.
 		const h = harness();
 		h.registry.update("quote", { aliases: ["cite", "цитата"] });
 		h.registry.setThemeOwnedIds(new Set(["quote"]));
 		for (const typed of ["cite", "Cite", "CITE", "cite "]) {
-			assert.strictEqual(offersColours(h, `> [!${typed}|⎸`), false, typed);
+			assert.strictEqual(offersColours(h, `> [!${typed}|⎸`), true, typed);
 		}
 		h.registry.update("tip", { aliases: ["hint", "important", "мой-совет"] });
 		h.registry.setThemeOwnedIds(new Set(["tip"]));
-		assert.strictEqual(offersColours(h, "> [!IMPORTANT|⎸"), false);
+		assert.strictEqual(offersColours(h, "> [!IMPORTANT|⎸"), true);
 		assert.strictEqual(offersColours(h, "> [!мой-совет|⎸"), true, "the user's own name is ours");
+	});
+
+	it("offers colours on a block callout the theme owns, but not on its heading or inline form", () => {
+		// The theme draws `tip` as a block callout and gets no heading or
+		// inline callout of that type (they would be literal text), so a colour
+		// there has nothing to paint. This is the Lumines case.
+		const h = harness();
+		h.registry.setThemeOwnedIds(new Set(["tip"]));
+		assert.strictEqual(h.registry.themeOwns(h.registry.get("tip")!), true);
+
+		assert.strictEqual(offersColours(h, "> [!tip|⎸"), true);
+		assert.strictEqual(offersColours(h, "## [!tip|⎸]"), false);
 	});
 });
 
@@ -634,7 +646,7 @@ describe("CalloutMetadataSuggest — what a row looks like", () => {
 
 	const withTheme = (h: Harness) => {
 		(h.injector as unknown as { metadataCatalog: unknown }).metadataCatalog = {
-			sourcesNow: () => [{ label: "Fixture theme", words: [word("wide", "spaced")] }],
+			sourcesNow: () => [{ label: "Fixture theme", origin: "theme" as const, words: [word("wide", "spaced")] }],
 			snippetWords: () => new Set<string>(),
 		};
 	};

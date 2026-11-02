@@ -27,7 +27,7 @@ import { paintResetIdle } from "../../ui/resetArrow";
 import { settingGroupEl } from "../../ui/settingGroupEl";
 import type { RowRegistry } from "./rowRegistry";
 import { guardRender } from "./safeTree";
-import type { CsGroup, CsRender } from "./types";
+import type { CsControl, CsGroup, CsRender } from "./types";
 
 /**
  * The class every box of the plugin's settings carries: settingsTree.ts puts
@@ -212,6 +212,36 @@ export interface DisableableControl {
  */
 export function addControlComponent(setting: Setting, control: DisableableControl): void {
 	setting.addComponent(() => new ControlComponent(control));
+}
+
+/** What {@link toggleRow} is told. */
+export interface ToggleRowSpec {
+	/** A key that never changes. */
+	id: string;
+	name: LocaleKey;
+	desc: LocaleKey;
+	/** Where the switch saves, as a dotted path into the settings. */
+	key: string;
+	/** Shown only while this is true. */
+	visible?: () => boolean;
+	/** The settings writer: the switch is greyed while saving is paused. */
+	writer: { isFrozen: boolean };
+}
+
+/**
+ * One of Obsidian's switches with a name and a sentence, saved at `key`
+ * through the tab's `setControlValue` (controlBinding.ts), and greyed while
+ * saving is paused.
+ */
+export function toggleRow(spec: ToggleRowSpec): CsControl {
+	const writer = spec.writer;
+	return {
+		id: spec.id,
+		name: t(spec.name),
+		desc: t(spec.desc),
+		visible: spec.visible,
+		control: { type: "toggle", key: spec.key, disabled: () => writer.isFrozen },
+	};
 }
 
 /**

@@ -170,7 +170,8 @@ describe("the settings tab as a tree", () => {
 		const pages = itemsPages(tab.settingItems as LooseDef[]);
 		// Built-in callouts and the theme's are drawn by the plugin, so they are not here.
 		assert.deepEqual(pages.map((path) => path.join(" › ")).sort(), [
-			"callouts-mine", "commands", "palettes", "right-click-menu", "style-block", "style-heading", "style-inline",
+			"autocomplete-and-metadata", "callouts-mine", "commands", "palettes", "right-click-menu", "style-block",
+			"style-heading", "style-inline",
 		]);
 		for (const path of pages) harness.openPage(path);
 		assert.deepEqual(harness.duplicateKeys, []);

@@ -41,6 +41,7 @@ import { booleanPreference, clampGlobalStyle, localePreference } from "./setting
 import { sanitizeUserImages } from "./userImages";
 import { sanitizeCustomCommands } from "./customCommands";
 import { mergeIconLibraries, mergeIconSources } from "./iconSourcesMerge";
+import { sanitizeMetadataWords } from "./metadataWordInput";
 
 /**
  * The three per-item booleans the context menu had until 1.2.2, when it became
@@ -173,10 +174,24 @@ export function mergeSavedSettings(
 			},
 		},
 		autocomplete: {
-			// Autocomplete is a core editor feature now. Keep the persisted
-			// compatibility shape for older builds, but never let an old saved
-			// opt-out disable it in this one.
+			// Kept for older builds only: they read this group and turn a
+			// saved `false` back into `true`. The switches are `suggestions`.
 			enabled: true,
+		},
+		suggestions: {
+			callouts:
+				booleanPreference(savedSettings.suggestions?.callouts,
+					DEFAULT_SETTINGS.suggestions.callouts),
+			themeCallouts:
+				booleanPreference(savedSettings.suggestions?.themeCallouts,
+					DEFAULT_SETTINGS.suggestions.themeCallouts),
+			metadata:
+				booleanPreference(savedSettings.suggestions?.metadata,
+					DEFAULT_SETTINGS.suggestions.metadata),
+			themeMetadata:
+				booleanPreference(savedSettings.suggestions?.themeMetadata,
+					DEFAULT_SETTINGS.suggestions.themeMetadata),
+			metadataWords: sanitizeMetadataWords(savedSettings.suggestions?.metadataWords),
 		},
 		iconSources: mergeIconSources(savedSettings.iconSources),
 		iconLibraries: mergeIconLibraries(savedSettings.iconLibraries),

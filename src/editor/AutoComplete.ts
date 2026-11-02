@@ -15,6 +15,11 @@
  * suggestions (`CalloutMetadataSuggest`). Neither ever rewrites or adds the
  * `]` — see `replaceTypeText`. Enter is unchanged — most people never use
  * metadata, and Enter finishing the callout is what they expect.
+ *
+ * Settings → Editor → Callout autocomplete can switch it off. Typing then opens nothing, but
+ * the Insert and Wrap commands still open it on the `[!]` they write: they
+ * leave an empty type for the user to choose, and this list is how the
+ * command asks. The row under it can leave the theme's own callouts out.
  */
 import { Editor, EditorPosition, EditorSuggest, EditorSuggestContext, EditorSuggestTriggerInfo, MarkdownView, TFile, setIcon } from "obsidian";
 import type CalloutStudioPlugin from "../main";
@@ -59,6 +64,11 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 	private plugin: CalloutStudioPlugin;
 	/** Role classified by the latest onTrigger; read by selectSuggestion. */
 	private triggerRole: CalloutRenderRole = "regular";
+	/**
+	 * The `[!` a command opened the list on while autocomplete is off: the
+	 * list keeps opening there as the type is typed, and nowhere else.
+	 */
+	private askedAt: { line: number; ch: number } | null = null;
 
 	constructor(plugin: CalloutStudioPlugin) {
 		super(plugin.app);
@@ -85,11 +95,15 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 	 * a frame so CM6 has flushed the insert and (when run from the command
 	 * palette) focus has returned to the editor — the manager no-ops unless the
 	 * editor is focused, hence the explicit `focus()`.
+	 *
+	 * `fromCommand`: a command wrote the `[!` and asks for its type, so the
+	 * list opens there even while autocomplete is switched off.
 	 */
-	triggerNow(editor: Editor, file: TFile | null): void {
+	triggerNow(editor: Editor, file: TFile | null, fromCommand = false): void {
 		if (!file) return;
 		window.requestAnimationFrame(() => {
 			editor.focus();
+			if (fromCommand) this.askedAt = this.tokenAtCursor(editor);
 			const manager = (
 				this.app.workspace as unknown as {
 					editorSuggest?: {
@@ -105,6 +119,13 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		});
 	}
 
+	/** Where the `[!` before the cursor opens, or null when the cursor is in no token. */
+	private tokenAtCursor(editor: Editor): { line: number; ch: number } | null {
+		const cursor = editor.getCursor();
+		const trigger = readCalloutTrigger(editor.getLine(cursor.line), cursor.ch, this.plugin.settings);
+		return trigger ? { line: cursor.line, ch: trigger.triggerCh } : null;
+	}
+
 	onTrigger(
 		cursor: EditorPosition,
 		editor: Editor,
@@ -118,6 +139,15 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 			this.plugin.settings,
 		);
 		if (!trigger) return null;
+
+		// Switched off: open only on the `[!` a command asked about.
+		if (!this.plugin.settings.suggestions.callouts) {
+			const asked = this.askedAt;
+			if (!asked || asked.line !== cursor.line || asked.ch !== trigger.triggerCh) {
+				this.askedAt = null;
+				return null;
+			}
+		}
 
 		// The query is the whole type, independent of where the cursor sits
 		// within it — reading only up to the cursor would mis-filter a mid-token
@@ -153,10 +183,16 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		// fallback row genuinely used elsewhere still autocompletes normally.
 		// The role narrows it again — see onTrigger, which classified it.
 		const all = suggestableCallouts(this.plugin.registry, this.triggerRole);
+		// The theme's own callouts, when the user left them out (Settings →
+		// Editor). Only from the rows: their names still count as taken
+		// below, so typing one in full never offers to create it again.
+		const offered = this.plugin.settings.suggestions.themeCallouts
+			? all
+			: all.filter((d) => d.source !== "theme");
 
 		// Filter — the same predicate the quick-insert window matches with, so
 		// the two lists can never disagree about what a typed word finds.
-		const filtered = all.filter((d) => calloutMatchesQuery(d, query));
+		const filtered = offered.filter((d) => calloutMatchesQuery(d, query));
 
 		const sorted = sortCalloutsByDisplayName(filtered, getLocale());
 
