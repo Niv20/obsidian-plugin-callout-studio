@@ -683,7 +683,10 @@ export const fa: Record<string, string> = {
 	"iconPack.artworkRestored": "آثار هنری آیکون‌ها برای {{names}} دانلود شد.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio نتوانست بسته آیکون را روی دیسک ذخیره کند، بنابراین دفعه بعد باید دوباره دانلود شود. آیکون‌هایی که انتخاب می‌کنید همچنان در تنظیمات شما ذخیره هستند.",
+	"settings.colorsAndIcons": "رنگ‌ها و نمادها",
 	"settings.iconLibrariesDesc": "ترتیب مجدد و دانلود کتابخانه‌های نماد اضافی.",
+	"settings.iconLibrariesEditorOpen":
+		"ابتدا کار با ویرایشگر callout را تمام کنید. نماد ذخیره‌نشدهٔ آن ممکن است از کتابخانه‌ای باشد که اینجا حذف می‌کنید.",
 	"iconLibraries.manage": "مدیریت کتابخانه‌های نماد",
 	"iconLibraries.title": "کتابخانه‌های نماد",
 	"iconLibraries.desc":

@@ -686,7 +686,10 @@ export const pl: Record<string, string> = {
 	"iconPack.artworkRestored": "Pobrano grafikę ikon dla {{names}}.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio nie mogło zapisać pakietu ikon na dysku, więc następnym razem będzie trzeba go pobrać ponownie. Wybrane ikony są nadal zapisane w ustawieniach.",
+	"settings.colorsAndIcons": "Kolory i ikony",
 	"settings.iconLibrariesDesc": "Zmień kolejność i pobierz dodatkowe biblioteki ikon.",
+	"settings.iconLibrariesEditorOpen":
+		"Najpierw zakończ pracę w edytorze calloutu. Jego niezapisana ikona może pochodzić z biblioteki, którą tu usuniesz.",
 	"iconLibraries.manage": "Zarządzaj bibliotekami ikon",
 	"iconLibraries.title": "Biblioteki ikon",
 	"iconLibraries.desc":

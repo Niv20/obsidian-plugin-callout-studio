@@ -681,7 +681,10 @@ export const ms: Record<string, string> = {
 	"iconPack.artworkRestored": "Seni ikon untuk {{names}} telah dimuat turun.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio tidak dapat menyimpan pakej ikon ke cakera, jadi ia perlu dimuat turun semula lain kali. Ikon yang anda pilih masih disimpan dengan tetapan anda.",
+	"settings.colorsAndIcons": "Warna dan ikon",
 	"settings.iconLibrariesDesc": "Susun semula dan muat turun pustaka ikon tambahan.",
+	"settings.iconLibrariesEditorOpen":
+		"Selesaikan kerja dalam editor callout dahulu. Ikonnya yang belum disimpan mungkin datang daripada pustaka yang anda padam di sini.",
 	"iconLibraries.manage": "Urus pustaka ikon",
 	"iconLibraries.title": "Pustaka ikon",
 	"iconLibraries.desc":

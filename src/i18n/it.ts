@@ -694,7 +694,10 @@ export const it: Record<string, string> = {
 		"L'artwork delle icone per {{names}} è stato scaricato.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio non è riuscito a salvare il pacchetto di icone su disco, quindi dovrà essere scaricato di nuovo la prossima volta. Le icone che scegli sono comunque salvate nelle tue impostazioni.",
+	"settings.colorsAndIcons": "Colori e icone",
 	"settings.iconLibrariesDesc": "Riordina e scarica librerie di icone aggiuntive.",
+	"settings.iconLibrariesEditorOpen":
+		"Prima termina il lavoro nell’editor del callout. La sua icona non salvata potrebbe provenire da una libreria che elimini qui.",
 	"iconLibraries.manage": "Gestisci librerie di icone",
 	"iconLibraries.title": "Librerie di icone",
 	"iconLibraries.desc":

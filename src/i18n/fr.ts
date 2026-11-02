@@ -703,7 +703,10 @@ export const fr: Record<string, string> = {
 		"Les graphismes d'icônes pour {{names}} ont été téléchargés.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio n'a pas pu enregistrer le pack d'icônes sur le disque, il devra donc être retéléchargé la prochaine fois. Les icônes que vous choisissez sont toujours enregistrées dans vos paramètres.",
+	"settings.colorsAndIcons": "Couleurs et icônes",
 	"settings.iconLibrariesDesc": "Réorganisez et téléchargez des bibliothèques d’icônes supplémentaires.",
+	"settings.iconLibrariesEditorOpen":
+		"Terminez d’abord dans l’éditeur de callout. Son icône non enregistrée pourrait provenir d’une bibliothèque que vous supprimez ici.",
 	"iconLibraries.manage": "Gérer les bibliothèques d’icônes",
 	"iconLibraries.title": "Bibliothèques d’icônes",
 	"iconLibraries.desc":

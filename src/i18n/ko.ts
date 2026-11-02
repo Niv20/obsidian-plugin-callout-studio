@@ -678,7 +678,10 @@ export const ko: Record<string, string> = {
 		"{{names}}의 아이콘 아트워크를 다운로드했습니다.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio가 아이콘 팩을 디스크에 저장할 수 없어 다음에 다시 다운로드해야 합니다. 선택한 아이콘은 설정에 저장되어 있습니다.",
+	"settings.colorsAndIcons": "색상 및 아이콘",
 	"settings.iconLibrariesDesc": "아이콘 라이브러리 순서를 바꾸고 추가 라이브러리를 다운로드합니다.",
+	"settings.iconLibrariesEditorOpen":
+		"먼저 callout 편집기 작업을 마치세요. 저장되지 않은 아이콘이 여기서 삭제하는 라이브러리의 것일 수 있습니다.",
 	"iconLibraries.manage": "아이콘 라이브러리 관리",
 	"iconLibraries.title": "아이콘 라이브러리",
 	"iconLibraries.desc":

@@ -742,7 +742,10 @@ export const ro: Record<string, string> = {
 		"Arta pictogramelor pentru {{names}} a fost descărcată.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio nu a putut salva pachetul de pictograme pe disc, deci va trebui descărcat din nou data viitoare. Pictogramele alese sunt încă salvate în setările dvs.",
+	"settings.colorsAndIcons": "Culori și pictograme",
 	"settings.iconLibrariesDesc": "Reordonează și descarcă biblioteci de pictograme suplimentare.",
+	"settings.iconLibrariesEditorOpen":
+		"Termină mai întâi lucrul în editorul de callout. Pictograma lui nesalvată ar putea proveni dintr-o bibliotecă pe care o ștergi aici.",
 	"iconLibraries.manage": "Gestionați bibliotecile de pictograme",
 	"iconLibraries.title": "Biblioteci de pictograme",
 	"iconLibraries.desc":

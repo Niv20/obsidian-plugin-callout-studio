@@ -703,7 +703,10 @@ export const zhTW: Record<string, string> = {
 	"iconPack.artworkRestored": "已下載 {{names}} 的圖示圖稿。",
 	"iconPack.diskWriteFailed":
 		"Callout Studio 無法將圖示包儲存至磁碟，下次需要重新下載。您選擇的圖示仍已儲存在您的設定中。",
+	"settings.colorsAndIcons": "顏色與圖示",
 	"settings.iconLibrariesDesc": "重新排序並下載其他圖示庫。",
+	"settings.iconLibrariesEditorOpen":
+		"請先完成 callout 編輯器中的操作。其中未儲存的圖示可能來自你在此處刪除的圖示庫。",
 	"iconLibraries.manage": "管理圖示庫",
 	"iconLibraries.title": "圖示庫",
 	"iconLibraries.desc": "拖曳即可變更「選擇圖示」中圖示庫的順序。\n部分圖示庫可以下載與刪除。\nLucide、Emoji 和 Material 隨外掛一併提供，因此只能隱藏。",

@@ -675,7 +675,10 @@ export const ar: Record<string, string> = {
 	"iconPack.artworkRestored": "تم تنزيل رسومات الأيقونات لـ {{names}}.",
 	"iconPack.diskWriteFailed":
 		"تعذر على Callout Studio حفظ حزمة الأيقونات على القرص، لذا ستحتاج إلى تنزيلها مرة أخرى في المرة القادمة. الأيقونات التي تختارها لا تزال محفوظة في إعداداتك.",
+	"settings.colorsAndIcons": "الألوان والأيقونات",
 	"settings.iconLibrariesDesc": "إعادة ترتيب مكتبات الأيقونات وتنزيل مكتبات إضافية.",
+	"settings.iconLibrariesEditorOpen":
+		"أنهِ العمل في محرر الـ callout أولًا. فقد تأتي أيقونته غير المحفوظة من مكتبة تحذفها هنا.",
 	"iconLibraries.manage": "إدارة مكتبات الأيقونات",
 	"iconLibraries.title": "مكتبات الأيقونات",
 	"iconLibraries.desc":

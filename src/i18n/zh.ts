@@ -715,7 +715,10 @@ export const zh: Record<string, string> = {
 	"iconPack.artworkRestored": "已下载 {{names}} 的图标图稿。",
 	"iconPack.diskWriteFailed":
 		"Callout Studio 无法将图标包保存到磁盘，下次需要重新下载。您选择的图标仍已保存在您的设置中。",
+	"settings.colorsAndIcons": "颜色和图标",
 	"settings.iconLibrariesDesc": "重新排序并下载更多图标库。",
+	"settings.iconLibrariesEditorOpen":
+		"请先完成 callout 编辑器中的操作。其中未保存的图标可能来自你在此处删除的图标库。",
 	"iconLibraries.manage": "管理图标库",
 	"iconLibraries.title": "图标库",
 	"iconLibraries.desc": "拖动以更改“选择图标”中图标库的顺序。\n部分图标库可以下载和删除。\nLucide、Emoji 和 Material 随插件一同提供，因此只能隐藏。",

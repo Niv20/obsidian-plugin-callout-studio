@@ -685,7 +685,10 @@ export const hi: Record<string, string> = {
 		"{{names}} के लिए आइकन आर्टवर्क डाउनलोड किया गया।",
 	"iconPack.diskWriteFailed":
 		"Callout Studio आइकन पैक को डिस्क पर सहेज नहीं सका, इसलिए अगली बार फिर से डाउनलोड करना होगा। आपके द्वारा चुने गए आइकन आपकी सेटिंग के साथ सहेजे गए हैं।",
+	"settings.colorsAndIcons": "रंग और आइकन",
 	"settings.iconLibrariesDesc": "आइकन लाइब्रेरी का क्रम बदलें और अतिरिक्त लाइब्रेरी डाउनलोड करें।",
+	"settings.iconLibrariesEditorOpen":
+		"पहले callout संपादक में अपना काम पूरा करें। उसका बिना सहेजा आइकन किसी ऐसी लाइब्रेरी से हो सकता है जिसे आप यहाँ हटाते हैं।",
 	"iconLibraries.manage": "आइकन लाइब्रेरी प्रबंधित करें",
 	"iconLibraries.title": "आइकन लाइब्रेरी",
 	"iconLibraries.desc":

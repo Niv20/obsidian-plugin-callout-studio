@@ -696,7 +696,10 @@ export const nl: Record<string, string> = {
 	"iconPack.artworkRestored": "De icoongrafiek voor {{names}} is gedownload.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio kon het iconpakket niet opslaan op schijf, dus moet het de volgende keer opnieuw worden gedownload. De iconen die u kiest worden nog steeds opgeslagen met uw instellingen.",
+	"settings.colorsAndIcons": "Kleuren en pictogrammen",
 	"settings.iconLibrariesDesc": "Wijzig de volgorde en download extra pictogrambibliotheken.",
+	"settings.iconLibrariesEditorOpen":
+		"Rond eerst je werk in de callout-editor af. Het niet-opgeslagen pictogram daarin kan uit een bibliotheek komen die je hier verwijdert.",
 	"iconLibraries.manage": "Pictogrambibliotheken beheren",
 	"iconLibraries.title": "Pictogrambibliotheken",
 	"iconLibraries.desc":

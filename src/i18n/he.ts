@@ -772,7 +772,10 @@ export const he: Record<string, string> = {
 	"iconPack.artworkRestored": "האייקונים של {{names}} הורדו.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio לא הצליח לשמור את חבילת האייקונים לדיסק, ולכן היא תידרש להורדה מחדש בפעם הבאה. האייקונים שבחרתם עדיין נשמרים יחד עם ההגדרות.",
+	"settings.colorsAndIcons": "צבעים ואייקונים",
 	"settings.iconLibrariesDesc": "סידור מחדש והורדה של ספריות אייקונים נוספות.",
+	"settings.iconLibrariesEditorOpen":
+		"סיימו קודם את העבודה בעורך תיבת־ההבלטה. ייתכן שהאייקון שעדיין לא נשמר בו מגיע מספרייה שתמחקו כאן.",
 	"iconLibraries.manage": "ניהול ספריות אייקונים",
 	"iconLibraries.title": "ספריות אייקונים",
 	"iconLibraries.desc":

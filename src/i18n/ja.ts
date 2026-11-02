@@ -679,7 +679,10 @@ export const ja: Record<string, string> = {
 		"{{names}}のアイコンアートワークをダウンロードしました。",
 	"iconPack.diskWriteFailed":
 		"Callout Studioはアイコンパックをディスクに保存できませんでした。次回また再ダウンロードが必要です。選んだアイコンは設定に保存されています。",
+	"settings.colorsAndIcons": "色とアイコン",
 	"settings.iconLibrariesDesc": "アイコンライブラリの並べ替えと、追加ライブラリのダウンロード。",
+	"settings.iconLibrariesEditorOpen":
+		"先に callout エディターでの作業を終えてください。未保存のアイコンが、ここで削除するライブラリのものである可能性があります。",
 	"iconLibraries.manage": "アイコンライブラリを管理",
 	"iconLibraries.title": "アイコンライブラリ",
 	"iconLibraries.desc":

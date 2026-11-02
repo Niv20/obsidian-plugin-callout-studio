@@ -737,7 +737,10 @@ export const tr: Record<string, string> = {
 	"iconPack.artworkRestored": "{{names}} için simge çizimleri indirildi.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio simge paketini diske kaydedemedi, bu nedenle bir sonraki seferde yeniden indirilmesi gerekecek. Seçtiğiniz simgeler hâlâ ayarlarınıza kaydedildi.",
+	"settings.colorsAndIcons": "Renkler ve simgeler",
 	"settings.iconLibrariesDesc": "Simge kitaplıklarını yeniden sırala ve ek kitaplıkları indir.",
+	"settings.iconLibrariesEditorOpen":
+		"Önce callout düzenleyicisindeki işinizi bitirin. Oradaki kaydedilmemiş simge, burada sildiğiniz bir kitaplıktan geliyor olabilir.",
 	"iconLibraries.manage": "Simge kitaplıklarını yönet",
 	"iconLibraries.title": "Simge kitaplıkları",
 	"iconLibraries.desc":

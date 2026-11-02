@@ -740,7 +740,10 @@ export const pt: Record<string, string> = {
 		"O artwork dos ícones para {{names}} foi descarregado.",
 	"iconPack.diskWriteFailed":
 		"O Callout Studio não conseguiu guardar o pacote de ícones no disco, pelo que precisará de ser descarregado novamente na próxima vez. Os ícones que escolher continuam guardados nas suas definições.",
+	"settings.colorsAndIcons": "Cores e ícones",
 	"settings.iconLibrariesDesc": "Reordene e baixe bibliotecas de ícones adicionais.",
+	"settings.iconLibrariesEditorOpen":
+		"Termine primeiro no editor de callout. O ícone não salvo dele pode vir de uma biblioteca que você eliminar aqui.",
 	"iconLibraries.manage": "Gerir bibliotecas de ícones",
 	"iconLibraries.title": "Bibliotecas de ícones",
 	"iconLibraries.desc":

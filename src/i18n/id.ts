@@ -687,7 +687,10 @@ export const id: Record<string, string> = {
 		"Karya seni ikon untuk {{names}} telah diunduh.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio tidak dapat menyimpan paket ikon ke disk, sehingga perlu diunduh ulang lain kali. Ikon yang Anda pilih tetap tersimpan dengan pengaturan Anda.",
+	"settings.colorsAndIcons": "Warna dan ikon",
 	"settings.iconLibrariesDesc": "Urutkan ulang dan unduh pustaka ikon tambahan.",
+	"settings.iconLibrariesEditorOpen":
+		"Selesaikan dulu pekerjaan di editor callout. Ikonnya yang belum disimpan bisa berasal dari pustaka yang Anda hapus di sini.",
 	"iconLibraries.manage": "Kelola pustaka ikon",
 	"iconLibraries.title": "Pustaka ikon",
 	"iconLibraries.desc":

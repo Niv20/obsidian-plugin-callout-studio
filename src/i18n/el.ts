@@ -707,7 +707,10 @@ export const el: Record<string, string> = {
 	"iconPack.artworkRestored": "Λήψη γραφικών εικονιδίων για {{names}}.",
 	"iconPack.diskWriteFailed":
 		"Το Callout Studio δεν μπόρεσε να αποθηκεύσει το πακέτο εικονιδίων στο δίσκο, οπότε θα χρειαστεί να γίνει λήψη ξανά την επόμενη φορά. Τα εικονίδια που επιλέγετε αποθηκεύονται στις ρυθμίσεις σας.",
+	"settings.colorsAndIcons": "Χρώματα και εικονίδια",
 	"settings.iconLibrariesDesc": "Αναδιάταξη και λήψη πρόσθετων βιβλιοθηκών εικονιδίων.",
+	"settings.iconLibrariesEditorOpen":
+		"Ολοκληρώστε πρώτα την εργασία στον επεξεργαστή callout. Το μη αποθηκευμένο εικονίδιό του μπορεί να προέρχεται από μια βιβλιοθήκη που διαγράφετε εδώ.",
 	"iconLibraries.manage": "Διαχείριση βιβλιοθηκών εικονιδίων",
 	"iconLibraries.title": "Βιβλιοθήκες εικονιδίων",
 	"iconLibraries.desc":

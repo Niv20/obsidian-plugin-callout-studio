@@ -694,7 +694,10 @@ export const de: Record<string, string> = {
 		"Die Symbol-Grafiken für {{names}} wurden heruntergeladen.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio konnte das Symbol-Paket nicht auf der Festplatte speichern; es muss beim nächsten Mal erneut heruntergeladen werden. Die ausgewählten Symbole werden weiterhin mit Ihren Einstellungen gespeichert.",
+	"settings.colorsAndIcons": "Farben und Symbole",
 	"settings.iconLibrariesDesc": "Symbolbibliotheken neu anordnen und weitere herunterladen.",
+	"settings.iconLibrariesEditorOpen":
+		"Schließe zuerst den Callout-Editor ab. Sein nicht gespeichertes Symbol könnte aus einer Bibliothek stammen, die du hier löschst.",
 	"iconLibraries.manage": "Symbolbibliotheken verwalten",
 	"iconLibraries.title": "Symbolbibliotheken",
 	"iconLibraries.desc":

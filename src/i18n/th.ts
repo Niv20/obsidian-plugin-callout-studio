@@ -731,7 +731,10 @@ export const th: Record<string, string> = {
 	"iconPack.artworkRestored": "ดาวน์โหลดงานศิลป์ไอคอนสำหรับ {{names}} แล้ว",
 	"iconPack.diskWriteFailed":
 		"Callout Studio ไม่สามารถบันทึกชุดไอคอนลงดิสก์ได้ จึงต้องดาวน์โหลดใหม่ในครั้งถัดไป ไอคอนที่คุณเลือกยังคงบันทึกไว้ในการตั้งค่า",
+	"settings.colorsAndIcons": "สีและไอคอน",
 	"settings.iconLibrariesDesc": "จัดลำดับใหม่และดาวน์โหลดคลังไอคอนเพิ่มเติม",
+	"settings.iconLibrariesEditorOpen":
+		"ทำงานในตัวแก้ไข callout ให้เสร็จก่อน ไอคอนที่ยังไม่ได้บันทึกในนั้นอาจมาจากคลังที่คุณลบตรงนี้",
 	"iconLibraries.manage": "จัดการคลังไอคอน",
 	"iconLibraries.title": "คลังไอคอน",
 	"iconLibraries.desc":

@@ -666,7 +666,10 @@ export const da: Record<string, string> = {
 	"iconPack.artworkRestored": "Downloadede ikongrafikken for {{names}}.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio kunne ikke gemme ikonpakken på disken, så den skal downloades igen næste gang. De ikoner du vælger er stadig gemt i dine indstillinger.",
+	"settings.colorsAndIcons": "Farver og ikoner",
 	"settings.iconLibrariesDesc": "Omarranger og download flere ikonbiblioteker.",
+	"settings.iconLibrariesEditorOpen":
+		"Gør først arbejdet i callout-editoren færdigt. Dens ikon, som ikke er gemt, kan komme fra et bibliotek, du sletter her.",
 	"iconLibraries.manage": "Administrer ikonbiblioteker",
 	"iconLibraries.title": "Ikonbiblioteker",
 	"iconLibraries.desc":

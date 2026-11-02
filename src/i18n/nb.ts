@@ -671,7 +671,10 @@ export const nb: Record<string, string> = {
 	"iconPack.artworkRestored": "Ikongrafikken for {{names}} ble lastet ned.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio kunne ikke lagre ikonpakken til disk, så den må lastes ned igjen neste gang. Ikonene du velger er fortsatt lagret med innstillingene dine.",
+	"settings.colorsAndIcons": "Farger og ikoner",
 	"settings.iconLibrariesDesc": "Endre rekkefølgen på ikonbibliotekene og last ned flere.",
+	"settings.iconLibrariesEditorOpen":
+		"Bli ferdig i callout-redigeringsprogrammet først. Det ulagrede ikonet der kan komme fra et bibliotek du sletter her.",
 	"iconLibraries.manage": "Administrer ikonbiblioteker",
 	"iconLibraries.title": "Ikonbiblioteker",
 	"iconLibraries.desc":
