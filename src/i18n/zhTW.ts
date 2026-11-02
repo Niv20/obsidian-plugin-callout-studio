@@ -36,8 +36,8 @@ export const zhTW: Record<string, string> = {
 	"portable.scanning": "正在讀取 Markdown 筆記…",
 	"portable.progress": "正在讀取筆記：{{done}} / {{total}}",
 	"portable.empty": "找不到可轉換的標題或行內 callout。不會進行任何變更。",
-	"portable.skipped": "{{count}} 處不完整或不支援的內容維持原樣，留待手動檢查。",
 	"portable.confirmTitle": "永久轉換此儲存庫？",
+	"portable.confirmSubtitle": "不會建立自動備份",
 	"portable.confirmBody": "轉換 {{files}} 篇筆記中的 {{count}} 處內容，並更新 {{links}} 個標題連結？\n此操作會修改原始檔案，且無法在 Callout Studio 中復原。系統不會自動建立備份。請先備份儲存庫、儲存已開啟的筆記，並暫停編輯與同步，直到轉換完成。\n如果檔案發生變更或寫入失敗，轉換將停止。已轉換的筆記會保留變更。",
 	"portable.confirmAction": "永久轉換",
 	"portable.converting": "正在轉換所選內容… 關閉此面板不會停止轉換。",
@@ -71,6 +71,7 @@ export const zhTW: Record<string, string> = {
 	"autocomplete.createNew": '建立 "{{name}}"',
 	"metadataSuggest.finish": "完成",
 	"metadataSuggest.colors": "顏色",
+	"metadataSuggest.yourWords": "你的詞",
 	"metadataSuggest.useTyped": '使用 "{{text}}"',
 	"metadataSuggest.replaces": "取代 {{word}}",
 	"metadataSuggest.themeAlso": "你的主題也會為這個詞設定樣式",
@@ -86,7 +87,7 @@ export const zhTW: Record<string, string> = {
 	"replaceModal.searchPlaceholder": "搜尋 callout",
 	"replaceModal.chooseFirstReplace": "請先選擇用來替換它的 callout。",
 	"settings.fallbackTag": "預設",
-	"settings.fallbackTagAuto": "自動預設",
+	"settings.fallbackTagAuto": "自動",
 	"settings.rescanVaultDesc": "新增筆記中用到、但尚未出現在此清單中的 callout 類型。",
 	"settings.rescanVaultHintAction": "掃描 callout",
 	"manualDiscovery.failed": "掃描結果未儲存。請確認設定檔可寫入且同步已完成，再前往「設定 → 我的 callout 類型 → 掃描 callout」重試。現有 callout 未被取代。",
@@ -94,14 +95,12 @@ export const zhTW: Record<string, string> = {
 	"settings.rescanComplete": "掃描完成：已新增 {{count}} 個新的 callout 類型。",
 	"replaceModal.titleReplace": "在 vault 中替換",
 
-	"welcome.tooltip": "關於 Callout Studio",
 	"welcome.title": "歡迎使用 Callout Studio！",
 	"welcome.tagline": "建立、設計和管理 Obsidian callout 的完整解決方案。",
 	"importBanner.message":
 		"我們注意到您正在使用 {{plugins}}。是否要匯入您的 callout？",
 	"importBanner.action": "匯入",
 	"importBanner.dismiss": "忽略",
-	"welcome.previewTitle": "查看實際效果",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio 讓您可以建立具有自訂圖示、顏色與名稱的 callout。\n\n" +
@@ -112,14 +111,16 @@ export const zhTW: Record<string, string> = {
 		"> [!{{id}}] 區塊 callout\n" +
 		"> 經典的 callout 仍使用您熟悉的語法：`> [!type]`。\n\n" +
 		"Callout Studio 還有更多功能等您發掘！[深入了解]({{repoUrl}})。\n",
+	"deleteModal.title": "刪除 callout",
 
-	"deleteModal.title": "刪除 callout「{{name}}」？",
 	"deleteModal.bodyInUse":
 		"此 callout 在 {{files}} 個檔案中出現了 {{count}} 次。",
 	"deleteModal.notesUntouched": "此操作只會刪除 callout 的定義。您的筆記不會被更動，現有的 callout 只會回退到預設樣式。",
 	"deleteModal.fallbackTarget": "它也是您的預設備用 callout，因此沒有自己樣式的 callout 將改用 {{fallback}}。",
+	"deleteModal.subtitleFallback": "「{{name}}」 · 你的預設後備樣式",
+	"convertModal.title": "轉換為純文字",
+	"convertModal.subtitle": "你的保險庫中每一個 「{{name}}」",
 	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
-	"convertModal.title": "將「{{name}}」轉為純文字？",
 	"convertModal.explain": "每一處都會變成一般文字：標題和內容保留，只移除 callout 格式。",
 	"convertModal.typeStays": "該 callout 類型本身仍保留在您的清單中。",
 	"convertModal.confirm": "轉換",
@@ -135,7 +136,6 @@ export const zhTW: Record<string, string> = {
 	"settings.builtInCallouts": "內建 callout",
 	"settings.contextMenu": "右鍵選單",
 	"settings.language": "語言",
-	"settings.languageDesc": "Callout Studio 的語言；除非你另選，否則與 Obsidian 一致。",
 	"settings.importExport": "匯入與匯出",
 	"settings.import": "匯入…",
 	"settings.export": "匯出…",
@@ -167,17 +167,16 @@ export const zhTW: Record<string, string> = {
 
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "來自您佈景主題的 callout",
-	"settings.themeCalloutsDesc": "{{theme}} 會自行繪製這些 callout，因此 Callout Studio 保持其原樣，並僅以區塊 callout 提供。",
 	"settings.themeCalloutsDefaultTheme": "您的佈景主題",
 	"settings.themeCalloutsEmpty": "{{theme}} 目前沒有為任何 callout 設定樣式。",
 	"settings.themePreviewAria":
 		"預覽「{{name}}」— 查看您的佈景主題如何繪製它",
 	"settings.builtInAllThemeStyled":
-		"{{theme}} 重新設定了每個內建 callout 的樣式，因此它們全部列在上方，Callout Studio 不會干預它們。若要設計您自己的樣式，請新增一個使用不同 ID 的 callout。",
+		"{{theme}} 為每個內建 callout 設定了樣式，因此 Callout Studio 會保持它們全部原樣。若要設計您自己的樣式，請新增一個使用不同 ID 的 callout。",
 
 	"settings.fallbackCallout": "預設備用 callout",
 	"settings.fallbackCalloutDesc":
-		"vault 中無法辨識的 callout 類型將繼承此 callout 的樣式。",
+		"未知的 callout 類型將繼承此樣式。",
 	"settings.border": "邊框",
 	"settings.borderTop": "頂部",
 	"settings.borderRight": "右側",
@@ -206,14 +205,14 @@ export const zhTW: Record<string, string> = {
 	"settings.paletteCount": "{{count}} 個調色盤",
 	"settings.paletteCountOne": "1 個調色盤",
 	"settings.editPaletteAria": "編輯調色盤 {{name}}",
-	"settings.deletePaletteConfirm":
-		"刪除調色盤「{{name}}」？\n使用其顏色的 callout 不受影響。",
+	"settings.deletePaletteTitle": "刪除調色盤",
+	"settings.deletePaletteBody":
+		"使用其顏色的 callout 不受影響。",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'在中繼資料中寫了這個名稱（"{{key}}"）的 callout 會改用同名的內建顏色。你的筆記不會改變。',
 	"settings.customCommands": "指令與快速鍵",
 	"settings.customCommandsDesc": "Callout Studio 的所有指令、它們的快速鍵，以及你自己的指令。",
 	"commandBuilder.title": "指令與快速鍵",
-	"commandBuilder.pageDesc": "點選指令旁的 ⊕，即可在 Obsidian 的快速鍵設定中為它設定快速鍵。",
 	"commandBuilder.builtIn": "內建指令",
 	"commandBuilder.toggleAria": "開啟或關閉 {{name}}",
 	"commandBuilder.hotkeyBlank": "空白",
@@ -223,8 +222,7 @@ export const zhTW: Record<string, string> = {
 	"commandBuilder.empty": "尚無自訂指令。",
 	"commandBuilder.unknownCommand": "此指令",
 	"commandBuilder.editAria": "編輯 {{name}}",
-	"commandBuilder.deleteConfirm":
-		"刪除指令 {{name}}？為其設定的快速鍵將停止作用。",
+	"commandBuilder.deleteConfirm": "指派給它的所有快速鍵都將失效。",
 	"commandBuilder.newTitle": "新增指令",
 	"commandBuilder.editTitle": "編輯指令",
 	"commandBuilder.format": "Callout 格式",
@@ -262,13 +260,16 @@ export const zhTW: Record<string, string> = {
 	"commandBuilder.roleThemeOwned":
 		"您的佈景主題提供了此 callout，因此它只有 Block 格式。",
 	"commandBuilder.commandSuspended": "主題提供此 callout 期間已暫停，此時它只有區塊格式。",
+	"commandBuilder.pausedTag": "被主題暫停",
+	"commandBuilder.missingTag": "缺少 callout",
 
 	"settings.resetAll": "重置",
 	"settings.resetAllDesc":
-		"刪除所有使用者 callout，重置內建 callout、全域樣式（邊框、字型縮放、形狀）、已儲存的調色盤、右鍵選單自訂設定和已下載的 Material SVG。",
+		"將所有設定和自訂項目還原為預設值。",
 	"settings.resetAllButton": "重置所有內容",
 	"notice.resetAllDone": "所有內容已重置為預設值。",
 	"settings.resetIntro": "花點時間，回顧一下你用 Callout Studio 打造的一切。",
+	"settings.resetSubtitleDefaults": "你的設定將恢復為預設值",
 	"settings.resetDeletes": "以下內容即將被刪除：",
 	"settings.resetRestores": "以下內容將恢復為預設值：",
 	"settings.resetItemCallouts": "{{count}} 個自訂 callout 類型",
@@ -282,9 +283,10 @@ export const zhTW: Record<string, string> = {
 	"settings.resetItemHeading": "標題 callout 設定",
 	"settings.resetItemInline": "行內 callout 設定",
 	"settings.resetItemThemeCalloutStyles": "您佈景主題的 callout 樣式",
+	"settings.resetItemAutocomplete": "自動完成與元資料設定",
 	"settings.resetItemFallback": "後備樣式",
 	"settings.resetItemIconLibraries": "圖示庫順序與已隱藏的圖示庫",
-	"settings.resetAllConfirmAfter": "別擔心：重設之前，我們會儲存目前設定的備份。你可以隨時在設定的版本歷史中還原。\n如果你使用同步服務，重設也可能傳到你的其他裝置。",
+	"settings.resetAllConfirmAfter": "別擔心：重設之前，我們會儲存目前設定的備份。你可以隨時在設定的「還原較早的版本」中還原。\n如果你使用同步服務，重設也可能傳到你的其他裝置。",
 	"settings.resetNothing": "沒有需要重置的內容：一切都已是預設值。",
 	"notice.customCommandMissingCallout": "該指令的 callout 類型已不存在。",
 	"notice.importedJSON": "已從 JSON 匯入 {{count}} 個 callout 類型。",
@@ -393,7 +395,7 @@ export const zhTW: Record<string, string> = {
 		"微風吹過樹梢。溫暖的陽光灑在寧靜的小徑上，讓景色更添生氣。",
 	"editor.loremIpsumShort":
 		"微風吹過樹梢。",
-	"editor.sampleInlineText": "這是一個嵌入在段落中的行內 [!{id}] 徽標。",
+	"editor.sampleInlineText": "這是一個嵌入在段落中的行內 [!{id}]{{title}} 徽標。",
 	"editor.previewReadOnly": "即時預覽無法編輯",
 	"noteChanges.title": "更新你的筆記？",
 	"noteChanges.leave": "保持原樣",
@@ -424,7 +426,6 @@ export const zhTW: Record<string, string> = {
 	"palette.namePlaceholder": "我的調色盤",
 	"palette.nameExists": "已存在同名的調色盤",
 	"palette.saveBlockedName": "已存在同名的調色盤。請換一個名稱再儲存。",
-	"palette.metadataName": "在 callout 中繼資料中：{{key}}",
 	"palette.metadataNameExists": '另一個調色盤在 callout 中繼資料中已寫作 "{{key}}"。請換一個名稱。',
 	"palette.metadataNameShared": "在 callout 中繼資料中：{{key}}。另一個已儲存的調色盤也有這個詞，因此只有其中一個會回應它。",
 	"palette.renameNotesChange":
@@ -433,16 +434,15 @@ export const zhTW: Record<string, string> = {
 	"palette.renameNotesChangeDesc": "筆記中的每個 |{{old}} 都會變成 |{{new}}。",
 	"palette.renameNotesFailed": "有些筆記無法更新。已更新的已儲存；其餘的仍在使用舊名稱。",
 	"palette.baseColor": "基礎顏色",
-	"palette.baseColorHint":
-		"我們會自動將背景顏色與之匹配。如果需要，您可以透過{{link}}單獨控制它。",
-	"palette.baseColorHintLink": "點擊此處",
+	"palette.colorViewAdvanced": "個別設定每種顏色",
+	"palette.colorViewSimple": "還原為單一基礎顏色",
 	"palette.advancedColors": "顏色",
-	"palette.advancedColorsHint":
-		"正在編輯{{mode}}模式的顏色 - 另一模式會自動更新。切換 Obsidian 主題以進行檢查。",
-	"palette.revertHint": "更喜歡使用單一基礎顏色？{{link}}。",
-	"palette.revertHintLink": "還原",
-	"palette.lightMode": "淺色",
-	"palette.darkMode": "深色",
+	"palette.lightModeColors": "淺色模式顏色",
+	"palette.darkModeColors": "深色模式顏色",
+	"palette.modeColorsHintLight": "這些變更僅適用於淺色模式。深色模式保留自己的顏色。\n如需編輯，請按上方的月亮按鈕。",
+	"palette.modeColorsHintDark": "這些變更僅適用於深色模式。淺色模式保留自己的顏色。\n如需編輯，請按上方的太陽按鈕。",
+	"palette.showLightMode": "顯示淺色模式",
+	"palette.showDarkMode": "顯示深色模式",
 	"palette.accentColor": "強調色",
 	"palette.backgroundColorChannel": "背景顏色",
 	"palette.textColorChannel": "文字顏色",
@@ -513,6 +513,7 @@ export const zhTW: Record<string, string> = {
 	"iconPicker.searchMaterial": "搜尋 Material 圖示",
 	"iconPicker.searchEmoji": "搜尋表情符號",
 	"iconPicker.skinTone": "膚色",
+	"iconPicker.skinToneDefault": "預設",
 	"iconPicker.allCategories": "所有分類",
 	"iconPicker.noIconSelected": "未選擇圖示",
 	"iconPicker.chooseFirst": "請先選擇一個圖示。",
@@ -702,6 +703,7 @@ export const zhTW: Record<string, string> = {
 	"iconPack.artworkRestored": "已下載 {{names}} 的圖示圖稿。",
 	"iconPack.diskWriteFailed":
 		"Callout Studio 無法將圖示包儲存至磁碟，下次需要重新下載。您選擇的圖示仍已儲存在您的設定中。",
+	"settings.iconLibrariesDesc": "重新排序並下載其他圖示庫。",
 	"iconLibraries.manage": "管理圖示庫",
 	"iconLibraries.title": "圖示庫",
 	"iconLibraries.desc": "拖曳即可變更「選擇圖示」中圖示庫的順序。\n部分圖示庫可以下載與刪除。\nLucide、Emoji 和 Material 隨外掛一併提供，因此只能隱藏。",
@@ -723,11 +725,15 @@ export const zhTW: Record<string, string> = {
 	"iconLibraries.inUse": "有 {{count}} 個 callout 使用了 {{name}} 的圖示：",
 	"iconLibraries.inUseMore": "以及另外 {{count}} 個",
 	"iconLibraries.inUseKeeps": "它們會保留自己的圖示——每個圖示的副本都已隨你的設定儲存。之後若想從 {{name}} 選擇新圖示，請重新下載。",
+	"iconLibraries.resetSubtitle": "恢復為外掛原始圖示庫",
 	"iconLibraries.resetConfirm": "這會把圖示庫還原為外掛剛安裝時的樣子：預設順序、沒有隱藏項目，也沒有任何已下載的圖示庫。以下圖示庫將被刪除：",
 	"iconLibraries.resetKeeps": "已經在使用圖示的 callout 會保留它們。之後若想從這些圖示庫選擇新圖示，請重新下載。",
 	"iconLibraries.resetButton": "重置",
 
 	// Icon licences & credits
+	"license.title": "授權",
+	"license.openSourceBeforeLink": "Callout Studio 是開源的，而且會一直如此。授權條款在",
+	"license.openSourceLink": "這裡",
 	"credits.title": "圖示授權與致謝",
 	"credits.introBeforeNotices":
 		"Callout Studio 使用開源圖示庫；請在下方查看每個庫的授權、署名與修改內容，或閱讀",
@@ -746,23 +752,44 @@ export const zhTW: Record<string, string> = {
 	"contextMenu.deleteSection": "刪除標題部分",
 	"heading.toggleFold": "切換折疊",
 	"settings.globalSettings": "Callout Studio 全域樣式選項",
-	"settings.calloutStyle": "callout 樣式",
+	"settings.calloutStyle": "全域樣式",
 	"settings.menusAndCommands": "選單和指令",
+	"settings.editorBox": "編輯器",
+	"settings.autocompleteAndMetadata": "自動完成與元資料",
+	"settings.autocompleteAndMetadataDesc": "輸入 callout 時開啟的清單，以及 | 之後的元資料。",
+	"settings.calloutAutocomplete": "callout 自動完成",
+	"settings.calloutAutocompleteDesc": "輸入 [! 時顯示 callout 清單。",
+	"settings.suggestThemeCallouts": "包含佈景主題的 callout",
+	"settings.suggestThemeCalloutsDesc": "列出你的佈景主題新增的 callout。",
+	"settings.metadataPage": "元資料",
+	"settings.metadataPageDesc": "callout 中 | 之後的顏色和詞。",
+	"settings.metadataColors": "元資料顏色",
+	"settings.metadataColorsDesc": "| 之後的顏色只會替那一個 callout 上色，例如 [!note|red]。",
+	"settings.metadataAutocomplete": "元資料自動完成",
+	"settings.metadataAutocompleteDesc": "在 callout 中輸入 | 時顯示顏色和詞的清單。",
+	"settings.suggestThemeMetadata": "包含佈景主題的詞",
+	"settings.suggestThemeMetadataDesc": "列出你的佈景主題會回應的詞。",
+	"settings.metadataWords": "你的詞",
+	"settings.metadataWordsDesc": "在 | 之後建議的詞，例如其他外掛讀取的詞。",
+	"settings.metadataWordsPlaceholder": "新增詞",
+	"settings.addMetadataWord": "新增詞",
+	"settings.metadataWordAlreadyHere": "此詞已在清單中",
+	"settings.metadataWordTooLong": "每個詞最多 {{max}} 個字元",
+	"settings.maxMetadataWords": "最多 {{max}} 個詞。刪除一個才能新增另一個。",
 	"settings.buildFailed": "Callout Studio 無法繪製其設定頁面；請重新啟動 Obsidian，如果再次發生，請回報。",
 	"settings.globalSettingsRegularDesc":
-		"調整 vault 中每個 block callout 的邊框、圓角、字型縮放和對齊方式。",
+		"邊框、圓角、字型縮放和對齊方式。",
 	"settings.globalSettingsHeadingDesc":
-		"調整 vault 中每個標題 callout 的邊框、形狀和垂直間距。",
+		"邊框、形狀和垂直間距。",
 	"settings.globalSettingsInlineDesc":
-		"調整 vault 中每個行內 callout 的邊框和形狀。",
+		"邊框和形狀。",
 	"settings.themeCalloutStyles": "使用您佈景主題的 callout 樣式",
-	"settings.themeCalloutStylesDesc": "開啟時，主題設定樣式的 callout 保持主題的外觀；關閉時，由 Callout Studio 繪製所有 callout。",
-	"settings.calloutTypeRegular": "區塊 callout",
-	"settings.calloutTypeHeading": "標題 callout",
-	"settings.calloutTypeInline": "行內 callout",
+	"settings.themeCalloutStylesDesc": "開啟時，主題設定樣式的 callout 保持主題的外觀，並且僅顯示為區塊 callout；關閉時，由 Callout Studio 繪製所有 callout。",
+	"settings.calloutTypeRegular": "區塊 callout 樣式",
+	"settings.calloutTypeHeading": "標題 callout 樣式",
+	"settings.calloutTypeInline": "行內 callout 樣式",
 	"settings.customizeMenuDesc": "為每種 callout 類型選擇並排序右鍵動作。",
 	"menuCustomize.title": "自訂右鍵選單",
-	"menuCustomize.pageDesc": "拖曳握把可移動某個動作，點選 ✕ 可將其隱藏。",
 	"menuCustomize.regular": "區塊 callout",
 	"menuCustomize.heading": "標題 callout",
 	"menuCustomize.inline": "行內 callout",
@@ -780,10 +807,10 @@ export const zhTW: Record<string, string> = {
 	"confirm.ok": "刪除",
 	"confirm.cancel": "取消",
 	"confirm.acknowledge": "我已閱讀並理解",
+	"confirm.subtitleName": "「{{name}}」",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "刪除指令",
-	"confirm.titleDeletePalette": "刪除調色盤",
 	"confirm.titleDeleteImage": "刪除圖片",
 	"confirm.titleDeleteLibrary": "刪除圖示庫",
 	"confirm.titleResetLibraries": "重置圖示庫",
@@ -793,7 +820,6 @@ export const zhTW: Record<string, string> = {
 	"vault.titlesUpdated":
 		"已更新 vault 檔案中的 {{count}} 個 callout 標題：{{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated": "已更新 vault 檔案中 {{count}} 個 callout 的摺疊標記。",
-	"vault.replaceWith": "替換為：",
 	"vault.confirmReplace": "替換",
 	"vault.replacePromptInUse":
 		"「{{name}}」在 {{files}} 個檔案中被使用了 {{count}} 次。選擇替換它的 callout：",
@@ -1017,20 +1043,14 @@ export const zhTW: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"標題長度為 {{length}} 個字元；已縮短至 {{max}}。",
 
-	"footer.prompt":
-		"有問題、錯誤或想法？歡迎告訴我！{{break}} {{issue}} 或 {{email}}。",
-	"footer.openIssue": "開啟 GitHub issue",
-	"footer.sendEmail": "寄電子郵件給我",
+	"footer.openIssue": "開啟 issue",
 	"footer.sourceCode": "原始碼",
-	"footer.contribute": "參與貢獻",
-	"footer.license": "外掛授權",
-	"footer.iconCredits": "圖示授權",
 	"settings.about": "關於",
 	"settings.version": "版本",
-	"settings.deletePaletteConfirmLinkedOne":
-		"刪除色盤「{{name}}」？\n1 個 callout 正在使用它。它會保留原有色彩，你之後可以在其編輯器的顏色列重新連結。",
-	"settings.deletePaletteConfirmLinked":
-		"刪除色盤「{{name}}」？\n{{count}} 個 callout 正在使用它。它們會保留原有色彩，你之後可以在任一編輯器的顏色列重新連結。",
+	"settings.deletePaletteBodyLinkedOne":
+		"1 個 callout 正在使用它。它會保留原有色彩，你之後可以在其編輯器的顏色列重新連結。",
+	"settings.deletePaletteBodyLinked":
+		"{{count}} 個 callout 正在使用它。它們會保留原有色彩，你之後可以在任一編輯器的顏色列重新連結。",
 	"notice.palettesMerged":
 		"已合併 {{count}} 個色彩完全相同的已儲存色彩：{{names}}。使用它們的 callout 會保留原有色彩，並已連結到保留的色彩。",
 	"editor.colorsDescDeleted":
@@ -1042,8 +1062,8 @@ export const zhTW: Record<string, string> = {
 		"這些色彩與「{{name}}」完全相同。兩個已儲存色彩不能相同——請修改一個色彩，或{{link}}。",
 	"palette.colorExistsUseLink": "使用現有色彩",
 	"locale.downloading": "正在下載翻譯…",
+	"locale.downloaded": "翻譯已下載。",
 	"locale.notDownloaded": "{{name}} 尚未下載",
-	"locale.notDownloadedDesc": "在翻譯下載完成之前，Callout Studio 會顯示英文，並在 Obsidian 啟動時重試。",
 	"locale.retry": "重試",
 	"locale.diskWriteFailed":
 		"Callout Studio 無法將翻譯儲存到磁碟，因此下次需要重新下載。",
@@ -1056,6 +1076,7 @@ export const zhTW: Record<string, string> = {
 	"notice.exportCssEnabled":
 		"此片段已在此儲存庫中啟用。Callout Studio 已經為這些 callout 設定樣式，而片段保留匯出時的樣式。",
 	"confirm.titleOverwriteSnippet": "覆寫 CSS 片段",
+	"confirm.subtitleOverwriteSnippet": "自 Callout Studio 寫入後已被編輯",
 	"confirm.overwriteSnippet":
 		"snippets 資料夾中的 CSS 片段自 Callout Studio 寫入後已變更。再次匯出會取代整個檔案。",
 	"confirm.overwriteSnippetOk": "覆寫",
@@ -1151,9 +1172,11 @@ export const zhTW: Record<string, string> = {
 	"settings.resetNotSaved": "重設已顯示，但尚未能儲存，因此你的設定檔仍保留先前的設定。請查看 Callout Studio 設定中的儲存狀態。",
 	"confirm.titleResetEverything": "重設所有內容",
 	"confirm.titleReplaceUnreadable": "取代設定檔",
+	"confirm.subtitleReplaceUnreadable": "會先儲存一份完全相同的副本",
 	"confirm.replaceUnreadable": "系統會先將目前檔案的一份精確副本儲存到外掛的備份資料夾中。隨後該檔案會被取代為此處顯示的設定，你的同步服務會將其傳送到你的其他裝置。",
 	"confirm.replaceUnreadableSalvage": "系統會先將目前檔案的一份精確副本儲存到外掛的備份資料夾中。檔案內的設定會與此處顯示的設定合併，隨後檔案會被重寫，以便每部裝置都能重新讀取它。",
 	"confirm.titleDiscardRecoveryCopy": "捨棄復原副本",
+	"confirm.subtitleDiscardRecoveryCopy": "此裝置上已暫停儲存",
 	"confirm.discardRecoveryCopy": "這部裝置的復原副本無法讀取，因此這部裝置上的儲存已暫停。系統會先將其一份精確副本儲存到外掛的備份資料夾中，隨後將其取代為此處顯示的設定。你的設定檔不會發生變化。",
 	"vault.undoRewrite": "復原",
 	"vault.undoRestored": "已復原 {{count}} 篇筆記。",
@@ -1350,7 +1373,7 @@ export const zhTW: Record<string, string> = {
 	"recovery.delete": "刪除",
 
 	// Version history
-	"saveStatus.guide.versions": "恢復儲存後，你也可以從版本歷史還原較早的版本。",
+	"saveStatus.guide.versions": "恢復儲存後，你也可以透過「還原較早的版本」回到已儲存的版本。",
 	"saveStatus.goToVersions": "前往版本歷史",
 	"versions.title": "版本歷史",
 	"versions.intro": "Callout Studio 會自動儲存設定的版本。\n舊版本會逐漸清理。\n還原版本會取代所有已同步裝置上的目前設定。",
@@ -1370,13 +1393,14 @@ export const zhTW: Record<string, string> = {
 	"versions.reason.beforeImport": "匯入之前",
 	"versions.reason.beforeRepair": "修復設定檔之前",
 	"versions.restoreTitle": "還原此版本",
-	"versions.restoreBody": "目前設定將取代為 {{when}} 的「{{name}}」（{{count}} 處差異）。\n目前設定會先儲存為一個版本，以便你隨時返回。\n接著，同步服務會將還原的設定傳送到其他裝置。",
+	"versions.subtitle": "「{{name}}」 · {{when}}",
+	"versions.restoreBody": "你目前的設定將被取代（{{count}} 處差異）。\n會先將其儲存為一個版本，以便你隨時返回。\n之後你的同步服務會把還原的設定傳送到你的其他裝置。",
 	"versions.restoreSame": "此版本與目前設定相同，無需還原。",
 	"versions.restored": "已還原 {{when}} 的「{{name}}」。",
 	"versions.backupFailed": "未還原任何內容：無法先將目前設定儲存為一個版本。請檢查可用儲存空間後重試。",
 	"versions.restoreFailed": "無法還原此版本。未做任何變更。",
 	"versions.deleteTitle": "刪除此版本",
-	"versions.deleteAvailableBody": "將永久刪除 {{when}} 的版本「{{name}}」及其所有可用副本。",
+	"versions.deleteAvailableBody": "它及其所有可用副本將被永久刪除。",
 	"versions.deleteSyncedFiles": "刪除這些檔案的操作可能會同步到你的其他裝置。這些裝置上的本機副本可能仍會保留。",
 	"versions.deleteFinal": "此操作無法復原。目前設定不會受到影響。",
 	"versions.deleted": "已刪除 {{when}} 的「{{name}}」。",
@@ -1385,10 +1409,10 @@ export const zhTW: Record<string, string> = {
 	"versions.details.difference": "與目前設定相比有 {{count}} 項差異",
 	"versions.details.differences": "與目前設定相比有 {{count}} 項差異",
 	"versions.details.comparisonUnavailable": "無法進行比較",
-	"notice.unsavedChangesKept": "此裝置上的一些變更尚未儲存，被其他裝置的較新設定取代。你的版本已事先儲存：請在 Callout Studio 設定中開啟版本歷史以還原它。",
-	"settings.versionHistory": "版本歷史",
+	"notice.unsavedChangesKept": "此裝置上的一些變更尚未儲存，被其他裝置的較新設定取代。你的版本已事先儲存：請在 Callout Studio 設定中開啟「還原較早的版本」以還原它。",
+	"settings.versionHistory": "還原較早的版本",
 	"settings.versions": "較早版本",
-	"settings.versionsDesc": "比較自動儲存的設定版本，或回到其中某一個。",
+	"settings.versionsDesc": "用已儲存的較早版本取代你目前的設定。",
 	"settings.versionsButton": "檢視版本",
 	"noteChanges.callouts": "{{count}} 個 callout",
 	"noteChanges.calloutsOne": "1 個 callout",

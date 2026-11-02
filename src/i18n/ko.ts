@@ -20,6 +20,7 @@ export const ko: Record<string, string> = {
 	"autocomplete.createNew": '만들기 "{{name}}"',
 	"metadataSuggest.finish": "완료",
 	"metadataSuggest.colors": "색상",
+	"metadataSuggest.yourWords": "내 단어",
 	"metadataSuggest.useTyped": '"{{text}}" 사용',
 	"metadataSuggest.replaces": "{{word}}을(를) 대체합니다",
 	"metadataSuggest.themeAlso": "사용 중인 테마도 이 단어를 스타일링합니다",
@@ -36,7 +37,7 @@ export const ko: Record<string, string> = {
 	"replaceModal.searchPlaceholder": "callout 검색",
 	"replaceModal.chooseFirstReplace": "먼저 대체할 callout을 선택하세요.",
 	"settings.fallbackTag": "기본값",
-	"settings.fallbackTagAuto": "자동 기본값",
+	"settings.fallbackTagAuto": "자동",
 	"settings.rescanVaultDesc": "노트에서 사용하지만 아직 이 목록에 없는 callout 유형을 추가합니다.",
 	"settings.rescanVaultHintAction": "callout 스캔",
 	"manualDiscovery.failed": "스캔 결과를 저장하지 못했습니다. 설정 파일에 쓸 수 있고 동기화가 완료되었는지 확인한 다음 설정 → 내 callout 유형 → callout 스캔에서 다시 시도하세요. 기존 callout은 교체되지 않았습니다.",
@@ -45,7 +46,6 @@ export const ko: Record<string, string> = {
 		"스캔 완료: {{count}}개의 새 callout 유형이 추가되었습니다.",
 	"replaceModal.titleReplace": "볼트에서 교체",
 
-	"welcome.tooltip": "Callout Studio 소개",
 	"welcome.title": "Callout Studio에 오신 것을 환영합니다!",
 	"welcome.tagline":
 		"Obsidian callout을 만들고, 스타일을 지정하고, 관리하기 위한 완벽한 솔루션입니다.",
@@ -53,7 +53,6 @@ export const ko: Record<string, string> = {
 		"{{plugins}}을(를) 사용 중이신 것을 확인했습니다. callout을 가져오시겠습니까?",
 	"importBanner.action": "가져오기",
 	"importBanner.dismiss": "닫기",
-	"welcome.previewTitle": "실제 동작 보기",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio를 사용하면 아이콘, 색상, 이름을 원하는 대로 지정한 callout을 만들 수 있습니다.\n\n" +
@@ -64,16 +63,18 @@ export const ko: Record<string, string> = {
 		"> [!{{id}}] 블록 callout\n" +
 		"> 기존에 사용하던 것과 동일한 문법으로 클래식 callout도 그대로 사용할 수 있습니다: `> [!type]`.\n\n" +
 		"Callout Studio에는 훨씬 더 많은 기능이 있습니다! [자세히 보기]({{repoUrl}}).\n",
+	"deleteModal.title": "callout 삭제",
 
-	"deleteModal.title": 'callout "{{name}}"을(를) 삭제하시겠습니까?',
 	"deleteModal.bodyInUse":
 		"이 callout은 {{files}}개의 파일에서 {{count}}번 나타납니다.",
 	"deleteModal.notesUntouched":
 		"callout 정의만 삭제합니다. 노트는 건드리지 않으므로 기존 callout은 기본 스타일로 돌아갈 뿐입니다.",
 	"deleteModal.fallbackTarget":
 		"이것은 기본 폴백 callout이기도 하므로, 자체 스타일이 없는 callout은 {{fallback}}(으)로 바뀝니다.",
+	"deleteModal.subtitleFallback": "“{{name}}” · 기본 대체 스타일",
+	"convertModal.title": "일반 텍스트로 변환",
+	"convertModal.subtitle": "보관함의 모든 “{{name}}”",
 	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
-	"convertModal.title": '"{{name}}"을(를) 일반 텍스트로 변환하시겠습니까?',
 	"convertModal.explain": "각각 일반 텍스트가 됩니다. 제목과 내용은 그대로 남고 callout 서식만 사라집니다.",
 	"convertModal.typeStays": "callout 유형 자체는 목록에 남습니다.",
 	"convertModal.confirm": "변환",
@@ -89,7 +90,6 @@ export const ko: Record<string, string> = {
 	"settings.builtInCallouts": "기본 제공 callout",
 	"settings.contextMenu": "컨텍스트 메뉴",
 	"settings.language": "언어",
-	"settings.languageDesc": "Callout Studio의 언어이며, 다른 언어를 고르지 않으면 Obsidian의 언어를 따릅니다.",
 	"settings.importExport": "가져오기 및 내보내기",
 	"settings.import": "가져오기…",
 	"settings.export": "내보내기…",
@@ -126,17 +126,16 @@ export const ko: Record<string, string> = {
 
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "테마에서 제공하는 callout",
-	"settings.themeCalloutsDesc": "{{theme}}이(가) 이 callout을 직접 그리므로 Callout Studio는 그대로 두고 블록 callout으로만 제공합니다.",
 	"settings.themeCalloutsDefaultTheme": "사용자의 테마",
 	"settings.themeCalloutsEmpty": "현재 {{theme}}은(는) 어떤 callout에도 스타일을 적용하지 않습니다.",
 	"settings.themePreviewAria":
 		'"{{name}}" 미리보기 — 테마가 이를 어떻게 그리는지 확인',
 	"settings.builtInAllThemeStyled":
-		"{{theme}}이(가) 모든 기본 제공 callout의 스타일을 다시 지정하므로, 모두 위에 표시되며 Callout Studio는 그대로 둡니다. 직접 디자인하려면 다른 ID로 callout을 추가하세요.",
+		"{{theme}}이(가) 모든 기본 제공 callout에 스타일을 적용하므로 Callout Studio는 모두 그대로 둡니다. 직접 디자인하려면 다른 ID로 callout을 추가하세요.",
 
 	"settings.fallbackCallout": "기본 폴백 callout",
 	"settings.fallbackCalloutDesc":
-		"볼트에서 인식되지 않는 callout 유형은 이 callout의 스타일을 상속합니다.",
+		"알 수 없는 callout 유형은 이 스타일을 상속합니다.",
 
 	"settings.border": "테두리",
 	"settings.borderTop": "위",
@@ -167,8 +166,9 @@ export const ko: Record<string, string> = {
 	"settings.paletteCount": "팔레트 {{count}}개",
 	"settings.paletteCountOne": "팔레트 1개",
 	"settings.editPaletteAria": "팔레트 {{name}} 편집",
-	"settings.deletePaletteConfirm":
-		'팔레트 "{{name}}"을(를) 삭제하시겠습니까?\n이 색상을 사용하는 callout은 영향을 받지 않습니다.',
+	"settings.deletePaletteTitle": "팔레트 삭제",
+	"settings.deletePaletteBody":
+		'이 색상을 사용하는 callout은 영향을 받지 않습니다.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'메타데이터에 이 이름("{{key}}")을 적은 callout은 대신 그 이름의 기본 제공 색상을 사용합니다. 노트는 변경되지 않습니다.',
 
@@ -176,7 +176,6 @@ export const ko: Record<string, string> = {
 	"settings.customCommandsDesc": "Callout Studio의 모든 명령과 단축키, 그리고 직접 만든 명령입니다.",
 
 	"commandBuilder.title": "명령 및 단축키",
-	"commandBuilder.pageDesc": "명령 옆의 ⊕를 눌러 Obsidian 단축키 설정에서 단축키를 지정하세요.",
 	"commandBuilder.builtIn": "기본 제공 명령어",
 	"commandBuilder.toggleAria": "{{name}} 켜기/끄기",
 	"commandBuilder.hotkeyBlank": "비어 있음",
@@ -186,8 +185,7 @@ export const ko: Record<string, string> = {
 	"commandBuilder.empty": "아직 사용자 정의 명령어가 없습니다.",
 	"commandBuilder.unknownCommand": "이 명령어",
 	"commandBuilder.editAria": "{{name}} 편집",
-	"commandBuilder.deleteConfirm":
-		"명령어 {{name}}을(를) 삭제하시겠습니까? 여기에 지정된 단축키는 더 이상 작동하지 않습니다.",
+	"commandBuilder.deleteConfirm": "할당된 단축키는 더 이상 작동하지 않습니다.",
 	"commandBuilder.newTitle": "새 명령어",
 	"commandBuilder.editTitle": "명령어 편집",
 	"commandBuilder.format": "callout 형식",
@@ -200,6 +198,8 @@ export const ko: Record<string, string> = {
 	"commandBuilder.roleThemeOwned":
 		"이 callout은 테마가 제공하므로 Block 형식만 사용할 수 있습니다.",
 	"commandBuilder.commandSuspended": "테마가 이 callout을 제공하는 동안 일시 중지됩니다. 이때 이 callout에는 블록 형식만 있습니다.",
+	"commandBuilder.pausedTag": "테마 때문에 일시 중지",
+	"commandBuilder.missingTag": "callout 없음",
 	"commandBuilder.callout": "callout 유형",
 	"commandBuilder.calloutDesc": "이 명령어가 삽입하는 callout입니다.",
 	"commandBuilder.headingLevel": "제목 수준",
@@ -228,10 +228,11 @@ export const ko: Record<string, string> = {
 
 	"settings.resetAll": "재설정",
 	"settings.resetAllDesc":
-		"모든 사용자 callout을 삭제하고, 기본 제공 callout, 전역 스타일 (테두리, 폰트 크기, 모양), 저장된 색상 팔레트, 마우스 오른쪽 버튼 메뉴 사용자 지정 및 다운로드된 Material SVG를 재설정합니다.",
+		"모든 설정과 사용자 지정을 기본값으로 복원합니다.",
 	"settings.resetAllButton": "모두 재설정",
 	"notice.resetAllDone": "모든 항목이 기본값으로 재설정되었습니다.",
 	"settings.resetIntro": "잠시 시간을 내어 Callout Studio로 만든 모든 것을 돌아보세요.",
+	"settings.resetSubtitleDefaults": "설정이 기본값으로 돌아갑니다",
 	"settings.resetDeletes": "다음 항목이 모두 삭제됩니다:",
 	"settings.resetRestores": "다음 항목은 기본값으로 돌아갑니다:",
 	"settings.resetItemCallouts": "사용자 지정 callout 유형 {{count}}개",
@@ -245,9 +246,10 @@ export const ko: Record<string, string> = {
 	"settings.resetItemHeading": "제목 callout 설정",
 	"settings.resetItemInline": "인라인 callout 설정",
 	"settings.resetItemThemeCalloutStyles": "테마의 callout 스타일",
+	"settings.resetItemAutocomplete": "자동 완성 및 메타데이터 설정",
 	"settings.resetItemFallback": "대체 스타일",
 	"settings.resetItemIconLibraries": "아이콘 라이브러리 순서 및 숨긴 라이브러리",
-	"settings.resetAllConfirmAfter": "걱정 마세요. 초기화하기 전에 현재 설정의 백업을 저장합니다. 설정의 버전 기록에서 언제든 되돌릴 수 있습니다.\n동기화 서비스를 사용하면 초기화가 다른 기기에도 전달될 수 있습니다.",
+	"settings.resetAllConfirmAfter": "걱정 마세요. 초기화하기 전에 현재 설정의 백업을 저장합니다. 설정의 이전 버전 복원에서 언제든 되돌릴 수 있습니다.\n동기화 서비스를 사용하면 초기화가 다른 기기에도 전달될 수 있습니다.",
 	"settings.resetNothing": "재설정할 항목이 없습니다. 모든 것이 이미 기본값입니다.",
 
 	"notice.customCommandMissingCallout":
@@ -362,7 +364,7 @@ export const ko: Record<string, string> = {
 		"산들바람이 나무 사이로 지나갑니다. 따뜻한 햇살이 고요한 오솔길을 비추며 풍경에 생기를 더합니다.",
 	"editor.loremIpsumShort":
 		"산들바람이 나무 사이로 지나갑니다.",
-	"editor.sampleInlineText": "다음은 단락 안에 있는 인라인 [!{id}] 필입니다.",
+	"editor.sampleInlineText": "다음은 단락 안에 있는 인라인 [!{id}]{{title}} 필입니다.",
 	"editor.previewReadOnly": "실시간 미리보기는 편집할 수 없습니다",
 	"noteChanges.title": "노트를 업데이트할까요?",
 	"noteChanges.leave": "그대로 두기",
@@ -395,7 +397,6 @@ export const ko: Record<string, string> = {
 	"palette.namePlaceholder": "내 팔레트",
 	"palette.nameExists": "이 이름의 팔레트가 이미 있습니다",
 	"palette.saveBlockedName": "이 이름의 팔레트가 이미 있습니다. 저장하려면 다른 이름을 선택하세요.",
-	"palette.metadataName": "callout 메타데이터에서: {{key}}",
 	"palette.metadataNameExists": '다른 팔레트가 이미 callout 메타데이터에 "{{key}}"(으)로 쓰여 있습니다. 다른 이름을 선택하세요.',
 	"palette.metadataNameShared": "callout 메타데이터에서: {{key}}. 저장된 다른 팔레트에도 이 단어가 있어서 둘 중 하나만 반응합니다.",
 	"palette.renameNotesChange":
@@ -404,16 +405,15 @@ export const ko: Record<string, string> = {
 	"palette.renameNotesChangeDesc": "노트의 모든 |{{old}}이(가) |{{new}}(으)로 바뀝니다.",
 	"palette.renameNotesFailed": "일부 노트를 업데이트하지 못했습니다. 업데이트된 노트는 저장되었으며, 나머지는 여전히 이전 이름을 사용합니다.",
 	"palette.baseColor": "기본 색상",
-	"palette.baseColorHint":
-		"배경색을 자동으로 이 색상에 맞춥니다. 원하시면 {{link}}하여 별도로 설정할 수 있습니다.",
-	"palette.baseColorHintLink": "여기를 클릭",
+	"palette.colorViewAdvanced": "각 색상을 개별적으로 설정",
+	"palette.colorViewSimple": "단일 기본 색상으로 되돌리기",
 	"palette.advancedColors": "색상",
-	"palette.advancedColorsHint":
-		"{{mode}} 모드의 색상을 편집 중입니다 - 다른 모드는 자동으로 업데이트됩니다. 확인하려면 Obsidian 테마를 전환하세요.",
-	"palette.revertHint": "대신 단일 기본 색상을 사용하시겠습니까? {{link}}.",
-	"palette.revertHintLink": "되돌리기",
-	"palette.lightMode": "라이트",
-	"palette.darkMode": "다크",
+	"palette.lightModeColors": "라이트 모드 색상",
+	"palette.darkModeColors": "다크 모드 색상",
+	"palette.modeColorsHintLight": "이 변경 사항은 라이트 모드에만 적용됩니다. 다크 모드는 자체 색상을 유지합니다.\n다크 모드 색상을 편집하려면 위의 달 버튼을 누르세요.",
+	"palette.modeColorsHintDark": "이 변경 사항은 다크 모드에만 적용됩니다. 라이트 모드는 자체 색상을 유지합니다.\n라이트 모드 색상을 편집하려면 위의 해 버튼을 누르세요.",
+	"palette.showLightMode": "라이트 모드 보기",
+	"palette.showDarkMode": "다크 모드 보기",
 	"palette.accentColor": "강조 색상",
 	"palette.backgroundColorChannel": "배경 색상",
 	"palette.textColorChannel": "텍스트 색상",
@@ -484,6 +484,7 @@ export const ko: Record<string, string> = {
 	"iconPicker.searchMaterial": "Material 아이콘 검색",
 	"iconPicker.searchEmoji": "이모지 검색",
 	"iconPicker.skinTone": "피부 톤",
+	"iconPicker.skinToneDefault": "기본값",
 	"iconPicker.allCategories": "모든 카테고리",
 	"iconPicker.noIconSelected": "선택된 아이콘 없음",
 	"iconPicker.chooseFirst": "먼저 아이콘을 선택하세요.",
@@ -677,6 +678,7 @@ export const ko: Record<string, string> = {
 		"{{names}}의 아이콘 아트워크를 다운로드했습니다.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio가 아이콘 팩을 디스크에 저장할 수 없어 다음에 다시 다운로드해야 합니다. 선택한 아이콘은 설정에 저장되어 있습니다.",
+	"settings.iconLibrariesDesc": "아이콘 라이브러리 순서를 바꾸고 추가 라이브러리를 다운로드합니다.",
 	"iconLibraries.manage": "아이콘 라이브러리 관리",
 	"iconLibraries.title": "아이콘 라이브러리",
 	"iconLibraries.desc":
@@ -700,12 +702,16 @@ export const ko: Record<string, string> = {
 	"iconLibraries.inUseMore": "외 {{count}}개",
 	"iconLibraries.inUseKeeps":
 		"아이콘은 그대로 유지됩니다. 각 아이콘의 사본이 설정과 함께 저장되어 있습니다. 나중에 {{name}}에서 새 아이콘을 고르려면 다시 다운로드하세요.",
+	"iconLibraries.resetSubtitle": "플러그인 원래 라이브러리로 되돌리기",
 	"iconLibraries.resetConfirm":
 		"라이브러리를 플러그인 설치 당시 상태로 되돌립니다. 기본 순서로 돌아가고, 숨긴 항목이 없어지고, 다운로드한 라이브러리는 모두 사라집니다. 다음 라이브러리가 삭제됩니다:",
 	"iconLibraries.resetKeeps": "이미 아이콘을 사용 중인 callout은 그대로 유지합니다. 나중에 이 라이브러리에서 새 아이콘을 고르려면 다시 다운로드하세요.",
 	"iconLibraries.resetButton": "재설정",
 
 	// Icon licences & credits
+	"license.title": "라이선스",
+	"license.openSourceBeforeLink": "Callout Studio는 오픈 소스이며, 앞으로도 그렇게 유지됩니다. 라이선스는 ",
+	"license.openSourceLink": "여기",
 	"credits.title": "아이콘 라이선스 및 크레딧",
 	"credits.introBeforeNotices":
 		"Callout Studio는 오픈 소스 아이콘 라이브러리를 사용합니다. 각 라이브러리의 라이선스, 저작자 표시, 수정 사항을 아래에서 확인하거나 ",
@@ -727,25 +733,46 @@ export const ko: Record<string, string> = {
 	"heading.toggleFold": "접기 전환",
 
 	"settings.globalSettings": "Callout Studio 전역 스타일 옵션",
-	"settings.calloutStyle": "callout 스타일",
+	"settings.calloutStyle": "전역 스타일",
 	"settings.menusAndCommands": "메뉴와 명령",
+	"settings.editorBox": "편집기",
+	"settings.autocompleteAndMetadata": "자동 완성 및 메타데이터",
+	"settings.autocompleteAndMetadataDesc": "callout을 입력할 때 열리는 목록과 | 뒤의 메타데이터입니다.",
+	"settings.calloutAutocomplete": "callout 자동 완성",
+	"settings.calloutAutocompleteDesc": "[!를 입력하면 callout 목록을 표시합니다.",
+	"settings.suggestThemeCallouts": "테마의 callout 포함",
+	"settings.suggestThemeCalloutsDesc": "테마가 추가하는 callout을 목록에 표시합니다.",
+	"settings.metadataPage": "메타데이터",
+	"settings.metadataPageDesc": "callout에서 | 뒤에 오는 색상과 단어입니다.",
+	"settings.metadataColors": "메타데이터 색상",
+	"settings.metadataColorsDesc": "| 뒤의 색상은 [!note|red]처럼 해당 callout 하나에만 색을 입힙니다.",
+	"settings.metadataAutocomplete": "메타데이터 자동 완성",
+	"settings.metadataAutocompleteDesc": "callout에서 |를 입력하면 색상과 단어 목록을 표시합니다.",
+	"settings.suggestThemeMetadata": "테마의 단어 포함",
+	"settings.suggestThemeMetadataDesc": "테마가 반응하는 단어를 목록에 표시합니다.",
+	"settings.metadataWords": "내 단어",
+	"settings.metadataWordsDesc": "| 뒤에 제안할 단어입니다. 다른 플러그인이 읽는 단어 등을 추가하세요.",
+	"settings.metadataWordsPlaceholder": "단어 추가",
+	"settings.addMetadataWord": "단어 추가",
+	"settings.metadataWordAlreadyHere": "이미 목록에 있는 단어입니다",
+	"settings.metadataWordTooLong": "단어는 {{max}}자 이하여야 합니다",
+	"settings.maxMetadataWords": "단어는 최대 {{max}}개입니다. 다른 단어를 추가하려면 하나를 삭제하세요.",
 	"settings.buildFailed": "Callout Studio가 설정을 표시하지 못했습니다. Obsidian을 다시 시작하고, 같은 일이 반복되면 알려 주세요.",
 	"settings.globalSettingsRegularDesc":
-		"볼트에 있는 모든 block callout의 테두리, 반지름, 폰트 크기, 정렬을 조정합니다.",
+		"테두리, 반지름, 폰트 크기, 정렬.",
 	"settings.globalSettingsHeadingDesc":
-		"볼트에 있는 모든 제목 callout의 테두리, 모양, 수직 간격을 조정합니다.",
+		"테두리, 모양, 수직 간격.",
 	"settings.globalSettingsInlineDesc":
-		"볼트에 있는 모든 인라인 callout의 테두리와 모양을 조정합니다.",
+		"테두리와 모양.",
 	"settings.themeCalloutStyles": "테마의 callout 스타일 사용",
-	"settings.themeCalloutStylesDesc": "켜면 테마가 스타일을 적용하는 callout은 테마의 모양을 유지하고, 끄면 Callout Studio가 모든 callout을 그립니다.",
+	"settings.themeCalloutStylesDesc": "켜면 테마가 스타일을 적용하는 callout은 테마의 모양을 유지하며 블록 callout으로만 표시됩니다. 끄면 Callout Studio가 모든 callout을 그립니다.",
 
-	"settings.calloutTypeRegular": "블록 callout",
-	"settings.calloutTypeHeading": "제목 callout",
-	"settings.calloutTypeInline": "인라인 callout",
+	"settings.calloutTypeRegular": "블록 callout 스타일",
+	"settings.calloutTypeHeading": "제목 callout 스타일",
+	"settings.calloutTypeInline": "인라인 callout 스타일",
 
 	"settings.customizeMenuDesc": "callout 유형별로 오른쪽 클릭 동작을 고르고 순서를 정합니다.",
 	"menuCustomize.title": "마우스 오른쪽 버튼 메뉴 사용자 지정",
-	"menuCustomize.pageDesc": "동작은 핸들을 끌어 옮기거나 ✕로 숨길 수 있습니다.",
 	"menuCustomize.regular": "블록 callout",
 	"menuCustomize.heading": "제목 callout",
 	"menuCustomize.inline": "인라인 callout",
@@ -764,10 +791,10 @@ export const ko: Record<string, string> = {
 	"confirm.ok": "삭제",
 	"confirm.cancel": "취소",
 	"confirm.acknowledge": "읽고 이해했습니다",
+	"confirm.subtitleName": "“{{name}}”",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "명령 삭제",
-	"confirm.titleDeletePalette": "팔레트 삭제",
 	"confirm.titleDeleteImage": "이미지 삭제",
 	"confirm.titleDeleteLibrary": "아이콘 라이브러리 삭제",
 	"confirm.titleResetLibraries": "아이콘 라이브러리 재설정",
@@ -779,7 +806,6 @@ export const ko: Record<string, string> = {
 	"vault.titlesUpdated":
 		"볼트 파일에서 {{count}}개의 callout 제목을 업데이트했습니다: {{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated": "볼트 파일에서 Callout {{count}}개의 접기 표시를 업데이트했습니다.",
-	"vault.replaceWith": "다음으로 교체:",
 	"vault.confirmReplace": "교체",
 	"vault.replacePromptInUse":
 		'"{{name}}"은(는) {{files}}개의 파일에서 {{count}}번 사용됩니다. 교체할 callout을 선택하세요:',
@@ -1023,20 +1049,14 @@ export const ko: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"제목이 {{length}}자입니다. {{max}}자로 줄였습니다.",
 
-	"footer.prompt":
-		"질문, 버그, 아이디어가 있나요? 언제든 들려주세요!{{break}} {{issue}} 또는 {{email}}.",
-	"footer.openIssue": "GitHub issue 열기",
-	"footer.sendEmail": "이메일 보내기",
+	"footer.openIssue": "issue 열기",
 	"footer.sourceCode": "소스 코드",
-	"footer.contribute": "기여하기",
-	"footer.license": "플러그인 라이선스",
-	"footer.iconCredits": "아이콘 라이선스",
 	"settings.about": "정보",
 	"settings.version": "버전",
-	"settings.deletePaletteConfirmLinkedOne":
-		'팔레트 "{{name}}"을 삭제할까요?\n1개의 callout이 이 팔레트를 사용합니다. 색상은 유지되며, 나중에 편집기의 색상 행에서 다시 연결할 수 있습니다.',
-	"settings.deletePaletteConfirmLinked":
-		'팔레트 "{{name}}"을 삭제할까요?\n{{count}}개의 callout이 이 팔레트를 사용합니다. 색상은 유지되며, 나중에 각 편집기의 색상 행에서 다시 연결할 수 있습니다.',
+	"settings.deletePaletteBodyLinkedOne":
+		'1개의 callout이 이 팔레트를 사용합니다. 색상은 유지되며, 나중에 편집기의 색상 행에서 다시 연결할 수 있습니다.',
+	"settings.deletePaletteBodyLinked":
+		'{{count}}개의 callout이 이 팔레트를 사용합니다. 색상은 유지되며, 나중에 각 편집기의 색상 행에서 다시 연결할 수 있습니다.',
 	"notice.palettesMerged":
 		"동일한 색상을 가진 저장된 색상 {{count}}개를 병합했습니다: {{names}}. 이를 사용하는 callout은 색상을 유지하며, 이제 남은 색상에 연결됩니다.",
 	"editor.colorsDescDeleted":
@@ -1048,8 +1068,8 @@ export const ko: Record<string, string> = {
 		'이 색상은 "{{name}}"과 동일합니다. 저장된 색상 두 개는 같을 수 없습니다. 색상을 변경하거나 {{link}}.',
 	"palette.colorExistsUseLink": "기존 색상 사용",
 	"locale.downloading": "번역 다운로드 중…",
+	"locale.downloaded": "번역을 다운로드했습니다.",
 	"locale.notDownloaded": "{{name}}이(가) 아직 다운로드되지 않았습니다",
-	"locale.notDownloadedDesc": "번역이 다운로드될 때까지 Callout Studio는 영어로 표시하며, Obsidian을 시작할 때 다시 시도합니다.",
 	"locale.retry": "다시 시도",
 	"locale.diskWriteFailed":
 		"Callout Studio가 번역을 디스크에 저장하지 못했습니다. 다음에 다시 다운로드해야 합니다.",
@@ -1062,6 +1082,7 @@ export const ko: Record<string, string> = {
 	"notice.exportCssEnabled":
 		"이 스니펫은 이 vault에서 켜져 있습니다. Callout Studio가 이미 이 callout을 스타일링하며, 스니펫은 내보낼 당시의 스타일을 유지합니다.",
 	"confirm.titleOverwriteSnippet": "CSS 스니펫 덮어쓰기",
+	"confirm.subtitleOverwriteSnippet": "Callout Studio가 작성한 뒤 편집되었습니다",
 	"confirm.overwriteSnippet":
 		"Callout Studio가 작성한 후 snippets 폴더의 CSS 스니펫이 변경되었습니다. 다시 내보내면 파일 전체를 교체합니다.",
 	"confirm.overwriteSnippetOk": "덮어쓰기",
@@ -1149,8 +1170,8 @@ export const ko: Record<string, string> = {
 	"portable.scanning": "Markdown 노트 읽는 중…",
 	"portable.progress": "노트 읽는 중: {{total}}개 중 {{done}}개",
 	"portable.empty": "변환할 수 있는 제목 또는 인라인 콜아웃이 없습니다. 아무것도 변경되지 않습니다.",
-	"portable.skipped": "불완전하거나 지원되지 않는 {{count}}개 항목은 수동 검토를 위해 변경하지 않았습니다.",
 	"portable.confirmTitle": "이 보관함을 영구적으로 변환할까요?",
+	"portable.confirmSubtitle": "자동 백업이 만들어지지 않습니다",
 	"portable.confirmBody": "노트 {{files}}개에서 {{count}}개 항목을 변환하고 제목 링크 {{links}}개를 업데이트할까요?\n원본 파일이 변경되며 Callout Studio에서 되돌릴 수 없습니다. 자동 백업은 생성되지 않습니다. 먼저 보관함을 백업하고 열린 노트를 저장한 뒤, 변환이 끝날 때까지 편집과 동기화를 일시 중지하세요.\n파일이 변경되거나 쓰기에 실패하면 변환이 중지됩니다. 이미 변환된 노트는 변경된 상태로 유지됩니다.",
 	"portable.confirmAction": "영구적으로 변환",
 	"portable.converting": "선택한 변경 사항을 변환하는 중… 이 창을 닫아도 변환은 중지되지 않습니다.",
@@ -1224,11 +1245,13 @@ export const ko: Record<string, string> = {
 		"초기화는 화면에 표시되었지만 아직 저장되지 않았으므로 설정 파일에는 여전히 이전 설정이 남아 있습니다. Callout Studio 설정에서 저장 상태를 확인하세요.",
 	"confirm.titleResetEverything": "전체 초기화",
 	"confirm.titleReplaceUnreadable": "설정 파일 교체",
+	"confirm.subtitleReplaceUnreadable": "먼저 정확한 사본이 저장됩니다",
 	"confirm.replaceUnreadable":
 		"현재 파일의 정확한 사본이 먼저 플러그인의 백업 폴더에 저장됩니다. 그 다음 파일이 여기 표시된 설정으로 교체되고, 동기화 서비스가 다른 기기로 전송합니다.",
 	"confirm.replaceUnreadableSalvage":
 		"현재 파일의 정확한 사본이 먼저 플러그인의 백업 폴더에 저장됩니다. 그 안의 설정은 여기 표시된 설정과 합쳐지고, 모든 기기에서 다시 읽을 수 있도록 파일이 다시 작성됩니다.",
 	"confirm.titleDiscardRecoveryCopy": "복구 사본 삭제",
+	"confirm.subtitleDiscardRecoveryCopy": "이 기기에서는 저장이 일시 중지되었습니다",
 	"confirm.discardRecoveryCopy":
 		"이 기기의 복구 사본을 읽을 수 없어 이 기기에서 저장이 일시 중지되었습니다. 먼저 정확한 사본이 플러그인의 백업 폴더에 저장됩니다. 그 다음 여기 표시된 설정으로 교체됩니다. 설정 파일 자체는 변경되지 않습니다.",
 	"vault.undoRewrite": "실행 취소",
@@ -1430,7 +1453,7 @@ export const ko: Record<string, string> = {
 	"recovery.delete": "삭제",
 
 	// Version history
-	"saveStatus.guide.versions": "저장이 다시 작동하면 버전 기록에서 이전 버전을 복원할 수도 있습니다.",
+	"saveStatus.guide.versions": "저장이 다시 작동하면 이전 버전 복원에서 저장된 버전으로 되돌릴 수도 있습니다.",
 	"saveStatus.goToVersions": "버전 기록으로 이동",
 	"versions.title": "버전 기록",
 	"versions.intro": "Callout Studio는 구성의 버전을 자동으로 저장합니다.\n오래된 버전은 시간이 지나면 정리됩니다.\n버전을 복원하면 동기화된 모든 기기의 현재 구성이 바뀝니다.",
@@ -1450,13 +1473,14 @@ export const ko: Record<string, string> = {
 	"versions.reason.beforeImport": "가져오기 전",
 	"versions.reason.beforeRepair": "설정 파일 복구 전",
 	"versions.restoreTitle": "이 버전 복원",
-	"versions.restoreBody": "현재 구성이 {{when}}의 “{{name}}”(차이 {{count}}개)로 바뀝니다.\n되돌아갈 수 있도록 현재 구성을 먼저 버전으로 저장합니다.\n그런 다음 동기화 서비스가 복원된 구성을 다른 기기로 보냅니다.",
+	"versions.subtitle": "“{{name}}” · {{when}}",
+	"versions.restoreBody": "현재 설정이 교체됩니다(차이 {{count}}개).\n먼저 버전으로 저장되므로 언제든 돌아갈 수 있습니다.\n그다음 동기화 서비스가 복원된 설정을 다른 기기로 보냅니다.",
 	"versions.restoreSame": "이 버전은 현재 구성과 같으므로 복원할 내용이 없습니다.",
 	"versions.restored": "{{when}}의 “{{name}}”을(를) 복원했습니다.",
 	"versions.backupFailed": "아무것도 복원되지 않았습니다. 현재 구성을 먼저 버전으로 저장하지 못했습니다. 사용 가능한 저장 공간을 확인한 후 다시 시도하세요.",
 	"versions.restoreFailed": "버전을 복원하지 못했습니다. 아무것도 변경되지 않았습니다.",
 	"versions.deleteTitle": "이 버전 삭제",
-	"versions.deleteAvailableBody": "{{when}}의 버전 “{{name}}”과 사용 가능한 모든 사본이 영구적으로 삭제됩니다.",
+	"versions.deleteAvailableBody": "이 버전과 사용 가능한 모든 사본이 영구적으로 삭제됩니다.",
 	"versions.deleteSyncedFiles": "이 파일의 삭제가 다른 기기에도 동기화될 수 있습니다. 해당 기기의 로컬 사본은 남아 있을 수 있습니다.",
 	"versions.deleteFinal": "이 작업은 되돌릴 수 없습니다. 현재 구성에는 영향을 주지 않습니다.",
 	"versions.deleted": "{{when}}의 “{{name}}”을(를) 삭제했습니다.",
@@ -1465,10 +1489,10 @@ export const ko: Record<string, string> = {
 	"versions.details.difference": "현재 설정과의 차이 {{count}}개",
 	"versions.details.differences": "현재 설정과의 차이 {{count}}개",
 	"versions.details.comparisonUnavailable": "비교를 사용할 수 없습니다",
-	"notice.unsavedChangesKept": "이 기기에서 변경한 일부 내용이 아직 저장되지 않은 상태에서 다른 기기의 최신 설정으로 바뀌었습니다. 기존 버전은 먼저 저장되었습니다. 복구하려면 Callout Studio 설정에서 버전 기록을 여세요.",
-	"settings.versionHistory": "버전 기록",
+	"notice.unsavedChangesKept": "이 기기에서 변경한 일부 내용이 아직 저장되지 않은 상태에서 다른 기기의 최신 설정으로 바뀌었습니다. 기존 버전은 먼저 저장되었습니다. 복구하려면 Callout Studio 설정에서 이전 버전 복원을 여세요.",
+	"settings.versionHistory": "이전 버전 복원",
 	"settings.versions": "이전 버전",
-	"settings.versionsDesc": "자동으로 저장된 설정 버전을 비교하거나 그중 하나로 되돌립니다.",
+	"settings.versionsDesc": "현재 설정을 저장된 이전 버전으로 바꿉니다.",
 	"settings.versionsButton": "버전 보기",
 	"noteChanges.callouts": "Callout {{count}}개",
 	"noteChanges.calloutsOne": "Callout 1개",

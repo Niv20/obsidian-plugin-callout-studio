@@ -20,6 +20,7 @@ export const ja: Record<string, string> = {
 	"autocomplete.createNew": '作成 "{{name}}"',
 	"metadataSuggest.finish": "完了",
 	"metadataSuggest.colors": "色",
+	"metadataSuggest.yourWords": "追加した語",
 	"metadataSuggest.useTyped": '"{{text}}" を使う',
 	"metadataSuggest.replaces": "{{word}} を置き換えます",
 	"metadataSuggest.themeAlso": "お使いのテーマもこの語にスタイルを適用します",
@@ -36,7 +37,7 @@ export const ja: Record<string, string> = {
 	"replaceModal.searchPlaceholder": "calloutを検索",
 	"replaceModal.chooseFirstReplace": "先に置き換え先のcalloutを選択してください。",
 	"settings.fallbackTag": "デフォルト",
-	"settings.fallbackTagAuto": "自動デフォルト",
+	"settings.fallbackTagAuto": "自動",
 	"settings.rescanVaultDesc": "ノートで使われていて、まだこの一覧にないcalloutタイプを追加します。",
 	"settings.rescanVaultHintAction": "calloutをスキャン",
 	"manualDiscovery.failed": "スキャン結果を保存できませんでした。設定ファイルに書き込めることと同期が完了していることを確認し、設定 → マイcalloutタイプ → calloutをスキャンから再試行してください。既存のcalloutは置き換えられていません。",
@@ -45,7 +46,6 @@ export const ja: Record<string, string> = {
 		"スキャン完了: {{count}}件の新しいcalloutタイプを追加しました。",
 	"replaceModal.titleReplace": "vaultで置き換え",
 
-	"welcome.tooltip": "Callout Studioについて",
 	"welcome.title": "Callout Studioへようこそ！",
 	"welcome.tagline":
 		"Obsidianのcalloutを作成、スタイル設定、管理するための総合ソリューション。",
@@ -53,7 +53,6 @@ export const ja: Record<string, string> = {
 		"{{plugins}} をお使いのようです。calloutをインポートしますか?",
 	"importBanner.action": "インポート",
 	"importBanner.dismiss": "閉じる",
-	"welcome.previewTitle": "実際の動作を見る",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studioを使えば、アイコン・色・名前をカスタマイズしたcalloutを作成できます。\n\n" +
@@ -64,16 +63,18 @@ export const ja: Record<string, string> = {
 		"> [!{{id}}] ブロック callout\n" +
 		"> 従来のcalloutも、これまでと同じ構文でそのまま使えます：`> [!type]`。\n\n" +
 		"Callout Studioにはまだまだ多くの機能があります！[詳しく見る]({{repoUrl}})。\n",
+	"deleteModal.title": "calloutを削除",
 
-	"deleteModal.title": 'callout "{{name}}" を削除しますか？',
 	"deleteModal.bodyInUse":
 		"このcalloutは{{files}}個のファイルに{{count}}回出現しています。",
 	"deleteModal.notesUntouched":
 		"calloutの定義だけを削除します。ノートには一切手を加えないため、既存のcalloutはデフォルトのスタイルに戻るだけです。",
 	"deleteModal.fallbackTarget":
 		"これはデフォルトフォールバックcalloutでもあるため、独自のスタイルを持たないcalloutは{{fallback}}に切り替わります。",
+	"deleteModal.subtitleFallback": "「{{name}}」 · 既定のフォールバックスタイル",
+	"convertModal.title": "プレーンテキストに変換",
+	"convertModal.subtitle": "Vault 内のすべての 「{{name}}」",
 	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
-	"convertModal.title": '"{{name}}" をプレーンテキストに変換しますか？',
 	"convertModal.explain": "それぞれが通常のテキストになります。タイトルと内容は残り、calloutの書式だけが外れます。",
 	"convertModal.typeStays": "calloutのタイプ自体はリストに残ります。",
 	"convertModal.confirm": "変換",
@@ -89,7 +90,6 @@ export const ja: Record<string, string> = {
 	"settings.builtInCallouts": "組み込みcallout",
 	"settings.contextMenu": "コンテキストメニュー",
 	"settings.language": "言語",
-	"settings.languageDesc": "Callout Studioの言語。別の言語を選ばない限り、Obsidianの言語になります。",
 	"settings.importExport": "インポートとエクスポート",
 	"settings.import": "インポート…",
 	"settings.export": "エクスポート…",
@@ -126,17 +126,16 @@ export const ja: Record<string, string> = {
 
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "テーマ由来のcallout",
-	"settings.themeCalloutsDesc": "{{theme}} がこれらのcalloutを描画するため、Callout Studioはそのまま残し、ブロックcalloutとしてのみ提供します。",
 	"settings.themeCalloutsDefaultTheme": "あなたのテーマ",
 	"settings.themeCalloutsEmpty": "現在、{{theme}} はどのcalloutにもスタイルを適用していません。",
 	"settings.themePreviewAria":
 		'"{{name}}"をプレビュー — テーマでの描画を確認',
 	"settings.builtInAllThemeStyled":
-		"{{theme}}はすべての組み込みcalloutのスタイルを上書きしているため、それらはすべて上に一覧表示され、Callout Studioはそのままにします。独自にデザインするには、別のIDでcalloutを追加してください。",
+		"{{theme}}はすべての組み込みcalloutにスタイルを適用しているため、Callout Studioはそれらをすべてそのままにします。独自にデザインするには、別のIDでcalloutを追加してください。",
 
 	"settings.fallbackCallout": "デフォルトフォールバックcallout",
 	"settings.fallbackCalloutDesc":
-		"vaultで認識されないcalloutタイプはこのcalloutのスタイルを継承します。",
+		"不明なcalloutタイプはこのスタイルを継承します。",
 
 	"settings.border": "ボーダー",
 	"settings.borderTop": "上",
@@ -167,8 +166,9 @@ export const ja: Record<string, string> = {
 	"settings.paletteCount": "{{count}} 個のパレット",
 	"settings.paletteCountOne": "1 個のパレット",
 	"settings.editPaletteAria": "パレット {{name}} を編集",
-	"settings.deletePaletteConfirm":
-		'パレット "{{name}}" を削除しますか？\nこの色を使用しているcalloutには影響しません。',
+	"settings.deletePaletteTitle": "パレットを削除",
+	"settings.deletePaletteBody":
+		'この色を使用しているcalloutには影響しません。',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'メタデータにこの名前 ("{{key}}") を指定している callout は、代わりにその名前の組み込みの色になります。ノートは変更されません。',
 
@@ -176,7 +176,6 @@ export const ja: Record<string, string> = {
 	"settings.customCommandsDesc": "Callout Studioのすべてのコマンドとそのショートカット、そして独自のコマンド。",
 
 	"commandBuilder.title": "コマンドとショートカット",
-	"commandBuilder.pageDesc": "コマンドの ⊕ を押すと、Obsidianのホットキー設定でそのショートカットを設定できます。",
 	"commandBuilder.builtIn": "組み込みコマンド",
 	"commandBuilder.toggleAria": "{{name}}のオン/オフを切り替え",
 	"commandBuilder.hotkeyBlank": "未設定",
@@ -186,8 +185,7 @@ export const ja: Record<string, string> = {
 	"commandBuilder.empty": "まだカスタムコマンドはありません。",
 	"commandBuilder.unknownCommand": "このコマンド",
 	"commandBuilder.editAria": "{{name}}を編集",
-	"commandBuilder.deleteConfirm":
-		"コマンド{{name}}を削除しますか？割り当てられているショートカットは機能しなくなります。",
+	"commandBuilder.deleteConfirm": "割り当てられているショートカットは使えなくなります。",
 	"commandBuilder.newTitle": "新規コマンド",
 	"commandBuilder.editTitle": "コマンドを編集",
 	"commandBuilder.format": "calloutの形式",
@@ -200,6 +198,8 @@ export const ja: Record<string, string> = {
 	"commandBuilder.roleThemeOwned":
 		"このcalloutはテーマが提供しているため、Block形式のみ使用できます。",
 	"commandBuilder.commandSuspended": "テーマがこのcalloutを提供している間は一時停止します。その間、このcalloutにはブロック形式のみがあります。",
+	"commandBuilder.pausedTag": "テーマにより一時停止",
+	"commandBuilder.missingTag": "calloutが見つかりません",
 	"commandBuilder.callout": "calloutタイプ",
 	"commandBuilder.calloutDesc": "このコマンドが挿入するcallout。",
 	"commandBuilder.headingLevel": "見出しレベル",
@@ -229,10 +229,11 @@ export const ja: Record<string, string> = {
 
 	"settings.resetAll": "リセット",
 	"settings.resetAllDesc":
-		"すべてのユーザーcalloutを削除し、組み込みcallout、グローバルスタイル（ボーダー、フォントスケール、形状）、保存済みのカラーパレット、右クリックメニューのカスタマイズ、ダウンロード済みMaterial SVGをリセットします。",
+		"すべての設定とカスタマイズを初期状態に戻します。",
 	"settings.resetAllButton": "すべてリセット",
 	"notice.resetAllDone": "すべてデフォルトにリセットされました。",
 	"settings.resetIntro": "Callout Studioで作り上げてきたものを、少しだけ振り返ってみてください。",
+	"settings.resetSubtitleDefaults": "設定が既定値に戻ります",
 	"settings.resetDeletes": "次のものがすべて削除されます:",
 	"settings.resetRestores": "次のものはデフォルトに戻ります:",
 	"settings.resetItemCallouts": "カスタムcalloutタイプ {{count}} 件",
@@ -246,9 +247,10 @@ export const ja: Record<string, string> = {
 	"settings.resetItemHeading": "見出しcalloutの設定",
 	"settings.resetItemInline": "インラインcalloutの設定",
 	"settings.resetItemThemeCalloutStyles": "テーマのcalloutスタイル",
+	"settings.resetItemAutocomplete": "オートコンプリートとメタデータの設定",
 	"settings.resetItemFallback": "フォールバックスタイル",
 	"settings.resetItemIconLibraries": "アイコンライブラリの順序と非表示のライブラリ",
-	"settings.resetAllConfirmAfter": "ご安心ください。リセットの前に、現在の設定のバックアップを保存します。設定のバージョン履歴からいつでも元に戻せます。\n同期サービスを使っている場合、リセットがほかのデバイスにも反映されることがあります。",
+	"settings.resetAllConfirmAfter": "ご安心ください。リセットの前に、現在の設定のバックアップを保存します。設定の「以前のバージョンを復元」からいつでも元に戻せます。\n同期サービスを使っている場合、リセットがほかのデバイスにも反映されることがあります。",
 	"settings.resetNothing": "リセットするものはありません。すべてすでにデフォルトです。",
 
 	"notice.customCommandMissingCallout":
@@ -361,7 +363,7 @@ export const ja: Record<string, string> = {
 		"木々の間をそよ風が吹き抜けます。暖かな日差しが静かな小道を照らし、景色に彩りを添えます。",
 	"editor.loremIpsumShort":
 		"木々の間をそよ風が吹き抜けます。",
-	"editor.sampleInlineText": "段落内にインラインの [!{id}] ピルがあります。",
+	"editor.sampleInlineText": "段落内にインラインの [!{id}]{{title}} ピルがあります。",
 	"editor.previewReadOnly": "ライブプレビューは編集できません",
 	"noteChanges.title": "ノートを更新しますか？",
 	"noteChanges.leave": "そのままにする",
@@ -394,7 +396,6 @@ export const ja: Record<string, string> = {
 	"palette.namePlaceholder": "マイパレット",
 	"palette.nameExists": "この名前のパレットはすでに存在します",
 	"palette.saveBlockedName": "この名前のパレットはすでに存在します。別の名前を選んで保存してください。",
-	"palette.metadataName": "calloutのメタデータでの表記: {{key}}",
 	"palette.metadataNameExists": '別のパレットがすでに calloutのメタデータで "{{key}}" と書かれています。別の名前を選んでください。',
 	"palette.metadataNameShared": "calloutのメタデータでの表記: {{key}}。保存済みの別のパレットにもこの語があるため、どちらか一方だけが反応します。",
 	"palette.renameNotesChange":
@@ -403,16 +404,15 @@ export const ja: Record<string, string> = {
 	"palette.renameNotesChangeDesc": "ノート内の|{{old}}がすべて|{{new}}に変わります。",
 	"palette.renameNotesFailed": "一部のノートを更新できませんでした。更新できたものは保存されています。残りは古い名前のままです。",
 	"palette.baseColor": "ベースカラー",
-	"palette.baseColorHint":
-		"背景色を自動的にこの色に合わせます。ご希望であれば、{{link}}で個別に設定することもできます。",
-	"palette.baseColorHintLink": "ここをクリック",
+	"palette.colorViewAdvanced": "色を個別に設定",
+	"palette.colorViewSimple": "単一のベースカラーに戻す",
 	"palette.advancedColors": "色",
-	"palette.advancedColorsHint":
-		"{{mode}}モードの色を編集中 - もう一方のモードは自動的に更新されます。確認するにはObsidianのテーマを切り替えてください。",
-	"palette.revertHint": "代わりに単一のベースカラーを使いますか? {{link}}。",
-	"palette.revertHintLink": "元に戻す",
-	"palette.lightMode": "ライト",
-	"palette.darkMode": "ダーク",
+	"palette.lightModeColors": "ライトモードの色",
+	"palette.darkModeColors": "ダークモードの色",
+	"palette.modeColorsHintLight": "この変更はライトモードにのみ適用されます。ダークモードは独自の色を保持します。\nダークモードの色を編集するには、上の月のボタンを押してください。",
+	"palette.modeColorsHintDark": "この変更はダークモードにのみ適用されます。ライトモードは独自の色を保持します。\nライトモードの色を編集するには、上の太陽のボタンを押してください。",
+	"palette.showLightMode": "ライトモードを表示",
+	"palette.showDarkMode": "ダークモードを表示",
 	"palette.accentColor": "アクセントカラー",
 	"palette.backgroundColorChannel": "背景色",
 	"palette.textColorChannel": "テキストの色",
@@ -483,6 +483,7 @@ export const ja: Record<string, string> = {
 	"iconPicker.searchMaterial": "Materialアイコンを検索",
 	"iconPicker.searchEmoji": "絵文字を検索",
 	"iconPicker.skinTone": "肌の色調",
+	"iconPicker.skinToneDefault": "デフォルト",
 	"iconPicker.allCategories": "すべてのカテゴリ",
 	"iconPicker.noIconSelected": "アイコンが選択されていません",
 	"iconPicker.chooseFirst": "先にアイコンを選択してください。",
@@ -678,6 +679,7 @@ export const ja: Record<string, string> = {
 		"{{names}}のアイコンアートワークをダウンロードしました。",
 	"iconPack.diskWriteFailed":
 		"Callout Studioはアイコンパックをディスクに保存できませんでした。次回また再ダウンロードが必要です。選んだアイコンは設定に保存されています。",
+	"settings.iconLibrariesDesc": "アイコンライブラリの並べ替えと、追加ライブラリのダウンロード。",
 	"iconLibraries.manage": "アイコンライブラリを管理",
 	"iconLibraries.title": "アイコンライブラリ",
 	"iconLibraries.desc":
@@ -701,6 +703,7 @@ export const ja: Record<string, string> = {
 	"iconLibraries.inUseMore": "ほか{{count}}件",
 	"iconLibraries.inUseKeeps":
 		"アイコンはそのまま残ります。各アイコンのコピーが設定とともに保存されています。後で{{name}}から新しいアイコンを選ぶには、もう一度ダウンロードしてください。",
+	"iconLibraries.resetSubtitle": "プラグイン本来のライブラリに戻します",
 	"iconLibraries.resetConfirm":
 		"ライブラリをプラグイン導入時の状態に戻します。順序は既定に戻り、非表示は解除され、ダウンロードしたライブラリはすべてなくなります。次のライブラリが削除されます:",
 	"iconLibraries.resetKeeps":
@@ -708,6 +711,9 @@ export const ja: Record<string, string> = {
 	"iconLibraries.resetButton": "リセット",
 
 	// Icon licences & credits
+	"license.title": "ライセンス",
+	"license.openSourceBeforeLink": "Callout Studio はオープンソースで、これからもそうあり続けます。ライセンスは",
+	"license.openSourceLink": "こちら",
 	"credits.title": "アイコンライセンスとクレジット",
 	"credits.introBeforeNotices":
 		"Callout Studio はオープンソースのアイコンライブラリを使用しています。各ライブラリのライセンス、帰属表示、変更点を以下で確認するか、",
@@ -729,25 +735,46 @@ export const ja: Record<string, string> = {
 	"heading.toggleFold": "折りたたみを切り替え",
 
 	"settings.globalSettings": "Callout Studioのグローバルスタイルオプション",
-	"settings.calloutStyle": "calloutのスタイル",
+	"settings.calloutStyle": "グローバルスタイル",
 	"settings.menusAndCommands": "メニューとコマンド",
+	"settings.editorBox": "エディタ",
+	"settings.autocompleteAndMetadata": "オートコンプリートとメタデータ",
+	"settings.autocompleteAndMetadataDesc": "calloutの入力中に開くリストと、|の後のメタデータです。",
+	"settings.calloutAutocomplete": "calloutのオートコンプリート",
+	"settings.calloutAutocompleteDesc": "[! と入力したときにcalloutの一覧を表示します。",
+	"settings.suggestThemeCallouts": "テーマのcalloutを含める",
+	"settings.suggestThemeCalloutsDesc": "テーマが追加するcalloutを一覧に表示します。",
+	"settings.metadataPage": "メタデータ",
+	"settings.metadataPageDesc": "callout内の|の後に置く色と語です。",
+	"settings.metadataColors": "メタデータの色",
+	"settings.metadataColorsDesc": "|の後の色は、[!note|red] のように、そのcalloutだけに色を付けます。",
+	"settings.metadataAutocomplete": "メタデータのオートコンプリート",
+	"settings.metadataAutocompleteDesc": "callout内で | と入力したときに、色と語の一覧を表示します。",
+	"settings.suggestThemeMetadata": "テーマの語を含める",
+	"settings.suggestThemeMetadataDesc": "テーマが反応する語を一覧に表示します。",
+	"settings.metadataWords": "追加した語",
+	"settings.metadataWordsDesc": "|の後に提案する語です。別のプラグインが読み取る語などを登録できます。",
+	"settings.metadataWordsPlaceholder": "語を追加",
+	"settings.addMetadataWord": "語を追加",
+	"settings.metadataWordAlreadyHere": "この語はすでに一覧にあります",
+	"settings.metadataWordTooLong": "語は{{max}}文字以内にしてください",
+	"settings.maxMetadataWords": "最大{{max}}語です。別の語を追加するには、どれか1つを削除してください。",
 	"settings.buildFailed": "Callout Studioが設定画面を表示できませんでした。Obsidianを再起動し、再び起きた場合は報告してください。",
 	"settings.globalSettingsRegularDesc":
-		"vault内のすべてのblock calloutのボーダー、半径、フォントスケール、整列を調整します。",
+		"ボーダー、半径、フォントスケール、整列。",
 	"settings.globalSettingsHeadingDesc":
-		"vault内のすべての見出しcalloutのボーダー、形状、垂直方向の間隔を調整します。",
+		"ボーダー、形状、垂直方向の間隔。",
 	"settings.globalSettingsInlineDesc":
-		"vault内のすべてのインラインcalloutのボーダーと形状を調整します。",
+		"ボーダーと形状。",
 	"settings.themeCalloutStyles": "テーマのcalloutスタイルを使う",
-	"settings.themeCalloutStylesDesc": "オンにすると、テーマがスタイルを適用するcalloutはテーマの見た目を保ち、オフにすると、Callout Studioがすべてのcalloutを描画します。",
+	"settings.themeCalloutStylesDesc": "オンにすると、テーマがスタイルを適用するcalloutはテーマの見た目を保ち、ブロックcalloutとしてのみ表示されます。オフにすると、Callout Studioがすべてのcalloutを描画します。",
 
-	"settings.calloutTypeRegular": "ブロックcallout",
-	"settings.calloutTypeHeading": "見出しcallout",
-	"settings.calloutTypeInline": "インラインcallout",
+	"settings.calloutTypeRegular": "ブロックcalloutのスタイル",
+	"settings.calloutTypeHeading": "見出しcalloutのスタイル",
+	"settings.calloutTypeInline": "インラインcalloutのスタイル",
 
 	"settings.customizeMenuDesc": "calloutタイプごとに、右クリックのアクションを選び、並べ替えます。",
 	"menuCustomize.title": "右クリックメニューをカスタマイズ",
-	"menuCustomize.pageDesc": "アクションはハンドルをドラッグして移動でき、✕ で非表示にできます。",
 	"menuCustomize.regular": "ブロックcallout",
 	"menuCustomize.heading": "見出しcallout",
 	"menuCustomize.inline": "インラインcallout",
@@ -766,10 +793,10 @@ export const ja: Record<string, string> = {
 	"confirm.ok": "削除",
 	"confirm.cancel": "キャンセル",
 	"confirm.acknowledge": "読んで理解しました",
+	"confirm.subtitleName": "「{{name}}」",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "コマンドを削除",
-	"confirm.titleDeletePalette": "パレットを削除",
 	"confirm.titleDeleteImage": "画像を削除",
 	"confirm.titleDeleteLibrary": "アイコンライブラリを削除",
 	"confirm.titleResetLibraries": "アイコンライブラリをリセット",
@@ -781,7 +808,6 @@ export const ja: Record<string, string> = {
 	"vault.titlesUpdated":
 		"vaultファイルの{{count}}件のcalloutタイトルを更新しました: {{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated": "vaultファイル内の{{count}}件のCalloutの折りたたみ記号を更新しました。",
-	"vault.replaceWith": "置き換え先:",
 	"vault.confirmReplace": "置き換え",
 	"vault.replacePromptInUse":
 		'"{{name}}"は{{files}}個のファイルで{{count}}回使用されています。置き換えるcalloutを選択してください:',
@@ -1027,20 +1053,14 @@ export const ja: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"タイトルは {{length}} 文字です。{{max}} 文字に短縮しました。",
 
-	"footer.prompt":
-		"質問、不具合、アイデアがありますか？ぜひお聞かせください！{{break}} {{issue}} または {{email}}。",
-	"footer.openIssue": "GitHub issue を開く",
-	"footer.sendEmail": "メールを送る",
+	"footer.openIssue": "issue を開く",
 	"footer.sourceCode": "ソースコード",
-	"footer.contribute": "貢献する",
-	"footer.license": "プラグインライセンス",
-	"footer.iconCredits": "アイコンライセンス",
 	"settings.about": "情報",
 	"settings.version": "バージョン",
-	"settings.deletePaletteConfirmLinkedOne":
-		"パレット「{{name}}」を削除しますか？\n1 件の callout が使用しています。色は保持され、後でエディターの色の行から再接続できます。",
-	"settings.deletePaletteConfirmLinked":
-		"パレット「{{name}}」を削除しますか？\n{{count}} 件の callout が使用しています。色は保持され、後で各エディターの色の行から再接続できます。",
+	"settings.deletePaletteBodyLinkedOne":
+		"1 件の callout が使用しています。色は保持され、後でエディターの色の行から再接続できます。",
+	"settings.deletePaletteBodyLinked":
+		"{{count}} 件の callout が使用しています。色は保持され、後で各エディターの色の行から再接続できます。",
 	"notice.palettesMerged":
 		"同一の色を持つ保存済み色 {{count}} 件を統合しました: {{names}}。それらを使用している callout は色を保持し、残った色にリンクされました。",
 	"editor.colorsDescDeleted":
@@ -1052,8 +1072,8 @@ export const ja: Record<string, string> = {
 		"これらの色は「{{name}}」と同じです。保存済みの色を 2 つ同じにすることはできません — 色を変更するか、{{link}}。",
 	"palette.colorExistsUseLink": "既存の色を使う",
 	"locale.downloading": "翻訳をダウンロード中…",
+	"locale.downloaded": "翻訳をダウンロードしました。",
 	"locale.notDownloaded": "{{name}}はまだダウンロードされていません",
-	"locale.notDownloadedDesc": "翻訳がダウンロードされるまでCallout Studioは英語で表示し、Obsidianの起動時に再試行します。",
 	"locale.retry": "再試行",
 	"locale.diskWriteFailed":
 		"Callout Studioは翻訳をディスクに保存できませんでした。次回、再度ダウンロードする必要があります。",
@@ -1066,6 +1086,7 @@ export const ja: Record<string, string> = {
 	"notice.exportCssEnabled":
 		"このスニペットはこのvaultで有効です。Callout Studioはすでにこれらのcalloutをスタイル設定しており、スニペットにはエクスポート時の状態が保存されています。",
 	"confirm.titleOverwriteSnippet": "CSSスニペットを上書き",
+	"confirm.subtitleOverwriteSnippet": "Callout Studio が書き込んだあとに編集されています",
 	"confirm.overwriteSnippet":
 		"snippetsフォルダのCSSスニペットは、Callout Studioが書き込んだ後に変更されています。再度エクスポートするとファイル全体が置き換えられます。",
 	"confirm.overwriteSnippetOk": "上書き",
@@ -1153,8 +1174,8 @@ export const ja: Record<string, string> = {
 	"portable.scanning": "Markdown ノートを読み込み中…",
 	"portable.progress": "ノートを読み込み中: {{total}} 件中 {{done}} 件",
 	"portable.empty": "変換できる見出しコールアウトやインラインコールアウトはありません。何も変更されません。",
-	"portable.skipped": "不完全または未対応の {{count}} 件は変更せず、手動確認のために残しました。",
 	"portable.confirmTitle": "この保管庫を恒久的に変換しますか？",
+	"portable.confirmSubtitle": "自動バックアップは作成されません",
 	"portable.confirmBody": "{{files}} 件のノートで {{count}} 件を変換し、{{links}} 件の見出しリンクを更新しますか？\n元のファイルが変更され、Callout Studio では元に戻せません。自動バックアップは作成されません。先に保管庫をバックアップし、開いているノートを保存して、変換が終わるまで編集と同期を一時停止してください。\nファイルが変更されたり書き込みに失敗したりすると、変換は停止します。変換済みのノートは変更されたままになります。",
 	"portable.confirmAction": "恒久的に変換",
 	"portable.converting": "選択した変更を変換中… このペインを閉じても変換は停止しません。",
@@ -1216,9 +1237,11 @@ export const ja: Record<string, string> = {
 	"settings.resetNotSaved": "リセットは表示されていますが、まだ保存できていないため、設定ファイルには依然として以前の設定一式が保持されています。Callout Studioの設定で保存状況を確認してください。",
 	"confirm.titleResetEverything": "すべてリセット",
 	"confirm.titleReplaceUnreadable": "設定ファイルを置き換える",
+	"confirm.subtitleReplaceUnreadable": "先に完全なコピーを保存します",
 	"confirm.replaceUnreadable": "現在のファイルの正確なコピーが、先にプラグインのバックアップフォルダに保存されます。その後、ファイルはここに表示されている設定一式に置き換えられ、同期サービスが他の端末に送信します。",
 	"confirm.replaceUnreadableSalvage": "現在のファイルの正確なコピーが、先にプラグインのバックアップフォルダに保存されます。その中の設定は、ここに表示されている設定一式と統合され、すべての端末が再び読み込めるようファイルが書き直されます。",
 	"confirm.titleDiscardRecoveryCopy": "復元用コピーを破棄",
+	"confirm.subtitleDiscardRecoveryCopy": "このデバイスでは保存が一時停止中です",
 	"confirm.discardRecoveryCopy": "この端末の復元用コピーが読み込めないため、この端末では保存が一時停止しています。先にその正確なコピーがプラグインのバックアップフォルダに保存されます。その後、ここに表示されている設定一式に置き換えられます。設定ファイルは変更されません。",
 	"vault.undoRewrite": "元に戻す",
 	"vault.undoRestored": "{{count}}件のノートを復元しました。",
@@ -1415,7 +1438,7 @@ export const ja: Record<string, string> = {
 	"recovery.delete": "削除",
 
 	// Version history
-	"saveStatus.guide.versions": "保存が再び機能するようになったら、バージョン履歴から以前のバージョンを復元することもできます。",
+	"saveStatus.guide.versions": "保存が再び機能するようになったら、「以前のバージョンを復元」から保存済みのバージョンに戻すこともできます。",
 	"saveStatus.goToVersions": "バージョン履歴へ移動",
 	"versions.title": "バージョン履歴",
 	"versions.intro": "Callout Studio は構成のバージョンを自動で保存します。\n古いバージョンは徐々に削除されます。\nバージョンを復元すると、同期しているすべてのデバイスの現在の構成が置き換わります。",
@@ -1435,13 +1458,14 @@ export const ja: Record<string, string> = {
 	"versions.reason.beforeImport": "インポート前",
 	"versions.reason.beforeRepair": "設定ファイルの修復前",
 	"versions.restoreTitle": "このバージョンを復元",
-	"versions.restoreBody": "現在の構成は {{when}} の「{{name}}」に置き換わります（相違点：{{count}} 件）。\n元に戻れるように、現在の構成は先にバージョンとして保存されます。\nその後、同期サービスが復元した構成を他のデバイスに送信します。",
+	"versions.subtitle": "「{{name}}」 · {{when}}",
+	"versions.restoreBody": "現在の設定は置き換えられます（差分 {{count}} 件）。\n先にバージョンとして保存されるので、あとで戻せます。\nその後、同期サービスが復元した設定を他のデバイスに送ります。",
 	"versions.restoreSame": "このバージョンは現在の構成と同じなので、復元するものはありません。",
 	"versions.restored": "{{when}} の「{{name}}」を復元しました。",
 	"versions.backupFailed": "何も復元されませんでした。現在の構成を先にバージョンとして保存できませんでした。空き容量を確認して再試行してください。",
 	"versions.restoreFailed": "バージョンを復元できませんでした。何も変更されていません。",
 	"versions.deleteTitle": "このバージョンを削除",
-	"versions.deleteAvailableBody": "{{when}} のバージョン「{{name}}」と、利用可能なすべてのコピーを完全に削除します。",
+	"versions.deleteAvailableBody": "このバージョンと利用可能なすべてのコピーが完全に削除されます。",
 	"versions.deleteSyncedFiles": "これらのファイルの削除は、他のデバイスにも同期される場合があります。それらのデバイスにあるローカルコピーは残る場合があります。",
 	"versions.deleteFinal": "この操作は取り消せません。現在の構成には影響しません。",
 	"versions.deleted": "{{when}} の「{{name}}」を削除しました。",
@@ -1450,10 +1474,10 @@ export const ja: Record<string, string> = {
 	"versions.details.difference": "現在の設定との差分 {{count}} 件",
 	"versions.details.differences": "現在の設定との差分 {{count}} 件",
 	"versions.details.comparisonUnavailable": "比較は利用できません",
-	"notice.unsavedChangesKept": "このデバイスの一部の変更はまだ保存されておらず、別のデバイスの新しい設定に置き換えられました。お使いのバージョンは先に保存されています。取り戻すには、Callout Studio の設定でバージョン履歴を開いてください。",
-	"settings.versionHistory": "バージョン履歴",
+	"notice.unsavedChangesKept": "このデバイスの一部の変更はまだ保存されておらず、別のデバイスの新しい設定に置き換えられました。お使いのバージョンは先に保存されています。取り戻すには、Callout Studio の設定で「以前のバージョンを復元」を開いてください。",
+	"settings.versionHistory": "以前のバージョンを復元",
 	"settings.versions": "以前のバージョン",
-	"settings.versionsDesc": "自動保存された設定のバージョンを比較するか、いずれかに戻します。",
+	"settings.versionsDesc": "現在の設定を、保存済みの以前のバージョンに置き換えます。",
 	"settings.versionsButton": "バージョンを表示",
 	"noteChanges.callouts": "{{count}}個のCallout",
 	"noteChanges.calloutsOne": "1個のCallout",

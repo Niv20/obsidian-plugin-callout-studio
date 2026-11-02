@@ -22,6 +22,7 @@ export const de: Record<string, string> = {
 	"autocomplete.createNew": 'Erstellen "{{name}}"',
 	"metadataSuggest.finish": "Fertig",
 	"metadataSuggest.colors": "Farben",
+	"metadataSuggest.yourWords": "Deine Wörter",
 	"metadataSuggest.useTyped": '"{{text}}" verwenden',
 	"metadataSuggest.replaces": "Ersetzt {{word}}",
 	"metadataSuggest.themeAlso": "Dein Theme formatiert dieses Wort ebenfalls",
@@ -38,7 +39,7 @@ export const de: Record<string, string> = {
 	"replaceModal.searchPlaceholder": "Callouts durchsuchen",
 	"replaceModal.chooseFirstReplace": "Wähle zuerst das Callout aus, durch das es ersetzt werden soll.",
 	"settings.fallbackTag": "Standard",
-	"settings.fallbackTagAuto": "Automatischer Standard",
+	"settings.fallbackTagAuto": "Auto",
 	"settings.rescanVaultDesc": "Fügt die Callout-Typen hinzu, die deine Notizen verwenden und die noch nicht in dieser Liste stehen.",
 	"settings.rescanVaultHintAction": "Nach Callouts suchen",
 	"manualDiscovery.failed": "Die gefundenen Callouts wurden nicht gespeichert. Prüfe, ob die Einstellungen beschreibbar sind und die Synchronisierung abgeschlossen ist. Versuche es dann erneut über Einstellungen → Meine Callout-Typen → Nach Callouts suchen. Vorhandene Callouts wurden nicht ersetzt.",
@@ -47,7 +48,6 @@ export const de: Record<string, string> = {
 		"Suche abgeschlossen: {{count}} neue(r) Callout-Typ(en) hinzugefügt.",
 	"replaceModal.titleReplace": "Im Vault ersetzen",
 
-	"welcome.tooltip": "Über Callout Studio",
 	"welcome.title": "Willkommen bei Callout Studio!",
 	"welcome.tagline":
 		"Ihre umfassende Lösung zum Erstellen, Gestalten und Verwalten von Obsidian-Callouts.",
@@ -55,7 +55,6 @@ export const de: Record<string, string> = {
 		"Wir haben bemerkt, dass Sie {{plugins}} verwenden. Möchten Sie Ihre Callouts importieren?",
 	"importBanner.action": "Importieren",
 	"importBanner.dismiss": "Verwerfen",
-	"welcome.previewTitle": "In Aktion sehen",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Mit Callout Studio können Sie Callouts mit eigenem Symbol, eigenen Farben und Namen erstellen.\n\n" +
@@ -66,16 +65,18 @@ export const de: Record<string, string> = {
 		"> [!{{id}}] Block-Callout\n" +
 		"> Der klassische Callout funktioniert mit genau der gleichen Syntax, die Sie bereits kennen: `> [!type]`.\n\n" +
 		"Callout Studio hat noch viel mehr zu bieten! [Mehr erfahren]({{repoUrl}}).\n",
+	"deleteModal.title": "Callout löschen",
 
-	"deleteModal.title": 'Callout "{{name}}" löschen?',
 	"deleteModal.bodyInUse":
 		"Dieser Callout erscheint {{count}} Mal in {{files}} Datei(en).",
 	"deleteModal.notesUntouched":
 		"Dadurch wird nur die Callout-Definition gelöscht. Ihre Notizen bleiben unverändert, vorhandene Callouts fallen also einfach auf den Standardstil zurück.",
 	"deleteModal.fallbackTarget":
 		"Er ist außerdem Ihr Standard-Fallback-Callout, daher wechseln Callouts ohne eigenen Stil zu {{fallback}}.",
+	"deleteModal.subtitleFallback": "„{{name}}“ · dein Standard-Ersatzstil",
+	"convertModal.title": "In normalen Text umwandeln",
+	"convertModal.subtitle": "Jedes „{{name}}“ in deinem Vault",
 	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
-	"convertModal.title": '"{{name}}" in einfachen Text umwandeln?',
 	"convertModal.explain":
 		"Jeder davon wird zu normalem Text: Titel und Inhalt bleiben erhalten, nur die Callout-Formatierung entfällt.",
 	"convertModal.typeStays": "Der Callout-Typ selbst bleibt in Ihrer Liste.",
@@ -91,7 +92,6 @@ export const de: Record<string, string> = {
 	"settings.builtInCallouts": "Integrierte Callouts",
 	"settings.contextMenu": "Kontextmenü",
 	"settings.language": "Sprache",
-	"settings.languageDesc": "Sprache von Callout Studio – die von Obsidian, sofern du keine andere wählst.",
 	"settings.importExport": "Importieren und Exportieren",
 	"settings.import": "Importieren…",
 	"settings.export": "Exportieren…",
@@ -126,17 +126,16 @@ export const de: Record<string, string> = {
 	"settings.colorSwatchAria": "Akzent: {{accent}} · Hintergrund: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts aus Ihrem Theme",
-	"settings.themeCalloutsDesc": "{{theme}} gestaltet diese Callouts, daher lässt Callout Studio sie unverändert und bietet sie nur als Block-Callouts an.",
 	"settings.themeCalloutsDefaultTheme": "Ihr Theme",
 	"settings.themeCalloutsEmpty": "{{theme}} gestaltet derzeit keine Callouts.",
 	"settings.themePreviewAria":
 		'"{{name}}" ansehen — wie Ihr Theme sie zeichnet',
 	"settings.builtInAllThemeStyled":
-		"{{theme}} gestaltet alle integrierten Callouts neu, daher sind sie alle oben aufgeführt, und Callout Studio lässt sie unangetastet. Um einen eigenen zu entwerfen, fügen Sie einen Callout mit einer anderen ID hinzu.",
+		"{{theme}} gestaltet alle integrierten Callouts, daher lässt Callout Studio sie alle unverändert. Um einen eigenen zu entwerfen, fügen Sie einen Callout mit einer anderen ID hinzu.",
 
 	"settings.fallbackCallout": "Standard-Fallback-Callout",
 	"settings.fallbackCalloutDesc":
-		"Unbekannte Callout-Typen im Vault übernehmen den Stil dieses Callouts.",
+		"Unbekannte Callout-Typen übernehmen diesen Stil.",
 
 	"settings.border": "Rahmen",
 	"settings.borderTop": "Oben",
@@ -167,8 +166,9 @@ export const de: Record<string, string> = {
 	"settings.paletteCount": "{{count}} Paletten",
 	"settings.paletteCountOne": "1 Palette",
 	"settings.editPaletteAria": "Palette {{name}} bearbeiten",
-	"settings.deletePaletteConfirm":
-		'Palette "{{name}}" löschen?\nCallouts, die ihre Farben verwenden, sind davon nicht betroffen.',
+	"settings.deletePaletteTitle": "Palette löschen",
+	"settings.deletePaletteBody":
+		'Callouts, die ihre Farben verwenden, sind davon nicht betroffen.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callouts, die sie in ihren Metadaten nennen ("{{key}}"), übernehmen stattdessen die eingebaute Farbe dieses Namens. Deine Notizen werden nicht verändert.',
 
@@ -176,7 +176,6 @@ export const de: Record<string, string> = {
 	"settings.customCommandsDesc": "Alle Befehle von Callout Studio, ihre Tastenkürzel und eigene Befehle.",
 
 	"commandBuilder.title": "Befehle und Tastaturkürzel",
-	"commandBuilder.pageDesc": "Klicke bei einem Befehl auf ⊕, um sein Tastenkürzel in den Hotkey-Einstellungen von Obsidian festzulegen.",
 	"commandBuilder.builtIn": "Integrierte Befehle",
 	"commandBuilder.toggleAria": "{{name}} ein- oder ausschalten",
 	"commandBuilder.hotkeyBlank": "Leer",
@@ -186,8 +185,7 @@ export const de: Record<string, string> = {
 	"commandBuilder.empty": "Noch keine eigenen Befehle.",
 	"commandBuilder.unknownCommand": "diesen Befehl",
 	"commandBuilder.editAria": "{{name}} bearbeiten",
-	"commandBuilder.deleteConfirm":
-		"Befehl {{name}} löschen? Ein zugewiesenes Kürzel funktioniert dann nicht mehr.",
+	"commandBuilder.deleteConfirm": "Jede ihr zugewiesene Tastenkombination funktioniert nicht mehr.",
 	"commandBuilder.newTitle": "Neuer Befehl",
 	"commandBuilder.editTitle": "Befehl bearbeiten",
 	"commandBuilder.format": "Callout-Format",
@@ -227,13 +225,16 @@ export const de: Record<string, string> = {
 	"commandBuilder.roleThemeOwned":
 		"Ihr Theme liefert diesen Callout, daher hat er nur ein Block-Format.",
 	"commandBuilder.commandSuspended": "Pausiert, solange dein Theme diesen Callout liefert; er hat dann nur das Block-Format.",
+	"commandBuilder.pausedTag": "Vom Theme pausiert",
+	"commandBuilder.missingTag": "Callout fehlt",
 
 	"settings.resetAll": "Zurücksetzen",
 	"settings.resetAllDesc":
-		"Löscht alle Benutzer-Callouts, setzt integrierte Callouts, globale Stile (Rahmen, Schriftskalierung, Form), gespeicherte Farbpaletten, die Anpassung des Rechtsklickmenüs und heruntergeladene Material-SVGs zurück.",
+		"Setzt alle Einstellungen und Anpassungen auf die Standardwerte zurück.",
 	"settings.resetAllButton": "Alles zurücksetzen",
 	"notice.resetAllDone": "Alles wurde auf die Standardwerte zurückgesetzt.",
 	"settings.resetIntro": "Nimm dir einen Moment, um zu würdigen, was du mit Callout Studio aufgebaut hast.",
+	"settings.resetSubtitleDefaults": "Deine Einstellungen werden auf die Standardwerte zurückgesetzt",
 	"settings.resetDeletes": "All das wird gleich gelöscht:",
 	"settings.resetRestores": "Das wird auf die Standardwerte zurückgesetzt:",
 	"settings.resetItemCallouts": "{{count}} benutzerdefinierte(r) Callout-Typ(en)",
@@ -247,9 +248,10 @@ export const de: Record<string, string> = {
 	"settings.resetItemHeading": "Einstellungen für Überschrift-Callouts",
 	"settings.resetItemInline": "Einstellungen für Inline-Callouts",
 	"settings.resetItemThemeCalloutStyles": "Callout-Stile Ihres Themes",
+	"settings.resetItemAutocomplete": "Einstellungen für Autovervollständigung und Metadaten",
 	"settings.resetItemFallback": "Ausweichstil",
 	"settings.resetItemIconLibraries": "Reihenfolge der Symbolbibliotheken und ausgeblendete Bibliotheken",
-	"settings.resetAllConfirmAfter": "Keine Sorge: Vor dem Zurücksetzen sichern wir deine aktuelle Einrichtung. Du kannst sie jederzeit über den Versionsverlauf in den Einstellungen wiederherstellen.\nWenn du einen Synchronisierungsdienst nutzt, kann das Zurücksetzen auch auf deine anderen Geräte übergreifen.",
+	"settings.resetAllConfirmAfter": "Keine Sorge: Vor dem Zurücksetzen sichern wir deine aktuelle Einrichtung. Du kannst sie jederzeit mit Frühere Version wiederherstellen in den Einstellungen zurückholen.\nWenn du einen Synchronisierungsdienst nutzt, kann das Zurücksetzen auch auf deine anderen Geräte übergreifen.",
 	"settings.resetNothing": "Nichts zurückzusetzen: Alles ist bereits auf den Standardwerten.",
 
 	"notice.customCommandMissingCallout":
@@ -372,7 +374,7 @@ export const de: Record<string, string> = {
 	"editor.loremIpsumShort":
 		"Eine sanfte Brise streicht durch die Bäume.",
 	"editor.sampleInlineText":
-		"Hier ist eine eingebettete [!{id}] Pille innerhalb eines Absatzes.",
+		"Hier ist eine eingebettete [!{id}]{{title}} Pille innerhalb eines Absatzes.",
 	"editor.previewReadOnly": "Die Live-Vorschau kann nicht bearbeitet werden",
 	"noteChanges.title": "Notizen aktualisieren?",
 	"noteChanges.leave": "Unverändert lassen",
@@ -405,7 +407,6 @@ export const de: Record<string, string> = {
 	"palette.namePlaceholder": "Meine Palette",
 	"palette.nameExists": "Es gibt bereits eine Palette mit diesem Namen",
 	"palette.saveBlockedName": "Es gibt bereits eine Palette mit diesem Namen. Wähle einen anderen Namen, um sie zu speichern.",
-	"palette.metadataName": "In den Callout-Metadaten: {{key}}",
 	"palette.metadataNameExists":
 		'Eine andere Palette ist in den Callout-Metadaten bereits als "{{key}}" geschrieben. Wähle einen anderen Namen.',
 	"palette.metadataNameShared":
@@ -417,17 +418,15 @@ export const de: Record<string, string> = {
 	"palette.renameNotesFailed":
 		"Einige Notizen konnten nicht aktualisiert werden. Die aktualisierten sind gespeichert; die übrigen verwenden noch den alten Namen.",
 	"palette.baseColor": "Basisfarbe",
-	"palette.baseColorHint":
-		"Wir passen die Hintergrundfarbe automatisch daran an. Wenn du möchtest, kannst du sie separat steuern, indem du {{link}}.",
-	"palette.baseColorHintLink": "hier klickst",
+	"palette.colorViewAdvanced": "Jede Farbe einzeln festlegen",
+	"palette.colorViewSimple": "Zurück zu einer einzigen Basisfarbe",
 	"palette.advancedColors": "Farben",
-	"palette.advancedColorsHint":
-		"Bearbeiten der Farben für den {{mode}}-Modus – der andere Modus wird automatisch aktualisiert. Wechsle das Obsidian-Theme, um es zu überprüfen.",
-	"palette.revertHint":
-		"Bevorzugst du stattdessen eine einzelne Basisfarbe? {{link}}.",
-	"palette.revertHintLink": "Zurücksetzen",
-	"palette.lightMode": "Hell",
-	"palette.darkMode": "Dunkel",
+	"palette.lightModeColors": "Farben im hellen Modus",
+	"palette.darkModeColors": "Farben im dunklen Modus",
+	"palette.modeColorsHintLight": "Diese Änderungen gelten nur für den hellen Modus. Der dunkle Modus behält seine eigenen Farben.\nUm sie zu bearbeiten, klicke oben auf die Mond-Schaltfläche.",
+	"palette.modeColorsHintDark": "Diese Änderungen gelten nur für den dunklen Modus. Der helle Modus behält seine eigenen Farben.\nUm sie zu bearbeiten, klicke oben auf die Sonnen-Schaltfläche.",
+	"palette.showLightMode": "Hellen Modus anzeigen",
+	"palette.showDarkMode": "Dunklen Modus anzeigen",
 	"palette.accentColor": "Akzentfarbe",
 	"palette.backgroundColorChannel": "Hintergrundfarbe",
 	"palette.textColorChannel": "Textfarbe",
@@ -498,6 +497,7 @@ export const de: Record<string, string> = {
 	"iconPicker.searchMaterial": "Material-Symbole suchen",
 	"iconPicker.searchEmoji": "Emojis suchen",
 	"iconPicker.skinTone": "Hautton",
+	"iconPicker.skinToneDefault": "Standard",
 	"iconPicker.allCategories": "Alle Kategorien",
 	"iconPicker.noIconSelected": "Kein Symbol ausgewählt",
 	"iconPicker.chooseFirst": "Wähle zuerst ein Symbol aus.",
@@ -694,6 +694,7 @@ export const de: Record<string, string> = {
 		"Die Symbol-Grafiken für {{names}} wurden heruntergeladen.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio konnte das Symbol-Paket nicht auf der Festplatte speichern; es muss beim nächsten Mal erneut heruntergeladen werden. Die ausgewählten Symbole werden weiterhin mit Ihren Einstellungen gespeichert.",
+	"settings.iconLibrariesDesc": "Symbolbibliotheken neu anordnen und weitere herunterladen.",
 	"iconLibraries.manage": "Symbolbibliotheken verwalten",
 	"iconLibraries.title": "Symbolbibliotheken",
 	"iconLibraries.desc":
@@ -717,6 +718,7 @@ export const de: Record<string, string> = {
 	"iconLibraries.inUseMore": "und {{count}} weitere",
 	"iconLibraries.inUseKeeps":
 		"Sie behalten ihre Symbole — eine Kopie jedes Symbols wird mit deinen Einstellungen gespeichert. Um später neue Symbole aus {{name}} auszuwählen, lade die Bibliothek erneut herunter.",
+	"iconLibraries.resetSubtitle": "Zurück zu den ursprünglichen Bibliotheken des Plugins",
 	"iconLibraries.resetConfirm":
 		"Damit werden die Bibliotheken in den Zustand zurückversetzt, in dem das Plugin geliefert wurde: Standardreihenfolge, nichts ausgeblendet und keine heruntergeladenen Bibliotheken. Diese werden gelöscht:",
 	"iconLibraries.resetKeeps":
@@ -724,6 +726,9 @@ export const de: Record<string, string> = {
 	"iconLibraries.resetButton": "Zurücksetzen",
 
 	// Icon licences & credits
+	"license.title": "Lizenz",
+	"license.openSourceBeforeLink": "Callout Studio ist Open Source und bleibt es auch. Die Lizenz findest du ",
+	"license.openSourceLink": "hier",
 	"credits.title": "Symbol-Lizenzen und Quellenangaben",
 	"credits.introBeforeNotices":
 		"Callout Studio verwendet Open-Source-Icon-Bibliotheken; sieh dir unten die Lizenz, Namensnennung und Änderungen jeder Bibliothek an oder lies die ",
@@ -743,23 +748,44 @@ export const de: Record<string, string> = {
 	"contextMenu.deleteSection": "Überschriftsabschnitt löschen",
 	"heading.toggleFold": "Faltung umschalten",
 	"settings.globalSettings": "Globale Callout Studio-Stiloptionen",
-	"settings.calloutStyle": "Callout-Stil",
+	"settings.calloutStyle": "Globaler Stil",
 	"settings.menusAndCommands": "Menüs und Befehle",
+	"settings.editorBox": "Editor",
+	"settings.autocompleteAndMetadata": "Autovervollständigung und Metadaten",
+	"settings.autocompleteAndMetadataDesc": "Listen, die sich beim Tippen eines Callouts öffnen, und Metadaten nach |.",
+	"settings.calloutAutocomplete": "Callout-Autovervollständigung",
+	"settings.calloutAutocompleteDesc": "Zeigt eine Liste von Callouts, wenn du [! tippst.",
+	"settings.suggestThemeCallouts": "Callouts deines Themes einbeziehen",
+	"settings.suggestThemeCalloutsDesc": "Zeigt die Callouts, die dein Theme hinzufügt.",
+	"settings.metadataPage": "Metadaten",
+	"settings.metadataPageDesc": "Farben und Wörter nach | in einem Callout.",
+	"settings.metadataColors": "Metadaten-Farben",
+	"settings.metadataColorsDesc": "Eine Farbe nach | färbt nur dieses eine Callout, wie in [!note|red].",
+	"settings.metadataAutocomplete": "Metadaten-Autovervollständigung",
+	"settings.metadataAutocompleteDesc": "Zeigt eine Liste von Farben und Wörtern, wenn du in einem Callout | tippst.",
+	"settings.suggestThemeMetadata": "Wörter deines Themes einbeziehen",
+	"settings.suggestThemeMetadataDesc": "Zeigt die Wörter, auf die dein Theme reagiert.",
+	"settings.metadataWords": "Deine Wörter",
+	"settings.metadataWordsDesc": "Wörter, die nach | vorgeschlagen werden, etwa solche, die ein anderes Plugin liest.",
+	"settings.metadataWordsPlaceholder": "Wort hinzufügen",
+	"settings.addMetadataWord": "Wort hinzufügen",
+	"settings.metadataWordAlreadyHere": "Dieses Wort steht schon in der Liste",
+	"settings.metadataWordTooLong": "Ein Wort darf höchstens {{max}} Zeichen lang sein",
+	"settings.maxMetadataWords": "Höchstens {{max}} Wörter. Lösche eines, um ein weiteres hinzuzufügen.",
 	"settings.buildFailed": "Callout Studio konnte seine Einstellungen nicht darstellen; starte Obsidian neu und melde es, falls es wieder passiert.",
 	"settings.globalSettingsRegularDesc":
-		"Passen Sie Rahmen, Radius, Schriftskalierung und Ausrichtung jedes Block-Callouts in Ihrem Tresor an.",
+		"Rahmen, Radius, Schriftskalierung und Ausrichtung.",
 	"settings.globalSettingsHeadingDesc":
-		"Passen Sie Rahmen, Form und vertikalen Abstand jedes Überschriften-Callouts in Ihrem Tresor an.",
+		"Rahmen, Form und vertikaler Abstand.",
 	"settings.globalSettingsInlineDesc":
-		"Passen Sie Rahmen und Form jedes Inline-Callouts in Ihrem Tresor an.",
+		"Rahmen und Form.",
 	"settings.themeCalloutStyles": "Callout-Stile Ihres Themes verwenden",
-	"settings.themeCalloutStylesDesc": "Wenn aktiviert, behalten die Callouts, die dein Theme gestaltet, dessen Aussehen; wenn deaktiviert, zeichnet Callout Studio alle Callouts.",
-	"settings.calloutTypeRegular": "Block-Callout",
-	"settings.calloutTypeHeading": "Überschrift-Callout",
-	"settings.calloutTypeInline": "Inline-Callout",
+	"settings.themeCalloutStylesDesc": "Wenn aktiviert, behalten die Callouts, die dein Theme gestaltet, dessen Aussehen und erscheinen nur als Block-Callouts. Wenn deaktiviert, zeichnet Callout Studio alle Callouts.",
+	"settings.calloutTypeRegular": "Stil für Block-Callouts",
+	"settings.calloutTypeHeading": "Stil für Überschrift-Callouts",
+	"settings.calloutTypeInline": "Stil für Inline-Callouts",
 	"settings.customizeMenuDesc": "Wähle die Rechtsklick-Aktionen für jeden Callout-Typ aus und ordne sie.",
 	"menuCustomize.title": "Rechtsklickmenü anpassen",
-	"menuCustomize.pageDesc": "Ziehe eine Aktion am Griff, um sie zu verschieben, oder blende sie mit ✕ aus.",
 	"menuCustomize.regular": "Block-Callout",
 	"menuCustomize.heading": "Überschrift-Callout",
 	"menuCustomize.inline": "Inline-Callout",
@@ -779,10 +805,10 @@ export const de: Record<string, string> = {
 	"confirm.ok": "Löschen",
 	"confirm.cancel": "Abbrechen",
 	"confirm.acknowledge": "Ich habe es gelesen und verstanden",
+	"confirm.subtitleName": "„{{name}}“",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Befehl löschen",
-	"confirm.titleDeletePalette": "Palette löschen",
 	"confirm.titleDeleteImage": "Bild löschen",
 	"confirm.titleDeleteLibrary": "Symbolbibliothek löschen",
 	"confirm.titleResetLibraries": "Symbolbibliotheken zurücksetzen",
@@ -795,7 +821,6 @@ export const de: Record<string, string> = {
 		"{{count}} Callout-Titel in Vault-Dateien aktualisiert: {{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated":
 		"Einklappmarkierung von {{count}} Callout(s) in Vault-Dateien aktualisiert.",
-	"vault.replaceWith": "Ersetzen durch:",
 	"vault.confirmReplace": "Ersetzen",
 	"vault.replacePromptInUse":
 		'"{{name}}" wird {{count}} Mal in {{files}} Datei(en) verwendet. Wählen Sie einen Callout, durch den er ersetzt werden soll:',
@@ -873,8 +898,8 @@ export const de: Record<string, string> = {
 	"portable.scanning": "Markdown-Notizen werden gelesen…",
 	"portable.progress": "Notizen werden gelesen: {{done}} von {{total}}",
 	"portable.empty": "Keine geeigneten Überschriften- oder Inline-Callouts gefunden. Es wird nichts geändert.",
-	"portable.skipped": "{{count}} unvollständige oder nicht unterstützte Vorkommen wurden zur manuellen Prüfung unverändert gelassen.",
 	"portable.confirmTitle": "Diesen Vault dauerhaft konvertieren?",
+	"portable.confirmSubtitle": "Es wird kein automatisches Backup erstellt",
 	"portable.confirmBody": "{{count}} Vorkommen konvertieren und {{links}} Überschriftenlinks in {{files}} Notizen aktualisieren?\nDies ändert die ursprünglichen Dateien und kann in Callout Studio nicht rückgängig gemacht werden. Es wird keine automatische Sicherung erstellt. Sichere zuerst deinen Vault, speichere offene Notizen und pausiere Bearbeitung und Synchronisierung, bis die Konvertierung abgeschlossen ist.\nWenn sich eine Datei ändert oder ein Schreibvorgang fehlschlägt, wird die Konvertierung angehalten. Bereits konvertierte Notizen bleiben geändert.",
 	"portable.confirmAction": "Dauerhaft konvertieren",
 	"portable.converting": "Die ausgewählten Änderungen werden konvertiert… Das Schließen dieses Bereichs hält die Konvertierung nicht an.",
@@ -1110,20 +1135,14 @@ export const de: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Der Titel hat {{length}} Zeichen; er wurde auf {{max}} gekürzt.",
 
-	"footer.prompt":
-		"Fragen, Fehler oder Ideen? Ich freue mich, von dir zu hören!{{break}} {{issue}} oder {{email}}.",
-	"footer.openIssue": "Ein GitHub-Issue öffnen",
-	"footer.sendEmail": "mir eine E-Mail schicken",
+	"footer.openIssue": "Ein Issue öffnen",
 	"footer.sourceCode": "Quellcode",
-	"footer.contribute": "Mitwirken",
-	"footer.license": "Plugin-Lizenz",
-	"footer.iconCredits": "Icon-Lizenzen",
 	"settings.about": "Info",
 	"settings.version": "Version",
-	"settings.deletePaletteConfirmLinkedOne":
-		'Palette "{{name}}" löschen?\n1 Callout verwendet sie. Es behält seine Farben, und du kannst sie später über die Farbzeile im Editor wieder verknüpfen.',
-	"settings.deletePaletteConfirmLinked":
-		'Palette "{{name}}" löschen?\n{{count}} Callouts verwenden sie. Sie behalten ihre Farben, und du kannst sie später über die Farbzeile in jedem ihrer Editoren wieder verknüpfen.',
+	"settings.deletePaletteBodyLinkedOne":
+		'1 Callout verwendet sie. Es behält seine Farben, und du kannst sie später über die Farbzeile im Editor wieder verknüpfen.',
+	"settings.deletePaletteBodyLinked":
+		'{{count}} Callouts verwenden sie. Sie behalten ihre Farben, und du kannst sie später über die Farbzeile in jedem ihrer Editoren wieder verknüpfen.',
 	"notice.palettesMerged":
 		"{{count}} gespeicherte Farbe(n) mit identischen Farben wurden zusammengeführt: {{names}}. Die Callouts, die sie verwenden, behalten ihre Farben und sind jetzt mit der verbleibenden Farbe verknüpft.",
 	"editor.colorsDescDeleted":
@@ -1135,8 +1154,8 @@ export const de: Record<string, string> = {
 		'Diese Farben sind identisch mit "{{name}}". Zwei gespeicherte Farben dürfen nicht gleich sein — ändere eine Farbe oder {{link}}.',
 	"palette.colorExistsUseLink": "die bestehende verwenden",
 	"locale.downloading": "Übersetzung wird heruntergeladen…",
+	"locale.downloaded": "Übersetzung heruntergeladen.",
 	"locale.notDownloaded": "{{name}} wurde noch nicht heruntergeladen",
-	"locale.notDownloadedDesc": "Callout Studio zeigt Englisch, bis die Übersetzung heruntergeladen ist, und versucht es beim Start von Obsidian erneut.",
 	"locale.retry": "Erneut versuchen",
 	"locale.diskWriteFailed":
 		"Callout Studio konnte die Übersetzung nicht auf der Festplatte speichern. Sie muss beim nächsten Mal erneut heruntergeladen werden.",
@@ -1150,6 +1169,7 @@ export const de: Record<string, string> = {
 	"notice.exportCssEnabled":
 		"Dieses Snippet ist in diesem Vault aktiviert. Callout Studio gestaltet diese Callouts bereits, und das Snippet behält den Stand beim Export bei.",
 	"confirm.titleOverwriteSnippet": "CSS-Snippet überschreiben",
+	"confirm.subtitleOverwriteSnippet": "Bearbeitet, seit Callout Studio sie geschrieben hat",
 	"confirm.overwriteSnippet":
 		"Das CSS-Snippet in Ihrem Snippets-Ordner wurde geändert, seit Callout Studio es geschrieben hat. Ein erneuter Export ersetzt die gesamte Datei.",
 	"confirm.overwriteSnippetOk": "Überschreiben",
@@ -1262,10 +1282,12 @@ export const de: Record<string, string> = {
 	"settings.resetNotSaved": "Das Zurücksetzen wird angezeigt, konnte aber noch nicht gespeichert werden, daher enthält deine Einstellungsdatei noch die vorherige Konfiguration. Prüfe den Speicherstatus in den Callout-Studio-Einstellungen.",
 	"confirm.titleResetEverything": "Alles zurücksetzen",
 	"confirm.titleReplaceUnreadable": "Einstellungsdatei ersetzen",
+	"confirm.subtitleReplaceUnreadable": "Zuerst wird eine exakte Kopie gespeichert",
 	"confirm.replaceUnreadable": "Zuerst wird eine exakte Kopie der aktuellen Datei im Backup-Ordner des Plugins gespeichert. Die Datei wird dann durch die hier angezeigte Konfiguration ersetzt, und dein Sync-Dienst sendet sie an deine anderen Geräte.",
 	"confirm.replaceUnreadableSalvage":
 		"Zuerst wird eine exakte Kopie der aktuellen Datei im Backup-Ordner des Plugins gespeichert. Die darin enthaltenen Einstellungen werden mit der hier angezeigten Konfiguration kombiniert, und die Datei wird neu geschrieben, damit jedes Gerät sie wieder lesen kann.",
 	"confirm.titleDiscardRecoveryCopy": "Wiederherstellungskopie verwerfen",
+	"confirm.subtitleDiscardRecoveryCopy": "Das Speichern ist auf diesem Gerät pausiert",
 	"confirm.discardRecoveryCopy":
 		"Die Wiederherstellungskopie dieses Geräts kann nicht gelesen werden, daher ist das Speichern auf diesem Gerät pausiert. Zuerst wird eine exakte Kopie davon im Backup-Ordner des Plugins gespeichert. Sie wird dann durch die hier angezeigte Konfiguration ersetzt. Deine Einstellungsdatei wird nicht verändert.",
 	"vault.undoRewrite": "Rückgängig machen",
@@ -1463,7 +1485,7 @@ export const de: Record<string, string> = {
 	"recovery.delete": "Löschen",
 
 	// Version history
-	"saveStatus.guide.versions": "Sobald das Speichern wieder funktioniert, kannst du auch eine frühere Version aus dem Versionsverlauf wiederherstellen.",
+	"saveStatus.guide.versions": "Sobald das Speichern wieder funktioniert, kannst du mit Frühere Version wiederherstellen auch zu einer gespeicherten Version zurückgehen.",
 	"saveStatus.goToVersions": "Zum Versionsverlauf",
 	"versions.title": "Versionsverlauf",
 	"versions.intro": "Callout Studio speichert automatisch Versionen deiner Konfiguration.\nÄltere werden nach und nach gelöscht.\nDas Wiederherstellen einer Version ersetzt deine aktuelle Konfiguration auf jedem synchronisierten Gerät.",
@@ -1483,13 +1505,14 @@ export const de: Record<string, string> = {
 	"versions.reason.beforeImport": "Vor einem Import",
 	"versions.reason.beforeRepair": "Vor der Reparatur der Einstellungsdatei",
 	"versions.restoreTitle": "Diese Version wiederherstellen",
-	"versions.restoreBody": "Deine aktuelle Konfiguration wird durch „{{name}}“ vom {{when}} ersetzt ({{count}} Unterschiede).\nDeine aktuelle Konfiguration wird zuerst als Version gespeichert, damit du zu ihr zurückkehren kannst.\nDein Synchronisierungsdienst sendet die wiederhergestellte Konfiguration anschließend an deine anderen Geräte.",
+	"versions.subtitle": "„{{name}}“ · {{when}}",
+	"versions.restoreBody": "Deine aktuelle Einrichtung wird ersetzt ({{count}} Unterschied(e)).\nSie wird zuvor als Version gespeichert, sodass du zu ihr zurückkehren kannst.\nDein Sync-Dienst sendet die wiederhergestellte Einrichtung dann an deine anderen Geräte.",
 	"versions.restoreSame": "Diese Version entspricht deiner aktuellen Konfiguration, daher gibt es nichts wiederherzustellen.",
 	"versions.restored": "„{{name}}“ vom {{when}} wiederhergestellt.",
 	"versions.backupFailed": "Nichts wurde wiederhergestellt: Deine aktuelle Konfiguration konnte nicht zuerst als Version gespeichert werden. Prüfe den freien Speicherplatz und versuche es erneut.",
 	"versions.restoreFailed": "Die Version konnte nicht wiederhergestellt werden. Nichts wurde geändert.",
 	"versions.deleteTitle": "Diese Version löschen",
-	"versions.deleteAvailableBody": "Die Version „{{name}}“ vom {{when}} und alle verfügbaren Kopien davon werden dauerhaft gelöscht.",
+	"versions.deleteAvailableBody": "Sie und alle ihre verfügbaren Kopien werden dauerhaft gelöscht.",
 	"versions.deleteSyncedFiles": "Das Löschen dieser Dateien kann mit deinen anderen Geräten synchronisiert werden. Lokale Kopien auf diesen Geräten können erhalten bleiben.",
 	"versions.deleteFinal": "Dies kann nicht rückgängig gemacht werden. Deine aktuelle Konfiguration bleibt unberührt.",
 	"versions.deleted": "„{{name}}“ vom {{when}} gelöscht.",
@@ -1498,10 +1521,10 @@ export const de: Record<string, string> = {
 	"versions.details.difference": "{{count}} Unterschied zu deiner aktuellen Konfiguration",
 	"versions.details.differences": "{{count}} Unterschiede zu deiner aktuellen Konfiguration",
 	"versions.details.comparisonUnavailable": "Vergleich nicht verfügbar",
-	"notice.unsavedChangesKept": "Einige Änderungen auf diesem Gerät waren noch nicht gespeichert und wurden durch neuere Einstellungen von einem anderen Gerät ersetzt. Deine Version wurde zuerst gespeichert: Öffne den Versionsverlauf in den Einstellungen von Callout Studio, um sie wiederherzustellen.",
-	"settings.versionHistory": "Versionsverlauf",
+	"notice.unsavedChangesKept": "Einige Änderungen auf diesem Gerät waren noch nicht gespeichert und wurden durch neuere Einstellungen von einem anderen Gerät ersetzt. Deine Version wurde zuerst gespeichert: Öffne Frühere Version wiederherstellen in den Einstellungen von Callout Studio, um sie zurückzuholen.",
+	"settings.versionHistory": "Frühere Version wiederherstellen",
 	"settings.versions": "Frühere Versionen",
-	"settings.versionsDesc": "Vergleiche automatisch gespeicherte Versionen deiner Einrichtung oder kehre zu einer zurück.",
+	"settings.versionsDesc": "Ersetze dein aktuelles Setup durch eine früher gespeicherte Version.",
 	"settings.versionsButton": "Versionen anzeigen",
 	"noteChanges.callouts": "{{count}} Callouts",
 	"noteChanges.calloutsOne": "1 Callout",

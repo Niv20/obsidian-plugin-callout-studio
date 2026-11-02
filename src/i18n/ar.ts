@@ -22,6 +22,7 @@ export const ar: Record<string, string> = {
 	"autocomplete.createNew": 'إنشاء "{{name}}"',
 	"metadataSuggest.finish": "تم",
 	"metadataSuggest.colors": "الألوان",
+	"metadataSuggest.yourWords": "كلماتك",
 	"metadataSuggest.useTyped": 'استخدام "{{text}}"',
 	"metadataSuggest.replaces": "يستبدل {{word}}",
 	"metadataSuggest.themeAlso": "قالبك يُنسّق هذه الكلمة أيضًا",
@@ -38,7 +39,7 @@ export const ar: Record<string, string> = {
 	"replaceModal.searchPlaceholder": "بحث في الـ callouts",
 	"replaceModal.chooseFirstReplace": "اختر أولًا الـ callout الذي سيحل محله.",
 	"settings.fallbackTag": "افتراضي",
-	"settings.fallbackTagAuto": "افتراضي تلقائي",
+	"settings.fallbackTagAuto": "تلقائي",
 	"settings.rescanVaultDesc": "يضيف أنواع الـ callout التي تستخدمها ملاحظاتك وغير الموجودة في هذه القائمة بعد.",
 	"settings.rescanVaultHintAction": "مسح بحثًا عن callout",
 	"manualDiscovery.failed": "لم يتم حفظ نتائج الاكتشاف. تحققوا من إمكانية حفظ الإعدادات واكتمال المزامنة، ثم أعيدوا المحاولة من الإعدادات ← أنواع الـ callout الخاصة بي ← مسح بحثًا عن callout. لم تُستبدل الـ callouts الموجودة.",
@@ -47,7 +48,6 @@ export const ar: Record<string, string> = {
 		"اكتمل المسح: تمت إضافة {{count}} نوع callout جديد.",
 	"replaceModal.titleReplace": "استبدال في المخزن",
 
-	"welcome.tooltip": "حول Callout Studio",
 	"welcome.title": "مرحبًا بك في Callout Studio!",
 	"welcome.tagline":
 		"حلّك الشامل لإنشاء callouts في Obsidian وتصميمها وإدارتها.",
@@ -55,7 +55,6 @@ export const ar: Record<string, string> = {
 		"لاحظنا أنك تستخدم {{plugins}}. هل ترغب في استيراد callouts الخاصة بك؟",
 	"importBanner.action": "استيراد",
 	"importBanner.dismiss": "تجاهل",
-	"welcome.previewTitle": "شاهده أثناء العمل",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"يتيح لك Callout Studio إنشاء callouts بأيقونة وألوان واسم مخصصة.\n\n" +
@@ -66,16 +65,18 @@ export const ar: Record<string, string> = {
 		"> [!{{id}}] Callout ككتلة\n" +
 		"> يعمل الـ callout الكلاسيكي بنفس الصيغة التي اعتدت عليها تمامًا: `> [!type]`.\n\n" +
 		"هناك الكثير مما يقدمه Callout Studio! [معرفة المزيد]({{repoUrl}}).\n",
+	"deleteModal.title": "حذف callout",
 
-	"deleteModal.title": 'حذف callout "{{name}}"؟',
 	"deleteModal.bodyInUse":
 		"يظهر هذا الـ callout {{count}} مرة في {{files}} ملف.",
 	"deleteModal.notesUntouched":
 		"يحذف هذا تعريف الـ callout فقط. لن تُمَسّ ملاحظاتك، لذا ستعود الـ callouts الموجودة ببساطة إلى النمط الافتراضي.",
 	"deleteModal.fallbackTarget":
 		"وهو أيضًا الـ callout الاحتياطي الافتراضي لديك، لذا ستنتقل الـ callouts التي ليس لها نمط خاص بها إلى {{fallback}}.",
+	"deleteModal.subtitleFallback": "«{{name}}» · نمطك الاحتياطي الافتراضي",
+	"convertModal.title": "التحويل إلى نص عادي",
+	"convertModal.subtitle": "كل «{{name}}» في خزنتك",
 	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
-	"convertModal.title": 'تحويل "{{name}}" إلى نص عادي؟',
 	"convertModal.explain":
 		"يصبح كل واحد منها نصًا عاديًا: يبقى العنوان والمحتوى، ويزول تنسيق الـ callout فقط.",
 	"convertModal.typeStays": "يبقى نوع الـ callout نفسه في قائمتك.",
@@ -91,7 +92,6 @@ export const ar: Record<string, string> = {
 	"settings.builtInCallouts": "Callouts المدمجة",
 	"settings.contextMenu": "قائمة السياق",
 	"settings.language": "اللغة",
-	"settings.languageDesc": "لغة Callout Studio؛ هي لغة Obsidian ما لم تختر غيرها.",
 	"settings.importExport": "استيراد وتصدير",
 	"settings.import": "استيراد…",
 	"settings.export": "تصدير…",
@@ -126,16 +126,15 @@ export const ar: Record<string, string> = {
 	"settings.colorSwatchAria": "التمييز: {{accent}} · الخلفية: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts من سمتك",
-	"settings.themeCalloutsDesc": "تنسّق {{theme}} هذه الـ callouts، لذا يتركها Callout Studio كما هي ويعرضها بتنسيق كتلي فقط.",
 	"settings.themeCalloutsDefaultTheme": "سمتك",
 	"settings.themeCalloutsEmpty": "لا تنسّق {{theme}} أي callout حاليًا.",
 	"settings.themePreviewAria":
 		'معاينة "{{name}}" — شاهد كيف ترسمها سمتك',
 	"settings.builtInAllThemeStyled":
-		"تعيد {{theme}} تنسيق كل الـ callouts المدمجة، لذا تظهر كلها أعلاه ويتركها Callout Studio بلا تغيير. لتصميم واحد خاص بك، أضف callout بمعرّف مختلف.",
+		"تنسّق {{theme}} كل الـ callouts المدمجة، لذا يتركها Callout Studio كلها كما هي. لتصميم callout خاص بك، أضف callout بمعرّف مختلف.",
 	"settings.fallbackCallout": "Callout الاحتياطي الافتراضي",
 	"settings.fallbackCalloutDesc":
-		"ستَرِث أنواع الـ callout غير المعروفة في مخزنك نمط هذا الـ callout.",
+		"ترث أنواع الـ callout غير المعروفة هذا النمط.",
 
 	"settings.border": "الحدود",
 	"settings.borderTop": "أعلى",
@@ -166,8 +165,9 @@ export const ar: Record<string, string> = {
 	"settings.paletteCount": "{{count}} من اللوحات",
 	"settings.paletteCountOne": "لوحة واحدة",
 	"settings.editPaletteAria": "تعديل لوحة الألوان {{name}}",
-	"settings.deletePaletteConfirm":
-		'حذف لوحة الألوان "{{name}}"؟\nلن تتأثر عناصر callout التي تستخدم هذه الألوان.',
+	"settings.deletePaletteTitle": "حذف لوحة الألوان",
+	"settings.deletePaletteBody":
+		'لن تتأثر عناصر callout التي تستخدم هذه الألوان.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'تأخذ callouts التي تذكرها في بياناتها الوصفية ("{{key}}") اللون المدمج الذي يحمل هذا الاسم بدلًا منها. ملاحظاتك لا تتغير.',
 
@@ -175,7 +175,6 @@ export const ar: Record<string, string> = {
 	"settings.customCommandsDesc": "كل أوامر Callout Studio واختصاراتها، وأوامرك الخاصة.",
 
 	"commandBuilder.title": "الأوامر والاختصارات",
-	"commandBuilder.pageDesc": "اضغط على ⊕ بجانب أي أمر لتعيين اختصاره في إعدادات المفاتيح السريعة في Obsidian.",
 	"commandBuilder.builtIn": "الأوامر المدمجة",
 	"commandBuilder.toggleAria": "تفعيل أو تعطيل {{name}}",
 	"commandBuilder.hotkeyBlank": "فارغ",
@@ -185,8 +184,7 @@ export const ar: Record<string, string> = {
 	"commandBuilder.empty": "لا توجد أوامر مخصصة بعد.",
 	"commandBuilder.unknownCommand": "هذا الأمر",
 	"commandBuilder.editAria": "تعديل {{name}}",
-	"commandBuilder.deleteConfirm":
-		"حذف الأمر {{name}}؟ أي اختصار مُعيَّن له سيتوقف عن العمل.",
+	"commandBuilder.deleteConfirm": "سيتوقف أي اختصار مخصص له عن العمل.",
 	"commandBuilder.newTitle": "أمر جديد",
 	"commandBuilder.editTitle": "تعديل الأمر",
 	"commandBuilder.format": "تنسيق الـ callout",
@@ -223,13 +221,16 @@ export const ar: Record<string, string> = {
 	"commandBuilder.roleThemeOwned":
 		"يوفّر القالب الخاص بك هذا الـ callout، لذا لا يتوفر له سوى تنسيق الكتلة.",
 	"commandBuilder.commandSuspended": "متوقف مؤقتًا ما دامت سمتك توفّر هذا الـ callout، وحينها لا يتوفر له سوى التنسيق الكتلي.",
+	"commandBuilder.pausedTag": "متوقف مؤقتًا بسبب السمة",
+	"commandBuilder.missingTag": "الـ callout مفقود",
 
 	"settings.resetAll": "إعادة التعيين",
 	"settings.resetAllDesc":
-		"يحذف كل الـ callouts التي أنشأها المستخدم، ويعيد تعيين الـ callouts المدمجة والأنماط العامة (الحدود ومقياس الخط والشكل) ولوحات الألوان المحفوظة وتخصيص قائمة النقر بزر الماوس الأيمن، ويحذف ملفات SVG الخاصة بـ Material التي تم تنزيلها.",
+		"يستعيد جميع الإعدادات والتخصيصات إلى قيمها الافتراضية.",
 	"settings.resetAllButton": "إعادة تعيين الكل",
 	"notice.resetAllDone": "تمت إعادة تعيين كل شيء إلى الإعدادات الافتراضية.",
 	"settings.resetIntro": "خذ لحظة لتقدّر كل ما بنيته مع Callout Studio.",
+	"settings.resetSubtitleDefaults": "تعود إعداداتك إلى الإعدادات الافتراضية",
 	"settings.resetDeletes": "كل هذا على وشك أن يُحذف:",
 	"settings.resetRestores": "سيعود هذا إلى الإعدادات الافتراضية:",
 	"settings.resetItemCallouts": "{{count}} من أنواع callout المخصصة",
@@ -243,9 +244,10 @@ export const ar: Record<string, string> = {
 	"settings.resetItemHeading": "إعدادات callout في العناوين",
 	"settings.resetItemInline": "إعدادات callout المضمّنة في السطر",
 	"settings.resetItemThemeCalloutStyles": "أنماط الـ callout في سمتك",
+	"settings.resetItemAutocomplete": "إعدادات الإكمال التلقائي والبيانات الوصفية",
 	"settings.resetItemFallback": "النمط الاحتياطي",
 	"settings.resetItemIconLibraries": "ترتيب مكتبات الأيقونات والمكتبات المخفية",
-	"settings.resetAllConfirmAfter": "لا تقلق: قبل إعادة التعيين نحفظ نسخة احتياطية من إعداداتك الحالية. يمكنك استعادتها في أي وقت من سجل الإصدارات في الإعدادات.\nإذا كنت تستخدم خدمة مزامنة، فقد تنتقل إعادة التعيين إلى أجهزتك الأخرى أيضًا.",
+	"settings.resetAllConfirmAfter": "لا تقلق: قبل إعادة التعيين نحفظ نسخة احتياطية من إعداداتك الحالية. يمكنك إرجاعها في أي وقت عبر استعادة إصدار سابق في الإعدادات.\nإذا كنت تستخدم خدمة مزامنة، فقد تنتقل إعادة التعيين إلى أجهزتك الأخرى أيضًا.",
 	"settings.resetNothing": "لا يوجد ما يُعاد تعيينه: كل شيء على إعداداته الافتراضية بالفعل.",
 
 	"notice.customCommandMissingCallout":
@@ -359,7 +361,7 @@ export const ar: Record<string, string> = {
 		"تداعب نسمة لطيفة أوراق الأشجار. وتغمر أشعة الشمس الدافئة ممراً هادئاً، فتبعث الحياة في المشهد.",
 	"editor.loremIpsumShort":
 		"تداعب نسمة لطيفة أوراق الأشجار.",
-	"editor.sampleInlineText": "إليك شارة [!{id}] مضمّنة داخل فقرة.",
+	"editor.sampleInlineText": "إليك شارة [!{id}]{{title}} مضمّنة داخل فقرة.",
 	"editor.previewReadOnly": "لا يمكن تعديل المعاينة المباشرة",
 	"noteChanges.title": "هل تريد تحديث ملاحظاتك؟",
 	"noteChanges.leave": "اتركها كما هي",
@@ -391,7 +393,6 @@ export const ar: Record<string, string> = {
 	"palette.namePlaceholder": "لوحتي",
 	"palette.nameExists": "توجد بالفعل لوحة ألوان بهذا الاسم",
 	"palette.saveBlockedName": "توجد بالفعل لوحة ألوان بهذا الاسم. اختر اسمًا مختلفًا لحفظها.",
-	"palette.metadataName": "في البيانات الوصفية لـ callout: {{key}}",
 	"palette.metadataNameExists":
 		'توجد لوحة ألوان أخرى مكتوبة بالفعل "{{key}}" في البيانات الوصفية لـ callout. اختر اسمًا مختلفًا.',
 	"palette.metadataNameShared":
@@ -403,16 +404,15 @@ export const ar: Record<string, string> = {
 	"palette.renameNotesFailed":
 		"تعذّر تحديث بعض الملاحظات. التي تم تحديثها محفوظة، وما تبقى لا يزال يستخدم الاسم القديم.",
 	"palette.baseColor": "اللون الأساسي",
-	"palette.baseColorHint":
-		"سنقوم بمطابقة لون الخلفية معه تلقائيًا. إذا أردت، يمكنك التحكم فيه بشكل منفصل عن طريق {{link}}.",
-	"palette.baseColorHintLink": "النقر هنا",
+	"palette.colorViewAdvanced": "ضبط كل لون على حدة",
+	"palette.colorViewSimple": "الرجوع إلى لون أساسي واحد",
 	"palette.advancedColors": "الألوان",
-	"palette.advancedColorsHint":
-		"تحرير الألوان لوضع {{mode}} - يتم تحديث الوضع الآخر تلقائيًا. بدّل سمة Obsidian للتحقق من ذلك.",
-	"palette.revertHint": "تفضل لونًا أساسيًا واحدًا بدلاً من ذلك؟ {{link}}.",
-	"palette.revertHintLink": "استعادة",
-	"palette.lightMode": "فاتح",
-	"palette.darkMode": "داكن",
+	"palette.lightModeColors": "ألوان الوضع الفاتح",
+	"palette.darkModeColors": "ألوان الوضع الداكن",
+	"palette.modeColorsHintLight": "تنطبق هذه التغييرات على الوضع الفاتح فقط. يحتفظ الوضع الداكن بألوانه الخاصة.\nلتعديلها، اضغط على زر القمر أعلاه.",
+	"palette.modeColorsHintDark": "تنطبق هذه التغييرات على الوضع الداكن فقط. يحتفظ الوضع الفاتح بألوانه الخاصة.\nلتعديلها، اضغط على زر الشمس أعلاه.",
+	"palette.showLightMode": "إظهار الوضع الفاتح",
+	"palette.showDarkMode": "إظهار الوضع الداكن",
 	"palette.accentColor": "لون التمييز",
 	"palette.backgroundColorChannel": "لون الخلفية",
 	"palette.textColorChannel": "لون النص",
@@ -483,6 +483,7 @@ export const ar: Record<string, string> = {
 	"iconPicker.searchMaterial": "بحث في أيقونات Material",
 	"iconPicker.searchEmoji": "بحث في الرموز التعبيرية",
 	"iconPicker.skinTone": "لون البشرة",
+	"iconPicker.skinToneDefault": "افتراضي",
 	"iconPicker.allCategories": "جميع الفئات",
 	"iconPicker.noIconSelected": "لم يتم اختيار أيقونة",
 	"iconPicker.chooseFirst": "اختر أيقونة أولًا.",
@@ -674,6 +675,7 @@ export const ar: Record<string, string> = {
 	"iconPack.artworkRestored": "تم تنزيل رسومات الأيقونات لـ {{names}}.",
 	"iconPack.diskWriteFailed":
 		"تعذر على Callout Studio حفظ حزمة الأيقونات على القرص، لذا ستحتاج إلى تنزيلها مرة أخرى في المرة القادمة. الأيقونات التي تختارها لا تزال محفوظة في إعداداتك.",
+	"settings.iconLibrariesDesc": "إعادة ترتيب مكتبات الأيقونات وتنزيل مكتبات إضافية.",
 	"iconLibraries.manage": "إدارة مكتبات الأيقونات",
 	"iconLibraries.title": "مكتبات الأيقونات",
 	"iconLibraries.desc":
@@ -697,6 +699,7 @@ export const ar: Record<string, string> = {
 	"iconLibraries.inUseMore": "و{{count}} أخرى",
 	"iconLibraries.inUseKeeps":
 		"تحتفظ بأيقوناتها — تُحفظ نسخة من كل أيقونة مع إعداداتك. لاختيار أيقونات جديدة من {{name}} لاحقًا، نزّلها مرة أخرى.",
+	"iconLibraries.resetSubtitle": "العودة إلى مكتبات الإضافة الأصلية",
 	"iconLibraries.resetConfirm":
 		"سيعيد هذا المكتبات إلى حالتها عند تثبيت الإضافة: الترتيب الافتراضي، دون أي مكتبة مخفية، ودون أي من المكتبات التي نُزّلت. ستُحذف هذه المكتبات:",
 	"iconLibraries.resetKeeps":
@@ -704,6 +707,9 @@ export const ar: Record<string, string> = {
 	"iconLibraries.resetButton": "إعادة التعيين",
 
 	// Icon licences & credits
+	"license.title": "الترخيص",
+	"license.openSourceBeforeLink": "Callout Studio مفتوح المصدر، وسيبقى كذلك. يمكنك العثور على ترخيصه ",
+	"license.openSourceLink": "هنا",
 	"credits.title": "تراخيص الأيقونات والاعتمادات",
 	"credits.introBeforeNotices":
 		"يستخدم Callout Studio مكتبات أيقونات مفتوحة المصدر؛ اعرض أدناه ترخيص كل مكتبة ونسبتها والتعديلات التي أُجريت عليها، أو اقرأ ",
@@ -723,23 +729,44 @@ export const ar: Record<string, string> = {
 	"contextMenu.deleteSection": "حذف قسم العنوان",
 	"heading.toggleFold": "تبديل الطي",
 	"settings.globalSettings": "خيارات نمط Callout Studio العامة",
-	"settings.calloutStyle": "نمط الـ callout",
+	"settings.calloutStyle": "التنسيق العام",
 	"settings.menusAndCommands": "القوائم والأوامر",
+	"settings.editorBox": "المحرّر",
+	"settings.autocompleteAndMetadata": "الإكمال التلقائي والبيانات الوصفية",
+	"settings.autocompleteAndMetadataDesc": "قوائم تُفتح أثناء كتابة callout، وبيانات وصفية بعد |.",
+	"settings.calloutAutocomplete": "الإكمال التلقائي لـ callout",
+	"settings.calloutAutocompleteDesc": "اعرض قائمة callouts عند كتابة [!.",
+	"settings.suggestThemeCallouts": "تضمين callouts القالب",
+	"settings.suggestThemeCalloutsDesc": "اعرض callouts التي يضيفها قالبك.",
+	"settings.metadataPage": "البيانات الوصفية",
+	"settings.metadataPageDesc": "ألوان وكلمات بعد | في callout.",
+	"settings.metadataColors": "ألوان البيانات الوصفية",
+	"settings.metadataColorsDesc": "اللون بعد | يلوّن ذلك الـ callout وحده، كما في [!note|red].",
+	"settings.metadataAutocomplete": "الإكمال التلقائي للبيانات الوصفية",
+	"settings.metadataAutocompleteDesc": "اعرض قائمة بالألوان والكلمات عند كتابة | في callout.",
+	"settings.suggestThemeMetadata": "تضمين كلمات القالب",
+	"settings.suggestThemeMetadataDesc": "اعرض الكلمات التي يتفاعل معها قالبك.",
+	"settings.metadataWords": "كلماتك",
+	"settings.metadataWordsDesc": "كلمات تُقترح بعد |، مثل كلمات تقرؤها إضافة أخرى.",
+	"settings.metadataWordsPlaceholder": "أضف كلمة",
+	"settings.addMetadataWord": "إضافة كلمة",
+	"settings.metadataWordAlreadyHere": "هذه الكلمة موجودة بالفعل في القائمة",
+	"settings.metadataWordTooLong": "يجب ألا تتجاوز الكلمة {{max}} حرفًا",
+	"settings.maxMetadataWords": "الحد الأقصى {{max}} كلمة. احذف كلمة لإضافة أخرى.",
 	"settings.buildFailed": "تعذّر على Callout Studio رسم إعداداته؛ أعد تشغيل Obsidian، وبلّغ عن المشكلة إن تكررت.",
 	"settings.globalSettingsRegularDesc":
-		"اضبط الحدود ونصف القطر ومقياس الخط والمحاذاة لكل block callout في خزنتك.",
+		"الحدود ونصف القطر ومقياس الخط والمحاذاة.",
 	"settings.globalSettingsHeadingDesc":
-		"اضبط الحدود والشكل والمسافة الرأسية لكل heading callout في خزنتك.",
+		"الحدود والشكل والمسافة الرأسية.",
 	"settings.globalSettingsInlineDesc":
-		"اضبط الحدود والشكل لكل inline callout في خزنتك.",
+		"الحدود والشكل.",
 	"settings.themeCalloutStyles": "استخدام أنماط الـ callout في سمتك",
-	"settings.themeCalloutStylesDesc": "عند التفعيل، تحتفظ الـ callouts التي تنسّقها سمتك بمظهرها؛ وعند الإيقاف، يرسم Callout Studio كل callout.",
-	"settings.calloutTypeRegular": "callout كتلي",
-	"settings.calloutTypeHeading": "callout العنوان",
-	"settings.calloutTypeInline": "callout مضمّن",
+	"settings.themeCalloutStylesDesc": "عند التفعيل، تحتفظ الـ callouts التي تنسّقها سمتك بمظهرها وتظهر كـ callouts كتلية فقط. وعند الإيقاف، يرسم Callout Studio كل callout.",
+	"settings.calloutTypeRegular": "نمط callout الكتلي",
+	"settings.calloutTypeHeading": "نمط callout العنوان",
+	"settings.calloutTypeInline": "نمط callout المضمّن",
 	"settings.customizeMenuDesc": "اختر إجراءات النقر بزر الماوس الأيمن لكل نوع callout ورتّبها.",
 	"menuCustomize.title": "تخصيص قائمة النقر بزر الماوس الأيمن",
-	"menuCustomize.pageDesc": "اسحب أي إجراء من مقبضه لنقله، أو أخفِه بالضغط على ✕.",
 	"menuCustomize.regular": "callout كتلي",
 	"menuCustomize.heading": "callout العنوان",
 	"menuCustomize.inline": "callout مضمّن",
@@ -758,10 +785,10 @@ export const ar: Record<string, string> = {
 	"confirm.ok": "حذف",
 	"confirm.cancel": "إلغاء",
 	"confirm.acknowledge": "قرأت وفهمت",
+	"confirm.subtitleName": "«{{name}}»",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "حذف الأمر",
-	"confirm.titleDeletePalette": "حذف لوحة الألوان",
 	"confirm.titleDeleteImage": "حذف الصورة",
 	"confirm.titleDeleteLibrary": "حذف مكتبة أيقونات",
 	"confirm.titleResetLibraries": "إعادة تعيين مكتبات الأيقونات",
@@ -777,7 +804,6 @@ export const ar: Record<string, string> = {
 		"تم تحديث {{count}} عنوان callout في ملفات المخزن: {{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated":
 		"تم تحديث علامة الطيّ لـ {{count}} callout في ملفات المخزن.",
-	"vault.replaceWith": "الاستبدال بـ:",
 	"vault.confirmReplace": "استبدال",
 	"vault.replacePromptInUse":
 		'يُستخدم "{{name}}" {{count}} مرة في {{files}} ملف. اختر callout لاستبداله:',
@@ -852,8 +878,8 @@ export const ar: Record<string, string> = {
 	"portable.scanning": "جارٍ قراءة ملاحظات Markdown…",
 	"portable.progress": "قراءة الملاحظات: {{done}} من {{total}}",
 	"portable.empty": "لم يُعثر على callout صالح للتحويل في العناوين أو داخل الأسطر. لن يتغير شيء.",
-	"portable.skipped": "تُركت {{count}} مواضع غير مكتملة أو غير مدعومة دون تغيير للمراجعة اليدوية.",
 	"portable.confirmTitle": "هل تريد تحويل هذه الخزنة نهائيًا؟",
+	"portable.confirmSubtitle": "لا يتم إنشاء نسخة احتياطية تلقائية",
 	"portable.confirmBody": "هل تريد تحويل {{count}} مواضع وتحديث {{links}} روابط عناوين في {{files}} ملاحظات؟\nيؤدي ذلك إلى تغيير الملفات الأصلية ولا يمكن التراجع عنه في Callout Studio. لا تُنشأ نسخة احتياطية تلقائيًا. أنشئ نسخة احتياطية من خزنتك أولًا، واحفظ الملاحظات المفتوحة، وأوقف التحرير والمزامنة مؤقتًا حتى انتهاء التحويل.\nإذا تغيّر ملف أو فشلت الكتابة، يتوقف التحويل. تظل الملاحظات التي حُوِّلت بالفعل معدّلة.",
 	"portable.confirmAction": "التحويل نهائيًا",
 	"portable.converting": "جارٍ تحويل التغييرات المحددة… لن يؤدي إغلاق هذه اللوحة إلى إيقاف التحويل.",
@@ -1079,20 +1105,14 @@ export const ar: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"طول العنوان {{length}} حرفًا؛ تم اختصاره إلى {{max}}.",
 
-	"footer.prompt":
-		"أسئلة أو أخطاء أو أفكار؟ يسعدني سماعها!{{break}} {{issue}} أو {{email}}.",
-	"footer.openIssue": "افتح مشكلة على GitHub",
-	"footer.sendEmail": "أرسل لي بريدًا إلكترونيًا",
+	"footer.openIssue": "افتح مشكلة",
 	"footer.sourceCode": "الشيفرة المصدرية",
-	"footer.contribute": "المساهمة",
-	"footer.license": "ترخيص الإضافة",
-	"footer.iconCredits": "تراخيص الأيقونات",
 	"settings.about": "حول",
 	"settings.version": "الإصدار",
-	"settings.deletePaletteConfirmLinkedOne":
-		'حذف لوحة الألوان "{{name}}"؟\nيوجد 1 callout يستخدمها. سيحتفظ بألوانه، ويمكنك إعادة ربطه لاحقًا من صف اللون في محرره.',
-	"settings.deletePaletteConfirmLinked":
-		'حذف لوحة الألوان "{{name}}"؟\nيوجد {{count}} callout يستخدمونها. سيحتفظون بألوانهم، ويمكنك إعادة ربطهم لاحقًا من صف اللون في أي محرر منهم.',
+	"settings.deletePaletteBodyLinkedOne":
+		'يوجد 1 callout يستخدمها. سيحتفظ بألوانه، ويمكنك إعادة ربطه لاحقًا من صف اللون في محرره.',
+	"settings.deletePaletteBodyLinked":
+		'يوجد {{count}} callout يستخدمونها. سيحتفظون بألوانهم، ويمكنك إعادة ربطهم لاحقًا من صف اللون في أي محرر منهم.',
 	"notice.palettesMerged":
 		"تم دمج {{count}} لون محفوظ كان يحمل ألوانًا متطابقة: {{names}}. الـ callouts التي تستخدمها تحتفظ بألوانها وهي الآن مرتبطة باللون المتبقي.",
 	"editor.colorsDescDeleted":
@@ -1104,8 +1124,8 @@ export const ar: Record<string, string> = {
 		'هذه الألوان مطابقة لـ "{{name}}". لا يمكن أن يكون لونان محفوظان متطابقين — غيّر لونًا، أو {{link}}.',
 	"palette.colorExistsUseLink": "استخدام الموجود",
 	"locale.downloading": "جارٍ تنزيل الترجمة…",
+	"locale.downloaded": "تم تنزيل الترجمة.",
 	"locale.notDownloaded": "لم يتم تنزيل {{name}} بعد",
-	"locale.notDownloadedDesc": "يعرض Callout Studio الإنجليزية إلى أن تُنزَّل الترجمة، ويعيد المحاولة عند تشغيل Obsidian.",
 	"locale.retry": "إعادة المحاولة",
 	"locale.diskWriteFailed":
 		"تعذر على Callout Studio حفظ الترجمة على القرص، لذا سيلزم تنزيلها مرة أخرى في المرة القادمة.",
@@ -1118,6 +1138,7 @@ export const ar: Record<string, string> = {
 	"notice.exportCssEnabled":
 		"هذا المقطع مفعّل في هذه الخزنة. يقوم Callout Studio بتنسيق هذه النداءات بالفعل، والمقطع يحتفظ بالتنسيق الذي كان عليه عند تصديره.",
 	"confirm.titleOverwriteSnippet": "استبدال مقطع CSS",
+	"confirm.subtitleOverwriteSnippet": "تم تعديله منذ أن كتبه Callout Studio",
 	"confirm.overwriteSnippet":
 		"تغير مقطع CSS في مجلد المقاطع منذ أن كتبه Callout Studio. سيؤدي التصدير مرة أخرى إلى استبدال الملف بالكامل.",
 	"confirm.overwriteSnippetOk": "استبدال",
@@ -1221,10 +1242,12 @@ export const ar: Record<string, string> = {
 	"settings.resetNotSaved": "إعادة التعيين مُعروضة لكن تعذّر حفظها بعد، لذا لا يزال ملف إعداداتك يحمل الإعداد السابق. تحقق من حالة الحفظ في إعدادات Callout Studio.",
 	"confirm.titleResetEverything": "إعادة تعيين كل شيء",
 	"confirm.titleReplaceUnreadable": "استبدال ملف الإعدادات",
+	"confirm.subtitleReplaceUnreadable": "تُحفظ نسخة مطابقة أولًا",
 	"confirm.replaceUnreadable": "تُحفظ نسخة مطابقة من الملف الحالي في مجلد نسخ الإضافة الاحتياطية أولًا. ثم يُستبدل الملف بالإعداد المعروض هنا، وترسله خدمة المزامنة لديك إلى أجهزتك الأخرى.",
 	"confirm.replaceUnreadableSalvage":
 		"تُحفظ نسخة مطابقة من الملف الحالي في مجلد نسخ الإضافة الاحتياطية أولًا. تُدمج الإعدادات بداخله مع الإعداد المعروض هنا، ويُعاد كتابة الملف كي يتمكن كل جهاز من قراءته مرة أخرى.",
 	"confirm.titleDiscardRecoveryCopy": "تجاهل نسخة الاسترداد",
+	"confirm.subtitleDiscardRecoveryCopy": "الحفظ متوقف مؤقتًا على هذا الجهاز",
 	"confirm.discardRecoveryCopy":
 		"يتعذّر قراءة نسخة الاسترداد الخاصة بهذا الجهاز، لذا الحفظ متوقف مؤقتًا على هذا الجهاز. تُحفظ نسخة مطابقة منها في مجلد نسخ الإضافة الاحتياطية أولًا. ثم تُستبدل بالإعداد المعروض هنا. ملف إعداداتك لا يتغيّر.",
 	"vault.undoRewrite": "تراجع",
@@ -1422,7 +1445,7 @@ export const ar: Record<string, string> = {
 	"recovery.delete": "حذف",
 
 	// Version history
-	"saveStatus.guide.versions": "عندما يعمل الحفظ مجددًا، يمكنك أيضًا استعادة إصدار سابق من سجل الإصدارات.",
+	"saveStatus.guide.versions": "عندما يعمل الحفظ مجددًا، يمكنك أيضًا الرجوع إلى إصدار محفوظ من خلال استعادة إصدار سابق.",
 	"saveStatus.goToVersions": "الانتقال إلى سجل الإصدارات",
 	"versions.title": "سجل الإصدارات",
 	"versions.intro": "يحفظ Callout Studio إصدارات من إعداداتك تلقائيًا.\nتُحذف الإصدارات القديمة تدريجيًا.\nاستعادة إصدار تستبدل إعداداتك الحالية على كل جهاز متزامن.",
@@ -1442,13 +1465,14 @@ export const ar: Record<string, string> = {
 	"versions.reason.beforeImport": "قبل استيراد",
 	"versions.reason.beforeRepair": "قبل إصلاح ملف الإعدادات",
 	"versions.restoreTitle": "استعادة هذا الإصدار",
-	"versions.restoreBody": "ستُستبدل إعداداتك الحالية بالإصدار «{{name}}» من {{when}} (عدد الاختلافات: {{count}}).\nتُحفظ إعداداتك الحالية أولًا كإصدار لتتمكن من الرجوع إليها.\nثم ترسل خدمة المزامنة الإعدادات المستعادة إلى أجهزتك الأخرى.",
+	"versions.subtitle": "«{{name}}» · {{when}}",
+	"versions.restoreBody": "سيتم استبدال إعداداتك الحالية ({{count}} من الاختلافات).\nيُحفظ الإعداد الحالي كنسخة أولًا، فيمكنك العودة إليه.\nثم ترسل خدمة المزامنة الإعداد المستعاد إلى أجهزتك الأخرى.",
 	"versions.restoreSame": "هذا الإصدار مطابق لإعداداتك الحالية، لذا لا يوجد ما يمكن استعادته.",
 	"versions.restored": "تمت استعادة «{{name}}» من {{when}}.",
 	"versions.backupFailed": "لم تتم استعادة شيء: تعذر حفظ إعداداتك الحالية كإصدار أولًا. تحقق من مساحة التخزين المتاحة، ثم حاول مجددًا.",
 	"versions.restoreFailed": "تعذرت استعادة الإصدار. لم يتغير شيء.",
 	"versions.deleteTitle": "حذف هذا الإصدار",
-	"versions.deleteAvailableBody": "سيُحذف الإصدار «{{name}}» بتاريخ {{when}} وجميع نسخه المتاحة نهائيًا.",
+	"versions.deleteAvailableBody": "سيتم حذفه هو وجميع نسخه المتاحة نهائيًا.",
 	"versions.deleteSyncedFiles": "قد تتم مزامنة حذف هذه الملفات مع أجهزتك الأخرى. وقد تبقى نسخ محلية على تلك الأجهزة.",
 	"versions.deleteFinal": "لا يمكن التراجع عن هذا الإجراء. لن تتأثر إعداداتك الحالية.",
 	"versions.deleted": "تم حذف «{{name}}» من {{when}}.",
@@ -1457,10 +1481,10 @@ export const ar: Record<string, string> = {
 	"versions.details.difference": "{{count}} اختلاف عن إعداداتك الحالية",
 	"versions.details.differences": "{{count}} اختلافات عن إعداداتك الحالية",
 	"versions.details.comparisonUnavailable": "المقارنة غير متاحة",
-	"notice.unsavedChangesKept": "لم تكن بعض التغييرات على هذا الجهاز قد حُفظت بعد، واستبدلتها إعدادات أحدث من جهاز آخر. حُفظ إصدارك أولًا: افتح سجل الإصدارات في إعدادات Callout Studio لاستعادته.",
-	"settings.versionHistory": "سجل الإصدارات",
+	"notice.unsavedChangesKept": "لم تكن بعض التغييرات على هذا الجهاز قد حُفظت بعد، واستبدلتها إعدادات أحدث من جهاز آخر. حُفظ إصدارك أولًا: افتح استعادة إصدار سابق في إعدادات Callout Studio لاستعادته.",
+	"settings.versionHistory": "استعادة إصدار سابق",
 	"settings.versions": "الإصدارات السابقة",
-	"settings.versionsDesc": "قارن الإصدارات التي حُفظت تلقائيًا من إعداداتك، أو ارجع إلى أحدها.",
+	"settings.versionsDesc": "استبدل إعدادك الحالي بإصدار سابق محفوظ.",
 	"settings.versionsButton": "عرض الإصدارات",
 	"noteChanges.callouts": "{{count}} من الـ callout",
 	"noteChanges.calloutsOne": "callout واحد",

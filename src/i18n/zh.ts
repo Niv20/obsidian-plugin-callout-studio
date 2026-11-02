@@ -36,8 +36,8 @@ export const zh: Record<string, string> = {
 	"portable.scanning": "正在读取 Markdown 笔记…",
 	"portable.progress": "正在读取笔记：{{done}} / {{total}}",
 	"portable.empty": "未找到可转换的标题或行内 callout。不会进行任何更改。",
-	"portable.skipped": "{{count}} 处不完整或不受支持的内容保持原样，留待手动检查。",
 	"portable.confirmTitle": "永久转换此仓库？",
+	"portable.confirmSubtitle": "不会创建自动备份",
 	"portable.confirmBody": "转换 {{files}} 篇笔记中的 {{count}} 处内容，并更新 {{links}} 个标题链接？\n此操作会修改原始文件，且无法在 Callout Studio 中撤销。系统不会自动创建备份。请先备份仓库、保存已打开的笔记，并暂停编辑和同步，直到转换完成。\n如果文件发生更改或写入失败，转换将停止。已转换的笔记会保留更改。",
 	"portable.confirmAction": "永久转换",
 	"portable.converting": "正在转换所选内容… 关闭此面板不会停止转换。",
@@ -73,6 +73,7 @@ export const zh: Record<string, string> = {
 	"autocomplete.createNew": '创建 "{{name}}"',
 	"metadataSuggest.finish": "完成",
 	"metadataSuggest.colors": "颜色",
+	"metadataSuggest.yourWords": "你的词",
 	"metadataSuggest.useTyped": '使用 "{{text}}"',
 	"metadataSuggest.replaces": "替换 {{word}}",
 	"metadataSuggest.themeAlso": "你的主题也会为这个词设置样式",
@@ -89,7 +90,7 @@ export const zh: Record<string, string> = {
 	"replaceModal.searchPlaceholder": "搜索 callout",
 	"replaceModal.chooseFirstReplace": "请先选择用来替换它的 callout。",
 	"settings.fallbackTag": "默认",
-	"settings.fallbackTagAuto": "自动默认",
+	"settings.fallbackTagAuto": "自动",
 	"settings.rescanVaultDesc": "添加笔记中用到、但尚未出现在此列表中的 callout 类型。",
 	"settings.rescanVaultHintAction": "扫描 callout",
 	"manualDiscovery.failed": "扫描结果未保存。请确认设置文件可写且同步已完成，然后前往“设置 → 我的 callout 类型 → 扫描 callout”重试。现有 callout 未被替换。",
@@ -97,14 +98,12 @@ export const zh: Record<string, string> = {
 	"settings.rescanComplete": "扫描完成：已添加 {{count}} 个新的 callout 类型。",
 	"replaceModal.titleReplace": "在库中替换",
 
-	"welcome.tooltip": "关于 Callout Studio",
 	"welcome.title": "欢迎使用 Callout Studio！",
 	"welcome.tagline": "创建、设计和管理 Obsidian callout 的完整解决方案。",
 	"importBanner.message":
 		"我们注意到您正在使用 {{plugins}}。是否要导入您的 callout？",
 	"importBanner.action": "导入",
 	"importBanner.dismiss": "忽略",
-	"welcome.previewTitle": "查看实际效果",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio 让您可以创建带有自定义图标、颜色和名称的 callout。\n\n" +
@@ -115,14 +114,16 @@ export const zh: Record<string, string> = {
 		"> [!{{id}}] 块级 callout\n" +
 		"> 经典的 callout 依然使用您熟悉的语法：`> [!type]`。\n\n" +
 		"Callout Studio 还有更多功能等您发现！[了解更多]({{repoUrl}})。\n",
+	"deleteModal.title": "删除 callout",
 
-	"deleteModal.title": '删除 callout "{{name}}"？',
 	"deleteModal.bodyInUse":
 		"此 callout 在 {{files}} 个文件中出现了 {{count}} 次。",
 	"deleteModal.notesUntouched": "此操作只删除 callout 的定义。您的笔记不会被改动，现有的 callout 只会回退到默认样式。",
 	"deleteModal.fallbackTarget": "它也是您的默认回退 callout，因此没有自己样式的 callout 将改用 {{fallback}}。",
+	"deleteModal.subtitleFallback": "“{{name}}” · 你的默认回退样式",
+	"convertModal.title": "转换为纯文本",
+	"convertModal.subtitle": "你的库中每一个 “{{name}}”",
 	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
-	"convertModal.title": '将 "{{name}}" 转为纯文本？',
 	"convertModal.explain": "每一处都会变成普通文本：标题和内容保留，只去掉 callout 格式。",
 	"convertModal.typeStays": "该 callout 类型本身仍保留在您的列表中。",
 	"convertModal.confirm": "转换",
@@ -138,7 +139,6 @@ export const zh: Record<string, string> = {
 	"settings.builtInCallouts": "内置 callout",
 	"settings.contextMenu": "右键菜单",
 	"settings.language": "语言",
-	"settings.languageDesc": "Callout Studio 的语言；除非你另选，否则与 Obsidian 一致。",
 	"settings.importExport": "导入和导出",
 	"settings.import": "导入…",
 	"settings.export": "导出…",
@@ -174,16 +174,15 @@ export const zh: Record<string, string> = {
 
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "来自主题的 callout",
-	"settings.themeCalloutsDesc": "{{theme}} 会自行绘制这些 callout，因此 Callout Studio 保持其原样，并仅以块级 callout 提供。",
 	"settings.themeCalloutsDefaultTheme": "您的主题",
 	"settings.themeCalloutsEmpty": "{{theme}} 目前没有为任何 callout 设置样式。",
 	"settings.themePreviewAria": '预览 "{{name}}" — 查看您的主题如何绘制它',
 	"settings.builtInAllThemeStyled":
-		"{{theme}} 重新设置了每个内置 callout 的样式，因此它们全部列在上方，Callout Studio 不会干预它们。要设计您自己的样式，请添加一个使用不同 ID 的 callout。",
+		"{{theme}} 为每个内置 callout 设置了样式，因此 Callout Studio 会保持它们全部原样。要设计您自己的样式，请添加一个使用不同 ID 的 callout。",
 
 	"settings.fallbackCallout": "默认回退 callout",
 	"settings.fallbackCalloutDesc":
-		"库中无法识别的 callout 类型将继承此 callout 的样式。",
+		"未知的 callout 类型将继承此样式。",
 
 	"settings.border": "边框",
 	"settings.borderTop": "顶部",
@@ -214,8 +213,9 @@ export const zh: Record<string, string> = {
 	"settings.paletteCount": "{{count}} 个调色板",
 	"settings.paletteCountOne": "1 个调色板",
 	"settings.editPaletteAria": "编辑调色板 {{name}}",
-	"settings.deletePaletteConfirm":
-		'删除调色板 "{{name}}"？\n使用其颜色的 callout 不受影响。',
+	"settings.deletePaletteTitle": "删除调色板",
+	"settings.deletePaletteBody":
+		'使用其颜色的 callout 不受影响。',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'在元数据中写了这个名称（"{{key}}"）的 callout 会改用同名的内置颜色。你的笔记不会改变。',
 
@@ -223,7 +223,6 @@ export const zh: Record<string, string> = {
 	"settings.customCommandsDesc": "Callout Studio 的所有命令、它们的快捷键，以及你自己的命令。",
 
 	"commandBuilder.title": "命令与快捷键",
-	"commandBuilder.pageDesc": "点击命令旁的 ⊕，即可在 Obsidian 的快捷键设置中为它设置快捷键。",
 	"commandBuilder.builtIn": "内置命令",
 	"commandBuilder.toggleAria": "开启或关闭 {{name}}",
 	"commandBuilder.hotkeyBlank": "空",
@@ -233,8 +232,7 @@ export const zh: Record<string, string> = {
 	"commandBuilder.empty": "还没有自定义命令。",
 	"commandBuilder.unknownCommand": "此命令",
 	"commandBuilder.editAria": "编辑 {{name}}",
-	"commandBuilder.deleteConfirm":
-		"删除命令 {{name}}？为其分配的快捷键将停止生效。",
+	"commandBuilder.deleteConfirm": "分配给它的所有快捷键都将失效。",
 	"commandBuilder.newTitle": "新建命令",
 	"commandBuilder.editTitle": "编辑命令",
 	"commandBuilder.format": "Callout 格式",
@@ -272,13 +270,16 @@ export const zh: Record<string, string> = {
 	"commandBuilder.roleThemeOwned":
 		"您的主题提供了此 callout，因此它只有 Block 格式。",
 	"commandBuilder.commandSuspended": "主题提供此 callout 期间已暂停，此时它只有块级格式。",
+	"commandBuilder.pausedTag": "被主题暂停",
+	"commandBuilder.missingTag": "缺少 callout",
 
 	"settings.resetAll": "重置",
 	"settings.resetAllDesc":
-		"删除所有用户 callout，重置内置 callout、全局样式（边框、字体缩放、形状）、已保存的调色板、右键菜单自定义设置和已下载的 Material SVG。",
+		"将所有设置和自定义恢复为默认值。",
 	"settings.resetAllButton": "重置所有内容",
 	"notice.resetAllDone": "所有内容已重置为默认值。",
 	"settings.resetIntro": "花点时间，回顾一下你用 Callout Studio 打造的一切。",
+	"settings.resetSubtitleDefaults": "你的设置将恢复为默认值",
 	"settings.resetDeletes": "以下内容即将被删除：",
 	"settings.resetRestores": "以下内容将恢复为默认值：",
 	"settings.resetItemCallouts": "{{count}} 个自定义 callout 类型",
@@ -292,9 +293,10 @@ export const zh: Record<string, string> = {
 	"settings.resetItemHeading": "标题 callout 设置",
 	"settings.resetItemInline": "行内 callout 设置",
 	"settings.resetItemThemeCalloutStyles": "主题的 callout 样式",
+	"settings.resetItemAutocomplete": "自动补全与元数据设置",
 	"settings.resetItemFallback": "后备样式",
 	"settings.resetItemIconLibraries": "图标库顺序和已隐藏的图标库",
-	"settings.resetAllConfirmAfter": "别担心：重置之前，我们会保存当前设置的备份。你可以随时在设置的版本历史中恢复。\n如果你使用同步服务，重置也可能传到你的其他设备。",
+	"settings.resetAllConfirmAfter": "别担心：重置之前，我们会保存当前设置的备份。你可以随时在设置的“恢复较早的版本”中恢复。\n如果你使用同步服务，重置也可能传到你的其他设备。",
 	"settings.resetNothing": "没有需要重置的内容：一切都已是默认值。",
 
 	"notice.customCommandMissingCallout": "该命令的 callout 类型已不存在。",
@@ -404,7 +406,7 @@ export const zh: Record<string, string> = {
 		"微风拂过树梢。温暖的阳光洒在静谧的小径上，让景色焕发生机。",
 	"editor.loremIpsumShort":
 		"微风拂过树梢。",
-	"editor.sampleInlineText": "这是一个嵌入在段落中的行内 [!{id}] 徽标。",
+	"editor.sampleInlineText": "这是一个嵌入在段落中的行内 [!{id}]{{title}} 徽标。",
 	"editor.previewReadOnly": "实时预览无法编辑",
 	"noteChanges.title": "更新你的笔记？",
 	"noteChanges.leave": "保持原样",
@@ -436,7 +438,6 @@ export const zh: Record<string, string> = {
 	"palette.namePlaceholder": "我的调色板",
 	"palette.nameExists": "已存在同名的调色板",
 	"palette.saveBlockedName": "已存在同名的调色板。请换一个名称再保存。",
-	"palette.metadataName": "在 callout 元数据中：{{key}}",
 	"palette.metadataNameExists": '另一个调色板在 callout 元数据中已写作 "{{key}}"。请换一个名称。',
 	"palette.metadataNameShared": "在 callout 元数据中：{{key}}。另一个已保存的调色板也有这个词，因此只有其中一个会响应它。",
 	"palette.renameNotesChange":
@@ -445,16 +446,15 @@ export const zh: Record<string, string> = {
 	"palette.renameNotesChangeDesc": "笔记中的每个 |{{old}} 都会变成 |{{new}}。",
 	"palette.renameNotesFailed": "有些笔记无法更新。已更新的已保存；其余的仍在使用旧名称。",
 	"palette.baseColor": "基础颜色",
-	"palette.baseColorHint":
-		"我们会自动将背景颜色与之匹配。如果需要，您可以通过{{link}}单独控制它。",
-	"palette.baseColorHintLink": "点击此处",
+	"palette.colorViewAdvanced": "单独设置每种颜色",
+	"palette.colorViewSimple": "恢复为单一基础颜色",
 	"palette.advancedColors": "颜色",
-	"palette.advancedColorsHint":
-		"正在编辑{{mode}}模式的颜色 - 另一模式会自动更新。切换 Obsidian 主题以进行检查。",
-	"palette.revertHint": "更喜欢使用单一基础颜色？{{link}}。",
-	"palette.revertHintLink": "还原",
-	"palette.lightMode": "浅色",
-	"palette.darkMode": "深色",
+	"palette.lightModeColors": "浅色模式颜色",
+	"palette.darkModeColors": "深色模式颜色",
+	"palette.modeColorsHintLight": "这些更改仅适用于浅色模式。深色模式保留自己的颜色。\n如需编辑，请按上方的月亮按钮。",
+	"palette.modeColorsHintDark": "这些更改仅适用于深色模式。浅色模式保留自己的颜色。\n如需编辑，请按上方的太阳按钮。",
+	"palette.showLightMode": "显示浅色模式",
+	"palette.showDarkMode": "显示深色模式",
 	"palette.accentColor": "强调色",
 	"palette.backgroundColorChannel": "背景颜色",
 	"palette.textColorChannel": "文本颜色",
@@ -525,6 +525,7 @@ export const zh: Record<string, string> = {
 	"iconPicker.searchMaterial": "搜索 Material 图标",
 	"iconPicker.searchEmoji": "搜索表情符号",
 	"iconPicker.skinTone": "肤色",
+	"iconPicker.skinToneDefault": "默认",
 	"iconPicker.allCategories": "所有分类",
 	"iconPicker.noIconSelected": "未选择图标",
 	"iconPicker.chooseFirst": "请先选择一个图标。",
@@ -714,6 +715,7 @@ export const zh: Record<string, string> = {
 	"iconPack.artworkRestored": "已下载 {{names}} 的图标图稿。",
 	"iconPack.diskWriteFailed":
 		"Callout Studio 无法将图标包保存到磁盘，下次需要重新下载。您选择的图标仍已保存在您的设置中。",
+	"settings.iconLibrariesDesc": "重新排序并下载更多图标库。",
 	"iconLibraries.manage": "管理图标库",
 	"iconLibraries.title": "图标库",
 	"iconLibraries.desc": "拖动以更改“选择图标”中图标库的顺序。\n部分图标库可以下载和删除。\nLucide、Emoji 和 Material 随插件一同提供，因此只能隐藏。",
@@ -735,11 +737,15 @@ export const zh: Record<string, string> = {
 	"iconLibraries.inUse": "有 {{count}} 个 callout 使用了 {{name}} 的图标：",
 	"iconLibraries.inUseMore": "以及另外 {{count}} 个",
 	"iconLibraries.inUseKeeps": "它们会保留自己的图标——每个图标的副本都已随你的设置保存。以后若想从 {{name}} 选择新图标，请重新下载。",
+	"iconLibraries.resetSubtitle": "恢复为插件原始图标库",
 	"iconLibraries.resetConfirm": "这会把图标库恢复为插件刚安装时的样子：默认顺序、没有隐藏项，也没有任何已下载的图标库。以下图标库将被删除：",
 	"iconLibraries.resetKeeps": "已经在使用图标的 callout 会保留它们。以后若想从这些图标库选择新图标，请重新下载。",
 	"iconLibraries.resetButton": "重置",
 
 	// Icon licences & credits
+	"license.title": "许可证",
+	"license.openSourceBeforeLink": "Callout Studio 是开源的，并且会一直如此。许可证在",
+	"license.openSourceLink": "这里",
 	"credits.title": "图标许可证与致谢",
 	"credits.introBeforeNotices":
 		"Callout Studio 使用开源图标库；请在下方查看每个库的许可证、署名和修改内容，或阅读",
@@ -761,25 +767,46 @@ export const zh: Record<string, string> = {
 	"heading.toggleFold": "切换折叠",
 
 	"settings.globalSettings": "Callout Studio 全局样式选项",
-	"settings.calloutStyle": "callout 样式",
+	"settings.calloutStyle": "全局样式",
 	"settings.menusAndCommands": "菜单和命令",
+	"settings.editorBox": "编辑器",
+	"settings.autocompleteAndMetadata": "自动补全与元数据",
+	"settings.autocompleteAndMetadataDesc": "输入 callout 时打开的列表，以及 | 之后的元数据。",
+	"settings.calloutAutocomplete": "callout 自动补全",
+	"settings.calloutAutocompleteDesc": "输入 [! 时显示 callout 列表。",
+	"settings.suggestThemeCallouts": "包含主题的 callout",
+	"settings.suggestThemeCalloutsDesc": "列出你的主题添加的 callout。",
+	"settings.metadataPage": "元数据",
+	"settings.metadataPageDesc": "callout 中 | 之后的颜色和词。",
+	"settings.metadataColors": "元数据颜色",
+	"settings.metadataColorsDesc": "| 之后的颜色只会给那一个 callout 上色，例如 [!note|red]。",
+	"settings.metadataAutocomplete": "元数据自动补全",
+	"settings.metadataAutocompleteDesc": "在 callout 中输入 | 时显示颜色和词的列表。",
+	"settings.suggestThemeMetadata": "包含主题的词",
+	"settings.suggestThemeMetadataDesc": "列出你的主题会响应的词。",
+	"settings.metadataWords": "你的词",
+	"settings.metadataWordsDesc": "在 | 之后建议的词，例如其他插件读取的词。",
+	"settings.metadataWordsPlaceholder": "添加词",
+	"settings.addMetadataWord": "添加词",
+	"settings.metadataWordAlreadyHere": "此词已在列表中",
+	"settings.metadataWordTooLong": "每个词最多 {{max}} 个字符",
+	"settings.maxMetadataWords": "最多 {{max}} 个词。删除一个才能添加另一个。",
 	"settings.buildFailed": "Callout Studio 无法绘制其设置页面；请重启 Obsidian，如果再次出现，请反馈。",
 	"settings.globalSettingsRegularDesc":
-		"调整库中每个 block callout 的边框、圆角、字体缩放和对齐方式。",
+		"边框、圆角、字体缩放和对齐方式。",
 	"settings.globalSettingsHeadingDesc":
-		"调整库中每个标题 callout 的边框、形状和垂直间距。",
+		"边框、形状和垂直间距。",
 	"settings.globalSettingsInlineDesc":
-		"调整库中每个行内 callout 的边框和形状。",
+		"边框和形状。",
 	"settings.themeCalloutStyles": "使用主题的 callout 样式",
-	"settings.themeCalloutStylesDesc": "开启时，主题设置样式的 callout 保持主题的外观；关闭时，由 Callout Studio 绘制所有 callout。",
+	"settings.themeCalloutStylesDesc": "开启时，主题设置样式的 callout 保持主题的外观，并且仅显示为块级 callout；关闭时，由 Callout Studio 绘制所有 callout。",
 
-	"settings.calloutTypeRegular": "块级 callout",
-	"settings.calloutTypeHeading": "标题 callout",
-	"settings.calloutTypeInline": "行内 callout",
+	"settings.calloutTypeRegular": "块级 callout 样式",
+	"settings.calloutTypeHeading": "标题 callout 样式",
+	"settings.calloutTypeInline": "行内 callout 样式",
 
 	"settings.customizeMenuDesc": "为每种 callout 类型选择并排序右键操作。",
 	"menuCustomize.title": "自定义右键菜单",
-	"menuCustomize.pageDesc": "拖动手柄可移动某个操作，点击 ✕ 可将其隐藏。",
 	"menuCustomize.regular": "块级 callout",
 	"menuCustomize.heading": "标题 callout",
 	"menuCustomize.inline": "行内 callout",
@@ -798,10 +825,10 @@ export const zh: Record<string, string> = {
 	"confirm.ok": "删除",
 	"confirm.cancel": "取消",
 	"confirm.acknowledge": "我已阅读并理解",
+	"confirm.subtitleName": "“{{name}}”",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "删除命令",
-	"confirm.titleDeletePalette": "删除调色板",
 	"confirm.titleDeleteImage": "删除图片",
 	"confirm.titleDeleteLibrary": "删除图标库",
 	"confirm.titleResetLibraries": "重置图标库",
@@ -812,7 +839,6 @@ export const zh: Record<string, string> = {
 	"vault.titlesUpdated":
 		"已更新库文件中的 {{count}} 个 callout 标题：{{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated": "已更新库文件中 {{count}} 个 callout 的折叠标记。",
-	"vault.replaceWith": "替换为：",
 	"vault.confirmReplace": "替换",
 	"vault.replacePromptInUse":
 		'"{{name}}" 在 {{files}} 个文件中被使用了 {{count}} 次。选择替换它的 callout：',
@@ -1039,20 +1065,14 @@ export const zh: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"标题长度为 {{length}} 个字符；已缩短至 {{max}}。",
 
-	"footer.prompt":
-		"有问题、错误或想法？欢迎告诉我！{{break}} {{issue}} 或 {{email}}。",
-	"footer.openIssue": "打开 GitHub issue",
-	"footer.sendEmail": "给我发邮件",
+	"footer.openIssue": "打开 issue",
 	"footer.sourceCode": "源代码",
-	"footer.contribute": "参与贡献",
-	"footer.license": "插件许可证",
-	"footer.iconCredits": "图标许可证",
 	"settings.about": "关于",
 	"settings.version": "版本",
-	"settings.deletePaletteConfirmLinkedOne":
-		"删除调色板“{{name}}”？\n1 个 callout 正在使用它。它会保留原有颜色，你之后可以在其编辑器的颜色行重新关联。",
-	"settings.deletePaletteConfirmLinked":
-		"删除调色板“{{name}}”？\n{{count}} 个 callout 正在使用它。它们会保留原有颜色，你之后可以在任一编辑器的颜色行重新关联。",
+	"settings.deletePaletteBodyLinkedOne":
+		"1 个 callout 正在使用它。它会保留原有颜色，你之后可以在其编辑器的颜色行重新关联。",
+	"settings.deletePaletteBodyLinked":
+		"{{count}} 个 callout 正在使用它。它们会保留原有颜色，你之后可以在任一编辑器的颜色行重新关联。",
 	"notice.palettesMerged":
 		"已合并 {{count}} 个颜色完全相同的已保存颜色：{{names}}。使用它们的 callout 会保留原有颜色，并已关联到保留的颜色。",
 	"editor.colorsDescDeleted":
@@ -1064,8 +1084,8 @@ export const zh: Record<string, string> = {
 		"这些颜色与“{{name}}”完全相同。两个已保存颜色不能相同——请修改一个颜色，或{{link}}。",
 	"palette.colorExistsUseLink": "使用现有颜色",
 	"locale.downloading": "正在下载翻译…",
+	"locale.downloaded": "翻译已下载。",
 	"locale.notDownloaded": "{{name}} 尚未下载",
-	"locale.notDownloadedDesc": "在翻译下载完成之前，Callout Studio 会显示英文，并在 Obsidian 启动时重试。",
 	"locale.retry": "重试",
 	"locale.diskWriteFailed":
 		"Callout Studio 无法将翻译保存到磁盘，因此下次需要重新下载。",
@@ -1077,6 +1097,7 @@ export const zh: Record<string, string> = {
 	"notice.exportCssEnabled":
 		"此片段已在此 vault 中启用。Callout Studio 已经为这些 callout 设置样式，而片段保留导出时的样式。",
 	"confirm.titleOverwriteSnippet": "覆盖 CSS 片段",
+	"confirm.subtitleOverwriteSnippet": "自 Callout Studio 写入后已被编辑",
 	"confirm.overwriteSnippet":
 		"snippets 文件夹中的 CSS 片段自 Callout Studio 写入后已发生变化。再次导出会替换整个文件。",
 	"confirm.overwriteSnippetOk": "覆盖",
@@ -1172,9 +1193,11 @@ export const zh: Record<string, string> = {
 	"settings.resetNotSaved": "重置已显示，但尚未能保存，因此你的设置文件仍保留之前的设置。请查看 Callout Studio 设置中的保存状态。",
 	"confirm.titleResetEverything": "重置所有内容",
 	"confirm.titleReplaceUnreadable": "替换设置文件",
+	"confirm.subtitleReplaceUnreadable": "会先保存一份完全相同的副本",
 	"confirm.replaceUnreadable": "系统会先将当前文件的一份精确副本保存到插件的备份文件夹中。随后该文件会被替换为此处显示的设置，你的同步服务会将其发送到你的其他设备。",
 	"confirm.replaceUnreadableSalvage": "系统会先将当前文件的一份精确副本保存到插件的备份文件夹中。文件内的设置会与此处显示的设置合并，随后文件会被重写，以便每台设备都能重新读取它。",
 	"confirm.titleDiscardRecoveryCopy": "丢弃恢复副本",
+	"confirm.subtitleDiscardRecoveryCopy": "此设备上已暂停保存",
 	"confirm.discardRecoveryCopy": "此设备的恢复副本无法读取，因此此设备上的保存已暂停。系统会先将其一份精确副本保存到插件的备份文件夹中，随后将其替换为此处显示的设置。你的设置文件不会发生变化。",
 	"vault.undoRewrite": "撤销",
 	"vault.undoRestored": "已恢复 {{count}} 篇笔记。",
@@ -1371,7 +1394,7 @@ export const zh: Record<string, string> = {
 	"recovery.delete": "删除",
 
 	// Version history
-	"saveStatus.guide.versions": "恢复保存后，你也可以从版本历史中恢复较早的版本。",
+	"saveStatus.guide.versions": "恢复保存后，你也可以通过“恢复较早的版本”回到已保存的版本。",
 	"saveStatus.goToVersions": "前往版本历史",
 	"versions.title": "版本历史",
 	"versions.intro": "Callout Studio 会自动保存配置的版本。\n旧版本会逐渐清理。\n恢复版本会替换所有已同步设备上的当前配置。",
@@ -1391,13 +1414,14 @@ export const zh: Record<string, string> = {
 	"versions.reason.beforeImport": "导入之前",
 	"versions.reason.beforeRepair": "修复设置文件之前",
 	"versions.restoreTitle": "恢复此版本",
-	"versions.restoreBody": "当前配置将替换为 {{when}} 的“{{name}}”（{{count}} 处差异）。\n当前配置会先保存为一个版本，以便你随时返回。\n随后，同步服务会将恢复的配置发送到其他设备。",
+	"versions.subtitle": "“{{name}}” · {{when}}",
+	"versions.restoreBody": "你当前的设置将被替换（{{count}} 处差异）。\n会先将其保存为一个版本，以便你随时返回。\n之后你的同步服务会把恢复的设置发送到你的其他设备。",
 	"versions.restoreSame": "此版本与当前配置相同，无需恢复。",
 	"versions.restored": "已恢复 {{when}} 的“{{name}}”。",
 	"versions.backupFailed": "未恢复任何内容：无法先将当前配置保存为一个版本。请检查可用存储空间后重试。",
 	"versions.restoreFailed": "无法恢复此版本。未做任何更改。",
 	"versions.deleteTitle": "删除此版本",
-	"versions.deleteAvailableBody": "将永久删除 {{when}} 的版本“{{name}}”及其所有可用副本。",
+	"versions.deleteAvailableBody": "它及其所有可用副本将被永久删除。",
 	"versions.deleteSyncedFiles": "删除这些文件的操作可能会同步到你的其他设备。这些设备上的本地副本可能仍会保留。",
 	"versions.deleteFinal": "此操作无法撤销。当前配置不会受到影响。",
 	"versions.deleted": "已删除 {{when}} 的“{{name}}”。",
@@ -1406,10 +1430,10 @@ export const zh: Record<string, string> = {
 	"versions.details.difference": "与当前设置相比有 {{count}} 处差异",
 	"versions.details.differences": "与当前设置相比有 {{count}} 处差异",
 	"versions.details.comparisonUnavailable": "无法进行比较",
-	"notice.unsavedChangesKept": "此设备上的一些更改尚未保存，被其他设备的较新设置替换。你的版本已事先保存：请在 Callout Studio 设置中打开版本历史以恢复它。",
-	"settings.versionHistory": "版本历史",
+	"notice.unsavedChangesKept": "此设备上的一些更改尚未保存，被其他设备的较新设置替换。你的版本已事先保存：请在 Callout Studio 设置中打开“恢复较早的版本”以恢复它。",
+	"settings.versionHistory": "恢复较早的版本",
 	"settings.versions": "较早版本",
-	"settings.versionsDesc": "比较自动保存的设置版本，或回到其中某一个。",
+	"settings.versionsDesc": "用已保存的较早版本替换你当前的设置。",
 	"settings.versionsButton": "查看版本",
 	"noteChanges.callouts": "{{count}} 个 callout",
 	"noteChanges.calloutsOne": "1 个 callout",
