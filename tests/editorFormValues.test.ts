@@ -7,9 +7,8 @@
  * - The preview's title is an Obsidian heading above its box, and Picture is
  *   an Obsidian group like the icon adjustments (`iconAdjustGroup.test.ts`).
  * - A built-in callout's name cannot change (Obsidian declares it), so the
- *   editor shows it as Obsidian shows a value you cannot change: quiet text at
- *   the row's end (`Setting.addDisplayValue`), not a field that looks editable
- *   but is greyed out.
+ *   editor shows it inside a disabled, field-shaped box (not bare text pinned
+ *   to the row's edge).
  * - While a save runs, Save keeps its words and its size and shows Obsidian's
  *   own spinner (`mod-loading`), instead of turning into "Saving…".
  *
@@ -31,9 +30,9 @@ installFakeDom();
 describe("a built-in callout's name", () => {
 	const source = readRepoFile("src/settings/CalloutEditor.ts");
 
-	it("is a display value, not a disabled text field", () => {
-		assert.match(source, /if \(this\.isBuiltIn\) \{[\s\S]{0,400}?nameSetting\.addDisplayValue\(\(value\) => value\.setValue\(this\.displayName\)\)/);
-		assert.doesNotMatch(source, /text\.setDisabled\(true\)/, "no greyed-out name field any more");
+	it("is a disabled text field box, not bare text at the row's end", () => {
+		assert.match(source, /if \(this\.isBuiltIn\) \{[\s\S]{0,600}?nameSetting\.addText\(\(text\) => \{[\s\S]{0,200}?text\.setValue\(this\.displayName\)\.setDisabled\(true\)/);
+		assert.doesNotMatch(source, /nameSetting\.addDisplayValue/);
 	});
 });
 

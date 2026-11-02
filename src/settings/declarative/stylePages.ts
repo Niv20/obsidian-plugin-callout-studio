@@ -29,6 +29,7 @@ import { DEFAULT_SETTINGS } from "../../constants";
 import { t, type LocaleKey } from "../../i18n";
 import type { BorderSidesSettings, CalloutRenderRole, PluginSettings } from "../../types";
 import { paintResetIdle } from "../../ui/resetArrow";
+import { followWindow } from "../../utils/elementWindow";
 import { specFromDef, wireStyleSlider, type StyleSliderSpec } from "../styleControls";
 import { StylePreview } from "../stylePreview";
 import {
@@ -207,31 +208,35 @@ function buildPreview(ctx: TreeContext, role: CalloutRenderRole, parent: HTMLEle
  * - The preview is a kept part: leaving the page and coming back before it is
  *   let go moves the same preview into the new page's row. Its box and its
  *   bar are then new ones, so they are found from where the preview is now.
- * The observer is made by the preview's own window, because Obsidian 1.14
- * opens the settings in a window of their own.
+ * The observer is made by the window that shows the preview, because Obsidian
+ * 1.14 opens the settings in a window of their own and draws the row in the
+ * main window first, so the preview is moved there afterwards: an observer of
+ * the main window would never hear it (`followWindow`, utils/elementWindow.ts).
  *
  * @param previewEl The preview's own element, which moves with it.
  */
 function pinBelowTitlebar(previewEl: HTMLElement): () => void {
-	const view = previewEl.ownerDocument.defaultView;
-	if (!view || typeof view.ResizeObserver !== "function") return () => {};
-	/** The title bar being watched for its height; it changes with the page. */
-	let watchedBar: HTMLElement | null = null;
-	const observer = new view.ResizeObserver(() => {
-		const titlebar = previewEl.closest(".setting-page")?.querySelector<HTMLElement>(".setting-page-titlebar");
-		const boxEl = previewEl.closest<HTMLElement>(".setting-group");
-		if (!titlebar || !boxEl) return;
-		// Watch the bar of the page the preview is on now. (Only when it is a
-		// new one: watching an element again makes the observer call back again.)
-		if (titlebar !== watchedBar) {
-			if (watchedBar) observer.unobserve(watchedBar);
-			observer.observe(titlebar);
-			watchedBar = titlebar;
-		}
-		boxEl.style.setProperty("--cs-sticky-top", `${titlebar.getBoundingClientRect().height}px`);
+	return followWindow(previewEl, (view) => {
+		const Observer = (view as { ResizeObserver?: typeof ResizeObserver }).ResizeObserver;
+		if (typeof Observer !== "function") return () => {};
+		/** The title bar being watched for its height; it changes with the page. */
+		let watchedBar: HTMLElement | null = null;
+		const observer = new Observer(() => {
+			const titlebar = previewEl.closest(".setting-page")?.querySelector<HTMLElement>(".setting-page-titlebar");
+			const boxEl = previewEl.closest<HTMLElement>(".setting-group");
+			if (!titlebar || !boxEl) return;
+			// Watch the bar of the page the preview is on now. (Only when it is a
+			// new one: watching an element again makes the observer call back again.)
+			if (titlebar !== watchedBar) {
+				if (watchedBar) observer.unobserve(watchedBar);
+				observer.observe(titlebar);
+				watchedBar = titlebar;
+			}
+			boxEl.style.setProperty("--cs-sticky-top", `${titlebar.getBoundingClientRect().height}px`);
+		});
+		observer.observe(previewEl);
+		return () => observer.disconnect();
 	});
-	observer.observe(previewEl);
-	return () => observer.disconnect();
 }
 
 /** The heading page's preview, when it is on screen. */

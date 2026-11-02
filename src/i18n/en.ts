@@ -713,7 +713,7 @@ export const en: Record<string, string> = {
 	"settings.maintenance": "Danger zone",
 	"settings.resetAll": "Reset everything",
 	"settings.resetAllDesc":
-		"Delete all user callouts, reset built-in callouts, global styles (borders, font scale, shape), saved color palettes, the right-click menu customization, and downloaded Material SVGs.",
+		"Restore all settings and customizations to their defaults.",
 	"settings.resetAllButton": "Reset everything",
 	"notice.resetAllDone": "Everything has been reset to defaults.",
 	// The confirmation lists what this vault would lose, one bullet per kind,
@@ -1336,7 +1336,7 @@ export const en: Record<string, string> = {
 
 	// Global settings section (per-role style popups)
 	"settings.globalSettings": "Global Callout Studio style options",
-	"settings.calloutStyle": "Callout style",
+	"settings.calloutStyle": "Global styling",
 	"settings.menusAndCommands": "Menus and commands",
 	"settings.editorBox": "Editor",
 
@@ -1364,19 +1364,19 @@ export const en: Record<string, string> = {
 	"settings.maxMetadataWords": "Maximum {{max}} words. Delete one to add another.",
 	"settings.buildFailed": "Callout Studio couldn't draw its settings; restart Obsidian, and report it if it happens again.",
 	"settings.globalSettingsRegularDesc":
-		"Adjust the border, radius, font scale, and alignment of every block callout in your vault.",
+		"Border, radius, font scale, and alignment.",
 	"settings.globalSettingsHeadingDesc":
-		"Adjust the border, shape, and vertical spacing of every heading callout in your vault.",
+		"Border, shape, and vertical spacing.",
 	"settings.globalSettingsInlineDesc":
-		"Adjust the border and shape of every inline callout in your vault.",
+		"Border and shape.",
 	"settings.themeCalloutStyles": "Use your theme's callout styles",
 	"settings.themeCalloutStylesDesc":
 		"When on, callouts your theme styles keep its look, and appear only as Block callouts. When off, Callout Studio draws every callout.",
 
 	// Callout types section
-	"settings.calloutTypeRegular": "Block callout",
-	"settings.calloutTypeHeading": "Heading callout",
-	"settings.calloutTypeInline": "Inline callout",
+	"settings.calloutTypeRegular": "Block callout style",
+	"settings.calloutTypeHeading": "Heading callout style",
+	"settings.calloutTypeInline": "Inline callout style",
 
 	// Context menu customization
 	"settings.customizeMenuDesc":

@@ -66,16 +66,18 @@ function sliders(): SliderComponent[] {
 }
 
 describe("renderIconAdjustGroup — an Obsidian group", () => {
-	it("is a SettingGroup with the role's heading and a stacked row per slider", () => {
+	it("is a SettingGroup with the role's heading and a row per slider", () => {
 		const { box } = build({ ...DEFAULT_ICON_ADJUST });
 		assert.ok(box.hasClass("setting-group"));
 		assert.ok(box.hasClass("cs-editor-group"), "rows share the editor's 16px inset");
 		const heading = box.querySelector(".setting-item-heading .setting-item-name");
 		assert.strictEqual(heading?.textContent, t("editor.headingIconAdjustments"));
-		const rows = box.querySelectorAll(".cs-stacked-slider");
+		const rows = Array.from(box.querySelectorAll(".setting-item")).filter(
+			(row) => !row.hasClass("setting-item-heading"),
+		);
 		assert.strictEqual(rows.length, 3);
 		for (const row of rows) {
-			assert.ok(row.hasClass("setting-item"));
+			assert.ok(!row.hasClass("cs-stacked-slider"));
 			assert.ok(row.closest(".setting-items"), "each slider is a row in the group's box");
 		}
 	});

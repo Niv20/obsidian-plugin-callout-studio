@@ -47,7 +47,7 @@ import {
 } from "../utils/colorPalettes";
 import { t } from "../i18n";
 import { sanitizeCalloutIdInput } from "../utils/calloutId";
-import { TagInput } from "../ui/TagInput";
+import { TagInput, wide } from "../ui/TagInput";
 import { SelectDropdown } from "../ui/selectDropdown";
 import { renderInlineLinkHint } from "../ui/inlineLinkHint";
 import { resolveCurrentModeColors } from "../ui/ColorCircles";
@@ -71,7 +71,7 @@ import { EditorSaveSession } from "./editor/EditorSaveSession";
 import { askNoteChanges } from "./editor/askNoteChanges";
 import { idOwnership, type IdMove } from "./editor/idMoves";
 import type { NoteChoices } from "./editor/noteChanges";
-import type { TagMessage } from "../ui/TagInput";
+import type { TagMessage, TagRefusal } from "../ui/TagInput";
 import {
 	hasAuthoredBackground,
 	hasAuthoredTextColors,
@@ -455,10 +455,12 @@ export class CalloutEditor extends Modal {
 			);
 		if (this.isBuiltIn) {
 			// A built-in's name is fixed (Obsidian declares it), so it is shown
-			// the way Obsidian shows a value you cannot change: quiet text at
-			// the row's end (`addDisplayValue`, Obsidian 1.13.1), not a field
-			// that looks editable but is greyed out (finding S5-V2).
-			nameSetting.addDisplayValue((value) => value.setValue(this.displayName));
+			// inside a field-shaped box that cannot be focused or clicked. It
+			// is not stored in `nameTextInput`: nothing may ever edit it.
+			nameSetting.addText((text) => {
+				text.inputEl.addClass("cs-text-control");
+				text.setValue(this.displayName).setDisabled(true);
+			});
 		} else {
 			nameSetting.addText((text) => {
 				this.nameTextInput = text;
@@ -518,9 +520,10 @@ export class CalloutEditor extends Modal {
 				}),
 			);
 
-		// Errors go under the field, where Obsidian shows a rejected value
-		// (`setErrorMessage`, finding S5-V1); notes — not problems, just worth
-		// knowing — stay under the label, as more description.
+		// A short error goes under the field, where Obsidian shows a rejected
+		// value (`setErrorMessage`, finding S5-V1). A long one — a sentence that
+		// names a callout or a theme — is marked `wide(...)` and goes under the
+		// label with the notes, which are not problems, just worth knowing.
 		const idsNoteEl = idsSetting.descEl.createDiv();
 
 		this.idsTagInput = new TagInput(idsSetting.controlEl, {
@@ -588,7 +591,7 @@ export class CalloutEditor extends Modal {
 				const taken = this.takenIdMessage(tag, () => this.idsTagInput?.addTagUnchecked(tag));
 				if (taken) return taken;
 				return clash
-					? t("editor.idDashConflict", { other: clash })
+					? wide(t("editor.idDashConflict", { other: clash }))
 					: t("editor.idConflict");
 			},
 		});
@@ -781,7 +784,13 @@ export class CalloutEditor extends Modal {
 					// repaints them in the next frame.
 					this.previewColorOverride === null,
 				);
-				this.plugin.cssInjector.inject(false);
+				// A new callout's draft is a lone demo, so a step rewrites only
+				// its own small sheet instead of the whole stylesheet; editing
+				// an existing callout shadows a real one and takes the full
+				// pass, as it always did (see CSSInjector.repaintDemoPreview).
+				// The icon can change here, which is not CSS, so the preview
+				// pane is swept for it.
+				this.plugin.cssInjector.repaintDemoPreview(previewCol);
 				this.scheduleNoteDecorationRefresh();
 			},
 			onDestroy: () => {
@@ -1554,21 +1563,21 @@ export class CalloutEditor extends Modal {
 	 * "move it here" records the move and calls `onMove`. See ./editor/idMoves
 	 * for what may move.
 	 */
-	private takenIdMessage(id: string, onMove: () => void): TagMessage | null {
+	private takenIdMessage(id: string, onMove: () => void): TagRefusal | null {
 		const owner = idOwnership(this.plugin.registry, id, this.existingId);
 		switch (owner.kind) {
 			case "free":
 				return null;
 			case "theme":
-				return t("editor.idFromTheme", {
+				return wide(t("editor.idFromTheme", {
 					theme: activeThemeName(this.plugin.app) ?? t("settings.themeCalloutsDefaultTheme"),
-				});
+				}));
 			case "stock":
-				return t("editor.idBuiltInStock", { id, name: owner.owner.displayName });
+				return wide(t("editor.idBuiltInStock", { id, name: owner.owner.displayName }));
 			case "main":
-				return t("editor.idOwnedByMain", { id, name: owner.owner.displayName });
+				return wide(t("editor.idOwnedByMain", { id, name: owner.owner.displayName }));
 			case "movable":
-				return (el) => {
+				return wide((el) => {
 					const line = renderInlineLinkHint(el, {
 						textKey: "editor.idOwnedBy",
 						linkKey: "editor.idMoveHere",
@@ -1584,7 +1593,7 @@ export class CalloutEditor extends Modal {
 					// typed id again, and the message would be redrawn from under
 					// the pointer before the click lands — as the + guards itself.
 					line.querySelector("button")?.addEventListener("mousedown", (evt) => evt.preventDefault());
-				};
+				});
 		}
 	}
 
@@ -1751,11 +1760,13 @@ export class CalloutEditor extends Modal {
 			// over another's extra id — the message says how.
 			this.idsTagInput.showExternalError(
 				this.themeSuppliesId(this.calloutId)
-					? t("editor.idFromTheme", {
-							theme:
-								activeThemeName(this.plugin.app) ??
-								t("settings.themeCalloutsDefaultTheme"),
-						})
+					? wide(
+							t("editor.idFromTheme", {
+								theme:
+									activeThemeName(this.plugin.app) ??
+									t("settings.themeCalloutsDefaultTheme"),
+							}),
+						)
 					: this.takenIdMessage(this.calloutId, () => {
 							this.updateIdWarning();
 							this.updatePreview();
@@ -1773,7 +1784,7 @@ export class CalloutEditor extends Modal {
 		const fuzzy = this.themeFuzzyClaim(this.calloutId);
 		if (fuzzy) {
 			this.idsTagInput.showExternalError(
-				t("editor.idThemePattern", { pattern: fuzzy }),
+				wide(t("editor.idThemePattern", { pattern: fuzzy })),
 			);
 			return;
 		}
@@ -1787,7 +1798,7 @@ export class CalloutEditor extends Modal {
 			const clash = this.findAttrIdCollision(id);
 			if (clash) {
 				this.idsTagInput.showExternalError(
-					t("editor.idDashConflict", { other: clash }),
+					wide(t("editor.idDashConflict", { other: clash })),
 				);
 				return;
 			}
@@ -1815,13 +1826,15 @@ export class CalloutEditor extends Modal {
 			const theme =
 				activeThemeName(this.plugin.app) ?? t("settings.themeCalloutsDefaultTheme");
 			this.idsTagInput.showExternalError(
-				obsidianNames.length > 0
-					? t("editor.namesFromThemeAndObsidian", {
-							theme,
-							names: list(themeNames),
-							stock: list(obsidianNames),
-						})
-					: t("editor.namesFromTheme", { theme, names: list(themeNames) }),
+				wide(
+					obsidianNames.length > 0
+						? t("editor.namesFromThemeAndObsidian", {
+								theme,
+								names: list(themeNames),
+								stock: list(obsidianNames),
+							})
+						: t("editor.namesFromTheme", { theme, names: list(themeNames) }),
+				),
 			);
 			return;
 		}

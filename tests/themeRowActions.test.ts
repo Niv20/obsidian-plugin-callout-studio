@@ -510,7 +510,7 @@ describe("the theme preview window writes nothing", () => {
 		assert.match(en, /To customize, create a new callout/);
 	});
 
-	it("collapses only the theme preview's final blank line", () => {
+	it("collapses a preview's final blank line only where it opts in (the theme preview, the style pages' preview)", () => {
 		const modal = readRepoFile("src/settings/ThemeCalloutPreviewModal.ts");
 		assert.match(
 			modal,
@@ -527,8 +527,11 @@ describe("the theme preview window writes nothing", () => {
 		const optInFiles = pluginSourceFiles()
 			.filter((file) => file.text.includes("collapseTrailingBlankLine:"))
 			.map((file) => file.path);
+		// The style pages' preview opts in too, to stay short (stylePreview.ts);
+		// the callout editor's preview does not, and keeps its blank line.
 		assert.deepStrictEqual(optInFiles, [
 			"src/settings/ThemeCalloutPreviewModal.ts",
+			"src/settings/stylePreview.ts",
 		]);
 		assert.match(
 			readRepoFile("styles.css"),

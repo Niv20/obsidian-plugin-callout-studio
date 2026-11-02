@@ -53,6 +53,9 @@ export class StylePreview {
 		this.preview = new LiveCalloutPreview(plugin.app, this.el, {
 			title: showTitle ? t("settings.previewTitle") : undefined,
 			initialText: sampleText(role),
+			// The block sample ends in a blank line to park the caret on; it
+			// stays for the caret but takes no room, to keep the preview short.
+			collapseTrailingBlankLine: true,
 			beforeRender: () => {
 				// A neutral demo callout for previewing the vault-wide geometry,
 				// never a real row — keep it out of the settings lists.
@@ -182,7 +185,13 @@ export class StylePreview {
 			});
 	}
 
-	/** Instantly swap the live editor out for the stacked gap demo. */
+	/**
+	 * Instantly swap the live editor out for the stacked gap demo.
+	 *
+	 * The demo takes the editor's place in the same box, at the height the box
+	 * has right now, and scrolls inside it. A demo of its own height would grow
+	 * the box and push the page down under the slider being dragged.
+	 */
 	showGapDemo(): void {
 		// Sync the demo to the current value before it's revealed, so a fresh
 		// grab shows the right gap even before the first move fires `set`.
@@ -190,12 +199,18 @@ export class StylePreview {
 		// Same for the chevrons: the fold switch may have been flipped since the
 		// demo was built, and it's the reveal — not the build — the user sees.
 		this.syncDemoChevrons();
+		// Measured before the swap: afterwards the box would be the demo's.
+		const box = this.el.querySelector<HTMLElement>(".cs-live-preview-container");
+		box?.style.setProperty("--cs-style-preview-height", `${box.offsetHeight}px`);
 		this.el.addClass("cs-showing-gap-demo");
 	}
 
 	/** Restore the live editor. */
 	hideGapDemo(): void {
 		this.el.removeClass("cs-showing-gap-demo");
+		this.el
+			.querySelector<HTMLElement>(".cs-live-preview-container")
+			?.style.removeProperty("--cs-style-preview-height");
 	}
 }
 
@@ -208,17 +223,16 @@ export function sampleText(role: CalloutRenderRole): string {
 			// home outside the callout (see EmbeddableMarkdownEditor.parkCursor).
 			return [
 				`> [!${STYLE_DEMO_ID}] ${name}`,
-				`> ${t("editor.loremIpsum")}`,
+				`> ${t("editor.loremIpsumShort")}`,
 				"",
 			].join("\n");
 		case "heading":
-			// Two body paragraphs so the fold arrow visibly hides content.
+			// One short body paragraph: enough for the fold arrow to visibly
+			// hide something, and the preview stays short.
 			return [
 				`## [!${STYLE_DEMO_ID}] ${name}`,
 				"",
-				t("editor.loremIpsum"),
-				"",
-				t("editor.loremIpsum"),
+				t("editor.loremIpsumShort"),
 			].join("\n");
 		case "inline":
 			// Use the localized label in the syntax revealed by the preview.

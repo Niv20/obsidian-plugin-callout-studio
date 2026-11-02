@@ -12,7 +12,8 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import type { App } from "obsidian";
-import { installFakeDom } from "./support/fakeDom";
+import { installFakeDom, type FakeElement, type FakeWindow } from "./support/fakeDom";
+import { installResizeObserver, migrateElement, newWindow } from "./support/fakeWindows";
 import { DeclarativeHarness, searchSettings, type RenderedBox } from "./support/declarativeRenderer";
 import type { ButtonLike, SliderComponent, ToggleComponent } from "./support/obsidianStub";
 import { DEFAULT_SETTINGS } from "../src/constants";
@@ -239,6 +240,28 @@ describe("a style page", () => {
 			assert.equal(second.boxEl.style.getPropertyValue("--cs-sticky-top"), "36px");
 		} finally {
 			Reflect.deleteProperty(view, "ResizeObserver");
+		}
+	});
+});
+
+describe("the preview's pin under the title bar, in a window of its own", () => {
+	it("is watched by the window that shows the preview once it has moved there", () => {
+		const { plugin } = drawStyleWith();
+		const { tab, harness } = plugin;
+		const main = installResizeObserver(tab.containerEl.ownerDocument.defaultView as unknown as FakeWindow);
+		try {
+			harness.openPage([STYLE_PAGES.regular]);
+			const previewEl = row(harness, `${STYLE_PAGES.regular}-preview`).settingEl.querySelector(".cs-style-preview") as unknown as FakeElement;
+			// The row was drawn by the main window, after the observer was put on it…
+			const settingsDoc = newWindow();
+			const settings = installResizeObserver(settingsDoc.defaultView);
+			// …and the preview is shown in the settings window.
+			migrateElement(previewEl, settingsDoc);
+			assert.ok(settings.observers[0]?.targets.has(previewEl), "the settings window's observer watches it");
+			assert.equal(main.observers.at(-1)?.targets.size, 0, "the main window's has let go");
+			settings.restore();
+		} finally {
+			main.restore();
 		}
 	});
 });

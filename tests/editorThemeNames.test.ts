@@ -12,6 +12,7 @@ import type { App } from "obsidian";
 import { t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CalloutEditor } from "../src/settings/CalloutEditor";
+import { wide, type TagRefusal } from "../src/ui/TagInput";
 import type { CalloutEditorPlugin } from "../src/settings/editor/types";
 import { definition } from "./support/discoveryHarness";
 
@@ -50,11 +51,11 @@ function editorFor(
 	if (newId !== undefined) {
 		Object.assign(editor, { calloutId: newId, aliases: [] });
 	}
-	const shown: string[] = [];
+	const shown: TagRefusal[] = [];
 	let cleared = 0;
 	Object.assign(editor, {
 		idsTagInput: {
-			showExternalError: (msg: string) => shown.push(msg),
+			showExternalError: (msg: TagRefusal) => shown.push(msg),
 			clearExternalError: () => void cleared++,
 		},
 	});
@@ -65,8 +66,9 @@ function editorFor(
 describe("the callout editor on a name the theme draws", () => {
 	it("names the claimed names and the theme", () => {
 		const { shown } = editorFor(["description"], ["вид", "description"]);
+		// A sentence that names the theme: a wide message, drawn under the label.
 		assert.deepEqual(shown, [
-			t("editor.namesFromTheme", { theme: "Fixture", names: "[!description]" }),
+			wide(t("editor.namesFromTheme", { theme: "Fixture", names: "[!description]" })),
 		]);
 	});
 
@@ -90,10 +92,10 @@ describe("the callout editor on a name the theme draws", () => {
 		// really draws Note is "your theme supplies it" the right reason —
 		// otherwise the message names whose id it is.
 		const own = editorFor(["note"], [], [], "note");
-		assert.deepEqual(own.shown, [t("editor.idBuiltInStock", { id: "note", name: "Note" })]);
+		assert.deepEqual(own.shown, [wide(t("editor.idBuiltInStock", { id: "note", name: "Note" }))]);
 		const theirs = editorFor(["note"], [], ["note"], "note");
 		assert.deepEqual(theirs.shown, [
-			t("editor.idFromTheme", { theme: "Fixture" }),
+			wide(t("editor.idFromTheme", { theme: "Fixture" })),
 		]);
 	});
 
@@ -118,16 +120,16 @@ describe("the callout editor on a name the theme draws", () => {
 			},
 		} as unknown as CalloutEditorPlugin;
 		const editor = new CalloutEditor(plugin, registry.get("quote"));
-		const shown: string[] = [];
+		const shown: TagRefusal[] = [];
 		Object.assign(editor, {
 			idsTagInput: {
-				showExternalError: (msg: string) => shown.push(msg),
+				showExternalError: (msg: TagRefusal) => shown.push(msg),
 				clearExternalError: () => {},
 			},
 		});
 		(editor as unknown as { updateIdWarning(): void }).updateIdWarning();
 		assert.deepEqual(shown, [
-			t("editor.namesFromThemeAndObsidian", { theme: "Fixture", names: "[!quote]", stock: "[!cite]" }),
+			wide(t("editor.namesFromThemeAndObsidian", { theme: "Fixture", names: "[!quote]", stock: "[!cite]" })),
 		]);
 	});
 });

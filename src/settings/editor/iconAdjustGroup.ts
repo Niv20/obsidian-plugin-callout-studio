@@ -141,12 +141,9 @@ export function renderIconAdjustGroup(
 
 	for (const control of controls) {
 		group.addSetting((setting) => {
-			// `cs-stacked-slider`: the name on its own line and the track under
-			// it at full width. The column is too narrow for Obsidian's usual
-			// name-beside-slider row.
+			// Obsidian's usual row: the name on the left, the track beside it.
 			setting
 				.setName(control.label)
-				.setClass("cs-stacked-slider")
 				.addSlider((slider: SliderComponent) => {
 					control.slider = slider;
 					// The number beside the track is Obsidian's own, kept in sync
