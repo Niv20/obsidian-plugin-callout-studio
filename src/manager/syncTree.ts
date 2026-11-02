@@ -7,9 +7,11 @@ export const SYNC_KEY = "calloutStudioSync";
 export const canonical = (value: unknown): string => JSON.stringify(stableKeyOrder(value));
 
 export function content(data: unknown): Record<string, unknown> {
-	const copy = JSON.parse(JSON.stringify(data)) as Record<string, unknown>;
-	delete copy[SYNC_KEY];
-	return copy;
+	// Drop the metadata before the deep copy, not after: its stamps are most of
+	// the file, and copying them only to delete them dominated a launch.
+	const body = { ...(data as Record<string, unknown>) };
+	delete body[SYNC_KEY];
+	return JSON.parse(JSON.stringify(body)) as Record<string, unknown>;
 }
 
 function itemKey(path: string[], value: unknown): string | undefined {

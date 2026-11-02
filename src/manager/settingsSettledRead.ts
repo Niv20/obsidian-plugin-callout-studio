@@ -16,8 +16,9 @@ function sameRead(a: SettingsRead, b: SettingsRead): boolean {
 	if (a.kind === "absent" && b.kind === "absent") return true;
 	// A later build's file stays a later build's file; say so rather than "unreadable".
 	if (a.kind === "unreadable" && b.kind === "unreadable" && a.newer && b.newer) return true;
-	return a.kind === "loaded" && b.kind === "loaded" &&
-		JSON.stringify(stableKeyOrder(a.data)) === JSON.stringify(stableKeyOrder(b.data));
+	// Identical text is the usual answer and settles it without sorting both.
+	return a.kind === "loaded" && b.kind === "loaded" && (a.json === b.json ||
+		JSON.stringify(stableKeyOrder(a.data)) === JSON.stringify(stableKeyOrder(b.data)));
 }
 
 /**
