@@ -710,6 +710,11 @@ The width is 120 rather than Prettier's default 80 because narrower widths push
 several handwritten files over the [500-line limit](#source-file-size); check
 that suite before lowering it.
 
+A commit that only reformats goes into a commit of its own, and its full hash
+into `.git-blame-ignore-revs`, so `git blame` attributes each line to the change
+that last meant something. GitHub reads that file by itself; a local checkout
+needs `git config blame.ignoreRevsFile .git-blame-ignore-revs` once.
+
 `no-unexpected-multiline` stays on even though `eslint-config-prettier` would
 turn it off: with semicolons it only fires when Prettier breaks a chain before
 `[index]`, and the fix is to name the intermediate value rather than drop a
@@ -739,8 +744,8 @@ Public API documentation, contribution guidance, and third-party notices live
 in `docs/`. README and the plugin's contribution/credits links point to those
 paths. Development configuration and hooks live in `scripts/` alongside the
 build tools. `README.md`, `LICENSE`, the package and plugin manifests,
-`versions.json`, `.editorconfig`, `.prettierignore`, `.npmrc`, and `.gitignore`
-remain at the root for their conventional consumers. `styles.css` remains the maintained
+`versions.json`, `.editorconfig`, `.prettierignore`, `.git-blame-ignore-revs`,
+`.npmrc`, and `.gitignore` remain at the root for their conventional consumers. `styles.css` remains the maintained
 root stylesheet and the release artifact.
 
 ---
