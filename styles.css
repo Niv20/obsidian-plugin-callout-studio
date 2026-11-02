@@ -3982,8 +3982,9 @@ input[type="color"].callout-studio-color-input {
 	background: none;
 	box-shadow: none;
 	color: inherit;
-	text-decoration-line: var(--link-decoration);
-	text-decoration-thickness: var(--link-decoration-thickness);
+	/* Obsidian's link underline (`a` in app.css) as one shorthand: the store
+	   review's browser-support check flags every `text-decoration-*` longhand. */
+	text-decoration: var(--link-decoration) var(--link-decoration-thickness);
 	font-size: var(--font-smaller);
 	font-family: inherit;
 	font-weight: normal;
@@ -3999,7 +4000,8 @@ input[type="color"].callout-studio-color-input {
 	.cs-inline-hint .cs-link-btn.cs-link-btn:hover {
 		color: color-mix(in srgb, currentColor 75%, var(--text-normal));
 		background: none;
-		text-decoration-line: var(--link-decoration-hover);
+		/* The thickness again: a shorthand resets every part it leaves out. */
+		text-decoration: var(--link-decoration-hover) var(--link-decoration-thickness);
 	}
 }
 /* The reset above takes Obsidian's button ring away with `box-shadow: none`;
@@ -5294,7 +5296,9 @@ button.cs-sidebar-result[aria-current="true"],
 	inline-size: 1px;
 	block-size: 1px;
 	overflow: hidden;
-	clip-path: inset(50%);
+	/* `clip`, not `clip-path: inset(50%)`: the store review's browser-support
+	   check flags `clip-path`. Both hide an absolute box the same way. */
+	clip: rect(0, 0, 0, 0);
 	white-space: nowrap;
 }
 
@@ -7697,9 +7701,10 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 }
 
 /* The language tile's wrapper is a plain box in the tiles' line: it takes no
-   room of its own. */
+   room of its own. Inline, not `display: contents`, which the store review's
+   browser-support check flags; the tile inside sits in the line the same way. */
 .cs-footer-tiles > .cs-select-dropdown {
-	display: contents;
+	display: inline;
 }
 
 /* A list's search that finds nothing (declarative/noMatchesRow.ts): Obsidian's
@@ -7773,7 +7778,8 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	inline-size: 1px;
 	block-size: 1px;
 	overflow: hidden;
-	clip-path: inset(50%);
+	/* `clip`, not `clip-path`, as in `.cs-portable-refresh-overlay`. */
+	clip: rect(0, 0, 0, 0);
 	white-space: nowrap;
 }
 

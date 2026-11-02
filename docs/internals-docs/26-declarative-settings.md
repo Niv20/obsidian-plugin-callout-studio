@@ -106,7 +106,8 @@ tree as `CsItem` (`CsRender`, `CsAction`, `CsControl`, `CsGroup`, `CsList`,
 `CsPage` …). They are Obsidian's definition types plus three fields its
 renderer reads but its typings leave out: `id` everywhere, `icon` on a plain
 or action row in a list, and `disabled` on a render row. `toObsidianItems()`
-converts the finished tree, once, with a cast.
+hands the finished tree over, once, with no cast: a type with extra fields is
+accepted where Obsidian's is asked for, and TypeScript still checks the rest.
 
 ## Saving a control: never `saveData`
 

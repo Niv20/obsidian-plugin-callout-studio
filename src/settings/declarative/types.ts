@@ -120,10 +120,11 @@ export interface TreeContext extends SettingsContext {
 /**
  * Hand the finished tree to Obsidian.
  *
- * The one place the local types become Obsidian's: the extra fields are real
- * to Obsidian's renderer but missing from its typings, so the conversion is a
- * cast (`as unknown as`: "trust me, this is that type"), done once, here.
+ * The one place the local types become Obsidian's. No cast is needed: a local
+ * type is Obsidian's with fields added, and TypeScript lets a value with more
+ * fields stand where fewer are asked for. It still checks the rest, so a local
+ * type that drifts from Obsidian's fails the build here.
  */
 export function toObsidianItems(items: CsItem[]): SettingDefinitionItem[] {
-	return items as unknown as SettingDefinitionItem[];
+	return items;
 }
