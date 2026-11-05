@@ -18,6 +18,9 @@ import { preparePortableCalloutConversion } from "../../src/utils/portableCallou
 import { PortableConversionHelpModal } from "../../src/portable/PortableConversionHelpModal.ts";
 import { QuickInsertModal } from "../../src/settings/QuickInsertModal.ts";
 import { mountSettings, openModal, settingsContext } from "./fixture-host.mjs";
+import { settleMascots } from "./mascotStill.mjs";
+import { sidebarWindow } from "./sidebarWindow.mjs";
+import { STATISTICS_ICON_ID, PORTABLE_CONVERSION_ICON_ID } from "../../src/icons/uiIcons.ts";
 
 const copy = value => JSON.parse(JSON.stringify(value));
 const waitFor = async predicate => {
@@ -39,18 +42,6 @@ function seedCallouts(plugin) {
 	plugin.cssInjector.inject(false);
 }
 
-
-/**
- * A sidebar view as Obsidian lays it out: the leaf's content, and in it the
- * view's content, which is returned. (The pane's icon button, help or filter,
- * is drawn by the pane's own frame, at the end of its first row.)
- */
-function sidebarPanel(cls, width, height) {
-	const leaf = document.body.createDiv({ cls: "workspace-leaf-content", attr: { id: "guide-scene" } });
-	leaf.style.width = `${width}px`;
-	leaf.style.height = `${height}px`;
-	return leaf.createDiv({ cls: `view-content ${cls}` });
-}
 
 const noteSources = {
 	"Projects/Launch plan.md": "# [!project] Launch plan\n\n> [!project] Scope\n> Ship the first milestone this month.\n\nChoose [!decision]{the smaller release} before expanding the scope.\n\n> [!note] Next steps\n> Invite the design team to review.\n",
@@ -79,7 +70,7 @@ async function findScene(plugin, pickerOpen) {
 	const all = Object.entries(noteSources).flatMap(([path, text]) => scanCalloutOccurrences(path, text));
 	const index = { dataRevision: 1, query: () => ({ occurrences: all, fileCount: Object.keys(noteSources).length }) };
 	const types = new OccurrenceTypeChoices(plugin.registry, index);
-	const root = sidebarPanel("cs-occurrences-view", 640, 650);
+	const root = sidebarWindow({ cls: "cs-occurrences-view", icon: STATISTICS_ICON_ID, label: t("usage.title"), height: pickerOpen ? 650 : 540 });
 	const frame = createOccurrencesFrame(root, () => {});
 	let selected = pickerOpen ? ALL_TYPES_ID : "project";
 	const picker = new CalloutCombobox(frame.pickerHost, {
@@ -104,9 +95,9 @@ async function findScene(plugin, pickerOpen) {
 		input.value = "de";
 		input.dispatchEvent(new Event("input", { bubbles: true }));
 	}
-	return metadata(pickerOpen ? "Find callouts: searchable type picker" : "Find callouts: Project note occurrences",
-		pickerOpen ? "The production CalloutCombobox searches registered types and the unregistered idea type derived by the real source scanner from synthetic notes."
-			: "The production occurrences sidebar frame and cards show source references to project across three synthetic notes, with block and heading formats counted separately.");
+	return metadata(pickerOpen ? "Find callouts: searchable type picker": "Find callouts: Project note occurrences",
+		pickerOpen ? "The production CalloutCombobox, in Obsidian's right sidebar beside placeholder note text, searches registered types and the unregistered idea type derived by the real source scanner from synthetic notes."
+			: "The production occurrences sidebar frame and cards, in Obsidian's right sidebar beside placeholder note text, show source references to project across three synthetic notes, with block and heading formats counted separately.");
 }
 
 /**
@@ -134,18 +125,20 @@ function recoveryFixture(plugin, { older = false } = {}) {
 		time.setHours(hours, minutes, 0, 0);
 		return time.getTime();
 	};
+	// Clock times a person plausibly works at, none on the hour or the same
+	// minute twice: this morning's edits today, an afternoon's yesterday.
 	const sources = [
-		source(current, "history", at(0, 9, 0), "edit"),
-		source(previous, "backup", at(0, 7, 50), "before-import"),
-		source(oldest, "backup", at(1, 7, 50), "before-reset"),
-		source(oldest, "history", at(1, 7, 40), "edit"),
+		source(current, "history", at(0, 10, 24), "edit"),
+		source(previous, "backup", at(0, 9, 47), "before-import"),
+		source(oldest, "backup", at(1, 17, 18), "before-reset"),
+		source(oldest, "history", at(1, 16, 52), "edit"),
 	];
 	if (older) {
 		// A colour of its own makes it a setup of its own: one setup kept in two
 		// places is one row.
 		const earliest = copy(oldest);
 		earliest.callouts.find(row => row.id === "project").colorDark = "#f472b6";
-		sources.push(source(earliest, "history", at(1, 7, 10), "edit"));
+		sources.push(source(earliest, "history", at(1, 15, 36), "edit"));
 	}
 	const versions = mergeVersions(sources);
 	plugin.recovery = {
@@ -181,11 +174,14 @@ async function pausedScene(plugin) {
 		status: { reason: "missing", frozenReason: "missing", subscribe: () => () => {} },
 	});
 	Object.assign(plugin, { retrySettingsRecovery: async () => false, startFreshSettings: async () => false });
-	return mountSettings(plugin, {
+	const scene = mountSettings(plugin, {
 		boxes: ["banners", "version-history"],
 		title: "Saving paused: missing settings file",
-		description: "The settings' main page while saving is paused, showing only its first box, the actual Saving is paused notice, and the Version history box further down the page. No settings file is read or written.",
+		description: "The settings' main page while saving is paused, showing only its first box, the actual Saving is paused notice, with the brush mascot standing calm where the warning triangle would be, and the Version history box further down the page. No settings file is read or written.",
 	});
+	// The banner holds the mascot's "paused" face still: after its way in, it rests.
+	settleMascots(3000);
+	return scene;
 }
 
 async function conversionScene(plugin) {
@@ -195,13 +191,16 @@ async function conversionScene(plugin) {
 	};
 	syntheticVault(plugin, conversionSources);
 	const plan = await preparePortableCalloutConversion(plugin.app);
-	const root = sidebarPanel("cs-portable-view", 640, 670);
+	const root = sidebarWindow({ cls: "cs-portable-view", icon: PORTABLE_CONVERSION_ICON_ID, label: t("portable.reviewTitle"), height: 670 });
 	const frame = createPortableConversionFrame(root, () => {});
 	frame.retry.hidden = true;
 	updatePortableSelection(frame, plan, true);
 	renderPortableConversionRows(frame.results, plan, portableConversionRows(plan), 100, false, undefined, () => {});
-	return metadata("Review conversion before changing notes", "The actual conversion planner reads only synthetic Markdown. Its proposed heading and inline replacements are rendered by the production sidebar frame, selection summary, and before/after cards.");
+	return metadata("Review conversion before changing notes","The actual conversion planner reads only synthetic Markdown. Its proposed heading and inline replacements are rendered by the production sidebar frame, selection summary, and before/after cards, in Obsidian's right sidebar beside placeholder note text.");
 }
+
+/** How far into its scared face the picture is taken: the way in is done and the sweat bead is out. */
+const MASCOT_SCARED_MS = 700;
 
 async function resetScene(plugin) {
 	seedCallouts(plugin);
@@ -211,7 +210,9 @@ async function resetScene(plugin) {
 	await waitFor(() => document.querySelector(".cs-confirm-acknowledge"));
 	const modal = document.querySelector(".modal-container:last-of-type .modal");
 	modal.id = "guide-scene";
-	return metadata("Reset everything confirmation", "The real Danger zone action computes the inventory and note-reference count from synthetic callouts and notes, then opens its actual confirmation. The acknowledgement stays unticked; no reset is performed.");
+	// The window holds the mascot scared for as long as it is open; the picture is that face a moment in.
+	settleMascots(MASCOT_SCARED_MS);
+	return metadata("Reset everything confirmation", "The real Danger zone action computes the inventory and note-reference count from synthetic callouts and notes, then opens its actual confirmation, with the brush mascot scared beside the heading. The acknowledgement stays unticked; no reset is performed.");
 }
 
 function attachSyntheticEditor(plugin) {

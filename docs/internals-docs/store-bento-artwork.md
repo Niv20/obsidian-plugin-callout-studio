@@ -65,6 +65,12 @@ the format filter at the end of its row, then the summary,
 results (a file title with its faint count, then its matches). The results
 include heading, block, and inline examples. The tile's spacing is tightened
 (`render-store-bento-find.mjs`) so all four matches fit its 414-pixel height.
+Two things in that capture are for the picture only, so the file's box and the line
+between its matches read clearly on the dark tile: the box is filled `#232323`
+(`--search-result-background` on `#bento-find`) and the line under a match is
+2px `#1e1e1e`. The plugin itself keeps Obsidian's own colours and 1px line.
+The website's Find callouts image sets the same fill, with a 1px `#1c1c1c` line
+(`assets/website/generator/render.mjs`).
 
 `scripts/store-bento/ribbon-scene.mjs` calls `registerUiIcons` and
 `registerQuickInsertRibbon` in a small offline host. A scoped bridge preserves
@@ -72,7 +78,9 @@ the production `addIcon` registrations without altering the shared guide host.
 The real brush-and-plus icon sits between two core Obsidian icons above and two
 below. Installed Obsidian CSS paints the ribbon, highlighted button, and tooltip;
 the tooltip text comes from the production registration: **Quick insert block
-callout**. Abstract rounded bars form a subdued explorer backdrop, matching the
+callout**. The picture breaks it as "Quick insert" / "block callout" (a `<br>` in
+the scene; Obsidian itself wraps it after "block"), and the scene throws if the
+production label ever stops being those four words. Abstract rounded bars form a subdued explorer backdrop, matching the
 file-list treatment in image 01. The bars start at x = 63 in the capture,
 shifted 10 pixels right to leave more clearance from the ribbon divider, with
 no folder arrows or file names.
@@ -80,7 +88,9 @@ The tooltip's left-pointing arrow is an explicit 6 × 12 SVG triangle in the
 native message color, slightly larger than Obsidian's CSS border triangle.
 The tooltip starts at x = 50, four pixels farther left, so its arrow spans
 x = 44–50 and overlaps the ribbon divider. This scoped vector equivalent
-avoids the exporter's rectangular border-strip rendering.
+avoids the exporter's rectangular border-strip rendering. The tooltip box is
+fixed at 128 px wide (the capture's `.tooltip` rule), snug around its two
+centred lines.
 The ribbon has rounded left corners and square right corners against its
 divider. Shell positioning and explorer framing are editorial. The capture
 verifies the five-button order, middle selection, tooltip, and click handler.
@@ -199,5 +209,5 @@ Custom shortcuts occupies the upper-right tile.
 | Upper middle-right | [Quick insert](../user-guide/15-quick-insert.md) | Native-styled ribbon, real selected plugin icon, production tooltip, and nearby abstract file bars without arrows from `05-ribbon.svg`. |
 | Upper right | [Custom shortcuts](../user-guide/09-commands-and-hotkeys.md) | Editorial collapsed Idea command box and Command, Shift, and C keycaps representing a possible user-assigned shortcut. No default hotkey is implied. |
 | Right, tall | [Autocomplete](../user-guide/01-the-three-callout-types.md#picking-from-the-autocomplete-menu) | Real CodeMirror input and production suggestions in the dedicated capture. |
-| Lower left, double-width | [Version history](../user-guide/13-syncing-and-backups.md) | One crop of `version-history.svg`, scaled to the tile's width: today's heading on the timeline and its first two versions, with their times, dots, and eye/delete/Restore actions. This restores plugin settings, not note history. |
+| Lower left, double-width | [Version history](../user-guide/13-syncing-and-backups.md) | One crop of `version-history.svg`, scaled to the tile's width: today's heading on the timeline and its first two versions, with their times, dots, and eye/delete/Restore actions. A third version (the guide's "Before Reset everything") follows the second with the same gap and is cut off by the tile's bottom edge, with the timeline carried on beside it, so the list reads as continuing; the guide's "yesterday" heading between them is skipped because it would not fit. This restores plugin settings, not note history. |
 | Lower middle-right | [Right-click menu](../user-guide/08-the-right-click-menu.md) | The actual five block-callout actions and icons from `05-context-menu.svg`, centered over a partial Idea block that continues beyond the tile's right edge. The block sits at y = 53 so the raised menu overlaps the lower portion of its Idea title, with extra space below the menu. |

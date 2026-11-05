@@ -9,11 +9,14 @@ import { Scope } from "../../tests/support/obsidianStub";
 
 type IconTable = Record<string, Array<Array<string | number>>>;
 let icons: IconTable = {};
+/** Obsidian's own icons, which it keeps beside Lucide's: name -> inner SVG markup on a 24px canvas. */
+let glyphs: Record<string, string> = {};
 const NS = "http://www.w3.org/2000/svg";
 
 /** Install native browser equivalents of Obsidian's convenience methods. */
 export function installDomHelpers(table?: IconTable): void {
 	icons = table ?? (window as any).__CS_GUIDE_ICONS__ ?? {};
+	glyphs = (window as any).__CS_GUIDE_GLYPHS__ ?? {};
 	Object.defineProperties(Node.prototype, {
 		doc: { configurable: true, get() { return this.ownerDocument ?? this; } },
 		win: { configurable: true, get() { return this.ownerDocument?.defaultView ?? window; } },
@@ -70,6 +73,15 @@ export function installDomHelpers(table?: IconTable): void {
 		createEl: (tag: string, options?: any, callback?: any) => make(null, tag, options, callback),
 		createDiv: (options?: any, callback?: any) => make(null, "div", options, callback),
 		createSpan: (options?: any, callback?: any) => make(null, "span", options, callback),
+		// The brush mascot is drawn with it (`canDrawMascot`), so without it no scene would show the mascot.
+		createSvg: (tag: string, options?: any, callback?: any) => {
+			const info = typeof options === "string" ? { cls: options } : options ?? {};
+			const el = document.createElementNS(NS, tag);
+			if (info.cls) el.setAttribute("class", Array.isArray(info.cls) ? info.cls.join(" ") : info.cls);
+			for (const [key, value] of Object.entries(info.attr ?? {})) if (value !== null && value !== undefined) el.setAttribute(key, String(value));
+			callback?.(el);
+			return el;
+		},
 		createFragment: (callback?: (fragment: DocumentFragment) => void) => { const f = document.createDocumentFragment(); callback?.(f); return f; },
 		activeWindow: window, activeDocument: document,
 	});
@@ -83,16 +95,20 @@ const OBSIDIAN_ICONS: Record<string, unknown[][]> = {
 	"right-triangle": [[6, "M3 8L12 17L21 8"]],
 };
 
-/** Icon geometry comes from the locally installed Obsidian Lucide table. */
+/** Icon geometry comes from the locally installed Obsidian Lucide table, and its own glyph table. */
 export function setIcon(parent: HTMLElement, id: string): void {
 	const name = id.replace(/^lucide-/, "");
 	const shapes = icons[name] ?? OBSIDIAN_ICONS[name];
-	if (!shapes) throw new Error(`Missing local Obsidian icon: ${name}`);
+	// A name Lucide's table (or the list above) draws stays as it was; the glyph table answers the rest.
+	const glyph = shapes || id.startsWith("lucide-") ? undefined : glyphs[name];
+	if (!shapes && glyph === undefined) throw new Error(`Missing local Obsidian icon: ${name}`);
 	const svg = document.createElementNS(NS, "svg");
-	for (const [key, value] of Object.entries({ xmlns: NS, viewBox: "0 0 24 24", width: "24", height: "24", fill: "none", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round", class: `svg-icon lucide-${name}` })) svg.setAttribute(key, value);
+	for (const [key, value] of Object.entries({ xmlns: NS, viewBox: "0 0 24 24", width: "24", height: "24", fill: "none", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round", class: `svg-icon ${glyph === undefined ? "lucide-" : ""}${name}` })) svg.setAttribute(key, value);
+	// Obsidian draws a glyph as it does a Lucide icon, from markup rather than shapes.
+	if (glyph !== undefined) { svg.innerHTML = glyph; parent.replaceChildren(svg); return; }
 	const tags = ["line", "circle", "polyline", "polygon", "ellipse", "rect", "path"];
 	const attributes = [["x1", "y1", "x2", "y2"], ["cx", "cy", "r", "fill"], ["points"], ["points"], ["cx", "cy", "rx", "ry"], ["x", "y", "width", "height", "rx", "ry"], ["d", "fill"]];
-	for (const [kind, ...values] of shapes) {
+	for (const [kind, ...values] of shapes!) {
 		const shape = document.createElementNS(NS, tags[Number(kind)]);
 		attributes[Number(kind)].forEach((attr, index) => { if (values[index] !== undefined) shape.setAttribute(attr, String(values[index])); });
 		svg.appendChild(shape);

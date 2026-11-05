@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { historyTile } from "./store-bento/history-tile.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const components = path.join(root, "assets/store-screenshots/desktop/components");
@@ -32,7 +33,8 @@ function component(name, box, x, y, width, height, radius = 5) {
 }
 
 // The same fragments as desktop image 05, cropped to the shorter tiles.
-const find = () => heading("Find callouts") + component("05-find", [0, 0, 233, 152], 22, 58, 233, 152);
+// Cut between the two lines of the second result (the file's box runs on to 220), so the box reads as continuing.
+const find = () => heading("Find callouts") + component("05-find", [0, 0, 233, 200], 22, 58, 233, 200);
 const savedPalettes = () => heading("Saved color palettes") + component("05-saved-palettes", [0, 0, 233, 166], 22, 58, 233, 166);
 const quickInsert = () => heading("Quick insert") + component("05-ribbon", [0, 0, 233, 180], 22, 56, 233, 180);
 function shortcuts() {
@@ -49,8 +51,8 @@ function shortcuts() {
     return svg;
 }
 const autocomplete = () => heading("Autocomplete") + component("05-autocomplete", [0, 0, 233, 186], 22, 58, 233, 186);
-/** Today's heading and its first two versions, cut from the guide's Version history picture. */
-const history = () => heading("Version history") + component("version-history", [100, 176, 700, 195], 22, 58, 536, 150);
+/** Today's heading and its first two versions, then a third cut by the tile's edge (see store-bento/history-tile.mjs). */
+const history = () => heading("Version history") + historyTile(root, component, rect, { x: 22, y: 58, w: 536 });
 const contextMenu = () => heading("Right-click menu")
     // The Idea block behind the menu, then the production menu itself, clipped to its shell.
     + component("05-context-menu", [57, 57, 241, 101], 37, 53, 241, 101)

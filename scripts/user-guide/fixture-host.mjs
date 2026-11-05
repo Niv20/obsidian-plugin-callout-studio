@@ -5,6 +5,7 @@ import { CSSInjector } from "../../src/manager/CSSInjector.ts";
 import { createCalloutReadingPostProcessor } from "../../src/reading/calloutPostProcessor.ts";
 import { PACK_MANIFEST } from "../../src/icons/data/packManifest.ts";
 import { mountSettingsPage } from "./settingsPage.mjs";
+import manifest from "../../manifest.json";
 
 export function makeHost() {
 	const texts = new Map(), files = new Map(), caches = new Map();
@@ -37,7 +38,7 @@ export function makeHost() {
 	const cssInjector = new CSSInjector(app, registry);
 	const plugin = {
 		app, registry, cssInjector, settings: registry.settings, settingsEditOpen: false,
-		manifest: { id: "callout-studio", name: "Callout Studio", version: "2.16.0", dir: ".obsidian/plugins/callout-studio" },
+		manifest: { id: "callout-studio", name: "Callout Studio", version: manifest.version, dir: ".obsidian/plugins/callout-studio" },
 		settingsWriter: { isFrozen: false, isDestroyed: false, matchesLastWrite: () => true },
 		localState: {
 			iconCategory: () => "all", setIconCategory() {},

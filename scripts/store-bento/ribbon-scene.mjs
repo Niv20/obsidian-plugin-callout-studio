@@ -34,7 +34,15 @@ export async function mountRibbon() {
 	for (const [id, name] of [["calendar", "Open today's daily note"], ["square-terminal", "Open command palette"]]) plugin.addRibbonIcon(id, name, () => {});
 	const selected = actions.querySelector(`[data-icon="${QUICK_INSERT_ICON_ID}"]`);
 	selected.classList.add("is-active");
-	const tooltip = panel.createDiv({ cls: "tooltip mod-right", text: selected.getAttribute("aria-label") });
+	// Picture only: Obsidian wraps this tooltip as "Quick insert block" / "callout"; the artwork
+	// breaks it as "Quick insert" / "block callout". The label itself (and textContent) is unchanged.
+	const label = selected.getAttribute("aria-label");
+	const [firstLine, secondLine] = ["Quick insert", "block callout"];
+	if (label !== `${firstLine} ${secondLine}`) throw new Error(`The ribbon label changed: ${label}`);
+	const tooltip = panel.createDiv({ cls: "tooltip mod-right" });
+	tooltip.appendText(`${firstLine} `);
+	tooltip.createEl("br");
+	tooltip.appendText(secondLine);
 	// Native CSS border triangles export as rectangular border strips. Use the
 	// slightly enlarged 6 × 12 left-pointing arrow as vector geometry here.
 	const arrow = document.createElementNS("http://www.w3.org/2000/svg", "svg");

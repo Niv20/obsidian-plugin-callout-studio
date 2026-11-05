@@ -4,6 +4,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { heroCrystal } from "./store-bento/hero-crystal.mjs";
+import { historyTile } from "./store-bento/history-tile.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const output = path.join(root, "assets/store-screenshots/desktop");
@@ -63,14 +64,9 @@ function hero() {
     svg += text(283, 90, "Callout Studio has", 26, "#E3D8FC", `${center} font-weight="500"`);
     return svg + text(283, 151, "so much more to offer...", 44, "#FCF9FF", `${center} font-weight="700" letter-spacing="-1.5"`);
 }
-/**
- * Today's heading on the timeline and its first two versions, with their times,
- * dots and buttons, cut from the guide's Version history page picture and scaled
- * to fit the tile's width.
- */
+/** Version history: see store-bento/history-tile.mjs (shared with the README grid). */
 function history() {
-    return heading("Version history")
-        + component("version-history", [100, 176, 700, 195], 20, 62, 526, 160);
+    return heading("Version history") + historyTile(root, component, rect, { x: 20, y: 58, w: 526 });
 }
 function contextMenu() {
     return heading("Right-click menu")
@@ -115,7 +111,7 @@ for (const tile of tiles) {
     body += `<g transform="translate(${tile.x} ${tile.y})">` + rect(0, 0, tile.w, tile.h, fill, 20, `stroke="${tile.id === "hero" ? "#A385DC" : "#484848"}" stroke-opacity=".6"`)
         + `<g clip-path="url(#clip-${tile.id})">${tile.draw()}</g></g>`;
 }
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="title description"><title id="title">Callout Studio has so much more to offer...</title><desc id="description">Seven feature tiles surround a purple-blue central message with two smaller, partially cropped Obsidian-inspired faceted crystals and five sparse geometric shards. Find callouts is a tall left panel with type and format filters, a normal-weight occurrence summary, and grouped heading, block, and inline source results. Custom shortcuts pairs a collapsed Idea command with illustrative user-assigned Command, Shift and C keys. Quick insert shows the real ribbon icon and tooltip beside nearby abstract file rows. Saved color palettes shows Coral, transparent Mint glass, and violet-blue Twilight with native color circles and edit/delete actions. Production autocomplete fills a tall right panel. Version history spans the lower left with today's date over its box of saved versions, beside a right-click menu over the edge of a Purple Idea block, raised with extra space below the menu. All feature tiles use Obsidian's default dark settings background. Production components use synthetic data.</desc>${body}</svg>\n`;
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="title description"><title id="title">Callout Studio has so much more to offer...</title><desc id="description">Seven feature tiles surround a purple-blue central message with two smaller, partially cropped Obsidian-inspired faceted crystals and five sparse geometric shards. Find callouts is a tall left panel with type and format filters, a normal-weight occurrence summary, and grouped heading, block, and inline source results. Custom shortcuts pairs a collapsed Idea command with illustrative user-assigned Command, Shift and C keys. Quick insert shows the real ribbon icon and tooltip beside nearby abstract file rows. Saved color palettes shows Coral, transparent Mint glass, and violet-blue Twilight with native color circles and edit/delete actions. Production autocomplete fills a tall right panel. Version history spans the lower left with today's date over its box of saved versions, a further version cut off by the tile's bottom edge as if the list goes on, beside a right-click menu over the edge of a Purple Idea block, raised with extra space below the menu. All feature tiles use Obsidian's default dark settings background. Production components use synthetic data.</desc>${body}</svg>\n`;
 assert.ok(!/<(?:image|script|foreignObject)\b/i.test(svg), "Vector-only artwork required");
 assert.ok(!/\b(?:NaN|Infinity)\b/.test(svg), "Finite geometry required");
 const ids = [...svg.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);

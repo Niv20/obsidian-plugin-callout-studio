@@ -173,12 +173,27 @@ note scans, and conversion plans come from synthetic data; destructive actions
 are never confirmed. These are source-rendered illustrations, not a complete
 Obsidian session or a check of its Live Preview internals.
 
-The renderer reads `app.css` and the Lucide geometry table from locally installed
+The sidebar views (`find-results`, `find-picker`, `conversion-review`) are not
+drawn as a window of their own. `scripts/user-guide/sidebarWindow.mjs` pictures
+the slice of Obsidian's window they live in: the view at a real sidebar's width
+(340px) in the right sidebar, under the tab row Obsidian draws there (Backlinks,
+Outgoing links, Tags, Outline, and the plugin's own tab selected, then the collapse
+button), beside the open note, drawn as placeholder lines that begin at the
+window's left edge. The sidebar's elements carry Obsidian's own class names, so
+its stylesheet draws them; `.guide-window` in `render-user-guide.mjs` lays the
+window out. The window is a bordered, rounded card in the picture's usual 24px
+frame, as a modal is in the other guide images.
+
+The renderer reads `app.css`, the Lucide geometry table, and the table of icons
+Obsidian draws itself (the sidebar's Backlinks and Outgoing links tabs, its collapse
+button) from locally installed
 Obsidian. On macOS it prefers the newest installed update archive in
 `~/Library/Application Support/obsidian/`, falling back to
 `/Applications/Obsidian.app/Contents/Resources/obsidian.asar`. Set `OBSIDIAN_ASAR`
 for another location, or supply `OBSIDIAN_APP_CSS`, `OBSIDIAN_ICON_DATA`, and
-`OBSIDIAN_VERSION` together to use extracted assets. The host uses that version
+`OBSIDIAN_VERSION` together to use extracted assets (add `OBSIDIAN_GLYPH_DATA`, a
+JSON object of that icon table, for the three sidebar scenes, which fail without
+it). The host uses that version
 for API checks, so the callout color format matches the loaded core stylesheet.
 `PLAYWRIGHT_MODULE` selects an existing Playwright
 installation and `BROWSER_EXECUTABLE` optionally selects Chromium. No additional
@@ -209,6 +224,33 @@ emoji remain Unicode text and follow the viewer's emoji font. The exporter keeps
 each line in logical text order for bidirectional shaping, preserves uppercase
 transforms and letter spacing, and adjusts spacing without stretching glyphs.
 Modern color spaces and gradient stops are converted to portable sRGB values.
+A hard `box-shadow` ring (`0 0 0 1px colour`: no offset, no blur) is drawn as a
+stroke outside the box, which is how Obsidian outlines a note's card in the
+Find callouts and Review conversion sidebars; soft and inset shadows are left
+out. Those two scenes also give their pane Obsidian's sidebar surface
+(`--background-secondary`) and cut the picture to it (`sidebarPanel` in
+`scenes-sidebars.mjs`), since the cards are the primary colour on it: on the
+page's own colour they would not show; the view fills the pane, since Obsidian
+takes its 40px header off the view's height and the picture has none.
+A gradient layer is painted where its `background-size` and position put it,
+so a checkbox's tick bar (`0% 2px` when unticked) stays empty; a `::before` or
+`::after` that is a flex container's only box is placed by the container's
+alignment (a search field's clear button, ✕ centred in the button). A
+background image that is an SVG data URL is drawn as a vector at its size and
+position (Obsidian's up-down chevrons on every dropdown), and a list item's
+disc, circle or square bullet (`::marker`, which is not an element) is drawn
+beside its first line, so a bulleted list shows its bullets and not only the
+indent they leave.
+The render page sets `scrollbar-width: none` on everything: a browser that
+reserves a classic scrollbar's gutter makes the icon picker inset its content
+by 15px on both sides, and the picture shows no scrollbar.
+The brush mascot is drawn (`createSvg` is in the guide runtime, which is what
+`canDrawMascot` asks) but never runs on real frames:
+`scripts/user-guide/mascotStill.mjs` makes it ask for none, so a scene that
+wants a mood moves its clock with `settleMascots(ms)` and the picture is the
+same on every render (the saving-paused banner rests on its still "paused"
+face; the Reset everything window is 700ms into its scared one). The footer's
+version comes from `manifest.json`.
 An element that lies wholly behind an opaque `position: sticky` bar in a scrolled
 container is not exported: the browser never shows it (the icon picker opens
 with its chosen icon centred, which tucks a row or two of icons under the search
@@ -323,7 +365,13 @@ composes it, with no browser, from the fragments image 05 uses: the five capture
 in `assets/store-screenshots/desktop/components/` and the guide's Version history
 picture. Refresh those first (the five `render-store-bento-*.mjs` captures, and
 `node scripts/render-user-guide.mjs version-history`), because the grid embeds
-copies of them.
+copies of them. Two tiles are cut on purpose so the list reads as continuing:
+Find callouts ends between the two lines of its second result, and Version
+history shows a third version cut by the tile's bottom edge. The Version history
+crop is the same code as the store image's, in `scripts/store-bento/history-tile.mjs`,
+so change it there. The result boxes are `#232323` because the Find component's
+capture sets them so (see `store-bento-artwork.md`); re-render that capture before
+the grid, or the grid keeps the old fill.
 
 ### Store screenshots
 

@@ -22,29 +22,49 @@ function literal(node) {
 	throw new Error("The installed Obsidian icon table contains an unsupported expression");
 }
 
+function readObjectTable(text, what) {
+	const file = ts.createSourceFile("table.js", `(${text})`, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS);
+	const expression = file.statements[0]?.expression?.expression;
+	if (!expression || !ts.isObjectLiteralExpression(expression)) throw new Error(`Cannot parse the installed Obsidian ${what}`);
+	const table = {};
+	for (const property of expression.properties) {
+		if (!ts.isPropertyAssignment(property)) throw new Error("Unsupported Obsidian icon property");
+		table[property.name.text] = literal(property.initializer);
+	}
+	return table;
+}
+
 function readLucideTable(source) {
 	const firstIcon = source.indexOf('{"a-arrow-down":');
 	if (firstIcon < 0) throw new Error("Cannot locate the installed Obsidian Lucide table; supply OBSIDIAN_ICON_DATA instead");
 	const end = source.indexOf("};", firstIcon);
-	const file = ts.createSourceFile("icons.js", `(${source.slice(firstIcon, end + 1)})`, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS);
-	const expression = file.statements[0]?.expression?.expression;
-	if (!expression || !ts.isObjectLiteralExpression(expression)) throw new Error("Cannot parse the installed Obsidian Lucide table");
-	const icons = {};
-	for (const property of expression.properties) {
-		if (!ts.isPropertyAssignment(property)) throw new Error("Unsupported Obsidian icon property");
-		icons[property.name.text] = literal(property.initializer);
-	}
-	return icons;
+	return readObjectTable(source.slice(firstIcon, end + 1), "Lucide table");
+}
+
+/**
+ * The icons Obsidian draws itself, beside Lucide's (the sidebar's Backlinks and
+ * Outgoing links tabs, its collapse button): name -> inner SVG markup on a 24px
+ * canvas. Its strings hold no braces, so the table ends at the first one.
+ */
+function readGlyphTable(source) {
+	const key = source.indexOf(`"links-coming-in":'`);
+	const open = source.lastIndexOf("{", key), close = source.indexOf("}", key);
+	if (key < 0 || open < 0 || close < 0) throw new Error("Cannot locate the installed Obsidian glyph table; supply OBSIDIAN_GLYPH_DATA instead");
+	return readObjectTable(source.slice(open, close + 1), "glyph table");
 }
 
 export function loadObsidianAssets() {
 	const archivePath = process.env.OBSIDIAN_ASAR || installedArchive();
 	const cssPath = process.env.OBSIDIAN_APP_CSS;
 	const iconsPath = process.env.OBSIDIAN_ICON_DATA;
+	const glyphsPath = process.env.OBSIDIAN_GLYPH_DATA;
 	const archive = !cssPath || !iconsPath ? readFileSync(archivePath) : null;
+	const script = archive && (!iconsPath || !glyphsPath) ? readAsarFile(archive, "app.js") : null;
 	return {
 		appCss: cssPath ? readFileSync(cssPath, "utf8") : readAsarFile(archive, "app.css"),
-		icons: iconsPath ? JSON.parse(readFileSync(iconsPath, "utf8")) : readLucideTable(readAsarFile(archive, "app.js")),
+		icons: iconsPath ? JSON.parse(readFileSync(iconsPath, "utf8")) : readLucideTable(script),
+		// Extracted assets without a glyph table leave it empty; a scene that draws one says so.
+		glyphs: glyphsPath ? JSON.parse(readFileSync(glyphsPath, "utf8")) : script ? readGlyphTable(script) : {},
 		version: process.env.OBSIDIAN_VERSION || (archive ? JSON.parse(readAsarFile(archive, "package.json")).version : null),
 	};
 }

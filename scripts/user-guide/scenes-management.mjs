@@ -219,9 +219,11 @@ function commandEditor(plugin) {
 
 function languageSelector(plugin) {
 	return mountSettings(plugin, {
-		height: 560,
-		// The foot of the page, where the globe is.
-		boxes: ["danger-zone", "footer"],
+		height: 440,
+		// The foot of the page, where the globe is: the footer alone, so the menu
+		// is what the picture is about, and the window need only be as tall as the
+		// tiles and the first dozen languages.
+		boxes: ["footer"],
 		title: "Choose the interface language",
 		description: "The globe tile in the settings' footer opens Obsidian's own menu listing every supported language under its native name, with a check mark beside the language shown. The dark-mode settings window crops the menu after its first options.",
 		after(harness, frame) {

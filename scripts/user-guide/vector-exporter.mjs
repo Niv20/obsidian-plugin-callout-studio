@@ -135,7 +135,51 @@ export async function exportSvg(page, selector, options = {}) {
 		}
 		function backgrounds(style) {
 			const clips = layers(style.backgroundClip || style.webkitBackgroundClip || "border-box");
-			return layers(style.backgroundImage).map((image, index) => ({ image, clip: clips[index % clips.length] }));
+			const sizes = layers(style.backgroundSize || "auto"), positions = layers(style.backgroundPosition || "0% 0%");
+			return layers(style.backgroundImage).map((image, index) => ({
+				image, clip: clips[index % clips.length], size: sizes[index % sizes.length], position: positions[index % positions.length],
+			}));
+		}
+		// Where a layer is painted in the box: all of it unless it has a size of
+		// its own (a checkbox's tick is a bar `0% 2px` wide, which a box that is
+		// not ticked keeps empty), placed by its position; null where it has none.
+		function layerBox(layer, r) {
+			const [sx = "auto", sy = "auto"] = layer.size.split(" ");
+			if (sx === "cover" || sx === "contain" || sx === "auto" && sy === "auto") return r;
+			const length = (value, total) => value === "auto" ? total : value.endsWith("%") ? px(value) / 100 * total : px(value);
+			const width = length(sx, r.width), height = length(sy, r.height);
+			if (width <= 0 || height <= 0) return null;
+			const [ox, oy] = positionOf(layer);
+			return { x: r.x + place(ox, r.width - width), y: r.y + place(oy, r.height - height), width, height };
+		}
+		// A background's position is two values, one of which may be a calc():
+		// Chrome reports `right 8px center` as `calc(100% - 8px) 50%`.
+		function positionOf(layer) {
+			const parts = layer.position.replace(/calc\([^)]*\)/g, match => match.replace(/\s+/g, "")).split(" ");
+			return [parts[0] ?? "0%", parts[1] ?? "0%"];
+		}
+		// Where that value puts the image: a percentage is of the room left over.
+		function place(value, free) {
+			const sum = /^calc\((-?[\d.]+)%([+-])([\d.]+)px\)$/.exec(value);
+			if (sum) return Number(sum[1]) / 100 * free + (sum[2] === "-" ? -1 : 1) * Number(sum[3]);
+			return value.endsWith("%") ? px(value) / 100 * free : px(value);
+		}
+		// A background image that is an SVG data URL (Obsidian's dropdown chevrons),
+		// drawn at its size and position as the vector it is.
+		function paintImage(image, layer, r) {
+			const viewBox = (image.getAttribute("viewBox") || "").split(/[ ,]+/).map(Number);
+			const naturalWidth = px(image.getAttribute("width") || "") || viewBox[2] || 0, naturalHeight = px(image.getAttribute("height") || "") || viewBox[3] || naturalWidth;
+			if (!naturalWidth) return "";
+			const [sx = "auto", sy = "auto"] = layer.size.split(" ");
+			const length = (value, total) => value.endsWith("%") ? px(value) / 100 * total : px(value);
+			let width = naturalWidth, height = naturalHeight;
+			if (sx !== "auto") { width = length(sx, r.width); height = sy === "auto" ? width * naturalHeight / naturalWidth : length(sy, r.height); }
+			else if (sy !== "auto") { height = length(sy, r.height); width = height * naturalWidth / naturalHeight; }
+			const [ox, oy] = positionOf(layer);
+			image.removeAttribute("style"); image.removeAttribute("xmlns:xlink");
+			image.setAttribute("x", n(r.x + place(ox, r.width - width))); image.setAttribute("y", n(r.y + place(oy, r.height - height)));
+			image.setAttribute("width", n(width)); image.setAttribute("height", n(height));
+			return serializer.serializeToString(image);
 		}
 		function gradient(value, r, textSpace = false) {
 			if (!value.startsWith("linear-gradient(")) return null;
@@ -153,14 +197,29 @@ export async function exportSvg(page, selector, options = {}) {
 			defs.push(`<linearGradient id="${id}" ${coordinates}>${colors.map((match, index) => `<stop offset="${match[1] || n(index / (colors.length - 1) * 100) + "%"}" stop-color="${escape(color(match[0].replace(/\s+[\d.]+%$/, "")))}"/>`).join("")}</linearGradient>`);
 			return `url(#${id})`;
 		}
-		function paintBox(style, r) {
+		function paintBox(style, r, element) {
 			const radius = cornerRadii(style, r);
 			const output = [];
+			// A hard ring, `0 0 0 1px colour` (no offset, no blur), is how Obsidian
+			// outlines a Find callouts note's card; it lies outside the box, so it is
+			// a stroke centred half its width beyond the edge. A soft drop shadow is
+			// not vector geometry and is left out, as are inset shadows. So is the ring
+			// of a focused control and of what holds one: the fixture focuses a field
+			// with a script, which draws the keyboard's ring, where a click draws none.
+			for (const shadow of element?.matches(":focus-within") ? [] : layers(style.boxShadow)) {
+				const ring = /^(.+?)\s+0px 0px 0px (\d*\.?\d+)px$/.exec(shadow);
+				if (!ring || !visibleColor(color(ring[1]))) continue;
+				const spread = Number(ring[2]);
+				output.push(rect({ x: r.x - spread / 2, y: r.y - spread / 2, width: r.width + spread, height: r.height + spread }, "none", radius.map(v => v ? v + spread / 2 : 0), `stroke="${escape(color(ring[1]))}" stroke-width="${n(spread)}"`));
+			}
 			const background = backgrounds(style);
 			if (background.at(-1).clip !== "text" && visibleColor(style.backgroundColor)) output.push(rect(r, style.backgroundColor, radius));
 			for (const layer of background.reverse()) {
-				const fill = layer.clip !== "text" && gradient(layer.image, r);
-				if (fill) output.push(rect(r, fill, radius));
+				const image = layer.clip === "text" ? null : vectorUrl(layer.image);
+				if (image) { output.push(paintImage(image, layer, r)); continue; }
+				const where = layer.clip === "text" ? null : layerBox(layer, r);
+				const fill = where && gradient(layer.image, where);
+				if (fill) output.push(rect(where, fill, where === r ? radius : 0));
 			}
 			const borders = ["Top", "Right", "Bottom", "Left"].map(side => ({ side, width: px(style[`border${side}Width`]), color: style[`border${side}Color`], style: style[`border${side}Style`] }));
 			if (borders.every(edge => edge.width === borders[0].width && edge.color === borders[0].color) && borders[0].width && borders[0].style !== "none") {
@@ -177,6 +236,25 @@ export async function exportSvg(page, selector, options = {}) {
 			return output.join("");
 		}
 		const metrics = document.createElement("canvas").getContext("2d");
+		// The bullet of a list item (`::marker`, which is not an element, so it is
+		// never walked): a disc, circle or square hung outside the item, sized and
+		// set against the first line as Chrome draws it.
+		function bullet(element, style, r) {
+			if (style.display !== "list-item" || style.listStyleImage !== "none" || style.listStylePosition !== "outside") return "";
+			const kind = style.listStyleType;
+			if (!["disc", "circle", "square"].includes(kind)) return "";
+			metrics.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+			const measured = metrics.measureText("x");
+			const ascent = measured.fontBoundingBoxAscent, height = ascent + measured.fontBoundingBoxDescent;
+			const size = Math.floor((Math.floor(ascent * 2 / 3) + 1) / 2);
+			const line = px(style.lineHeight) || height, ink = color(getComputedStyle(element, "::marker").color || style.color);
+			const middleX = r.x - 8 - size / 2;
+			const middleY = r.y + px(style.paddingTop) + px(style.borderTopWidth) + (line - height) / 2 + 3 * (ascent - Math.floor(ascent * 2 / 3)) / 2 + size / 2;
+			if (kind === "square") return `<rect x="${n(middleX - size / 2)}" y="${n(middleY - size / 2)}" width="${size}" height="${size}" fill="${escape(ink)}"/>`;
+			return kind === "disc"
+				? `<circle cx="${n(middleX)}" cy="${n(middleY)}" r="${n(size / 2)}" fill="${escape(ink)}"/>`
+				: `<circle cx="${n(middleX)}" cy="${n(middleY)}" r="${n((size - 1) / 2)}" fill="none" stroke="${escape(ink)}" stroke-width="1"/>`;
+		}
 		function font(style) { return `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`; }
 		const textSweeps = new WeakMap();
 		function textFill(element, style) {
@@ -244,6 +322,21 @@ export async function exportSvg(page, selector, options = {}) {
 			const height = size(style.height, parentBox.height) + outer("Top", "Bottom");
 			if (!width || !height) return "";
 			const r = { x: parentBox.x + px(style.marginLeft), y: parentBox.y + px(style.marginTop), width, height };
+			// The one box a flex container holds is placed by its alignment, not at
+			// its corner: a search field's clear button is a `display: flex` box with
+			// the ✕ as its `::after`, centred in it. (Only for a host with nothing
+			// else in it, so there is no other item to share the line with.)
+			const host = getComputedStyle(element), other = getComputedStyle(element, name === "::before" ? "::after" : "::before");
+			if (!["absolute", "fixed"].includes(style.position) && /flex/.test(host.display) && !element.firstChild && (other.content === "none" || other.display === "none")) {
+				const edge = side => px(host[`border${side}Width`]) + px(host[`padding${side}`]);
+				const free = (total, ...sides) => total - sides.reduce((sum, side) => sum + edge(side), 0);
+				const share = (value, space) => value === "center" ? space / 2 : /(^|-)end$/.test(value) ? space : 0;
+				const column = host.flexDirection.startsWith("column");
+				const across = share(column ? host.alignItems : host.justifyContent, free(parentBox.width, "Left", "Right") - width - px(style.marginLeft) - px(style.marginRight));
+				const down = share(column ? host.justifyContent : host.alignItems, free(parentBox.height, "Top", "Bottom") - height - px(style.marginTop) - px(style.marginBottom));
+				r.x = parentBox.x + edge("Left") + across + px(style.marginLeft);
+				r.y = parentBox.y + edge("Top") + down + px(style.marginTop);
+			}
 			if (style.left !== "auto") r.x += size(style.left, parentBox.width);
 			else if (style.right !== "auto") r.x += parentBox.width - size(style.right, parentBox.width) - width;
 			if (style.top !== "auto") r.y += size(style.top, parentBox.height);
@@ -342,7 +435,7 @@ export async function exportSvg(page, selector, options = {}) {
 			const beforeStyle = getComputedStyle(element, "::before");
 			const beforeOnTop = beforeStyle.position !== "static" && !(Number(beforeStyle.zIndex) < 0);
 			const before = pseudo(element, "::before", r);
-			let result = paintBox(style, r) + (beforeOnTop ? "" : before) + (afterBehind ? after : "");
+			let result = paintBox(style, r, element) + bullet(element, style, r) + (beforeOnTop ? "" : before) + (afterBehind ? after : "");
 			result = paintMask(style, r) ?? result;
 			result += control(element, style, r);
 			let children = "";

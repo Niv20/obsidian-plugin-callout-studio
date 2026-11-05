@@ -48,7 +48,8 @@ body[data-store-scene="03-create"] .modal { width:var(--site-editor-width, 640px
 .site-side-tabs { display:flex; gap:2px; align-items:center; height:40px; padding:0 8px; border-bottom:1px solid var(--divider-color); flex:none; }
 .site-side-tabs .clickable-icon { padding:6px; }
 .site-side-body { flex:1; min-height:0; overflow:hidden; }
-.site-side-body .cs-occurrences-view { height:100%; }
+.site-side-body .cs-occurrences-view { height:100%; --search-result-background:#333333; }
+.site-side-body .search-result-file-match { border-bottom-color:#1c1c1c; }
 .site-outline { padding:10px 8px; }
 `;
 

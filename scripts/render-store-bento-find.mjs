@@ -21,12 +21,12 @@ const { outputFiles } = await build({
 const layout = `
 body { margin:0; padding:20px; overflow:hidden; background:transparent; }
 *, *::before, *::after { animation:none!important; transition:none!important; }
-#bento-find { width:233px; height:414px; display:flex; flex-direction:column; overflow:hidden; background:transparent; }
+#bento-find { width:233px; height:414px; display:flex; flex-direction:column; overflow:hidden; background:transparent; --search-result-background:#232323; }
 #bento-find .view-content { flex:1 1 auto; min-height:0; overflow:hidden; }
 #bento-find .cs-occurrences-picker .cs-dropdown-field { font-size:12.5px; }
 #bento-find .cs-occurrences-scroll { overflow:hidden; }
 #bento-find .search-result-file-title { font-size:12.5px; padding-block:2px; }
-#bento-find .search-result-file-match { font-size:12px; line-height:16px; padding-block:4px; }
+#bento-find .search-result-file-match { font-size:12px; line-height:16px; padding-block:4px; border-bottom-width:2px; border-bottom-color:#1e1e1e; }
 `;
 const browser = await chromium.launch({ headless: true, executablePath: process.env.BROWSER_EXECUTABLE });
 try {

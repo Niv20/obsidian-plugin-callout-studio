@@ -19,15 +19,16 @@ import { settingsPageCss } from "./user-guide/settingsPageLayout.mjs";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || "playwright");
-const { appCss, icons, version } = loadObsidianAssets();
+const { appCss, icons, glyphs, version } = loadObsidianAssets();
 if (!version) throw new Error("Set OBSIDIAN_VERSION when supplying extracted Obsidian assets");
 const pluginCss = readFileSync(path.join(root, "styles.css"), "utf8");
 const themePath = process.env.GUIDE_THEME_CSS || path.resolve(root, "../../themes/AnuPpuccin/theme.css");
 const themeCss = existsSync(themePath) ? readFileSync(themePath, "utf8").replace(/@import[^;]+;/g, "").replace(/@font-face\s*\{[^}]*\}/g, "") : null;
 const layoutCss = `
 body { margin:0; padding:32px; overflow:hidden; background:var(--background-primary); }
-*, *::before, *::after { animation:none!important; transition:none!important; caret-color:transparent!important; }
-${settingsPageCss({ width: 850 })}
+/* A picture shows no scrollbar, and a page must not set room aside for one: a picker measures its scrollbar and insets its content by it, which cut 15px off both sides of its list when the browser reserved a classic scrollbar's gutter (scrollbar-gutter: stable). */
+* { scrollbar-width:none; }
+*, *::before, *::after { animation:none!important; transition:none!important; caret-color:transparent!important; }${settingsPageCss({ width: 850 })}
 .modal-container { position:static; padding:0; height:auto; min-height:0; }
 .modal-bg { display:none; }
 .modal { position:relative; margin:0; max-height:704px!important; }
@@ -41,6 +42,17 @@ ${settingsPageCss({ width: 850 })}
 .guide-autocomplete .cm-content { padding:12px 0; }
 .guide-autocomplete .cm-line { padding:0; }
 .guide-autocomplete .suggestion-container { position:static; width:390px; margin:8px 0 16px 24px; }
+/* A sidebar view is pictured as the slice of Obsidian's window it lives in (scripts/user-guide/sidebarWindow.mjs): a note, cut off at the left edge, beside the right sidebar. */
+.guide-window { box-sizing:border-box; width:640px; border:1px solid var(--background-modifier-border-hover); border-radius:12px; }
+.guide-window-clip { display:flex; height:100%; overflow:hidden; border-radius:11px; background:var(--background-primary); }
+.guide-window-note { flex:1 1 0; min-width:0; overflow:hidden; }
+.guide-window-note-header { height:var(--header-height); border-bottom:var(--tab-outline-width) solid var(--tab-outline-color); }
+.guide-window-text { padding-top:28px; }
+/* Placeholder text. Each line starts at the picture's edge, as if it began before it. */
+.guide-window-line { height:9px; margin-bottom:13px; border-radius:0 5px 5px 0; background:var(--background-modifier-border); }
+.guide-window-line.is-heading { height:15px; margin-bottom:22px; border-radius:0 8px 8px 0; }
+.guide-window-line.is-last { margin-bottom:28px; }
+.guide-window .workspace-split.mod-sidedock { flex:0 0 auto; width:340px; height:100%; border-inline-start:1px solid var(--divider-color); }
 `;
 const { outputFiles } = await build({
 	entryPoints: [path.join(root, "scripts/user-guide/scenes.mjs")],
@@ -74,10 +86,11 @@ try {
 		}
 		await page.addStyleTag({ content: pluginCss });
 		await page.addStyleTag({ content: layoutCss });
-		await page.evaluate(({ artwork, version }) => {
+		await page.evaluate(({ artwork, glyphs, version }) => {
 			globalThis.__CS_GUIDE_ICONS__ = artwork;
+			globalThis.__CS_GUIDE_GLYPHS__ = glyphs;
 			globalThis.__CS_GUIDE_OBSIDIAN_VERSION__ = version;
-		}, { artwork: icons, version });
+		}, { artwork: icons, glyphs, version });
 		await page.addScriptTag({ content: outputFiles[0].text });
 		const metadata = await page.evaluate(scene => userGuideScenes.mountScene(scene), name);
 		await page.evaluate(selector => {

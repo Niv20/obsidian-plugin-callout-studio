@@ -48,7 +48,7 @@ body { margin:0; padding:20px; overflow:hidden; background:transparent; }
 #bento-ribbon .bento-file { display:flex; align-items:center; height:31px; color:var(--text-faint); }
 #bento-ribbon .bento-file-name { display:block; height:6px; border-radius:3px; background:var(--text-faint); }
 
-#bento-ribbon .tooltip { position:absolute; left:50px; top:90px; width:174px; max-width:174px; }
+#bento-ribbon .tooltip { position:absolute; left:50px; top:90px; width:128px; max-width:128px; }
 #bento-ribbon .tooltip.mod-right .tooltip-arrow { left:-6px; top:calc(50% - 6px); margin-left:0; width:6px; height:12px; border:0; }
 `;
 const browser = await chromium.launch({ headless: true, executablePath: process.env.BROWSER_EXECUTABLE });

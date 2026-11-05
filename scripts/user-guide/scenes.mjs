@@ -15,6 +15,7 @@ import { scenes as formatScenes } from "./scenes-formats.mjs";
 import { scenes as integrationScenes } from "./scenes-integration.mjs";
 import { makeHost as sharedHost } from "./fixture-host.mjs";
 import { mountSettingsPage } from "./settingsPage.mjs";
+import "./mascotStill.mjs";
 
 const mounts = { "create-settings": mountSettings, "create-editor": mountEditor, "create-autocomplete": mountAutocomplete, ...designScenes, ...managementScenes, ...sidebarScenes, ...formatScenes, ...integrationScenes };
 export const sceneNames = Object.keys(mounts);
