@@ -410,6 +410,8 @@ export class CalloutEditor extends Modal {
 			// A built-in's name is fixed (Obsidian declares it), so it is shown
 			// inside a field-shaped box that cannot be focused or clicked. It
 			// is not stored in `nameTextInput`: nothing may ever edit it.
+			// `cs-fixed-name` stops a double-click or drag selecting its text.
+			nameSetting.controlEl.addClass("cs-fixed-name");
 			nameSetting.addText((text) => {
 				text.inputEl.addClass("cs-text-control");
 				text.setValue(this.displayName).setDisabled(true);

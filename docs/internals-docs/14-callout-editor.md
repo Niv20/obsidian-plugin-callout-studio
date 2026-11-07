@@ -104,7 +104,11 @@ picture that cannot follow the callout's colour).
 A built-in's display name cannot change: Obsidian declares it. Its row shows
 the name inside a disabled text field (`addText` + `setDisabled(true)`), so it
 reads as a rectangle like the other rows' fields but cannot be focused or
-clicked. (It was bare `addDisplayValue` text pinned to the row's edge until
+clicked. A disabled input's text can still be selected in Chromium, by a
+double-click or a drag, so the row's control carries `cs-fixed-name`: the
+input gets `pointer-events: none` and the control `user-select: none`. Both
+rules are needed, because `user-select` on the input alone does not stop it.
+(It was bare `addDisplayValue` text pinned to the row's edge until
 2026-11-01.) `nameTextInput` stays `null` for a built-in; every reader already
 uses `?.`.
 

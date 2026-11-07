@@ -1593,6 +1593,21 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	--setting-items-padding-x: var(--size-4-4);
 }
 
+/* A built-in's display name: a disabled field whose text cannot be selected.
+   Chromium still selects the text of a disabled input on a double-click or a
+   drag, and `user-select: none` on the input itself does not stop it. Both
+   rules are needed: the input lets the pointer through, the way Obsidian's own
+   disabled Bases inputs do, and the control around it selects nothing.
+   Without the container rule a double-click still selects a word. */
+.cs-fixed-name {
+	user-select: none;
+	-webkit-user-select: none;
+}
+
+.cs-fixed-name > input:disabled {
+	pointer-events: none;
+}
+
 /* The groups beside the preview are spaced by Obsidian's own
    `.setting-group + .setting-group` margin (24px), so the column adds none. */
 .callout-studio-editor .callout-studio-adjust-col,
