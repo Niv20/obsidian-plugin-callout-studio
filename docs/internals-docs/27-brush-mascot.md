@@ -83,14 +83,14 @@ looking and then a shake of the head, then sad: a search that found nothing), `n
 progress), `hold` (still and calm, for "paused"), and three for the pointer
 playing with it (see [Played with](#played-with)): `notice`, `ouch` and `angry`.
 
-**Looking** (`look`, and `lookTwice`, which is one round of it) is three glances,
-`searchGlances` in `mascotAnimations.ts`: down left, up left, down right. A glance
+**Looking** (`look`, and `lookTwice`, which is one round of it) is two glances,
+`searchGlances` in `mascotAnimations.ts`: up left, down right. A glance
 (`glance(gaze, flick, rest)`) is a quick flick with the eyes wide open that slows as
 it arrives (`ease: "out"`), then a long stare in which the eyes creep a tenth
 further and **narrow** (`EYES.narrow`, a slit with its middle point on the centre:
 the same eye half closed, not a blink) as if straining to see, until the next flick
 opens them again. The head tilts away from the side looked at and rises or dips a
-little. Every glance has its own flick and stare (240/640, 200/820, 250/700 ms), so
+little. Every glance has its own flick and stare (200/820, 250/700 ms), so
 it does not tick, and the eyes cross the face from one corner to the next at speed
 instead of stopping in the middle (an earlier version went left, middle, right,
 middle: the eases made the middle a pause). There is no glance up and to the
@@ -100,8 +100,8 @@ last corner is where the eyes stay, narrowed. `look` stops there (held, it goes
 round again after a blink). `lookTwice` carries on with `answerNo`: the eyes open
 and look straight ahead (160 ms), a beat (180 ms), then the head shakes "no" (the
 same `headShake` as `no`, 0.7 s) with the flat mouth, and only then it hands over to
-the held `sad`, which restores the frown. So one round is 0.39 s of face, 2.85 s of
-looking and 1.2 s of answer: 4.44 s.
+the held `sad`, which restores the frown. So one round is 0.39 s of face, 1.97 s of
+looking and 1.2 s of answer: 3.56 s.
 `tests/brushMascot.test.ts` reads the order of the corners off the eye's path (its
 second point: a blink moves the first), counts the frames where it sits still in the
 middle, and checks the stroke width: wide on arriving, under 1.3 at the end of the

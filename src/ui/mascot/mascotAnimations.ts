@@ -174,7 +174,7 @@ const glance = (gaze: Vec, flick: number, rest: number): Step[] => [
 	{ ms: rest, to: { eyes: "narrow", gaze: [gaze[0] * 1.1, gaze[1] * 1.1] }, ease: "inOut" },
 ];
 /**
- * Looking for something: down left, up left, down right. Every glance has its
+ * Looking for something: up left, down right. Every glance has its
  * own speed and its own long stare, so it does not tick like a clock and it is
  * plain that it is looking, and the eyes sweep straight across the face from one
  * corner to the next instead of stopping in the middle. There is no glance up and
@@ -183,11 +183,7 @@ const glance = (gaze: Vec, flick: number, rest: number): Step[] => [
  * eyes from there, and they are narrowed, which every face that can follow
  * (`sad`, `hold`…) opens again in its intro.
  */
-const searchGlances: Step[] = [
-	...glance([-0.65, 0.4], 240, 640),
-	...glance([-0.55, -0.45], 200, 820),
-	...glance([0.55, 0.4], 250, 700),
-];
+const searchGlances: Step[] = [...glance([-0.55, -0.45], 200, 820), ...glance([0.55, 0.4], 250, 700)];
 /**
  * The answer to the search: the eyes open and look straight ahead, there is a
  * beat, and the head shakes "no". What follows takes it from there (the sad face
@@ -251,7 +247,7 @@ export const ANIMATIONS = {
 		body: [wait(380), ...wink, wait(420)],
 	},
 
-	/** Looks around in three directions, narrowing its eyes at each, then blinks and goes round again: for searching. */
+	/** Looks around in two directions, narrowing its eyes at each, then blinks and goes round again: for searching. */
 	look: {
 		intro: [crouch, face({ eyes: "dot", mouth: "flat", fill: 0 })],
 		body: searchGlances,

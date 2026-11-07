@@ -363,27 +363,27 @@ describe("the brush mascot", () => {
 		// only once that is over.
 		assert.deepEqual(seen, ["lookTwice", NO_RESULTS_MOOD, null]);
 		assert.ok(isIcon(m));
-		// Three glances of 0.88, 1.02 and 0.95 s (a flick and a stare each) and the 1.2 s
-		// of the head shake, after a 0.39 s face: 4.44 s.
-		assert.equal(at[4288], "lookTwice");
-		assert.equal(at[4560], NO_RESULTS_MOOD);
+		// Two glances of 1.02 and 0.95 s (a flick and a stare each) and the 1.2 s
+		// of the head shake, after a 0.39 s face: 3.56 s.
+		assert.equal(at[3440], "lookTwice");
+		assert.equal(at[3680], NO_RESULTS_MOOD);
 	});
 
-	it('shakes its head "no" after the three glances, with its eyes open again, and only then goes on as sad', () => {
+	it('shakes its head "no" after the two glances, with its eyes open again, and only then goes on as sad', () => {
 		const m = mascot();
 		void m.play("lookTwice");
 		const tilt = (): number =>
 			Number(/rotate\((-?[\d.]+) 12 13\)/.exec(parts(m).body.getAttribute("transform") ?? "")?.[1] ?? 0);
 		const eyeWidth = (): number => Number(parts(m).eyes[0].getAttribute("stroke-width"));
 		let whileLooking = 0;
-		for (let t = 0; t < 3200; t += 16) {
+		for (let t = 0; t < 2600; t += 16) {
 			m.advance(16);
 			whileLooking = Math.max(whileLooking, Math.abs(tilt()));
 		}
 		assert.ok(whileLooking < 4, `only a slight tilt while it looks around: ${whileLooking}`);
 		let leftmost = 0;
 		let rightmost = 0;
-		for (let t = 3200; t < 4400; t += 16) {
+		for (let t = 2600; t < 3500; t += 16) {
 			m.advance(16);
 			leftmost = Math.min(leftmost, tilt());
 			rightmost = Math.max(rightmost, tilt());
@@ -394,15 +394,16 @@ describe("the brush mascot", () => {
 		assert.ok(Math.abs(tilt()) < 1, "and the head is straight again");
 	});
 
-	it("looks down left, up left, down right in turn, never up and to the right, never coming to rest in the middle", () => {
+	it("looks up left, down right in turn, never up and to the right, never coming to rest in the middle", () => {
 		const m = mascot();
 		void m.play("lookTwice");
 		// The face is up at 390 ms and the first glance has not begun: that is the middle.
 		run(m, 380);
 		const middle = eyePoint(m);
-		const { seen, stoppedInMiddle } = corners(m, middle, 380, 3200);
+		// Up to the end of the second stare (2.36 s): after it the eyes come back to the middle for the answer.
+		const { seen, stoppedInMiddle } = corners(m, middle, 380, 2320);
 		// No "NE": looking up and to the right pushes the right eye onto the handle's lower edge.
-		assert.deepEqual(seen, ["SW", "NW", "SE"]);
+		assert.deepEqual(seen, ["NW", "SE"]);
 		assert.equal(stoppedInMiddle, 0, "the eyes sweep across, they do not stop there");
 	});
 
@@ -411,23 +412,23 @@ describe("the brush mascot", () => {
 		void m.play("lookTwice");
 		const width = (): number => Number(parts(m).eyes[0].getAttribute("stroke-width"));
 		// Each glance is a flick (the eyes wide, a plain dot) and then a stare (narrowing): the
-		// first flick ends at 630 ms and its stare at 1270 ms, then the next flick opens them.
-		run(m, 640);
+		// first flick ends at 590 ms and its stare at 1410 ms, then the next flick opens them.
+		run(m, 600);
 		assert.ok(width() > 1.9, `wide as it arrives: ${width()}`);
-		run(m, 620);
+		run(m, 800);
 		assert.ok(width() < 1.3, `narrowed by the end of the stare: ${width()}`);
 		run(m, 200);
 		assert.ok(width() > 1.9, `open again for the next glance: ${width()}`);
 	});
 
-	it("looks round in the same three directions for as long as it is held, blinking between the rounds", () => {
+	it("looks round in the same two directions for as long as it is held, blinking between the rounds", () => {
 		const m = mascot();
 		const look = m.hold("look");
 		run(m, 380);
 		const middle = eyePoint(m);
-		// The body (2.85 s) and one trip round the loop (2.85 s and a blink); the next round has begun by 7 s.
-		const { seen, stoppedInMiddle } = corners(m, middle, 380, 7000);
-		assert.deepEqual(seen.slice(0, 6), ["SW", "NW", "SE", "SW", "NW", "SE"]);
+		// The body (1.97 s) and one trip round the loop (1.97 s, a blink and a beat); the third round has begun by 6 s.
+		const { seen, stoppedInMiddle } = corners(m, middle, 380, 6000);
+		assert.deepEqual(seen.slice(0, 6), ["NW", "SE", "NW", "SE", "NW", "SE"]);
 		assert.equal(stoppedInMiddle, 0);
 		look.release();
 		run(m, 2000);

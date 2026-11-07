@@ -137,7 +137,7 @@ export class KeptMascot {
 
 /**
  * The mascot of a search that found nothing. When the search turns up empty it
- * looks around (three glances), shakes its head "no" and is sad, and stays sad
+ * looks around (two glances), shakes its head "no" and is sad, and stays sad
  * for as long as nothing matches. While the query keeps changing it looks around
  * again, and once the typing pauses with nothing found it shakes its head "no"
  * once more and goes back to being sad.
