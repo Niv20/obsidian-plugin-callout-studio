@@ -40,6 +40,11 @@ const context = await esbuild.context({
 	treeShaking: true,
 	outfile: "main.js",
 	minify: prod,
+	// Write non-ASCII characters as themselves, not as `\uXXXX` / `\u{XXXXX}`
+	// escapes. The default (ASCII) spends up to 10 bytes on every emoji in the
+	// picker's dataset; UTF-8 spends 4. Same program either way - only the
+	// spelling of the literals changes - and Obsidian reads main.js as UTF-8.
+	charset: "utf8",
 });
 
 if (prod) {

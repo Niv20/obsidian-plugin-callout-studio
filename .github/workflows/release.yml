@@ -211,6 +211,10 @@ jobs:
             # with the tag input they are typed into), the palette editor's
             # light and dark colour views and the license box - the build
             # was 2,399,025 bytes, which leaves about 5.2 KiB of headroom.
+            # Not raised when the build went 4.8 KiB over (2,409,217 bytes):
+            # esbuild's `charset: "utf8"` writes the emoji picker's dataset as
+            # UTF-8 instead of escapes, taking the build to 2,367,031 bytes -
+            # about 36.4 KiB of headroom - with the same program inside.
             - name: Check bundle size
               run: |
                   limit=2404352  # 2 MiB + 300 KiB

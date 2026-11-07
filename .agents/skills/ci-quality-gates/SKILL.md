@@ -35,6 +35,7 @@ For the normal push workflow, local parity is:
 npm run build
 git diff --exit-code -- locales src/i18n/localeManifest.ts
 npm run lint
+npm run format:check
 npm test
 ```
 
@@ -50,7 +51,7 @@ When the user asks to prevent red pushes, prefer these mutually reinforcing
 layers:
 
 1. Add one repository script such as `npm run check` that mirrors the push
-   workflow's build → generated-locale diff → lint → test order. Inspect the
+   workflow's build → generated-locale diff → lint → format:check → test order. Inspect the
    workflow when adding or changing it; do not let the convenience script
    become a second, weaker definition of success.
 2. Add a Husky `pre-push` hook that invokes that single script. Keep the existing
@@ -61,8 +62,9 @@ layers:
    not necessarily the exact commits being pushed. Either require a clean tree
    or run verification in an isolated snapshot; never claim commit-level
    coverage while uncommitted changes are influencing the result.
-4. Use feature branches and pull requests for changes destined for `master`.
-   Configure `master` protection to require the repository's Actions status
+4. The default flow is a single commit straight to `master` (see the
+   `commit-workflow` skill), so do not introduce branches or PRs unless the
+   user asks for them. If they do want PRs, configure `master` protection to require the repository's Actions status
    checks before merge and disallow bypasses where appropriate. Branch
    protection is external repository state: inspect the current settings and
    obtain the user's authorization before changing it.

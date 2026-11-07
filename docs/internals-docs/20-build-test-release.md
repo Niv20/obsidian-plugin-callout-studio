@@ -48,12 +48,23 @@ target: "es2018"
 outfile: "main.js"
 minify: prod
 sourcemap: prod ? false : "inline"
+charset: "utf8"
 ```
 
 Obsidian and CodeMirror packages are externals - the app itself supplies
 them at runtime, so bundling them would both bloat `main.js` and risk a
 duplicate/mismatched CodeMirror instance. Production builds strip
 sourcemaps entirely (dev builds inline them for fast iteration).
+
+`charset: "utf8"` makes esbuild write non-ASCII characters as themselves
+instead of its default `\uXXXX` / `\u{XXXXX}` escapes. It is purely a
+spelling change - the two builds parse to identical syntax trees - and it is
+worth 41 KiB, 97% of it the emoji picker's dataset (`src/data/emojiData.ts`),
+where an escaped emoji costs up to 10 bytes against UTF-8's 4. Obsidian reads
+`main.js` as UTF-8 on every path: desktop serves the file to a `<script>` in a
+`<meta charset="utf-8">` page, and the fallback (and mobile) path reads it as
+text through the vault adapter. `tests/repoRelease.test.ts` fails if the
+option is removed.
 
 Both the plugin's Obsidian API package and the linter's copy pin Moment
 2.29.4. The npm override resolves both to 2.31.0, which fixes
@@ -688,6 +699,9 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 > paint, `notice`, `ouch` and `angry`), Version history as a page with its
 > restored timeline, and a long menu that scrolls with the wheel came to 6.6 KB,
 > and the allowance grew by 8 KiB: 2,380,334 bytes, about 3.5 KiB under the limit.
+> Writing `main.js` as UTF-8 (`charset: "utf8"`, see Build above) then took a
+> build that was 4.8 KiB *over* the limit, at 2,409,217 bytes, down to
+> 2,367,031 bytes - about 36.4 KiB under it - with the limit left alone.
 
 > [!NOTE]
 > **The release is created as a `draft`, on purpose.** The `$release` skill

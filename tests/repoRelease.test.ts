@@ -25,7 +25,9 @@
  *   megabyte without noticing — which is exactly what happened, and what moving
  *   31 locales out of the bundle undid. The ceiling is not restated here; it is
  *   *read out of* `release.yml`, so the gate that blocks publication and the
- *   gate that runs in `npm test` cannot drift apart.
+ *   gate that runs in `npm test` cannot drift apart. The build's
+ *   `charset: "utf8"` is held here too, since dropping it costs 41 KiB and
+ *   nothing else.
  * - **Command ids have not moved.** Obsidian keys the user's hotkey by
  *   `callout-studio:<command id>`, so both halves of that string are frozen
  *   API. `fixedCommands.test.ts` already checks the declared list against what
@@ -314,6 +316,19 @@ describe("main.js stays inside its budget", () => {
 			size <= limit,
 			`main.js is ${size} bytes (${(size / 1048576).toFixed(2)} MiB), over the ${limit}-byte budget. ` +
 				"Raise it in release.yml consciously, with a note saying what earned the space.",
+		);
+	});
+
+	it("is written as UTF-8, not as esbuild's escaped ASCII", () => {
+		// esbuild's default charset spells every non-ASCII character as an
+		// escape - up to ten bytes for an emoji UTF-8 writes in four. That was
+		// 41 KiB of the bundle, nearly all of it the emoji picker's dataset.
+		// Losing the option changes no behaviour, so nothing else would notice
+		// until the budget above was already blown.
+		assert.match(
+			readRepoFile("scripts/esbuild.config.mjs"),
+			/^\s*charset:\s*"utf8",?\s*$/m,
+			'scripts/esbuild.config.mjs no longer sets `charset: "utf8"` — main.js grows by about 41 KiB of escaped emoji without it',
 		);
 	});
 });
