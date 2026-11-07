@@ -24,7 +24,6 @@ Every Callout Studio setting, and each of your own callouts, can be found from O
 | [16 - Advanced heading callouts](16-advanced-heading-callouts.md)          | Use heading callouts in the Outline, links, and tables of contents.                                                             |
 | [17 - Theme integration](17-theme-integration.md)                          | Understand which callouts your theme controls, and how the windows follow it.                                                   |
 | [18 - Callout metadata](18-callout-metadata.md)                            | Color one callout with `[!type\|pink]`, combine words for your theme, and type them from the menu.                             |
-| [19 - The brush mascot](19-the-brush-mascot.md)                            | Meet the paintbrush that reacts in empty lists, searches, confirmations and notices.                                            |
 
 ---
 

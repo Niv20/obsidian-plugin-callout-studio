@@ -146,6 +146,3 @@ Deleting a palette never changes your notes. Callouts that name it go back to th
 ## Where it works
 
 Metadata colors work in Reading view, Live Preview and PDF exports. The CSS snippet you can export (see [Import, export & sharing](10-import-export-and-sharing.md)) includes them for block callouts. They need a recent engine: iOS 16.5 or later on iPhone and iPad, and on a computer an up-to-date Obsidian installer. Where it is older, callouts simply keep their own colors.
-
----
-**Next:** [The brush mascot](19-the-brush-mascot.md)
