@@ -1,25 +1,29 @@
 /**
- * tests/cssInjectorPreviewLayer.test.ts — a demo preview's rules ride in a sheet
- * of their own, so a colour drag does not rewrite the stylesheet of the vault.
+ * tests/cssInjectorPreviewLayer.test.ts — a preview's rules ride in a sheet of
+ * their own, so a colour drag or a retyped name does not rewrite the
+ * stylesheet of the vault.
  *
  * The palette editor repaints its stand-in callout on every step of a colour
- * drag. The ordinary pass writes every callout's rules, twice (the adopted
+ * drag, and the callout editor its draft on every slider step and every typed
+ * name. The ordinary pass writes every callout's rules, twice (the adopted
  * sheet and the `<style>` copy), and Obsidian copies that `<style>` text into
  * each pop-out window, Settings included: about 25 ms a step in a vault with
- * 750 callouts. `CSSInjector.repaintDemoPreview` lifts the demo's rules out of
+ * 750 callouts. `CSSInjector.repaintPreview` lifts the preview's rules out of
  * that text into `PreviewLayer`, which is a few hundred bytes.
  *
  * What is pinned here is the contract that makes that safe:
  *
- * - **Nothing of the demo stays in the big sheet**, or a rule it no longer
+ * - **Nothing of the preview stays in the big sheet**, or a rule it no longer
  *   needs (a gradient left from the style before) would outlive the step that
  *   removed it, under the layer's own rules.
  * - **A step writes only the layer.** That is the whole saving.
- * - **Any other pass leaves the demo where it is**, and brings the layer up to
- *   date, because a theme switch can change what the demo's rules should say.
- * - **Whatever is not a lone demo takes the ordinary pass.** A preview that
- *   shadows a real callout sits in that callout's place in the sheet and
- *   cannot be lifted out of it.
+ * - **Any other pass leaves the preview where it is**, and brings the layer up
+ *   to date, because a theme switch can change what its rules should say.
+ * - **A demo on a reserved id never touches the big sheet** — the callout
+ *   editor's draft of any callout: up, every step and down write its layer
+ *   alone, and a pass with it up writes the big sheet it would without. A
+ *   built-in's draft still takes the theme's colour for that built-in.
+ * - **A demo raised over a real callout takes the ordinary pass.**
  * - **Releasing the preview takes the layer away**, element and sheet both.
  *
  * `{} as App` will not do here: the layer touches `app.workspace`, and the
@@ -31,8 +35,9 @@ import { describe, it } from "node:test";
 import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CSSInjector } from "../src/manager/CSSInjector";
+import { PREVIEW_PLACEHOLDER_ID, RESERVED_DEMO_IDS } from "../src/constants";
 import type { CalloutDefinition } from "../src/types";
-import { definition } from "./support/cssInjectorHarness";
+import { definition, parseRules } from "./support/cssInjectorHarness";
 
 class FakeSheet {
 	disabled = false;
@@ -76,6 +81,8 @@ interface Env {
 	readonly sheets: FakeSheet[];
 	mainEl(): FakeStyleEl;
 	layerEl(): FakeStyleEl | null;
+	/** The page's other stylesheets (`document.styleSheets`): a theme's, a snippet's. */
+	readonly pageSheets: unknown[];
 }
 
 function withEnv(body: (env: Env) => void): void {
@@ -88,8 +95,10 @@ function withEnv(body: (env: Env) => void): void {
 	};
 	const elements = new Map<string, FakeStyleEl>();
 	const adopted: FakeSheet[] = [];
+	const pageSheets: unknown[] = [];
 	const doc = {
 		adoptedStyleSheets: adopted,
+		styleSheets: pageSheets,
 		defaultView: { CSSStyleSheet: FakeSheet },
 		head: {
 			appendChild(el: FakeStyleEl) {
@@ -129,6 +138,7 @@ function withEnv(body: (env: Env) => void): void {
 			},
 			mainEl: () => elements.get(MAIN_EL_ID) as FakeStyleEl,
 			layerEl: () => doc.getElementById(LAYER_EL_ID),
+			pageSheets,
 		});
 	} finally {
 		Object.assign(g, saved);
@@ -143,7 +153,7 @@ function demo(accent: string, over: Partial<CalloutDefinition> = {}): CalloutDef
 /** Register `def` as the demo preview and repaint, as the palette editor does. */
 function step(env: Env, def: CalloutDefinition): void {
 	env.registry.setPreviewDefinition(def, true);
-	env.injector.repaintDemoPreview();
+	env.injector.repaintPreview();
 }
 
 describe("a demo preview in the preview layer", () => {
@@ -218,7 +228,7 @@ describe("a demo preview in the preview layer", () => {
 			const writes = main.writes.length;
 
 			// The step above only moved the layer. A whole pass over a different
-			// demo must come out byte-identical, or `repaintDemoPreview` skipping
+			// demo must come out byte-identical, or `repaintPreview` skipping
 			// the whole pass would be skipping something it owed.
 			env.registry.setPreviewDefinition(demo("#112233", { hideIcon: true, transparentBg: true }), true);
 			env.injector.inject(false);
@@ -263,7 +273,7 @@ describe("a demo preview in the preview layer", () => {
 
 			// The first call is the ordinary pass, which sweeps everything.
 			env.registry.setPreviewDefinition(demo("#a1b2c3"), true);
-			env.injector.repaintDemoPreview(pane);
+			env.injector.repaintPreview(pane);
 			assert.deepEqual(swept, [undefined]);
 
 			// A later step touches the layer and sweeps just the pane.
@@ -272,24 +282,25 @@ describe("a demo preview in the preview layer", () => {
 				demo("#445566", { icon: { type: "lucide", value: "lucide-star" } }),
 				true,
 			);
-			env.injector.repaintDemoPreview(pane);
+			env.injector.repaintPreview(pane);
 			assert.deepEqual(swept, [pane]);
 
 			// A caller that never changes its icon (the palette editor) asks for none.
 			swept.length = 0;
 			env.registry.setPreviewDefinition(demo("#778899"), true);
-			env.injector.repaintDemoPreview();
+			env.injector.repaintPreview();
 			assert.deepEqual(swept, []);
 		});
 	});
 
-	it("takes the ordinary pass for a preview that shadows a real callout", () => {
+	it("takes the ordinary pass for a demo raised over a real callout", () => {
 		withEnv((env) => {
 			const note = env.registry.get("note");
 			assert.ok(note);
-			// The callout editor's own preview: the real id, not a demo of its own.
+			// A demo on a real id rather than one of its own. (The callout
+			// editor's draft of a real callout is not a demo: see the suite below.)
 			env.registry.setPreviewDefinition({ ...note, colorLight: "#a1b2c3", colorDark: "#a1b2c3" }, true);
-			env.injector.repaintDemoPreview();
+			env.injector.repaintPreview();
 
 			assert.equal(env.sheets.length, 1, "no layer: the callout keeps its place in the big sheet");
 			assert.ok(env.sheets[0]?.text.includes("#a1b2c3"));
@@ -298,7 +309,7 @@ describe("a demo preview in the preview layer", () => {
 
 	it("takes the ordinary pass when there is no preview at all", () => {
 		withEnv((env) => {
-			env.injector.repaintDemoPreview();
+			env.injector.repaintPreview();
 			assert.equal(env.sheets.length, 1);
 			assert.ok(env.sheets[0]?.text.includes("Auto-generated by Callout Studio"));
 		});
@@ -322,6 +333,282 @@ describe("a demo preview in the preview layer", () => {
 			env.injector.destroy();
 			assert.equal(env.layerEl(), null);
 			assert.ok(!env.sheets.some((s) => s.text.includes("#a1b2c3")) || env.sheets.length < 2);
+		});
+	});
+});
+
+/** A callout of the user's own, in an accent easy to find in the text. */
+function mine(over: Partial<CalloutDefinition> = {}): CalloutDefinition {
+	return definition({ id: "mine", displayName: "Mine", colorLight: "#102030", colorDark: "#102030", ...over });
+}
+
+/* -------------------------------------------------------------------------- */
+/* A demo on a reserved id: the callout editor's draft of a callout of yours  */
+/* -------------------------------------------------------------------------- */
+
+/** The editor's draft as it registers it: under the placeholder id, as a demo. */
+function placeholderDraft(over: Partial<CalloutDefinition> = {}): CalloutDefinition {
+	return mine({ id: PREVIEW_PLACEHOLDER_ID, colorLight: "#a1b2c3", colorDark: "#a1b2c3", ...over });
+}
+
+describe("a demo on a reserved id", () => {
+	it("leaves the big sheet as it is, up, through every step, and down", () => {
+		withEnv((env) => {
+			env.registry.add(mine());
+			env.injector.inject(false);
+			const main = env.sheets[0] as FakeSheet;
+			const before = main.text;
+			const writes = main.writes.length;
+
+			// A gradient too: the metadata colours must not read it into the big sheet.
+			const gradient = { angleDeg: 90, toColorLight: "#ddeeff", toColorDark: "#112244" };
+			env.registry.setPreviewDefinition(placeholderDraft({ bgGradient: gradient }), true);
+			env.injector.repaintPreview();
+			env.registry.setPreviewDefinition(placeholderDraft({ colorLight: "#445566" }), true);
+			env.injector.repaintPreview();
+			assert.equal(main.writes.length, writes, "no pass on the way up or through a step");
+
+			env.injector.inject(false);
+			assert.equal(main.text, before, "a pass with the demo up writes the same big sheet");
+
+			env.registry.setPreviewDefinition(null);
+			env.injector.releasePreview();
+			assert.equal(main.writes.length, writes, "nor on the way down");
+			assert.equal(env.sheets.length, 1, "the layer is taken away");
+			assert.equal(env.layerEl(), null);
+		});
+	});
+
+	it("puts the demo's own rules and its share of the global rules in the layer", () => {
+		withEnv((env) => {
+			env.injector.inject(false); // the plugin's first pass, made on load
+			env.registry.setPreviewDefinition(placeholderDraft(), true);
+			env.injector.repaintPreview();
+			const layer = env.sheets[1] as FakeSheet;
+			const attr = `[data-callout="${PREVIEW_PLACEHOLDER_ID}"]`;
+
+			assert.ok(layer.text.includes("#a1b2c3"));
+			assert.ok(layer.text.includes(`.callout${attr} > .callout-title > .callout-icon`), "its global share");
+			assert.ok(
+				!(env.sheets[0] as FakeSheet).text.includes(`.callout${attr}`),
+				"and none of it in the big sheet",
+			);
+		});
+	});
+
+	it("keeps the fallback off every reserved id, with a demo up or not", () => {
+		withEnv((env) => {
+			env.injector.inject(false);
+			const [fallback] = parseRules((env.sheets[0] as FakeSheet).text).filter((rule) =>
+				rule.selector.startsWith(".callout:not(:where("),
+			);
+			assert.ok(fallback, "the fallback rule is there");
+			for (const id of RESERVED_DEMO_IDS) {
+				assert.ok(fallback.selector.includes(`[data-callout="${id}"]`), `${id} would take the fallback`);
+			}
+		});
+	});
+
+	it("keeps the pane's rules through a save's pass while the draft is up", () => {
+		// The callout editor's Save: the registry change runs an ordinary pass
+		// with the draft still registered, and the pane must keep showing it
+		// until the window closes. Taken down first, the pass would find no
+		// preview and clear the layer, and the pane would fall back to
+		// Obsidian's default callout.
+		withEnv((env) => {
+			env.registry.add(mine());
+			env.injector.inject(false);
+			env.registry.setPreviewDefinition(placeholderDraft(), true);
+			env.injector.repaintPreview();
+
+			env.registry.update("mine", { colorLight: "#a1b2c3", colorDark: "#a1b2c3" });
+			env.injector.inject(false);
+
+			assert.ok((env.sheets[1] as FakeSheet).text.includes("#a1b2c3"), "the pane lost its draft");
+			assert.ok((env.sheets[0] as FakeSheet).text.includes("#a1b2c3"), "the save reached the notes");
+		});
+	});
+
+	it("leaves a reserved demo out of a pass that nothing asked to", () => {
+		withEnv((env) => {
+			env.injector.inject(false);
+			const before = (env.sheets[0] as FakeSheet).text;
+
+			// What the style pages do: register, then an ordinary pass.
+			env.registry.setPreviewDefinition(placeholderDraft(), true);
+			env.injector.inject(false);
+
+			assert.equal((env.sheets[0] as FakeSheet).text, before);
+			assert.ok((env.sheets[1] as FakeSheet).text.includes("#a1b2c3"));
+		});
+	});
+
+	it("sweeps only the pane for painted icons, since no note can show it", () => {
+		withEnv((env) => {
+			env.injector.inject(false);
+			const swept: Array<ParentNode | undefined> = [];
+			env.injector.paintIcons = (root) => void swept.push(root);
+			const pane = {} as ParentNode;
+
+			env.registry.setPreviewDefinition(placeholderDraft(), true);
+			env.injector.repaintPreview(pane);
+			assert.deepEqual(swept, [pane]);
+		});
+	});
+});
+
+/* -------------------------------------------------------------------------- */
+/* A built-in's draft under the placeholder                                   */
+/* -------------------------------------------------------------------------- */
+
+describe("a built-in's draft under the placeholder id", () => {
+	// An untouched built-in takes its accent from Obsidian's rule for its id,
+	// which the theme's `--callout-*` variable feeds — 74 of 257 themes colour
+	// the built-ins that way without naming one. Under the placeholder that
+	// rule does not reach, so the layer has to say the same thing itself.
+
+	/** The editor's draft of `id`, as it registers it: the form's fields on the placeholder. */
+	function draftOf(env: Env, id: string, over: Partial<CalloutDefinition> = {}): CalloutDefinition {
+		const real = env.registry.get(id);
+		assert.ok(real);
+		return { ...real, id: PREVIEW_PLACEHOLDER_ID, aliases: [], builtIn: false, source: "user", ...over };
+	}
+
+	function layerFor(env: Env, draft: CalloutDefinition, savedId: string | null): string {
+		env.injector.inject(false);
+		env.registry.setPreviewDefinition(draft, true, true, savedId === null ? null : { savedId, id: savedId });
+		env.injector.repaintPreview();
+		return (env.sheets[1] as FakeSheet).text;
+	}
+
+	it("takes the theme's colour for an untouched built-in, spelled out for the placeholder", () => {
+		withEnv((env) => {
+			const layer = layerFor(env, draftOf(env, "warning"), "warning");
+			assert.match(layer, /--callout-warning/, "the theme's variable for warning");
+			assert.match(
+				layer,
+				/--callout-color:/,
+				"imposed, since core's rule for warning does not reach the placeholder",
+			);
+		});
+	});
+
+	it("takes the draft's own colour once the built-in is edited", () => {
+		withEnv((env) => {
+			const layer = layerFor(
+				env,
+				draftOf(env, "warning", { colorLight: "#a1b2c3", colorDark: "#a1b2c3" }),
+				"warning",
+			);
+			assert.doesNotMatch(layer, /--callout-warning/);
+			assert.ok(layer.includes("#a1b2c3"));
+		});
+	});
+
+	it("knows nothing of the built-in when the draft does not say whose it is", () => {
+		withEnv((env) => {
+			const layer = layerFor(env, draftOf(env, "warning"), null);
+			assert.doesNotMatch(layer, /--callout-warning/);
+		});
+	});
+
+	it("still leaves the big sheet as it is", () => {
+		withEnv((env) => {
+			env.injector.inject(false);
+			const main = env.sheets[0] as FakeSheet;
+			const before = main.text;
+			const writes = main.writes.length;
+
+			env.registry.setPreviewDefinition(draftOf(env, "warning"), true, true, {
+				savedId: "warning",
+				id: "warning",
+			});
+			env.injector.repaintPreview();
+			env.injector.inject(false);
+
+			assert.equal(main.writes.length, writes);
+			assert.equal(main.text, before);
+		});
+	});
+});
+
+/* -------------------------------------------------------------------------- */
+/* What the draft borrows from the rest of the page                           */
+/* -------------------------------------------------------------------------- */
+
+describe("the draft and the rules the page aims at its name", () => {
+	// A snippet's border on `[!mine]` reaches every note that writes it. The
+	// draft is previewed under the placeholder, so the layer carries a copy of
+	// that rule aimed at the placeholder instead (css/borrowedCalloutRules.ts).
+
+	/** A page stylesheet, owned by `owner`, holding one rule. */
+	function pageSheet(selectorText: string, owner: unknown = {}): unknown {
+		return {
+			ownerNode: owner,
+			disabled: false,
+			media: { mediaText: "" },
+			cssRules: [{ selectorText, style: { cssText: "border: 3px dashed purple;" } }],
+		};
+	}
+
+	function previewOf(env: Env, id: string): string {
+		env.registry.setPreviewDefinition(placeholderDraft(), true, true, { savedId: "mine", id });
+		env.injector.repaintPreview();
+		return (env.sheets[1] as FakeSheet).text;
+	}
+
+	it("borrows a snippet's rule for the draft's name, aimed at the placeholder", () => {
+		withEnv((env) => {
+			env.registry.add(mine());
+			env.pageSheets.push(pageSheet('.callout[data-callout="mine"]'));
+			env.injector.inject(false);
+			const main = env.sheets[0] as FakeSheet;
+			const writes = main.writes.length;
+
+			const layer = previewOf(env, "mine");
+
+			assert.ok(
+				layer.includes(`.callout[data-callout="${PREVIEW_PLACEHOLDER_ID}"] { border: 3px dashed purple; }`),
+			);
+			assert.ok(layer.indexOf("dashed purple") < layer.indexOf("#a1b2c3"), "before the draft's own rules");
+			assert.equal(main.writes.length, writes, "the big sheet is not touched");
+		});
+	});
+
+	it("follows the name being typed", () => {
+		withEnv((env) => {
+			env.registry.add(mine());
+			env.pageSheets.push(pageSheet('.callout[data-callout="mine"]'));
+			env.pageSheets.push(pageSheet('.callout[data-callout="plan"]'));
+			env.injector.inject(false);
+
+			const layer = previewOf(env, "plan");
+			assert.equal(layer.split("dashed purple").length - 1, 1, "the rule for the new name, not the old one");
+		});
+	});
+
+	it("never borrows from this plugin's own stylesheet, which holds the saved callout", () => {
+		withEnv((env) => {
+			env.registry.add(mine());
+			env.injector.inject(false);
+			env.pageSheets.push(pageSheet('.callout[data-callout="mine"]', env.mainEl()));
+			env.injector.inject(false);
+
+			assert.doesNotMatch(previewOf(env, "mine"), /dashed purple/);
+		});
+	});
+
+	it("reads the page again after a pass, not on every step", () => {
+		withEnv((env) => {
+			env.registry.add(mine());
+			env.injector.inject(false);
+			assert.doesNotMatch(previewOf(env, "mine"), /dashed purple/);
+
+			// A snippet switched on: Obsidian fires css-change, which runs a pass.
+			env.pageSheets.push(pageSheet('.callout[data-callout="mine"]'));
+			assert.doesNotMatch(previewOf(env, "mine"), /dashed purple/, "a step reuses what was read");
+			env.injector.inject(false);
+			assert.match((env.sheets[1] as FakeSheet).text, /dashed purple/);
 		});
 	});
 });

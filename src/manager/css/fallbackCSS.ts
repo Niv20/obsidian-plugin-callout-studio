@@ -24,6 +24,14 @@ import { tokenAttrSel } from "../../utils/calloutSelector";
  */
 export interface FallbackCssContext {
 	settings: PluginSettings;
+	/**
+	 * Ids to treat as known whether or not a definition carries them: the
+	 * reserved preview ids (`RESERVED_DEMO_IDS`). A settings window's demo on
+	 * one of them never sits in the main sheet (see
+	 * `CSSInjector.repaintPreview`), so the sheet must already keep the
+	 * fallback off it, and say so the same way with the demo up or down.
+	 */
+	alwaysKnown?: readonly string[];
 	/** `CalloutRegistry.themeOwns` — see the early return it guards. */
 	themeOwns(def: CalloutDefinition): boolean;
 	getIconCSS(def: CalloutDefinition): string;
@@ -65,6 +73,7 @@ export function generateFallbackCSS(callouts: CalloutDefinition[], ctx: Fallback
 	// A theme-styled row is included too: it is recognized, so the unknown-id
 	// fallback must never leak onto it while its own generated block is absent.
 	const knownAttrIds = new Set<string>();
+	for (const id of ctx.alwaysKnown ?? []) knownAttrIds.add(obsidianCalloutAttrId(id));
 	for (const def of callouts) {
 		knownAttrIds.add(obsidianCalloutAttrId(def.id));
 		for (const alias of def.aliases ?? []) {

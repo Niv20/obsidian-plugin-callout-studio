@@ -25,6 +25,8 @@ three-dot menu again when you need it.
 
 Click the pencil beside a callout to open its editor. Save the new color, icon, name, IDs, or icon adjustments when you are finished.
 
+While you edit, only the live previews inside the editor change. Your notes and the list in settings keep showing the saved callout until you click **Save changes**, so opening and closing the editor stays quick even in a vault with hundreds of callouts. This holds for built-in callouts too. The preview still shows what your theme, your CSS snippets and Obsidian itself give the callout by its name, such as a built-in's theme colour or a border a snippet adds to `[!plan]`.
+
 ![Editing a customized built-in callout, with reset arrows beside its changed icon and color](../../assets/user-guide/edit-callout.svg)
 
 When you customize one of Obsidian's thirteen built-in callouts, small return arrows appear beside changed IDs, icons, and colors. Each icon-adjustment group also gets its own return arrow, beside its heading, when its sliders change; it resets the size and both offsets for that callout format without touching the other two formats. To undo every customization on that built-in type at once, open its three-dot menu and choose **Reset to default**.

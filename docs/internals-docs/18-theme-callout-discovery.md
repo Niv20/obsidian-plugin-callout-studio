@@ -684,7 +684,11 @@ Decisions in the measurement:
   that never stops. A restyle (the theme or snippet text moved) and this
   plugin's own `css-change` are urgent and never wait. Measured over 180
   `css-change` events on Catppuccin in a real Obsidian: 10.5 s before the
-  check existed, 26.7 s with a pass per event, 2.5 s with the gate.
+  check existed, 26.7 s with a pass per event, 2.5 s with the gate. The
+  stylesheet pass the handler asks for is gated the same way for a nudge (a
+  third `QuietGate`, 150 ms of quiet or 500 ms into a burst); a restyle and this
+  plugin's own `css-change` pass at once (see
+  [CSS generation § What one external css-change costs here](06-css-generation.md#what-one-external-css-change-costs-here)).
   [When theme appearance refreshes](#when-theme-appearance-refreshes) has the
   rest of what a `css-change` costs.
 - **Nothing outlives a pass.** Every rule and this plugin's CSS are restored

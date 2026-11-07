@@ -161,6 +161,14 @@ emit `--callout-color` - because its job is to paint callouts *other than*
 the one it copied its style from, and omitting the variable there would
 silently disable the "Default fallback callout" setting.
 
+The callout editor's draft of a built-in is imposed the same way, for the same
+reason: it is previewed under the reserved placeholder id, where core's rule
+for the built-in does not reach. It still defers to the built-in's theme
+variable while untouched - `themeAccentVar` asks `registry.standInIdentity`,
+the draft on the real built-in's identity - so the preview pane shows the
+theme's colour for it, as the notes do (see
+[CSS generation § A reserved demo](06-css-generation.md#a-reserved-demo)).
+
 ## Two migrations that clean up old colour data
 
 Both are described in more depth in

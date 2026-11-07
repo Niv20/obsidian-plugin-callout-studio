@@ -21,19 +21,21 @@
  * locale (id sort order), the fallback id (the *Default fallback* tag), and
  * the theme's styles switch.
  *
- * ## Two inputs are deliberately absent
+ * ## One input is deliberately absent
  *
- * Both are answered with a forced redraw instead, because no amount of reading
- * the registry can see them:
+ * **Icon artwork.** It lives in a download cache keyed by icon name, so the
+ * definition naming a not-yet-downloaded icon is byte-identical to the one
+ * naming it a second later. A signature alone would freeze every row that came
+ * up on a spinner, spinning, for good. It is answered with a forced redraw
+ * instead.
  *
- * - **Icon artwork.** It lives in a download cache keyed by icon name, so the
- *   definition naming a not-yet-downloaded icon is byte-identical to the one
- *   naming it a second later. A signature alone would freeze every row that came
- *   up on a spinner, spinning, for good.
- * - **A preview definition.** The callout editor registers one transiently and
- *   *without* a registry mutation, by contract, so it may not be visible from
- *   here at all — and following the editor's colour picker live is the entire
- *   reason that signal exists.
+ * The callout editor's draft is not absent, although it arrives without a
+ * registry mutation: the rows handed in come from the registry's list views,
+ * which show a draft in place of the callout it stands over and leave out one
+ * standing on an id of its own. So a draft that changes a row changes this
+ * string, and one that changes no row (a name being retyped) leaves it alone —
+ * which is what lets that signal skip the redraw instead of forcing it
+ * (`tabSubscriptions.ts`).
  *
  * Both directions of failure are worth naming. A signature that changes when
  * nothing did costs one redraw. One that *fails* to change leaves a stale row

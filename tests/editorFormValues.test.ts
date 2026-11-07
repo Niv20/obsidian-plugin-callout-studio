@@ -18,6 +18,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { App } from "obsidian";
+import { PREVIEW_PLACEHOLDER_ID } from "../src/constants";
 import { t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CalloutEditor } from "../src/settings/CalloutEditor";
@@ -134,6 +135,7 @@ describe("the preview's inline sample", () => {
 		const name = "Price $& $$ $` $'";
 		(editor as unknown as { displayName: string }).displayName = name;
 		const sample = (editor as unknown as { buildSampleText(): string }).buildSampleText();
-		assert.ok(sample.includes(`[!note]{${name}}`), sample);
+		// Under the placeholder id: the draft is previewed in the pane alone.
+		assert.ok(sample.includes(`[!${PREVIEW_PLACEHOLDER_ID}]{${name}}`), sample);
 	});
 });

@@ -21,6 +21,20 @@ const REREAD_QUIET_MS = 250;
 const REREAD_MAX_MS = 2000;
 
 /**
+ * The stylesheet pass a `css-change` from outside asks for, folded the same
+ * way for a nudge — the same theme and snippets, something else moved: a
+ * Style Settings slider, the font size. Each step of such a drag used to run
+ * the whole pass (the stylesheet generated for every callout, every icon on
+ * screen swept, every editor refreshed), which in a vault with 750 callouts is
+ * tens of milliseconds a step. The first step of a burst still runs it at
+ * once, and the last state is always passed, this long after the drag stops
+ * or this often while it goes on. A new theme or snippet text, and this
+ * plugin's own `css-change`, still pass at once.
+ */
+const NUDGE_PASS_QUIET_MS = 150;
+const NUDGE_PASS_MAX_MS = 500;
+
+/**
  * What a test swaps in; production passes nothing. The two DOM-reading halves
  * (what the theme draws, and whether it draws what it names) are the parts a
  * fake DOM cannot answer, and this file's subject is when they are asked.
@@ -260,6 +274,13 @@ export function registerThemeAppearance(host: ThemeSyncHost, options: ThemeSyncO
 	};
 	const rereadGate = new QuietGate(reread, REREAD_QUIET_MS, REREAD_MAX_MS, options.schedule);
 	host.register(() => rereadGate.destroy());
+	const passGate = new QuietGate(
+		() => host.cssInjector.inject(false),
+		NUDGE_PASS_QUIET_MS,
+		NUDGE_PASS_MAX_MS,
+		options.schedule,
+	);
+	host.register(() => passGate.destroy());
 
 	// A `<body>`/`<html>` class moved without a css-change (see
 	// watchPageClasses). Nothing to do unless it moved a page condition the
@@ -335,7 +356,9 @@ export function registerThemeAppearance(host: ThemeSyncHost, options: ThemeSyncO
 				nudged = false;
 				appearance.invalidate({ keepAnswers: true });
 			}
-			host.cssInjector.inject(false);
+			// Urgent unless a nudge: a pass now, and none left owed by a
+			// burst of nudges before it (see NUDGE_PASS_QUIET_MS).
+			passGate.request(!nudge);
 			rereadGate.request(!nudge);
 		}),
 	);

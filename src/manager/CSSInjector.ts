@@ -18,13 +18,14 @@ import type { App } from "obsidian";
 import type { CalloutDefinition, CalloutRenderRole } from "../types";
 import { CALLOUT_RENDER_ROLES } from "../types";
 import { isDefaultIconAdjust, resolveIconAdjust } from "../utils/iconAdjust";
-import { renderIconInto } from "../icons/renderIcon";
+import { iconRenderKey, renderIconInto } from "../icons/renderIcon";
+import { IconPaintMemo } from "../icons/iconPaintMemo";
 import { createIconResolver } from "../icons/resolver";
 import type { IconResolver } from "../icons/types";
 import { bgGradientCss, DEFAULT_TEXT_COLOR_DARK, DEFAULT_TEXT_COLOR_LIGHT } from "../utils/colorUtils";
 import { accentDeclarations, ownAccentDeclarations, needsDarkBlock } from "./accentDeclarations";
 import { resolveBgAlpha } from "../utils/bgTintAlpha";
-import { OBSIDIAN_CALLOUT_VAR } from "../constants";
+import { OBSIDIAN_CALLOUT_VAR, RESERVED_DEMO_IDS } from "../constants";
 import { applyTitleGradient, clearGradientChars } from "../reading/gradientTitleText";
 import {
 	CSS_CM_WIDGET,
@@ -40,6 +41,7 @@ import {
 	paintRoleIcon,
 	resolveCalloutDef,
 	shouldRenderToken,
+	tokenIconKey,
 } from "../editor/renderShared";
 import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
 import { calloutTokenLabel, obsidianCalloutAttrId } from "../utils/calloutId";
@@ -48,7 +50,7 @@ import type { ThemeCalloutStore } from "./theme/ThemeCalloutStore";
 import { ThemeMetadataCatalog } from "./theme/ThemeMetadataCatalog";
 import { generateFallbackCSS } from "./css/fallbackCSS";
 import { generateMetadataColorCSS } from "./css/metadataColorCSS";
-import { PreviewLayer } from "./css/PreviewLayer";
+import { PreviewRepaint } from "./css/previewRepaint";
 import {
 	activeMetadataColorEntries,
 	definitionWithMetadataColor,
@@ -184,24 +186,33 @@ export class CSSInjector {
 	private icons: IconResolver;
 	private destroyed = false;
 	/**
-	 * Where a demo preview's rules go while the main sheet leaves them out. See
-	 * {@link repaintDemoPreview}.
+	 * What {@link paintIcons} last painted into each icon slot, so a sweep
+	 * leaves the ones that already show it — see `icons/iconPaintMemo.ts`.
 	 */
-	private readonly previewLayer: PreviewLayer;
+	private readonly iconMemo = new IconPaintMemo();
 	/**
-	 * The id of the demo preview whose rules belong in {@link previewLayer}
-	 * rather than in the main sheet, or null when no demo has asked for that.
-	 * Set by {@link repaintDemoPreview}; cleared by the first pass that finds
-	 * the demo gone, so a settings window that forgets to say it is done cannot
-	 * leave the main sheet short of a callout.
+	 * A settings window's preview, whose rules ride in a small sheet of their
+	 * own while the main sheet leaves them out — see `css/previewRepaint.ts`.
 	 */
-	private layeredDemoId: string | null = null;
+	private readonly preview: PreviewRepaint;
 
 	constructor(app: App, registry: CalloutRegistry) {
 		this.app = app;
 		this.registry = registry;
 		this.icons = createIconResolver(registry);
-		this.previewLayer = new PreviewLayer(app);
+		this.preview = new PreviewRepaint({
+			app,
+			registry,
+			inject: () => this.inject(false),
+			paintIcons: (root) => this.paintIcons(root),
+			outsidePass: (write) => this.outsidePass(write),
+			calloutCss: (def) => this.generateCalloutCSS(def),
+			globalCssFor: (def) => this.generateGlobalStyleCSS(false, [def], false),
+			ownStyleEl: () => this.styleEl,
+			persistMainSheet: () => {
+				if (this.lastCssText !== null) this.startupCache.persistSoon(this.lastCssText);
+			},
+		});
 		this.startupCache = new StartupStyleCache(app);
 		this.studioWeights = new StudioWeightCache(app, () => this.themeOff());
 		this.metadataCatalog = new ThemeMetadataCatalog(app, () => this.themeOff());
@@ -283,7 +294,7 @@ export class CSSInjector {
 		const el = this.styleEl;
 		const sheetWas = sheet?.disabled ?? false;
 		const elWas = el?.disabled ?? false;
-		const restoreLayer = this.previewLayer.suspend();
+		const restoreLayer = this.preview.suspend();
 		if (sheet) sheet.disabled = true;
 		if (el) el.disabled = true;
 		return () => {
@@ -429,66 +440,59 @@ export class CSSInjector {
 	}
 
 	/**
-	 * Repaint after the registry's demo preview changed — the stand-in callout
-	 * a settings window shows (`registry.setPreviewDefinition(def, true)`), as
-	 * the palette editor does on every step of a colour drag.
+	 * Repaint after the registry's demo preview changed: the stand-in callout a
+	 * settings window shows (`registry.setPreviewDefinition(def, true)`) — the
+	 * palette editor's, on every step of a colour drag, and the callout
+	 * editor's draft, on every step of a slider and every letter of a name.
+	 * Rewrites the preview's own small sheet rather than the whole stylesheet
+	 * when it can, and runs the ordinary pass when it cannot, so it is safe to
+	 * call from any preview (see `css/previewRepaint.ts`).
 	 *
-	 * The first call lifts the demo's rules out of the main sheet into the
-	 * preview layer, through one ordinary pass; every later call regenerates
-	 * just that callout and rewrites just the layer. A colour drag used to run
-	 * the ordinary pass per step, which writes the whole stylesheet twice and
-	 * makes Obsidian copy it into every pop-out window; this writes a few
-	 * hundred bytes, and a step costs about a millisecond instead of about
-	 * thirty.
-	 *
-	 * Nothing else a pass does is owed here. The main sheet's text does not
-	 * depend on the demo's colours, no real callout changed, and the editor
-	 * that shows the demo rebuilds its own widgets on its refresh.
-	 *
-	 * The one thing a pass does that a step might owe is the painted icons: a
-	 * Lucide, emoji or picture icon is drawn into the callout's DOM by
-	 * `paintIcons`, not by CSS. A caller whose form can change the icon (the
-	 * callout editor) passes `iconRoot`, the element the demo is shown in, and
-	 * only that is swept. The palette editor never changes its stand-in's icon
-	 * and passes nothing.
-	 *
-	 * Anything that is not a lone demo — no preview, or one standing on a real
-	 * callout — takes the ordinary pass, so this is safe to call from any
-	 * preview.
+	 * A caller whose form can change the icon passes `iconRoot`, the element
+	 * the preview is shown in: an icon is drawn into the DOM by
+	 * {@link paintIcons}, not by CSS, and only that element is swept.
 	 */
-	repaintDemoPreview(iconRoot?: ParentNode): void {
+	repaintPreview(iconRoot?: ParentNode): void {
 		if (this.destroyed) return;
-		const demo = this.registry.getDemoPreview();
-		if (!demo) {
-			this.inject(false);
-			return;
-		}
-		// The layer is the proof the main sheet already leaves this id out: a
-		// pass writes the layer only after building a main text without it.
-		if (this.layeredDemoId !== demo.id || this.previewLayer.owner !== demo.id) {
-			this.layeredDemoId = demo.id;
-			this.inject(false);
-			return;
-		}
-		// Outside a pass, so the one piece of pass state generateCalloutCSS
-		// reads that an ordinary pass sets up is set here. The memoised theme
-		// weight and accent spelling are kept from the last pass; a theme change
-		// is a `css-change`, which runs a whole pass and refreshes them.
+		this.preview.repaint(iconRoot);
+	}
+
+	/**
+	 * Repaint after a preview was taken down (`setPreviewDefinition(null)`).
+	 * The callout editor's draft was never in the main sheet, so only its
+	 * small sheet goes; anything else takes the ordinary pass.
+	 */
+	releasePreview(): void {
+		if (this.destroyed) return;
+		this.preview.release();
+	}
+
+	/**
+	 * Run `write` outside a pass, with the one piece of pass state the
+	 * generators read that an ordinary pass sets up. The memoised theme weight
+	 * and accent spelling are kept from the last pass; a theme change is a
+	 * `css-change`, which runs a whole pass and refreshes them.
+	 */
+	private outsidePass(write: () => void): void {
 		const themeOffWas = this.emitThemeOff;
 		this.emitThemeOff = this.themeOff();
 		try {
-			this.previewLayer.write(demo.id, this.generateCalloutCSS(demo));
+			write();
 		} finally {
 			this.emitThemeOff = themeOffWas;
 		}
-		if (iconRoot) this.paintIcons(iconRoot);
 	}
 
-	/** The demo whose rules this pass keeps out of the main sheet, if any. */
-	private layeredDemo(): CalloutDefinition | null {
-		if (this.layeredDemoId === null) return null;
-		const demo = this.registry.getDemoPreview();
-		return demo?.id === this.layeredDemoId ? demo : null;
+	/**
+	 * The fallback and metadata rules, which close the main sheet. The
+	 * metadata colours read `metadataDefs` (all but a reserved demo).
+	 */
+	private fallbackAndMetadata(callouts: CalloutDefinition[], metadataDefs: readonly CalloutDefinition[]): string[] {
+		// Fallback rule: style unrecognized callout IDs with the fallback callout
+		const fallback = this.generateFallbackCSS(callouts);
+		// `[!type|colour]` — after every definition and the fallback, which
+		// the metadata colours' precedence relies on (see metadataColorCSS.ts).
+		return [fallback, this.generateMetadataColorCSS(false, metadataDefs)];
 	}
 
 	private injectNow(emitCssChange: boolean): void {
@@ -497,16 +501,21 @@ export class CSSInjector {
 		this.emitThemeOff = this.themeOff();
 
 		const callouts = this.registry.getAll();
-		// A demo preview that asked for it (repaintDemoPreview) has its rules in
-		// the preview layer, so they are left out of this text. Everything else
-		// below still sees it in `callouts`: the fallback and the metadata rules
-		// are built from every id the registry knows.
-		const layered = this.layeredDemo();
+		// A demo that asked for it (repaintPreview), and a reserved demo always,
+		// has its rules in the preview layer (css/previewRepaint.ts), so they are
+		// left out of this text. For a demo that is all: the fallback and the
+		// metadata rules are built from every id the registry knows, the demo's
+		// included, and stay here.
+		// A reserved demo takes its global style rules with it, and the metadata
+		// colours are read without it; the fallback keeps off every reserved id
+		// anyway. So nothing here names a reserved demo.
+		const layered = this.preview.beginPass();
+		const others = layered?.kind === "reserved" ? callouts.filter((def) => def.id !== layered.def.id) : null;
 		const rules: string[] = [CSS_HEADER];
 		if (this.emitThemeOff) rules.push(THEME_CALLOUTS_OFF_MARKER);
 
 		// Global callout style rules
-		rules.push(this.generateGlobalStyleCSS());
+		rules.push(others ? this.generateGlobalStyleCSS(false, others) : this.generateGlobalStyleCSS());
 
 		// The DOM inline-SVG/emoji copies that paintIcons bakes in are the icons
 		// shown in PDF export (print). Hide them on screen (live view uses the
@@ -528,16 +537,11 @@ export class CSSInjector {
 		);
 
 		for (const def of callouts) {
-			if (def.id === layered?.id) continue;
+			if (def.id === layered?.def.id) continue;
 			rules.push(this.generateCalloutCSS(def));
 		}
 
-		// Fallback rule: style unrecognized callout IDs with the fallback callout
-		rules.push(this.generateFallbackCSS(callouts));
-
-		// `[!type|colour]` — after every definition and the fallback, which
-		// the metadata colours' precedence relies on (see metadataColorCSS.ts).
-		rules.push(this.generateMetadataColorCSS());
+		rules.push(...this.fallbackAndMetadata(callouts, others ?? callouts));
 
 		const cssText = rules.join("\n\n");
 		// Write the CSS to BOTH targets:
@@ -559,34 +563,27 @@ export class CSSInjector {
 			this.lastCssText = cssText;
 		}
 
-		// The demo's own rules, after the main sheet so they win a tie as they
-		// would have inside it. Written on every pass, not only when the main
-		// text moved: a theme switch moves what the demo's rules should say
-		// while the demo's definition stands still. The layer skips the write
-		// itself when the text is unchanged.
-		if (layered) {
-			this.previewLayer.write(layered.id, this.generateCalloutCSS(layered));
-		} else {
-			this.layeredDemoId = null;
-			this.previewLayer.clear();
-		}
+		// The preview's own rules, after the main sheet so they win a tie as
+		// they would have inside it — on every pass, not only when the main text
+		// moved (see PreviewRepaint.endPass).
+		this.preview.endPass(layered);
 
 		// Snapshot the same text for next launch's startup fast path (see
 		// StartupStyleCache). Skipped while a transient live-preview
 		// definition is registered: that CSS describes an unsaved draft,
 		// which toSaveData() already goes out of its way to keep off disk,
 		// and hovering a colour in the editor's palette menu would otherwise
-		// cost a synchronous localStorage write each time. Clearing the
-		// preview re-injects, which persists the real CSS again.
+		// cost a synchronous localStorage write each time. Taking the preview
+		// down persists the real CSS again (releasePreview, or the pass it
+		// runs).
 		//
-		// Outside the `cssChanged` branch on purpose. The callout editor clears
-		// its preview without a pass and then saves, so the save's pass makes
-		// text byte-identical to the preview's: `cssChanged` is false there,
-		// and the snapshot kept the CSS from before the edit. The cache's own
-		// memo skips text it already holds, so an unchanged pass costs one
-		// compare.
+		// Outside the `cssChanged` branch on purpose: a pass whose text did not
+		// move may still owe the snapshot one a preview held back. The cache's
+		// own memo skips text it already holds, so an unchanged pass costs one
+		// compare. Written once the sheet has been still for a moment, not
+		// here: the write is synchronous and only the next launch reads it.
 		if (!this.registry.hasPreviewDefinition()) {
-			this.startupCache.persist(cssText);
+			this.startupCache.persistSoon(cssText);
 		}
 
 		// Re-paint DOM icons: keeps Lucide icons in sync after edits, and bakes
@@ -631,7 +628,11 @@ export class CSSInjector {
 			mode === "dark" ? def.colorDark : def.colorLight,
 			this.themeAccentVar(def),
 			important ? " !important" : "",
-			imposed,
+			// A draft standing in for a built-in sits under the placeholder id,
+			// where Obsidian's own rule for the built-in does not reach: its
+			// accent is spelled out, as the fallback's is, instead of left to
+			// that rule.
+			imposed || this.registry.standInIdentity(def) !== null,
 			this.studioWeights.dialect(),
 			mode,
 		);
@@ -661,13 +662,19 @@ export class CSSInjector {
 	 * The Obsidian variable this def should defer to, or undefined when it
 	 * carries its own color. Only an unmodified built-in defers — the moment the
 	 * user edits one it becomes their color, theme or no theme.
+	 *
+	 * Asked of the callout a preview draft stands in for when it is one
+	 * (`registry.standInIdentity`): the callout editor previews a built-in's
+	 * draft under the placeholder id, and an untouched one must still preview
+	 * in the theme's colour for it.
 	 */
 	private themeAccentVar(def: CalloutDefinition): string | undefined {
 		// With the theme's callout styling off, an untouched built-in shows
 		// Obsidian's own colours — its stored seed — not the theme's palette.
 		if (this.emitThemeOff) return undefined;
-		if (!this.registry.isUnmodifiedBuiltIn(def)) return undefined;
-		return OBSIDIAN_CALLOUT_VAR[def.id];
+		const identity = this.registry.standInIdentity(def) ?? def;
+		if (!this.registry.isUnmodifiedBuiltIn(identity)) return undefined;
+		return OBSIDIAN_CALLOUT_VAR[identity.id];
 	}
 
 	/**
@@ -1556,7 +1563,10 @@ export class CSSInjector {
 				// An unknown id is the one icon path where CSS decides whether the
 				// fallback or an exact snippet owns the slot. The fallback painter
 				// reads the computed sentinel only after the new sheet is installed.
-				if (iconEl) paintUnknownFallbackIcon(calloutEl, iconEl, this.registry);
+				if (iconEl) {
+					this.iconMemo.forget(iconEl);
+					paintUnknownFallbackIcon(calloutEl, iconEl, this.registry);
+				}
 				if (titleInner) clearGradientChars(titleInner);
 				continue;
 			}
@@ -1566,7 +1576,10 @@ export class CSSInjector {
 				// Skipping is not enough: an earlier pass may already have painted
 				// this element and core resolves its icon only once. Restore from the
 				// now-winning theme/core property on every pass.
-				if (iconEl) restoreCoreIcon(calloutEl, iconEl);
+				if (iconEl) {
+					this.iconMemo.forget(iconEl);
+					restoreCoreIcon(calloutEl, iconEl);
+				}
 				if (titleInner) clearGradientChars(titleInner);
 				continue;
 			}
@@ -1665,7 +1678,18 @@ export class CSSInjector {
 			// Heading tokens draw at heading size, inline callouts at callout size;
 			// packs with per-size artwork pick their drawing from that.
 			const role = tokenEl.classList.contains(CSS_HEADING_TOKEN) ? "heading" : "inline";
-			paintRoleIcon(iconEl, def, this.registry, role);
+			// Left alone when it already shows this icon (see iconMemo). The
+			// widget key `tokenIconKey` is what says so; it does not see a
+			// hidden icon's artwork or a picture replaced under its name, so
+			// those are painted every time.
+			const key =
+				def.hideIcon === true || (!this.registry.themeOwns(def) && userImageFor(def.icon))
+					? null
+					: tokenIconKey(def, this.registry, role);
+			if (key === null || !this.iconMemo.holds(iconEl, key)) {
+				const drawn = paintRoleIcon(iconEl, def, this.registry, role);
+				this.iconMemo.record(iconEl, drawn ? key : null);
+			}
 		}
 		const nameEl = tokenEl.querySelector<HTMLElement>(`.${CSS_TOKEN_NAME}`);
 		if (!nameEl) return;
@@ -1724,22 +1748,36 @@ export class CSSInjector {
 	 * that is renderIcon's call to make and not this one's — the colour is handed
 	 * over the same way for every icon, and the painter drops it for the one
 	 * artwork the callout does not own.
+	 *
+	 * A slot that already shows this icon in this colour is left alone (see
+	 * {@link iconMemo}). A picture of the user's own is always repainted: it can
+	 * be replaced under the same name, which no key here would see.
 	 */
 	private paintIcon(iconEl: HTMLElement, def: CalloutDefinition): void {
 		iconEl.removeClass(CSS_FALLBACK_ICON_HIDDEN);
 		// Nothing to bake for print when the icon is off: iconHiddenCSS takes the
 		// whole box out of the layout in every medium, so a DOM copy here would
 		// only be an invisible child of a display:none parent.
-		if (def.hideIcon === true) return;
+		if (def.hideIcon === true) {
+			this.iconMemo.forget(iconEl);
+			return;
+		}
 		const doc = iconEl.ownerDocument;
 		const isDark = doc.body?.classList.contains("theme-dark") ?? false;
-		renderIconInto(iconEl, def.icon, createIconResolver(this.registry), {
+		const resolver = this.icons;
+		const fill = isDark ? def.colorDark : def.colorLight;
+		const picture = userImageFor(def.icon);
+		const rootStyle = `width:${iconBoxWidth(picture)};height:var(--icon-size, 1.2em)`;
+		const key = picture ? null : `${iconRenderKey(def.icon, resolver, "regular")}|${fill}|${rootStyle}`;
+		if (key !== null && this.iconMemo.holds(iconEl, key)) return;
+		const result = renderIconInto(iconEl, def.icon, resolver, {
 			role: "regular",
-			fill: { literal: isDark ? def.colorDark : def.colorLight },
+			fill: { literal: fill },
 			missing: { kind: "leave" },
 			className: "cs-export-icon",
-			rootStyle: `width:${iconBoxWidth(userImageFor(def.icon))};height:var(--icon-size, 1.2em)`,
+			rootStyle,
 		});
+		this.iconMemo.record(iconEl, result === "painted" ? key : null);
 	}
 
 	/**
@@ -1751,10 +1789,18 @@ export class CSSInjector {
 	 * Studio callouts get Studio geometry, theme-owned and unregistered callouts
 	 * do not, and neither does a name the theme claims on a callout it only
 	 * partly owns. A Set folds aliases that normalize to the same attr form.
+	 *
+	 * `defs` narrows the list to some callouts: a lifted draft's own share,
+	 * or everyone else's (see {@link repaintPreview}). Every selector in the
+	 * list takes the same declarations, so a name both halves happen to give
+	 * is painted twice the same way, never two ways.
 	 */
-	private studioCalloutSelectors(standalone: boolean): string[] {
+	private studioCalloutSelectors(
+		standalone: boolean,
+		defs: readonly CalloutDefinition[] = this.registry.getAll(),
+	): string[] {
 		const attrIds = new Set<string>();
-		for (const def of this.registry.getAll()) {
+		for (const def of defs) {
 			if (this.registry.themeOwns(def)) continue;
 			for (const name of this.blockNames(def, standalone)) {
 				attrIds.add(obsidianCalloutAttrId(name));
@@ -1765,10 +1811,16 @@ export class CSSInjector {
 			.map((id) => `.callout${tokenAttrSel(id)}`);
 	}
 
-	generateGlobalStyleCSS(standalone = false): string {
+	/**
+	 * The global style rules. `defs` and `roleFrames` cut them for a lifted
+	 * draft (see {@link repaintPreview}): the block-callout rules for just
+	 * those callouts, and without the heading-bar and inline-pill frames,
+	 * which name no callout and stay in the main sheet.
+	 */
+	generateGlobalStyleCSS(standalone = false, defs?: readonly CalloutDefinition[], roleFrames = true): string {
 		const gs = this.registry.settings.globalStyle;
 		const parts: string[] = ["/* Global callout style */"];
-		const calloutSelectors = this.studioCalloutSelectors(standalone);
+		const calloutSelectors = this.studioCalloutSelectors(standalone, defs);
 		const selectorsFor = (tail: string): string =>
 			calloutSelectors.map((selector) => `${selector}${tail}`).join(",\n");
 
@@ -1849,7 +1901,7 @@ export class CSSInjector {
 		if (gs.heading.marginTop !== 0) {
 			headingProps.push(`  --cs-heading-gap-top: ${gs.heading.marginTop}em;`);
 		}
-		if (headingProps.length > 0 && !standalone) {
+		if (headingProps.length > 0 && !standalone && roleFrames) {
 			parts.push(`.${CSS_HEADING_LINE} {\n${headingProps.join("\n")}\n}`);
 		}
 
@@ -1863,7 +1915,7 @@ export class CSSInjector {
 				`  --cs-inline-center-lift: ${(0.1 / gs.inline.fontScale).toFixed(3)}em;`,
 			);
 		}
-		if (inlineProps.length > 0 && !standalone) {
+		if (inlineProps.length > 0 && !standalone && roleFrames) {
 			parts.push(`.${CSS_INLINE_TOKEN} {\n${inlineProps.join("\n")}\n}`);
 		}
 
@@ -1907,6 +1959,7 @@ export class CSSInjector {
 	private generateFallbackCSS(callouts: CalloutDefinition[]): string {
 		return generateFallbackCSS(callouts, {
 			settings: this.registry.settings,
+			alwaysKnown: [...RESERVED_DEMO_IDS],
 			themeOwns: (def) => this.registry.themeOwns(def),
 			getIconCSS: (def) => fallbackCalloutIconProp(def),
 			fallbackAccentProps: (def, mode) => this.fallbackAccentProps(def, mode),
@@ -1928,14 +1981,17 @@ export class CSSInjector {
 	 * Sets the ambient weight and importance the shared emitters read
 	 * (`themeSurface`, `printGradientCSS`) for the duration, like
 	 * `generateCalloutCSS` does, and always puts them back.
+	 *
+	 * `defs` are the callouts it reads (which carry a gradient, which names
+	 * the theme owns): every one by default, and all but a reserved preview's
+	 * demo for the main sheet (see {@link repaintPreview}).
 	 */
-	generateMetadataColorCSS(standalone = false): string {
+	generateMetadataColorCSS(standalone = false, defs: readonly CalloutDefinition[] = this.registry.getAll()): string {
 		const settings = this.registry.settings;
 		const entries = this.metadataColorEntries();
 		if (entries.length === 0) return "";
 		this.emitWeight = this.studioWeights.resolve();
 		this.emitImportant = " !important";
-		const defs = this.registry.getAll();
 		try {
 			return generateMetadataColorCSS(
 				entries,
@@ -1946,7 +2002,7 @@ export class CSSInjector {
 						gradient: defs.some((d) => d.bgGradient !== undefined && d.transparentBg !== true),
 						sweep: defs.some((d) => Boolean(d.bgGradient?.textGradient && d.bgGradient.textToColorLight)),
 					},
-					themeOwnedAttrIds: this.themeOwnedAttrIds(standalone),
+					themeOwnedAttrIds: this.themeOwnedAttrIds(standalone, defs),
 					transparentBorderProps: () => transparentBorderProps(settings.globalStyle.borderSides, true),
 					accentProps: (def, mode) => this.accentProps(def, mode, true),
 					ownAccentProps: (def, mode) => this.ownAccentProps(def, mode),
@@ -1972,9 +2028,9 @@ export class CSSInjector {
 	 * one it only partly names - those only in the live sheet, never in the
 	 * export, for the reason given at {@link emitStandalone}.
 	 */
-	private themeOwnedAttrIds(standalone: boolean): string[] {
+	private themeOwnedAttrIds(standalone: boolean, defs: readonly CalloutDefinition[]): string[] {
 		const ids = new Set<string>();
-		for (const def of this.registry.getAll()) {
+		for (const def of defs) {
 			const owned = this.registry.themeOwns(def);
 			for (const id of [def.id, ...(def.aliases ?? [])]) {
 				if (owned || !this.paintsBlockName(def, id, standalone)) {
@@ -2001,6 +2057,8 @@ export class CSSInjector {
 		this.styleEl?.remove();
 		this.styleEl = null;
 		this.lastCssText = null;
-		this.previewLayer.destroy();
+		this.preview.destroy();
+		// The next launch's snapshot, if a pass was still waiting to write it.
+		this.startupCache.flush();
 	}
 }

@@ -124,6 +124,17 @@ function withIdentityOf(real: CalloutDefinition, preview: CalloutDefinition): Ca
 	};
 }
 
+/**
+ * Whose draft a demo preview is — what the callout editor says when it
+ * registers its draft under the reserved placeholder id.
+ */
+export interface PreviewDraft {
+	/** The saved callout the draft edits; null for a new one. */
+	savedId: string | null;
+	/** The id the draft will carry once saved (the form's primary id); null while it has none. */
+	id: string | null;
+}
+
 export class CalloutRegistry {
 	private callouts: Map<string, CalloutDefinition> = new Map();
 	private builtInDefaults: Map<string, CalloutDefinition> = new Map();
@@ -176,6 +187,14 @@ export class CalloutRegistry {
 	 * See {@link definitionsForLists}.
 	 */
 	private previewIsDemo = false;
+	/**
+	 * Whose draft a demo preview is, or null: the callout editor previews its
+	 * draft under the reserved placeholder id, so the notes and the lists keep
+	 * showing the saved callout until Save, and says here which callout the
+	 * draft edits and which id it will carry. See {@link standInIdentity} and
+	 * {@link previewDraftId}.
+	 */
+	private previewDraft: PreviewDraft | null = null;
 
 	/**
 	 * Set when a {@link load} migration rewrote the stored definitions, so the
@@ -225,6 +244,7 @@ export class CalloutRegistry {
 		this.previewActiveId = null;
 		this.previewShadowedDef = null;
 		this.previewIsDemo = false;
+		this.previewDraft = null;
 		this.syncUserImages();
 		const externalCss = retiredExternalCssState(data);
 		this.pendingExternalCssRetirement = externalCss.affected;
@@ -1393,48 +1413,52 @@ export class CalloutRegistry {
 
 	/**
 	 * Register (or clear, with `null`) the transient live-preview definition
-	 * under its own `def.id` — the *real* callout ID being edited — so the
-	 * settings live preview renders `> [!<real-id>]` with the in-progress style
-	 * through the real pipeline (CSS + reading post-processors).
+	 * under its own `def.id`, so a settings window's preview renders
+	 * `> [!<def.id>]` through the real pipeline (CSS + reading post-processors).
+	 * The callout editor registers its draft under the reserved
+	 * `PREVIEW_PLACEHOLDER_ID`, so it reaches its own pane and no note.
 	 *
 	 * Bookkeeping keeps this safe:
 	 * - The previous transient entry is always undone first (restoring any
-	 *   shadowed real callout), so rapid ID changes while typing a name leave no
-	 *   orphan rows.
-	 * - If the new ID collides with a real callout, the original is remembered in
-	 *   {@link previewShadowedDef} and restored on clear.
+	 *   shadowed real callout), so a new registration leaves no orphan row.
+	 * - If the new ID collides with a real callout (the welcome splash's
+	 *   `demo` can), the original is remembered in {@link previewShadowedDef}
+	 *   and restored on clear.
 	 * - A preview that collides that way also inherits the shadowed callout's
-	 *   identity ({@link withIdentityOf}), so an in-progress edit can restyle a
-	 *   row but never re-home it between the settings lists, strip its aliases,
-	 *   or make a built-in look deletable.
+	 *   identity ({@link withIdentityOf}), so it can restyle a row but never
+	 *   re-home it between the settings lists, strip its aliases, or make a
+	 *   built-in look deletable.
 	 * - {@link toSaveData} skips (or substitutes the shadowed original for) the
-	 *   active preview ID, so the in-progress edit can never reach disk.
+	 *   active preview ID, so a preview can never reach disk.
 	 *
-	 * `isDemo` marks a placeholder preview (palette editor, global-style popups,
-	 * or an unnamed new-callout draft) whose id is not a real callout the user is
-	 * editing. Such previews are hidden from the settings lists entirely, so a
-	 * demo whose id collides with an existing callout — as it did back when the
-	 * placeholder was the built-in `example` — can't leak a phantom "My callout
-	 * types" row while the modal is open. See {@link definitionsForLists}.
+	 * `isDemo` marks a placeholder preview (the callout editor's draft, the
+	 * palette editor's stand-in, the global-style popups, the welcome splash)
+	 * whose id is not a real callout the user is editing. Such previews are
+	 * hidden from the settings lists entirely, so a demo whose id collides with
+	 * an existing callout can't leak a phantom "My callout types" row while the
+	 * modal is open. See {@link definitionsForLists}.
 	 *
 	 * Deliberately does NOT call `notifyChange()`: that would trigger the
 	 * `onChange` → `saveSettings` write and force every open note to re-render.
-	 * The caller instead requests a targeted `cssInjector.inject(false)`.
+	 * The caller repaints instead (`cssInjector.repaintPreview()`, or a
+	 * targeted `inject(false)`).
 	 *
 	 * It DOES fire {@link onPreviewChange} whenever the settings lists could
-	 * look different afterwards, so the open settings tab repaints its rows in
-	 * the next frame. Without that signal the tab has no way to learn about a
-	 * preview at all.
+	 * look different afterwards — a preview that is not a demo, going up or
+	 * coming down — so the open settings tab repaints its rows. Without that
+	 * signal the tab has no way to learn about such a preview at all.
+	 * `notifyLists: false` suppresses it, for a caller that takes a preview
+	 * down and puts it straight back (`stageRenameAliases`).
 	 *
-	 * `notifyLists: false` suppresses exactly that signal for a preview the
-	 * user has not chosen — the callout editor's palette menu previewing a
-	 * merely hovered colour. The rows then keep rendering the last committed
-	 * state, which is what the modal's own swatches and labels still show. The
-	 * map does hold the hovered colours meanwhile, so a list refresh from an
-	 * unrelated source would surface them; that resolves itself on the next
-	 * committed change or when the menu closes and re-notifies.
+	 * `draft` says whose draft a demo is (see {@link PreviewDraft}); null for
+	 * anything else.
 	 */
-	setPreviewDefinition(def: CalloutDefinition | null, isDemo = false, notifyLists = true): void {
+	setPreviewDefinition(
+		def: CalloutDefinition | null,
+		isDemo = false,
+		notifyLists = true,
+		draft: PreviewDraft | null = null,
+	): void {
 		// A demo preview is hidden from the settings lists entirely (see
 		// definitionsForLists), so only a NON-demo preview — the in-progress
 		// edit of a real callout — can change what those lists render. Capture
@@ -1452,6 +1476,7 @@ export class CalloutRegistry {
 			this.previewActiveId = null;
 			this.previewShadowedDef = null;
 			this.previewIsDemo = false;
+			this.previewDraft = null;
 		}
 
 		if (def) {
@@ -1459,6 +1484,7 @@ export class CalloutRegistry {
 			this.previewShadowedDef = existing ?? null;
 			this.previewActiveId = def.id;
 			this.previewIsDemo = isDemo;
+			this.previewDraft = draft;
 			// A preview never owns the identity of the callout it shadows —
 			// see withIdentityOf. Applied to demos too: they are already hidden
 			// from the lists, but it keeps the map entry a faithful stand-in for
@@ -1505,12 +1531,53 @@ export class CalloutRegistry {
 	}
 
 	/**
+	 * Whose draft the registered preview is, or null — so a nested modal that
+	 * captures the preview can restore it whole (see
+	 * {@link getPreviewDefinition}).
+	 */
+	getPreviewDraft(): PreviewDraft | null {
+		return this.previewDraft;
+	}
+
+	/**
+	 * The id `def` will carry once saved, when `def` is the registered preview
+	 * and a draft; null otherwise. The rules other stylesheets aim at that
+	 * name are what the preview borrows (`manager/css/borrowedCalloutRules.ts`).
+	 */
+	previewDraftId(def: CalloutDefinition): string | null {
+		if (this.previewDraft === null || def.id !== this.previewActiveId) return null;
+		return this.previewDraft.id;
+	}
+
+	/**
+	 * `def` as the callout it is a draft of, when `def` is the registered
+	 * preview and stands in for one; null otherwise.
+	 *
+	 * The callout editor previews every draft under the reserved placeholder
+	 * id, so it reaches no note. But one thing a callout's look takes from its
+	 * id and not its definition: an untouched built-in leaves its accent to
+	 * Obsidian's rule for that id, which the theme's `--callout-*` variable
+	 * feeds (`CSSInjector.themeAccentVar`) — the colour 74 of 257 themes give a
+	 * built-in without ever naming it. Under the placeholder that rule does not
+	 * reach, so the stylesheet asks this instead: the draft's style on the real
+	 * callout's identity, which is exactly what the draft stood as when it was
+	 * registered under the real id.
+	 */
+	standInIdentity(def: CalloutDefinition): CalloutDefinition | null {
+		const savedId = this.previewDraft?.savedId ?? null;
+		if (savedId === null || def.id !== this.previewActiveId) return null;
+		const real = this.getReal(savedId);
+		return real ? { ...withIdentityOf(real, def), id: real.id } : null;
+	}
+
+	/**
 	 * The preview definition, but only when it is a demo standing on an id of
-	 * its own — the palette editor's stand-in callout. A preview that shadows a
-	 * real callout is not one: its rules replace that callout's, in the place
-	 * the callout holds in the stylesheet, so they cannot be lifted out of it.
-	 * `CSSInjector` keeps a demo's rules in a sheet of their own (see
-	 * `PreviewLayer`) and asks here for the one that qualifies.
+	 * its own — the palette editor's stand-in, the callout editor's draft. A
+	 * preview that shadows a real callout is not one: its rules replace that
+	 * callout's, in the place the callout holds in the stylesheet, so they
+	 * cannot be lifted out of it. `CSSInjector` keeps a demo's rules in a sheet
+	 * of their own (see `PreviewLayer`) and asks here for the one that
+	 * qualifies.
 	 */
 	getDemoPreview(): CalloutDefinition | null {
 		if (!this.previewIsDemo || this.previewShadowedDef !== null) return null;
@@ -1940,7 +2007,8 @@ export class CalloutRegistry {
 	 * {@link setPreviewDefinition}). Deliberately separate from
 	 * {@link onChange}: a preview is not a mutation, so these listeners must
 	 * stay off the `saveSettings` / re-render-every-note path. The settings tab
-	 * uses it to keep its row swatches in step with the editor modal's preview.
+	 * uses it to keep a row in step with a preview standing over it. A demo
+	 * (the callout editor's draft among them) never fires it.
 	 */
 	onPreviewChange(callback: RegistryChangeCallback): void {
 		this.previewChangeCallbacks.push(callback);

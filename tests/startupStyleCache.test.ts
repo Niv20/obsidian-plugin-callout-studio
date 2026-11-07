@@ -643,3 +643,98 @@ describe("injectFromCache — the startup fast path", () => {
 			);
 		}));
 });
+
+/* ────────────────────────────────────────────────────────────────────────────
+ * Written once the stylesheet is still
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+describe("StartupStyleCache — persistSoon waits for the stylesheet to settle", () => {
+	/**
+	 * A store reached through a `window` whose timers run when a case says so:
+	 * `settle()` runs every wait still pending, as the timer would once the
+	 * stylesheet has been still.
+	 */
+	function withTimers(store: FakeStorage, body: (settle: () => void, waiting: () => number) => void): void {
+		const g = globalThis as Record<string, unknown>;
+		const saved = g.window;
+		const timers = new Map<number, () => void>();
+		let next = 1;
+		g.window = {
+			...windowFor(store),
+			setTimeout: (callback: () => void): number => {
+				const id = next++;
+				timers.set(id, callback);
+				return id;
+			},
+			clearTimeout: (id: number): void => void timers.delete(id),
+		};
+		try {
+			body(
+				() => {
+					for (const [id, callback] of [...timers]) {
+						timers.delete(id);
+						callback();
+					}
+				},
+				() => timers.size,
+			);
+		} finally {
+			g.window = saved;
+		}
+	}
+
+	it("writes nothing inside the pass, and the last text once it settles", () => {
+		const store = storage();
+		withTimers(store, (settle, waiting) => {
+			const cache = new StartupStyleCache(app({ appId: "v" }));
+			cache.persistSoon(".a{}");
+			cache.persistSoon(".b{}");
+			cache.persistSoon(".c{}");
+			assert.strictEqual(store.writes.length, 0, "a synchronous write held up the pass");
+			assert.strictEqual(waiting(), 1, "each text restarts the one wait");
+
+			settle();
+			assert.deepStrictEqual(
+				store.writes.map((w) => w.value),
+				[".c{}"],
+			);
+		});
+	});
+
+	it("drops a waiting write when the stylesheet goes back to what is stored", () => {
+		const store = storage();
+		withTimers(store, (settle, waiting) => {
+			const cache = new StartupStyleCache(app({ appId: "v" }));
+			cache.persist(".a{}");
+			cache.persistSoon(".b{}");
+			cache.persistSoon(".a{}");
+			assert.strictEqual(waiting(), 0);
+			settle();
+			assert.strictEqual(store.writes.length, 1, "only the first, synchronous write");
+		});
+	});
+
+	it("writes a waiting snapshot at once on flush, and only once", () => {
+		const store = storage();
+		withTimers(store, (settle) => {
+			const cache = new StartupStyleCache(app({ appId: "v" }));
+			cache.persistSoon(".a{}");
+			cache.flush();
+			assert.deepStrictEqual(
+				store.writes.map((w) => w.value),
+				[".a{}"],
+			);
+			settle();
+			cache.flush();
+			assert.strictEqual(store.writes.length, 1);
+		});
+	});
+
+	it("writes at once where there is no timer to wait with", () => {
+		const store = storage();
+		withWindow(store, () => {
+			new StartupStyleCache(app({ appId: "v" })).persistSoon(".a{}");
+			assert.strictEqual(store.writes.length, 1);
+		});
+	});
+});

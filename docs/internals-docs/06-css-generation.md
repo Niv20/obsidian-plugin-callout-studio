@@ -102,15 +102,29 @@ class:
   the start of a burst and one at its end.
 
 What stays, per event, is the generation above (3 ms, byte-compared and so never
-written for a nudge), `paintIcons()`, and the editor refresh. `paintIcons()` is
-where the remaining weight is: theme-owned and unknown callouts no longer have
-their slot emptied and refilled when it already holds the right drawing (see
-below), but a **Studio-owned** callout's icon is still re-rendered into its slot
-on every sweep, and under a theme with a very large stylesheet each new node
-costs a style resolution - Serenity, about 2.7 ms for each of eighteen callouts,
-which is most of its 73 ms event (about 540 ms before). It is the next thing to
-spend effort on, and `iconRenderKey()` (the key the Live Preview widgets already
-compare) is the contract such a skip would stand on.
+written for a nudge), `paintIcons()`, and the editor refresh. `paintIcons()` was
+where the remaining weight was: a **Studio-owned** callout's icon was
+re-rendered into its slot on every sweep, and under a theme with a very large
+stylesheet each new node costs a style resolution - Serenity, about 2.7 ms for
+each of eighteen callouts, which was most of its 73 ms event. A slot that
+already shows its icon is now left alone (see
+[Icon painting § A slot that already shows its icon](#a-slot-that-already-shows-its-icon)).
+
+Two more things were cut on 2026-11-06, for a vault with 755 callouts, where the
+generation alone is about 7 ms:
+
+- **A drag is two passes, not one per step.** The theme sync's `css-change`
+  handler asks for the pass through a `QuietGate` when the event is a *nudge*
+  (`theirs && !restyledNow`: the same theme and snippet text, something else
+  moved): the first step of a burst passes at once, the rest fold into one more
+  pass 150 ms after the drag stops, or every 500 ms while it goes on
+  (`NUDGE_PASS_QUIET_MS`, `NUDGE_PASS_MAX_MS` in `themeAppearanceSync.ts`). A
+  restyle and this plugin's own `css-change` pass at once, and drop any pass a
+  burst still owed.
+- **The startup snapshot is written once the sheet is still**
+  (`StartupStyleCache.persistSoon`, see
+  [Persistence and caching](07-persistence-and-caching.md#the-startup-css-snapshot)):
+  `setItem` is synchronous and the snapshot is the whole sheet.
 
 ## Byte-identical short-circuit
 
@@ -120,9 +134,11 @@ generate CSS text
       ├─ unchanged → skip: stylesheet swap, <style> textContent write,
       │              css-change trigger
       └─ changed   → do all three, then set lastCssText = new text
-  → startup snapshot persist runs regardless, unless a preview is registered
-    (StartupStyleCache's own memo skips text it already holds)
-  → paintIcons() runs regardless (artwork can land with unchanged CSS text)
+  → startup snapshot queued regardless, unless a preview is registered
+    (persistSoon: written once the sheet has been still for a second;
+    StartupStyleCache's own memo skips text it already holds)
+  → paintIcons() runs regardless (artwork can land with unchanged CSS text),
+    leaving every slot that already shows its icon
   → refreshAllCalloutEditors() runs regardless
 ```
 
@@ -150,7 +166,7 @@ binding to a freshly-created or pre-existing element, `destroy()`), because in
 those cases the target may hold text this instance didn't write and can't be
 trusted as a comparison baseline.
 
-## The preview layer - a demo's rules in a sheet of their own
+## The preview layer - a preview's rules in a sheet of their own
 
 The byte-identical short-circuit above saves the passes that change nothing. A
 colour drag in the palette editor is the opposite case: it changes something on
@@ -163,32 +179,119 @@ again into the `<style>` element (~8 ms), Obsidian copying that `<style>` text
 into the Settings pop-out window (~7 ms, on a mutation observer after the
 step), the style recalculation that follows, and under all of it generating a
 rule block for 766 callouts (~6 ms). A browser reports the colour many times a
-second while the picker is dragged, so the editor "stuck".
+second while the picker is dragged, so the editor "stuck". The callout editor
+paid the same bill on every slider step and every letter typed into
+**Display name**, and twice more for opening and closing the editor
+(2026-11-06: a user with 755 callouts saw each letter of a rename land late,
+and the editor open and close slowly).
 
-`CSSInjector.repaintDemoPreview()` is what the palette editor's `beforeRender`
-calls instead of `inject(false)`. The demo's rules live in
+`CSSInjector.repaintPreview()` is what both editors' `beforeRender` calls
+instead of `inject(false)`. The preview's rules live in
 `manager/css/PreviewLayer.ts`: a second adopted sheet (adopted after the main
 one, so it wins a tie as the rules would have inside it) and a second `<style>`
 element with its own id (`callout-studio-preview-css`), written to the same two
 places the main sheet is for the same reason - the preview can sit in the main
 window, which shows the adopted sheet, or in a pop-out, which only gets the
-`<style>` copy.
+`<style>` copy. Which preview goes there, and how a step repaints it, is
+[`css/previewRepaint.ts`](../../src/manager/css/previewRepaint.ts)
+(`PreviewRepaint`, which the injector owns): it remembers which preview the main
+sheet was written without (`layered`: its kind and its id), tells each pass
+which preview to leave out (`beginPass()`) and installs that preview's rules
+once the pass has written the main sheet (`endPass()`). There are two kinds.
 
-- **The first call** records the demo's id (`layeredDemoId`) and runs one
-  ordinary pass. The pass leaves that id out of the main sheet's per-callout
-  rules (`layeredDemo()`) and writes it to the layer. Everything else the pass
-  builds still sees the demo in `callouts`: the fallback and metadata rules are
-  made from every id the registry knows.
+### A reserved demo
+
+`registry.getDemoPreview()` on an id in `RESERVED_DEMO_IDS`: the callout
+editor's draft of any callout - its own, a built-in, a new one - which it
+registers under `PREVIEW_PLACEHOLDER_ID` (see
+[Callout editor § the preview slot](14-callout-editor.md#registering-the-in-progress-draft-the-preview-slot-from-the-editors-side)),
+and the style pages' demo (`STYLE_DEMO_ID`).
+
+**The main sheet never holds it, up or down.** Every pass leaves it out
+(`beginPass()` returns it whether or not anything asked): its rules and its
+share of the global rules go to the layer, and the metadata colours are read
+without it (`generateMetadataColorCSS(standalone, defs)`). The fallback rule
+keeps off every reserved id at all times (`alwaysKnown` in `fallbackCSS.ts`),
+so it says the same thing with the demo up or down. The main sheet is then the
+same text either way, which is what makes the demo free to raise:
+
+- **Putting it up, every step, and taking it down write its layer alone** -
+  no pass, not even on the first call (`PreviewRepaint.repaintReserved`), and
+  `releasePreview()` just clears the layer. In the vault that reported the
+  problem, opening the callout editor wrote 1.4 MB of stylesheet and closing it
+  1.4 MB more; now opening writes about 1 KB and closing nothing.
+- **Nothing in the notes can show it**, so a step sweeps the painted icons of
+  the caller's `iconRoot` only, and nobody refreshes the notes' widgets.
+- **The one exception** is the pass after a demo on an id of its own was
+  lifted: the main sheet kept that demo's share of the global rules, so the
+  first call takes an ordinary pass. `releasePreview()` does the same for
+  anything that is not a reserved demo.
+
+**A draft says whose it is.** The callout editor registers its draft with a
+`PreviewDraft`: the saved callout it edits (`savedId`) and the id it will carry
+once saved (`id`, the name being typed). Two things a callout's look takes from
+its name rather than its definition need them, because neither reaches the
+placeholder by itself:
+
+- **An untouched built-in's colour.** It is left to Obsidian's rule for that id
+  (`.callout[data-callout="warning"] { --callout-color: var(--callout-warning)
+  }`), which the theme's `--callout-*` variable feeds - the colour 74 of the 257
+  themes in the author's vault give the built-ins without naming one, so the
+  built-in stays the user's to edit. `themeAccentVar` asks
+  `registry.standInIdentity(def)` - the draft's style on the saved callout's
+  identity, what the draft stood as when it was registered under the real id -
+  whether to defer; `accentProps` then spells the accent out (`imposed`, as the
+  fallback's is).
+- **The rules the rest of the page aims at the name.** A snippet's border on
+  `[!plan]`, a theme's family selector (`[data-callout*="col"]`), another
+  plugin's rule, Obsidian's own per-built-in rule.
+  [`css/borrowedCalloutRules.ts`](../../src/manager/css/borrowedCalloutRules.ts)
+  reads the page's parsed stylesheets (`document.styleSheets`: Obsidian's, the
+  theme as the theme switch leaves it, snippets, other plugins) for every style
+  rule mentioning `data-callout` (`collectCalloutAimedRules`: group rules kept,
+  nesting resolved as `:is(parent)`, an unreadable sheet and `@keyframes`
+  skipped), and `borrowedRulesCss` copies the ones that reach the draft's `id`
+  - exactly, by a family pattern, with the `i` flag, inside `:is()` - with that
+  bracket swapped for one naming the placeholder: the same declarations, the
+  same weight, inside the same `@media`/`@supports`/`@layer`. A selector list
+  keeps only the selectors that reached it. The copies lead the layer, before
+  the draft's own rules, as those sheets come before this plugin's.
+  `PreviewRepaint.borrowedRules` never reads this plugin's own sheets or its
+  exported (or legacy) snippet: they carry the saved callout, and a field the
+  draft took away would come back from them. What was read is kept until the
+  next pass (`aimedRules`, dropped by `beginPass()`), since a pass is
+  what follows a theme, snippet or plugin stylesheet changing; a step reads
+  nothing.
+
+Two things a copy cannot do, both rare and both confined to the preview pane: a
+rule that leaves the callout out by name (`:not([data-callout="x"])`) still
+reaches the placeholder, and a copy now wins a tie against a rule of equal
+weight that came after the original in its own sheet.
+
+`tests/cssInjectorPreviewLayer.test.ts` pins it: a pass with the demo up writes
+the same main sheet as one without it (with a gradient on the demo, which the
+metadata colours would otherwise read), up, a step and down write nothing to
+it, a built-in's draft previews in the theme's colour until it is edited, and
+a snippet's rule for the name being typed is borrowed (never one of this
+plugin's own) and read again after a pass. `tests/borrowedCalloutRules.test.ts`
+pins what is copied and how.
+
+### A demo
+
+`registry.getDemoPreview()` on any other id: a demo preview standing on an id
+of its own (the palette editor's stand-in, `palette-demo`).
+
+- **The first call** records the demo and runs one ordinary pass. The pass
+  leaves that id out of the main sheet's per-callout rules (`beginPass()`)
+  and writes it to the layer. Everything else the pass builds still sees the
+  demo in `callouts`: the fallback and metadata rules are made from every id
+  the registry knows, and stay in the main sheet.
 - **Every later call** regenerates just that callout (`generateCalloutCSS`) and
   rewrites just the layer, about 1 ms and a few hundred bytes. It is only taken
-  once the layer already carries the id (`previewLayer.owner`), the proof that
-  the main sheet was built without it.
-- **Any other pass** (a theme switch, an icon landing) still leaves the demo
-  out of the main sheet and rewrites the layer from the registry's current
-  definition. `PreviewLayer.write` skips text it already holds.
-- **Release** is automatic: the first pass that finds no lone demo clears
-  `layeredDemoId` and the layer, so a settings window that never says it is
-  done cannot leave the main sheet short a callout.
+  once the layer already carries the id (`PreviewLayer.owner`), the proof that
+  the main sheet was built without it. It sweeps painted icons only under the
+  `iconRoot` the caller passes (the callout editor's preview pane; the palette
+  editor never changes its stand-in's icon and passes nothing).
 
 Why skipping the whole pass is safe is a property, pinned by
 `tests/cssInjectorPreviewLayer.test.ts`: **the main sheet's text does not
@@ -197,30 +300,36 @@ a hidden icon and a transparent background comes out byte-identical. If a future
 rule ever makes the main sheet read a demo's colours, that test fails and this
 shortcut has to go.
 
-Only a *lone* demo takes this path - `registry.getDemoPreview()`: a demo
-preview that stands on an id of its own. A preview that shadows a real callout
-(the callout editor's own) occupies that callout's place in the sheet and its
-rules replace the callout's there, so it cannot be lifted out; `repaintDemoPreview`
-falls back to the ordinary pass for it and for no preview at all. Two things a
-pass does that a layer step does not, and why neither is owed: `paintIcons()`
-(the stand-in's icon never changes while a palette is edited, and the first pass
-paints it) and `refreshAllCalloutEditors()` (no real callout changed, and the
-preview's own editor rebuilds its widgets in `LiveCalloutPreview.refresh`).
+### Both
 
-The layer generates outside a pass, so it reuses the weight and accent spelling
-memoised by the last pass (`StudioWeightCache`) instead of calling
-`beginPass()`, which would re-scan the theme; a theme change is a `css-change`,
-which runs a whole pass and refreshes both. The one piece of pass state it does
-set is `emitThemeOff`, put back afterwards.
+- **Any other pass** (a theme switch, an icon landing) still leaves the preview
+  out of the main sheet and rewrites the layer from the registry's current
+  definition. `PreviewLayer.write` skips text it already holds.
+- **Release** is automatic: the first pass that finds no matching preview
+  clears `layered` and the layer, so a settings window that never says it is
+  done cannot leave the main sheet short a callout.
+- **Anything else takes the ordinary pass**: no preview, or a demo raised over a
+  real callout. `refreshAllCalloutEditors()`, which a pass runs, is not owed by
+  a step: no note shows a demo, and the preview's own editor rebuilds its
+  widgets in `LiveCalloutPreview.refresh`.
 
-Two callers use it. The palette editor never changes its stand-in's icon and
-passes nothing. The callout editor passes `iconRoot`, its preview pane: an icon
-is drawn into the DOM by `paintIcons`, not by CSS, so a step that may change it
-sweeps that one pane (a full pass sweeps every window). The callout editor only
-gains for a *new* callout, whose draft is a lone demo; editing an existing one
-shadows the real callout and takes the ordinary pass, as it always did. The
-per-role style popups change global rules that live in the main sheet, so a
-layer would not help them.
+The layer is generated outside a pass (`CSSInjector.outsidePass`, handed to
+`PreviewRepaint` with the rest of what it needs of the injector), so it reuses the weight
+and accent spelling memoised by the last pass (`StudioWeightCache`) instead of
+calling `beginPass()`, which would re-scan the theme; a theme change is a
+`css-change`, which runs a whole pass and refreshes both. The one piece of pass
+state a step does set is `emitThemeOff`, put back afterwards.
+
+Two callers use it: the palette editor (a demo) and the callout editor (a
+reserved demo). The per-role style popups register a reserved demo and run
+ordinary passes, since what they change is the global rules in the main sheet;
+the demo still stays out of it, so taking it down rewrites nothing.
+
+Until 2026-11-06 the callout editor registered an existing callout's draft
+under its real id, standing over the saved callout, so every note that used
+it repainted on every step, and opening and closing the editor rewrote the
+whole sheet and rebuilt every settings row. The user asked for the notes to
+change only on Save.
 
 ## `injectFromCache()` - the startup fast path
 
@@ -251,6 +360,10 @@ registry actually holds data) replaces it with a real generated pass.
 6. generateMetadataColorCSS() - one group per metadata colour word, weakest first;
                                 LAST on purpose (see "Metadata colours" below)
 ```
+
+While a preview is lifted into the [preview layer](#the-preview-layer---a-previews-rules-in-a-sheet-of-their-own),
+step 4 leaves it out. A reserved demo is also left out of step 2 and read out
+of step 6, and step 5 always keeps off the reserved ids.
 
 ### Block title/content alignment
 
@@ -481,6 +594,34 @@ Preview widgets and reading view - with CodeMirror-owned widget DOM (marked
 `CSS_CM_WIDGET`) explicitly excluded, because CM rebuilds those itself when the
 decoration set changes (see
 [Render roles](09-render-roles.md#the-css_cm_widget-marker)).
+
+### A slot that already shows its icon
+
+The sweep runs after every pass - every save, every artwork download, every
+`css-change` in the vault - over every callout and token in every open window.
+Rendering each icon again replaced it with an identical node: a DOM write per
+callout on screen per pass, and the style resolution and relayout of every
+callout title after it. [`icons/iconPaintMemo.ts`](../../src/icons/iconPaintMemo.ts)
+remembers, per slot, the key it was painted with and the node that paint left
+there, and the sweep leaves a slot when both still hold:
+
+- **The key** is the one the Live Preview widgets already compare to decide
+  their icon DOM is current: `iconRenderKey()` for a block callout's slot, with
+  the baked print colour (`colorLight`/`colorDark` for the mode) and the box
+  size added, and `tokenIconKey()` for a heading or inline token.
+- **The node** must still be the slot's only child. Anything else that rewrites
+  the slot - a re-render, core, the restore below - leaves another node, and the
+  slot is painted as before; the restore and the unknown-id painter also make
+  the memo forget the slot outright.
+- **Only a finished drawing is remembered** (`"painted"`): a placeholder, a
+  failure, or artwork still downloading is painted again on every sweep, as
+  every slot used to be. A hidden icon and a picture of the user's own are never
+  remembered either - the token key does not see a hidden icon's artwork, and a
+  picture can be replaced under the same name.
+
+`tests/iconPaintMemo.test.ts` pins both halves: a second sweep writes nothing,
+and a new icon, a new colour, a slot somebody else rewrote and a slot handed to
+the theme and back are all painted again.
 
 Native Block icons split again by ownership. A registered Studio definition
 uses the two-path machinery above. A theme-owned definition is restored through

@@ -31,7 +31,7 @@ import { archiveLegacySnippet } from "./legacySnippetArchive";
  * The only name this snippet ever had, across every released version — so
  * there are no older names to migrate from.
  */
-const LEGACY_SNIPPET_NAME = "callout-studio-do-not-delete";
+export const LEGACY_SNIPPET_NAME = "callout-studio-do-not-delete";
 
 /**
  * The undocumented subset of Obsidian's `app.customCss` needed to switch a

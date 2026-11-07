@@ -185,6 +185,49 @@ describe("a callout row hands its colours to the style sheet", () => {
 	});
 });
 
+describe("a callout row drawn again keeps an icon that did not change", () => {
+	// Obsidian draws every row of the page again on each update — 750 of them
+	// in a large vault, for a change to one. The icon element is the one part a
+	// redraw reuses (see rowIconElement), so the drawing it holds can stay.
+	function redrawable(rowDef: CalloutDefinition) {
+		const registry = new CalloutRegistry();
+		registry.load(null);
+		registry.add(rowDef);
+		const setting = new Setting(createDiv());
+		const ctx = fakeCtx(registry);
+		const handlers = { onEdit: () => {}, onOpenBuiltInMenu: () => {}, onOpenUserMenu: () => {} };
+		const draw = (next: CalloutDefinition): HTMLElement => {
+			// What Obsidian empties itself before drawing a row again.
+			setting.controlEl.empty();
+			setting.nameEl.empty();
+			setting.descEl.empty();
+			drawCalloutRow(ctx, setting, next, "user", handlers);
+			const icon = setting.settingEl.querySelector<HTMLElement>(".callout-studio-row-icon");
+			assert.ok(icon);
+			return icon;
+		};
+		return { draw };
+	}
+
+	it("keeps the drawing when the icon is the same", () => {
+		const row = redrawable(def());
+		const icon = row.draw(def());
+		const drawing = icon.firstChild;
+		assert.ok(drawing);
+
+		assert.strictEqual(row.draw(def({ colorLight: "#aa0000" })).firstChild, drawing, "drawn again for nothing");
+	});
+
+	it("draws it again when the icon changed", () => {
+		const row = redrawable(def());
+		row.draw(def());
+
+		const icon = row.draw(def({ icon: { type: "emoji", value: "⭐" } }));
+		assert.strictEqual(icon.textContent, "⭐");
+		assert.strictEqual(icon.childNodes.length, 1, "the old drawing is gone, not kept beside the new one");
+	});
+});
+
 describe("a callout row stays two lines", () => {
 	const css = readFileSync(join(process.cwd(), "styles.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
 

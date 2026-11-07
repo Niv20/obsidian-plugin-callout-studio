@@ -3,7 +3,8 @@
  * callout a settings window is previewing.
  *
  * Who uses it. `CSSInjector`, which owns one. The palette editor is the case
- * it was made for.
+ * it was made for; the callout editor's draft, which it previews under the
+ * reserved placeholder id until Save, is the other.
  *
  * The main idea. The generated stylesheet holds a rule block for every callout
  * in the vault — three quarters of a megabyte for a vault with 750 of them —
@@ -11,8 +12,9 @@
  * (the adopted sheet and the `<style>` copy), then re-matches the page against
  * it, and Obsidian copies the new `<style>` text into every pop-out window,
  * the Settings window included. A colour picker reports a new colour many
- * times a second while it is dragged, and each one used to pay that whole bill
- * to change the three rules of one stand-in callout.
+ * times a second while it is dragged, and a name is typed a letter at a time;
+ * each step used to pay that whole bill to change the rules of one stand-in
+ * callout.
  *
  * So that callout's rules live here instead, and the big sheet is left out of
  * it. Dragging then rewrites a few hundred bytes. The big sheet only changes
@@ -27,7 +29,7 @@
  */
 import type { App } from "obsidian";
 
-const PREVIEW_EL_ID = "callout-studio-preview-css";
+export const PREVIEW_EL_ID = "callout-studio-preview-css";
 
 export class PreviewLayer {
 	private sheet: CSSStyleSheet | null = null;

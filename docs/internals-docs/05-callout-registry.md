@@ -460,30 +460,32 @@ live embedded note, not a mocked-up preview widget. The registry supports this
 via one reserved slot rather than a parallel rendering path:
 
 ```ts
-setPreviewDefinition(def: CalloutDefinition | null, isDemo = false, notifyLists = true): void
+setPreviewDefinition(def: CalloutDefinition | null, isDemo = false, notifyLists = true, draft: PreviewDraft | null = null): void
 hasPreviewDefinition(): boolean
 getPreviewDefinition(): CalloutDefinition | null
 isPreviewDemo(): boolean
 getReal(id): CalloutDefinition | undefined   // sees through the shadow
 ```
 
-The preview registers **under the real ID being edited**, so `> [!<real-id>]`
-renders with in-progress styling. Bookkeeping:
+The preview registers under its own `def.id`, so `> [!<def.id>]` renders with
+in-progress styling. The callout editor's draft always uses the reserved
+`PREVIEW_PLACEHOLDER_ID` (see
+[Callout editor § Who sees the draft before Save](14-callout-editor.md#who-sees-the-draft-before-save)),
+so it reaches its own pane and no note. Bookkeeping:
 
 - Setting a new preview always undoes the previous one first (restoring
-  whatever it shadowed), so rapid typing while naming a new callout leaves no
-  orphan rows.
-- If the preview's id collides with an existing real callout, the shadowed
-  original is remembered (`previewShadowedDef`) and restored the moment the
-  preview clears.
+  whatever it shadowed), so a new registration leaves no orphan row.
+- If the preview's id collides with an existing real callout (the welcome
+  splash's `demo` can), the shadowed original is remembered
+  (`previewShadowedDef`) and restored the moment the preview clears.
 - A preview that shadows a real callout **inherits that callout's identity**
   (`withIdentityOf`: `builtIn`, `source`, `customized`, `aliases`, `metadata`
-  are taken from the real row, not the draft) - so an in-progress edit can
-  restyle a row live but can never re-home it between settings-list sections,
-  strip its aliases, or make a built-in look deletable while its editor is
-  open.
-- `isDemo` marks a placeholder preview with no real identity of its own (a
-  brand-new unnamed draft, or the palette/global-style demo previews). Demo
+  are taken from the real row, not the draft) - so a preview can restyle a row
+  but can never re-home it between settings-list sections, strip its aliases,
+  or make a built-in look deletable while it is up.
+- `isDemo` marks a placeholder preview with no real identity of its own (the
+  callout editor's draft of any callout, which it previews under the
+  placeholder id until Save; or the palette/global-style demo previews). Demo
   previews are **hidden from the settings lists entirely** - `definitionsForLists()`
   shows the *shadowed reality* in their place, or nothing if they shadow
   nothing - but they still render through `getAll()` / the CSS pipeline, which
@@ -493,14 +495,25 @@ renders with in-progress styling. Bookkeeping:
   restyles that callout vault-wide for as long as the modal is open.
 - `setPreviewDefinition` deliberately does **not** call `notifyChange()` - that
   would trigger `saveSettings()` and force every open note to re-render on
-  every keystroke. It fires the separate `onPreviewChange` signal instead (see
-  below), and the caller (`CalloutEditor`) explicitly requests a targeted
-  `cssInjector.inject(false)`. The palette editor, which repaints on every step
-  of a colour drag, calls `cssInjector.repaintDemoPreview()` instead, which
-  writes only the stand-in's own rules to a small sheet of their own (see
-  [CSS generation § The preview layer](06-css-generation.md#the-preview-layer---a-demos-rules-in-a-sheet-of-their-own)).
-  It asks the registry for `getDemoPreview()`: the preview, but only when it is
-  a demo standing on an id of its own, never one that shadows a real callout.
+  every keystroke. For a preview that is not a demo it fires the separate
+  `onPreviewChange` signal instead (see below). The callout editor and the palette editor, which repaint on every
+  slider or colour step, call `cssInjector.repaintPreview()`, which writes only
+  the preview's own rules to a small sheet of their own (see
+  [CSS generation § The preview layer](06-css-generation.md#the-preview-layer---a-previews-rules-in-a-sheet-of-their-own)).
+  It asks the registry for `getDemoPreview()`: the preview, when it is a demo
+  standing on an id of its own (on a `RESERVED_DEMO_IDS` id it never enters the
+  main sheet at all). A demo raised over a real callout takes the ordinary pass.
+- `draft` (the fourth argument, a `PreviewDraft`) says whose draft a demo is:
+  `savedId`, the saved callout it edits (the callout editor's `existingId`),
+  and `id`, the id it will carry once saved (the form's primary id). Two
+  readers, both for what a callout's look takes from its name (see
+  [CSS generation § A reserved demo](06-css-generation.md#a-reserved-demo)):
+  `standInIdentity(def)` hands the stylesheet the draft on the saved callout's
+  identity (`withIdentityOf` plus the real id), to decide whether an untouched
+  built-in defers its accent to the theme's `--callout-*` variable; and
+  `previewDraftId(def)` names the id whose rules elsewhere on the page the
+  preview borrows. `getPreviewDraft()` lets a nested modal (the palette
+  editor) capture and restore it with the preview.
 
 ### `onPreviewChange` - a second, deliberately separate listener list
 
@@ -510,9 +523,12 @@ offPreviewChange(callback): void
 ```
 
 A preview update is **not a mutation** - it must never reach `saveSettings()`
-or force a document-wide re-render. `SettingsTab` subscribes to this so its row
-swatches track the editor modal's colour picker live, without either side
-touching disk.
+or force a document-wide re-render. `SettingsTab` subscribes to this so a row
+tracks a preview standing over it, without either side touching disk, and
+redraws only if the lists would look different (see
+[Settings UI § Four signals, one coalesced redraw](16-settings-ui-and-modals.md#four-signals-one-coalesced-redraw)).
+Only a preview that is not a demo fires it, so the callout editor's draft never
+does.
 
 ## Reserved demo ids
 

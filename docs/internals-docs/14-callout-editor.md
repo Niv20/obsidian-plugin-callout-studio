@@ -217,7 +217,7 @@ in a real note, in whatever theme is active - not an approximation.
   three roles and painted icons), just not click-to-reveal.
 - **`beforeRender`** runs before every construction *and* every refresh - this
   is the hook the callout editor uses to push its in-progress draft into the
-  registry's preview slot and re-inject CSS **before** the editor's
+  registry's preview slot and repaint the CSS **before** the editor's
   decorations are built, so the very first paint already reflects the
   in-progress edit.
 
@@ -276,46 +276,103 @@ loosen the filter instead.
 this.preview = new LiveCalloutPreview(this.app, previewCol, {
   beforeRender: () => {
     this.plugin.registry.setPreviewDefinition(
-      this.buildPreviewDefinition(),
-      this.existingId === null,               // isDemo
-      this.previewColorOverride === null,       // notifyLists
+      this.buildPreviewDefinition(),  // id: PREVIEW_PLACEHOLDER_ID
+      true,                           // isDemo
+      true,                           // notifyLists (a demo notifies nothing)
+      { savedId: this.existingId, id: this.calloutId.trim() || null }, // whose draft
     );
-    this.plugin.cssInjector.inject(false);
-    this.scheduleNoteDecorationRefresh();
+    this.plugin.cssInjector.repaintPreview(previewCol);
   },
   onDestroy: () => {
     this.plugin.registry.setPreviewDefinition(null);
-    this.plugin.cssInjector.inject(false);
-    refreshAllCalloutEditors();
+    this.plugin.cssInjector.releasePreview();
   },
 });
 ```
 
 This is the editor-side half of `CalloutRegistry`'s preview mechanism (full
-mechanics in [Callout registry](05-callout-registry.md#the-transient-live-preview-slot)):
+mechanics in [Callout registry](05-callout-registry.md#the-transient-live-preview-slot)).
 
-- **`isDemo = this.existingId === null`** - a brand-new callout with no ID yet
-  registers as a *demo* (hidden from settings lists, since there's no real row
-  it stands in for); editing an existing callout registers as a live,
-  list-visible preview of that row.
-- **`notifyLists = this.previewColorOverride === null`** - while the user is
-  merely *hovering* a colour in the palette dropdown (not yet committed), the
-  settings-list row swatches deliberately do **not** repaint - they should
-  keep showing the colour the user actually clicked, not a hover preview.
-  Every *other* kind of edit (icon, name, sliders, a click-committed palette)
-  does notify.
-- **`onDestroy` clears the preview and forces a synchronous editor refresh**
- - this is what makes closing the modal (save, cancel, or dismiss) instantly
-  revert every open note's rendering back to committed state, with no
-  leftover draft styling lingering until the next unrelated change.
-- **Save clears the slot itself, but only once the notes question is
-  answered** - see [From the click to the save](#from-the-click-to-the-save).
-  Until then the draft stays registered, so anything on the save path that
-  needs the committed row reads it with `registry.getReal()`.
-- `PREVIEW_PLACEHOLDER_ID = "new-callout-preview"` is the id a brand-new
-  callout's demo preview registers under before the user has typed a name -
-  see [Data model](04-data-model.md) for why it can't be a real callout id
-  like the old `"example"` placeholder.
+### Who sees the draft before Save
+
+**Only the preview pane.** Every draft - a callout of the user's own, a
+built-in, a new one - is registered under `PREVIEW_PLACEHOLDER_ID` as a
+*demo* (`buildPreviewDefinition()`), so it reaches nothing that uses the callout's
+real id: the notes, the settings lists and the main stylesheet go on showing
+the saved callout, and catch up on Save, whose registry change runs the
+ordinary pass. Opening, every step and closing rewrite one small sheet (a
+reserved demo, see
+[CSS generation § A reserved demo](06-css-generation.md#a-reserved-demo)), the
+lists are never redrawn for the draft (a demo is hidden from them and fires no
+`onPreviewChange`), and no note's widgets are refreshed.
+
+Until 2026-11-06 an existing callout's draft stood over the real callout under
+its own id, so the notes and the list row followed every edit live. The price
+was paid on every opening and closing: in a vault with 755 callouts each one
+rewrote 1.4 MB of stylesheet and rebuilt every row of the settings list (the
+draft's definition never serialises like the saved row's, so the list always
+saw a change), and every step repainted every note that used the callout. The
+user asked for the notes to change only on Save.
+
+**Whose draft it is - what the placeholder cannot know.** A callout's look is
+not all in its definition. Some comes from its name, from outside this plugin,
+and none of that reaches the placeholder by itself. The draft is registered
+with a `PreviewDraft` - the saved callout it edits (`savedId`) and the id it
+will carry once saved (`id`, the name as typed) - and the stylesheet uses both:
+
+- **An untouched built-in's colour.** It is left to Obsidian's rule for its
+  id, which the theme's `--callout-*` variable feeds: 74 of the 257 themes in
+  the author's vault colour the built-ins that way without naming one, so the
+  built-in stays in *Built-in callouts*, editable, while taking the theme's
+  colour. (A theme that *names* the built-in and visibly changes it owns it
+  instead: it moves to *Callouts from your theme* and opens
+  `ThemeCalloutPreviewModal`, not this editor.) `registry.standInIdentity`
+  says whether the saved callout, wearing the draft's style, is still an
+  untouched built-in - in which case the preview spells out the theme's colour
+  itself. The first edit to the colour makes it the user's hex, as on Save.
+- **The rules the rest of the page aims at the name** - a snippet's border on
+  `[!plan]`, a theme's family selector such as `[data-callout*="col"]`,
+  another plugin's rule, Obsidian's own per-built-in rule. They are copied
+  onto the placeholder (`css/borrowedCalloutRules.ts`, see
+  [CSS generation § A reserved demo](06-css-generation.md#a-reserved-demo)),
+  following the name as it is typed, so the pane shows the callout as the
+  notes will after Save.
+
+What the placeholder still costs: clicking into the read-only preview to reveal
+its source shows `[!new-callout-preview]` rather than the callout's id; and two
+rare cases a copied rule cannot reproduce - a rule that leaves the callout out
+by name (`:not([data-callout="x"])`) still reaches the placeholder, and a copy
+wins a tie against a rule of equal weight that came after the original in its
+own sheet.
+
+### The rest of the wiring
+
+- **`repaintPreview`, not `inject(false)`** - a step rewrites only the draft's
+  own small sheet, not the stylesheet of every callout in the vault. See
+  [CSS generation § The preview layer](06-css-generation.md#the-preview-layer---a-previews-rules-in-a-sheet-of-their-own).
+  `previewCol` is where the draft's painted icons are swept.
+- **A typed name is followed at once.** Each letter typed into **Display name**
+  (and, while a new callout has no primary ID, each letter of the ID field
+  mirrored into the name by `syncNameFromIdInput`) updates the form and the
+  preview inside the keystroke: the step is one small sheet.
+- **`onDestroy` takes the pane's sheet away** (`releasePreview`) - no pass and
+  no note refresh, since no note ever showed the draft. It also hands the
+  current main sheet to the startup snapshot, in case a change made while the
+  editor was open skipped it.
+- **Save leaves the slot alone** - see
+  [From the click to the save](#from-the-click-to-the-save). Its registry
+  change runs the ordinary pass, which is the moment the notes and the lists
+  change; the draft stays up in the pane until the window closes and
+  `onDestroy` takes it down. Clearing it first, as Save had to while the
+  draft stood on the real id, would leave the save's pass no preview to keep:
+  the pass would clear the pane's sheet, and the pane would show Obsidian's
+  default callout until the window closed.
+- **A palette editor opened over this one** takes the preview slot for its own
+  demo and gives this draft back on close, its `PreviewDraft` included
+  (`getPreviewDraft`).
+- `PREVIEW_PLACEHOLDER_ID = "new-callout-preview"` is reserved
+  (`RESERVED_DEMO_IDS`) - see [Data model](04-data-model.md) for why it can't
+  be a real callout id like the old `"example"` placeholder.
 
 ## Deleted saved colours
 
@@ -515,8 +572,9 @@ owns every spelling); ids moved in from another callout are left out of it.
    closing never cancelled a save.
 5. Nothing in use → `LEAVE_NOTES`, no window. Otherwise the window's answer, or
    `null` for Cancel / Escape / close - back to the editor, nothing saved.
-6. Only now does the save clear the live-preview slot, so the window was drawn
-   over the callout as edited and going back finds the preview still standing.
+6. The save runs with the live-preview slot still up: the window was drawn
+   over the callout as edited, going back finds the preview still standing,
+   and the pane keeps showing the draft until the window closes.
 
 ### What the window asks
 

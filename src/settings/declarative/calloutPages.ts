@@ -74,11 +74,31 @@ export function calloutRowHandlers(ctx: TreeContext): RowRendererHandlers {
 
 /**
  * Open the editor for `def` (it saves the callout itself), then draw the
- * settings again.
+ * settings again if anything changed.
  */
 async function editCallout(ctx: TreeContext, def: CalloutDefinition): Promise<void> {
-	await openCalloutEditorFor(ctx.plugin, def);
-	ctx.redraw();
+	await redrawAfterEditor(ctx, () => openCalloutEditorFor(ctx.plugin, def));
+}
+
+/**
+ * Run a callout editor (`open` settles when it closes), then draw the settings
+ * again — but only when it saved, or when the registry changed while it was
+ * open (a picture added in its icon picker, a palette made from it).
+ *
+ * A redraw rebuilds every row of the open page, which on My callout types is
+ * every callout the user has: hundreds in a large vault. Closing the editor
+ * without a change used to pay that for nothing, which is why it closed slowly
+ * over that page and at once over the thirteen built-ins. The redraw stays
+ * forced when something did change: a picture is left out of the tab's
+ * signature, so only a forced redraw is sure to show it.
+ */
+export async function redrawAfterEditor(
+	ctx: TreeContext,
+	open: () => Promise<CalloutDefinition | null>,
+): Promise<void> {
+	const before = ctx.plugin.registry.revision;
+	const saved = await open();
+	if (saved !== null || ctx.plugin.registry.revision !== before) ctx.redraw();
 }
 
 /** A callout row's id: its key, and the name a jump to it uses. */
@@ -274,7 +294,7 @@ async function scanAndRedraw(ctx: TreeContext): Promise<void> {
 
 /* ---- The list's + ---- */
 
-/** Open the editor for a new callout, then draw again; refused while saving is paused. */
+/** Open the editor for a new callout, then draw again if anything changed; refused while saving is paused. */
 function addNewCallout(ctx: TreeContext): () => void {
 	return refuseWhilePaused(ctx.plugin.settingsWriter, () => {
 		void createCallout(ctx);
@@ -282,6 +302,5 @@ function addNewCallout(ctx: TreeContext): () => void {
 }
 
 async function createCallout(ctx: TreeContext): Promise<void> {
-	await new CalloutEditor(ctx.plugin).openAndWait();
-	ctx.redraw();
+	await redrawAfterEditor(ctx, () => new CalloutEditor(ctx.plugin).openAndWait());
 }

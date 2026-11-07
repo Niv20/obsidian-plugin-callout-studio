@@ -9,14 +9,21 @@
  * `tabSubscriptions.ts` is subscribed once, for the plugin's life
  * (declarative/declarativeSettings.ts). Subscribing again would stack
  * listeners, and every stacked listener doubles the redraw requests. The
- * doubling is what the last case here pins.
+ * doubling is what the last case of the signals pins.
+ *
+ * A preview standing over a row is not forced: the last suite shows the
+ * signature it relies on instead sees a draft that changes a row, and ignores
+ * one the lists leave out.
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import type { App, EventRef } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { subscribeSettingsTab } from "../src/settings/sections/tabSubscriptions";
-import type { SettingsTabPlugin } from "../src/settings/sections/types";
+import { calloutListsSignature } from "../src/settings/sections/calloutListsSignature";
+import { partitionCallouts } from "../src/settings/sections/rowOwnership";
+import type { SettingsContext, SettingsTabPlugin } from "../src/settings/sections/types";
+import type { CalloutDefinition } from "../src/types";
 import { installFakeDom } from "./support/fakeDom";
 
 installFakeDom();
@@ -31,6 +38,21 @@ function builtInsOnly(): CalloutRegistry {
 /* -------------------------------------------------------------------------- */
 /* The four signals                                                           */
 /* -------------------------------------------------------------------------- */
+
+/** A draft of a callout of the user's own, in `accent`. */
+function draft(accent: string): CalloutDefinition {
+	return {
+		id: "in-progress",
+		displayName: "In progress",
+		icon: { type: "lucide", value: "info" },
+		colorLight: accent,
+		colorDark: "#88bbee",
+		foldable: false,
+		defaultFolded: false,
+		builtIn: false,
+		source: "user",
+	};
+}
 
 function subscribed() {
 	const registry = builtInsOnly();
@@ -107,22 +129,15 @@ describe("the settings tab's four signals", () => {
 		assert.deepStrictEqual(tab.forced, [false]);
 	});
 
-	it("forces the repaint for a live preview, which moves no registry state", () => {
+	it("repaints a live preview unforced", () => {
+		// The signature reads the same registry views the rows are drawn from,
+		// which show the draft, so a draft that changes a row changes the
+		// signature (see the last suite).
 		const tab = subscribed();
 
-		tab.registry.setPreviewDefinition({
-			id: "in-progress",
-			displayName: "In progress",
-			icon: { type: "lucide", value: "info" },
-			colorLight: "#336699",
-			colorDark: "#88bbee",
-			foldable: false,
-			defaultFolded: false,
-			builtIn: false,
-			source: "user",
-		});
+		tab.registry.setPreviewDefinition(draft("#336699"));
 
-		assert.deepStrictEqual(tab.forced, [true]);
+		assert.deepStrictEqual(tab.forced, [false]);
 	});
 
 	it("forces it for artwork, which is byte-identical before and after", () => {
@@ -148,6 +163,7 @@ describe("the settings tab's four signals", () => {
 		tab.mutate("alpha");
 		tab.fireIcons();
 		tab.fireCss();
+		tab.registry.setPreviewDefinition(draft("#446699"));
 
 		assert.deepStrictEqual(tab.forced, [], "a dropped tab still repainting");
 		assert.strictEqual(tab.dropped.icon, 1);
@@ -164,5 +180,43 @@ describe("the settings tab's four signals", () => {
 		tab.mutate("alpha");
 
 		assert.deepStrictEqual(tab.forced, [false, false]);
+	});
+});
+
+/* -------------------------------------------------------------------------- */
+/* Why the preview's repaint need not be forced                               */
+/* -------------------------------------------------------------------------- */
+
+describe("the lists' signature and the callout editor's draft", () => {
+	/** The signature the settings tab compares, built as the tab builds it. */
+	function signatureOf(registry: CalloutRegistry): string {
+		const ctx = { plugin: { registry, settings: registry.settings } } as unknown as SettingsContext;
+		const { fromTheme, own, builtIn } = partitionCallouts(ctx);
+		return calloutListsSignature(ctx, "Theme", "en", { theme: fromTheme, user: own, builtin: builtIn });
+	}
+
+	function withMine(): CalloutRegistry {
+		const registry = builtInsOnly();
+		registry.add({ ...draft("#336699"), id: "mine", displayName: "Mine" });
+		return registry;
+	}
+
+	it("moves when a draft standing over a callout changes its row", () => {
+		const registry = withMine();
+		const before = signatureOf(registry);
+
+		registry.setPreviewDefinition({ ...draft("#cc3300"), id: "mine", displayName: "Mine" });
+
+		assert.notStrictEqual(signatureOf(registry), before, "a recoloured row would be skipped");
+	});
+
+	it("stays put while a name is retyped, whose draft the lists leave out", () => {
+		const registry = withMine();
+		registry.setPreviewDefinition({ ...draft("#336699"), id: "mine-a", displayName: "Mine a" });
+		const typing = signatureOf(registry);
+
+		registry.setPreviewDefinition({ ...draft("#336699"), id: "mine-ab", displayName: "Mine ab" });
+
+		assert.strictEqual(signatureOf(registry), typing, "every letter would rebuild the lists");
 	});
 });

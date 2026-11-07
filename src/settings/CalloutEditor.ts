@@ -68,7 +68,6 @@ import { setSettingError } from "../ui/settingError";
 import { setButtonBusy } from "../ui/busyButton";
 import { addCancelButton, applyModalChrome, removeModalChrome } from "./modalChrome";
 import { autofocusOnDesktop } from "./modalAutofocus";
-import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
 import { activeThemeName } from "../manager/theme/customCssApi";
 import { patternMatches } from "../manager/theme/themeClaimLookup";
 import type { PatternOp } from "../manager/theme/themeCalloutScan";
@@ -248,8 +247,7 @@ export class CalloutEditor extends Modal {
 	/** Id of the palette (custom or preset) currently applied, if any. */
 	private paletteId: string | undefined;
 	private preview: LiveCalloutPreview | null = null;
-	/** Both asked of the editor's own window — see utils/elementFrame.ts. */
-	private noteRefreshFrame: FrameHandle | null = null;
+	/** Asked of the editor's own window — see utils/elementFrame.ts. */
 	private updatePreviewFrame: FrameHandle | null = null;
 	private recolorToggle: ToggleComponent | null = null;
 	/**
@@ -703,39 +701,31 @@ export class CalloutEditor extends Modal {
 		this.preview = new LiveCalloutPreview(this.app, previewCol, {
 			title: t("editor.livePreview"),
 			initialText: this.buildSampleText(),
-			// Push the in-progress edit into the registry under the reserved
-			// preview ID and re-inject CSS so colours/icons render live.
+			// Push the in-progress edit into the registry's preview slot and
+			// repaint, so colours and icons render live — in the preview pane
+			// alone. The draft is a demo under the reserved placeholder id: no
+			// note and no settings row uses that id, so they all go on showing
+			// the saved callout until Save. It says whose draft it is, for
+			// what a callout's look takes from its name rather than its
+			// definition: an untouched built-in's theme colour
+			// (registry.standInIdentity), and the rules a theme, a snippet or
+			// Obsidian aims at that name, which the preview borrows
+			// (manager/css/borrowedCalloutRules.ts).
 			beforeRender: () => {
-				// A brand-new callout has no real row yet, so its preview is a
-				// demo (kept out of the settings lists — otherwise the reserved
-				// placeholder id it renders under would leak a phantom row).
-				// Editing an existing callout previews the real row live.
-				this.plugin.registry.setPreviewDefinition(
-					this.buildPreviewDefinition(),
-					this.existingId === null,
-					// A hover preview stays out of the settings lists' refresh:
-					// the row swatches must keep showing the colour the user
-					// actually picked until a new one is clicked. Every other
-					// edit (icon, name, sliders, a committed palette) still
-					// repaints them in the next frame.
-					this.previewColorOverride === null,
-				);
-				// A new callout's draft is a lone demo, so a step rewrites only
-				// its own small sheet instead of the whole stylesheet; editing
-				// an existing callout shadows a real one and takes the full
-				// pass, as it always did (see CSSInjector.repaintDemoPreview).
-				// The icon can change here, which is not CSS, so the preview
-				// pane is swept for it.
-				this.plugin.cssInjector.repaintDemoPreview(previewCol);
-				this.scheduleNoteDecorationRefresh();
+				this.plugin.registry.setPreviewDefinition(this.buildPreviewDefinition(), true, true, {
+					savedId: this.existingId,
+					id: this.calloutId.trim() || null,
+				});
+				// A step rewrites only the draft's own small sheet instead of
+				// the whole stylesheet (see CSSInjector.repaintPreview). The
+				// icon can change here, which is not CSS, so the preview pane is
+				// swept for it.
+				this.plugin.cssInjector.repaintPreview(previewCol);
 			},
 			onDestroy: () => {
+				// The notes never showed the draft: only the pane's sheet goes.
 				this.plugin.registry.setPreviewDefinition(null);
-				this.plugin.cssInjector.inject(false);
-				// Synchronous, unlike the scheduled call above: this is the
-				// teardown that reverts open notes to their committed state, and
-				// onClose cancels any frame still pending by the time it runs.
-				refreshAllCalloutEditors();
+				this.plugin.cssInjector.releasePreview();
 			},
 		});
 
@@ -1744,37 +1734,6 @@ export class CalloutEditor extends Modal {
 		renderCalloutEditorIconPreview(this.plugin, this.icon, container);
 	}
 
-	/**
-	 * Push the in-progress definition out to the notes themselves, not just to
-	 * the modal's own live preview.
-	 *
-	 * Colours and geometry ride the injected CSS and need no help — that is why
-	 * a block callout in the note restyles the instant the CSS does. Heading
-	 * and inline callouts are different: their icon and display name are baked
-	 * into Live Preview widget DOM, and a registry change never touches the
-	 * document, so CodeMirror has no reason to rebuild them. Without this
-	 * dispatch they keep the old icon until something unrelated rebuilds them —
-	 * a click in the note, or closing the modal.
-	 *
-	 * Coalesced on the next frame because beforeRender runs on every slider tick
-	 * and every keystroke, and one rebuild per burst is enough (the same reason
-	 * SettingsTab batches its list refresh).
-	 *
-	 * Reading view is deliberately left out: re-running its post-processors
-	 * means previewMode.rerender(), far too heavy to repeat per keystroke. Its
-	 * colours ride the CSS like the block callout's; what it bakes — an icon
-	 * span, a token at all — catches up on save, through ReadingStructureWatch
-	 * (editor/renderRefresh.ts). Not through css-change: core answers that by
-	 * refreshing the editors only.
-	 */
-	private scheduleNoteDecorationRefresh(): void {
-		if (this.noteRefreshFrame !== null) return;
-		this.noteRefreshFrame = requestFrameFor(this.modalEl, () => {
-			this.noteRefreshFrame = null;
-			refreshAllCalloutEditors();
-		});
-	}
-
 	/** Coalesce slider previews to one paint per animation frame. */
 	private scheduleUpdatePreview(): void {
 		if (this.updatePreviewFrame !== null) return;
@@ -1808,23 +1767,17 @@ export class CalloutEditor extends Modal {
 	}
 
 	/**
-	 * The callout ID the live preview should render under: the real primary ID
-	 * being edited, or the reserved placeholder while it is still empty (a
-	 * brand-new callout before the user types a name).
-	 */
-	private currentPreviewId(): string {
-		return this.calloutId.trim() || PREVIEW_PLACEHOLDER_ID;
-	}
-
-	/**
 	 * The sample markdown seeding the preview: a mini-document exercising all
 	 * three roles. A titled heading callout opens it, an inline callout sits in
 	 * the paragraph below, then the block callout closes it. The trailing
 	 * blank line keeps the read-only caret parked outside that last block (see
 	 * LiveCalloutPreview's focus policy).
+	 *
+	 * Written with the reserved placeholder id, which the draft is registered
+	 * under (see {@link buildPreviewDefinition}), not the callout's own.
 	 */
 	private buildSampleText(): string {
-		const id = this.currentPreviewId();
+		const id = PREVIEW_PLACEHOLDER_ID;
 		const name = this.displayName.trim() || t("editor.untitledCallout");
 		// Reflect the fold setting so a folded default previews collapsed. Only
 		// the blockquote takes a marker — on a heading it would be title text.
@@ -1865,22 +1818,24 @@ export class CalloutEditor extends Modal {
 	/**
 	 * Snapshot the current form state as a transient preview definition.
 	 *
-	 * The ownership fields below (`builtIn`, `source`, and the empty `aliases`)
-	 * describe a brand-new draft, which is the only case where this snapshot
-	 * shadows nothing. When it stands in for an existing callout, the registry
-	 * re-stamps it with that callout's real identity on the way into the map
-	 * (`withIdentityOf` in CalloutRegistry) — so don't try to derive them here:
-	 * mid-edit the form's id may not match any real row at all.
+	 * It is registered under the reserved `PREVIEW_PLACEHOLDER_ID`, always, so
+	 * the draft reaches the preview pane alone: every note, settings row and the
+	 * main stylesheet keep showing the saved callout until Save (see
+	 * `CSSInjector.repaintPreview`). It shadows nothing and reaches no note. The
+	 * ownership fields below (`builtIn`, `source`, and the empty `aliases`)
+	 * describe that stand-in; where the stylesheet needs the real callout's
+	 * identity, the registry re-stamps the draft with it
+	 * (`CalloutRegistry.standInIdentity`) — so don't try to derive them here.
 	 *
 	 * The three `hasAuthored…` gates are what keep this snapshot *faithful*, and
-	 * they are not cosmetic. This definition goes into the real registry, and the
-	 * CSS it generates is global — the live preview is a genuine embedded editor
-	 * in the same document, so styling it means styling every callout of that
-	 * type in the vault behind the modal. Emitting a field the committed
-	 * definition does not carry therefore repaints those notes for as long as the
-	 * modal is open: a derived background replaces Obsidian's own 10% fill with a
-	 * stronger tint, and any extra field at all flips `isUnmodifiedBuiltIn`,
-	 * dropping a built-in's deference to the theme's `--callout-*` variables.
+	 * they are not cosmetic. The preview must render as the callout would once
+	 * saved: a field the saved definition would not carry changes that. A
+	 * derived background replaces Obsidian's own 10% fill with a stronger tint,
+	 * and any extra field at all flips `isUnmodifiedBuiltIn` for the stand-in
+	 * identity, dropping a built-in's deference to the theme's `--callout-*`
+	 * variables in the preview. (When the draft stood under the real id, until
+	 * 2026-11-06, the same field repainted every note of that type behind the
+	 * modal.)
 	 */
 	private buildPreviewDefinition(): CalloutDefinition {
 		// A hovered-but-uncommitted palette replaces the colour half wholesale —
@@ -1891,14 +1846,14 @@ export class CalloutEditor extends Modal {
 		const adjust = this.iconAdjustState();
 		const storedAdjust = definitionIconAdjustFields(adjust, this.baselineDef, undefined, this.builtInDefault);
 		return {
-			id: this.currentPreviewId(),
+			id: PREVIEW_PLACEHOLDER_ID,
 			displayName: this.displayName.trim() || t("editor.untitledCallout"),
 			icon: { ...this.icon },
-			// `true`-or-absent here too: the live preview is registered under a
-			// real built-in's id, and a literal `false` would read as an edit and
-			// drop that built-in's deference to the theme's `--callout-*` while
-			// the modal is merely open. Same reasoning as the omitted background
-			// above; see authoredStyle.ts.
+			// `true`-or-absent here too: the stand-in identity of a built-in's
+			// draft is checked for edits, and a literal `false` would read as one
+			// and drop that built-in's deference to the theme's `--callout-*` in
+			// the preview while the modal is merely open. Same reasoning as the
+			// omitted background above; see authoredStyle.ts.
 			...(this.hideIcon ? { hideIcon: true as const } : {}),
 			colorLight: colors.colorLight,
 			colorDark: colors.colorDark,
@@ -2014,10 +1969,12 @@ export class CalloutEditor extends Modal {
 			async () => {
 				const answer = await this.askNoteChanges(state, moves, before);
 				if (!answer) return null;
-				// Transient previews must never become committed data either. Cleared
-				// only now, so the question was asked over the callout as edited, and
-				// going back to the editor found the preview still standing.
-				this.plugin.registry.setPreviewDefinition(null);
+				// The draft stays up through the save and is taken down with the
+				// window (onDestroy). It stands on the reserved placeholder, never
+				// on the callout being saved, and never reaches data.json
+				// (toSaveData). Taken down here, the save's own pass would find no
+				// preview and clear the pane's sheet, and the pane would show
+				// Obsidian's default callout until the window closed.
 				return performCalloutEditorSave({
 					app: this.app,
 					plugin: this.plugin,
@@ -2063,7 +2020,6 @@ export class CalloutEditor extends Modal {
 		this.releaseSaveStatus?.();
 		this.releaseSaveStatus = null;
 		// Cancel queued paints before destroying the preview.
-		this.noteRefreshFrame = cancelFrame(this.noteRefreshFrame);
 		this.updatePreviewFrame = cancelFrame(this.updatePreviewFrame);
 		this.preview?.destroy();
 		this.preview = null;

@@ -20,25 +20,29 @@ import type { CalloutDefinition, CalloutRenderRole } from "../types";
  * the glyph follows the surrounding element's CSS `color` in both themes.
  * Artwork that is not downloaded yet gets a pencil placeholder; the finished
  * download triggers a CSS re-inject whose paintIcons sweep repaints it.
+ *
+ * Says whether the artwork itself was drawn (not a placeholder, not a
+ * failure), which is when the sweep may trust `tokenIconKey` for this slot
+ * from then on (`icons/iconPaintMemo.ts`).
  */
 export function paintRoleIcon(
 	iconEl: HTMLElement,
 	def: CalloutDefinition,
 	registry: CalloutRegistry,
 	role: CalloutRenderRole,
-): void {
+): boolean {
 	// The theme's icon here too: `def.icon` would put artwork on a heading
 	// callout that appears nowhere on the block callout beside it.
 	if (registry.themeOwns(def)) {
-		renderThemeIconInto(iconEl, registry.themeAppearanceOf(def).icon);
-		return;
+		return renderThemeIconInto(iconEl, registry.themeAppearanceOf(def).icon);
 	}
-	renderIconInto(iconEl, def.icon, createIconResolver(registry), {
+	const result = renderIconInto(iconEl, def.icon, createIconResolver(registry), {
 		role,
 		fill: "currentColor",
 		missing: { kind: "placeholder", lucideId: "pencil" },
 		errorText: "•",
 	});
+	return result === "painted";
 }
 
 /**

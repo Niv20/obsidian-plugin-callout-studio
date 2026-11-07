@@ -9,8 +9,9 @@
  * rows as on the old page, the list's search and the settings search finding a
  * callout by any of its ids, the row that says nothing matches while a search
  * finds nothing, a row drawn again without a second icon or a second menu, the
- * grey row when there is none, Scan saying "Scanning…", and what saving being
- * paused leaves usable.
+ * grey row when there is none, Scan saying "Scanning…", what saving being
+ * paused leaves usable, and an editor closed without a change drawing nothing
+ * again.
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -19,7 +20,7 @@ import { DeclarativeHarness, searchSettings, type RenderedBox } from "./support/
 import { PluginSettingTab, Setting, type ButtonLike } from "./support/obsidianStub";
 import { t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import { CALLOUT_PAGES, myCalloutsPage } from "../src/settings/declarative/calloutPages";
+import { CALLOUT_PAGES, myCalloutsPage, redrawAfterEditor } from "../src/settings/declarative/calloutPages";
 import { PersistentParts } from "../src/settings/declarative/persistentParts";
 import { RowRegistry } from "../src/settings/declarative/rowRegistry";
 import { toObsidianItems, type TreeContext } from "../src/settings/declarative/types";
@@ -363,6 +364,48 @@ describe("a callout row drawn twice on the same setting", () => {
 		setting.clear();
 		drawCalloutRow(ctx, setting as never, RECITE, "user", handlers);
 		assert.equal(rowEl.querySelector(".callout-studio-row-icon"), iconBefore, "a redraw reuses it");
+	});
+});
+
+describe("a callout editor closing over the page", () => {
+	// A redraw rebuilds every row of the open page: on My callout types that is
+	// every callout the user has, hundreds in a large vault, so an editor closed
+	// without a change closed slowly over this page and at once over the
+	// thirteen built-ins.
+	function overThePage() {
+		const { plugin, registry } = fakePlugin([callout("alarm", "Alarm")]);
+		let redraws = 0;
+		const ctx = treeContext(plugin, () => redraws++);
+		return { ctx, registry, redraws: () => redraws };
+	}
+
+	it("draws nothing again when it closed without a change", async () => {
+		const page = overThePage();
+
+		await redrawAfterEditor(page.ctx, () => Promise.resolve(null));
+
+		assert.equal(page.redraws(), 0);
+	});
+
+	it("draws again after a save", async () => {
+		const page = overThePage();
+
+		await redrawAfterEditor(page.ctx, () => Promise.resolve(callout("alarm", "Alarm!")));
+
+		assert.equal(page.redraws(), 1);
+	});
+
+	it("draws again when the registry changed while it was open, though nothing was saved", async () => {
+		// A picture added in the icon picker: the tab's signature leaves the
+		// pictures out, so only this redraw is sure to show it.
+		const page = overThePage();
+
+		await redrawAfterEditor(page.ctx, () => {
+			page.registry.setUserImages([]);
+			return Promise.resolve(null);
+		});
+
+		assert.equal(page.redraws(), 1);
 	});
 });
 

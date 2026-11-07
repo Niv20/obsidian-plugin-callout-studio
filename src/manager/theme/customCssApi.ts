@@ -143,6 +143,16 @@ export function enabledSnippetNames(app: App): string[] {
 }
 
 /**
+ * Each enabled snippet's `<style>`, with its name — index-aligned the way
+ * {@link enabledSnippetCss} explains.
+ */
+export function enabledSnippetStyles(app: App): Array<{ name: string; el: unknown }> {
+	const els = api(app)?.extraStyleEls;
+	if (!Array.isArray(els)) return [];
+	return enabledSnippetNames(app).map((name, i) => ({ name, el: els[i] }));
+}
+
+/**
  * Each enabled snippet's CSS text.
  *
  * `extraStyleEls` is index-aligned to the *enabled* subset, not to `snippets`,

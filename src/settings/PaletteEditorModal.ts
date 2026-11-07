@@ -55,7 +55,7 @@ import {
 	type ColorPalette,
 } from "../utils/colorPalettes";
 import { t } from "../i18n";
-import type { CalloutRegistry } from "../manager/CalloutRegistry";
+import type { CalloutRegistry, PreviewDraft } from "../manager/CalloutRegistry";
 import type { CSSInjector } from "../manager/CSSInjector";
 import { addCancelButton, applyModalChrome, removeModalChrome } from "./modalChrome";
 import { autofocusOnDesktop } from "./modalAutofocus";
@@ -203,6 +203,8 @@ export class PaletteEditorModal extends Modal {
 	/** Preview the caller had registered before this modal took the slot. */
 	private outerPreview: CalloutDefinition | null = null;
 	private outerPreviewIsDemo = false;
+	/** Whose draft the captured preview was — see `CalloutRegistry.PreviewDraft`. */
+	private outerPreviewDraft: PreviewDraft | null = null;
 	private nameInputEl: HTMLInputElement | null = null;
 	/**
 	 * The Name row. A taken name is said under its field, through Obsidian's
@@ -461,6 +463,7 @@ export class PaletteEditorModal extends Modal {
 		// close instead of clearing the registry's single preview slot to null.
 		this.outerPreview = this.plugin.registry.getPreviewDefinition();
 		this.outerPreviewIsDemo = this.plugin.registry.isPreviewDemo();
+		this.outerPreviewDraft = this.plugin.registry.getPreviewDraft();
 		this.preview = new LiveCalloutPreview(this.plugin.app, this.previewEl, {
 			title: t("editor.livePreview"),
 			initialText: this.buildSampleText(),
@@ -473,8 +476,8 @@ export class PaletteEditorModal extends Modal {
 				// Not a full `inject`: this runs on every step of a colour drag,
 				// and a step only changes the stand-in's own rules. The injector
 				// keeps those in a small sheet of their own and rewrites just
-				// that (see CSSInjector.repaintDemoPreview).
-				this.plugin.cssInjector.repaintDemoPreview();
+				// that (see CSSInjector.repaintPreview).
+				this.plugin.cssInjector.repaintPreview();
 				// The one funnel every color change already passes through, so
 				// the duplicate-color block cannot drift out of step with the
 				// form. It also runs once before the footer exists, which is
@@ -482,7 +485,12 @@ export class PaletteEditorModal extends Modal {
 				this.updateValidity();
 			},
 			onDestroy: () => {
-				this.plugin.registry.setPreviewDefinition(this.outerPreview, this.outerPreviewIsDemo);
+				this.plugin.registry.setPreviewDefinition(
+					this.outerPreview,
+					this.outerPreviewIsDemo,
+					true,
+					this.outerPreviewDraft,
+				);
 				this.plugin.cssInjector.inject(false);
 			},
 		});

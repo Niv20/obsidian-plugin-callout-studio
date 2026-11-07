@@ -398,8 +398,12 @@ holds the one callout row every list uses, and the user's own callouts.
   `drawCalloutRow` (with its ✎ and ⋮), and the undo it returns
   is the row's cleanup. `calloutRowHandlers(ctx)` gives ✎ and ⋮ their flows:
   ✎ opens the editor (`openCalloutEditorFor`, which saves the callout itself,
-  built-ins too) and redraws; ⋮ opens the row menus (`CalloutRowActions.ts`,
-  `themeRowActions.ts`).
+  built-ins too) and redraws once it closes, but only when it saved or the
+  registry changed while it was open (`redrawAfterEditor`, the `+` too): a
+  redraw rebuilds every row of the page, every callout the user has on My
+  callout types, so an editor closed without a change used to close slowly
+  there and at once over the built-ins. ⋮ opens the row menus
+  (`CalloutRowActions.ts`, `themeRowActions.ts`).
 - **My callout types** (`callouts-mine`, with "12 callouts" at its end, or
   "None") is one of Obsidian's lists (`callouts-mine-list`): its own search
   (`rowMatchesQuery`: name or any id), a `+` (`addItem`: the editor for a new

@@ -84,7 +84,7 @@ registry.onChange fires (coalesced - see CalloutRegistry.batch)
         │
         ├──► CSSInjector.inject() - regenerates CSS, swaps the stylesheet
         │        │  (only if the text actually changed - see "Coalescing" below)
-        │        ├──► paintIcons() - repaints DOM icons in every open window
+        │        ├──► paintIcons() - repaints changed DOM icons in every open window
         │        ├──► refreshAllCalloutEditors() - asks CodeMirror to rebuild its widgets
         │        └──► workspace.trigger("css-change") - core refreshes every open editor
         │               (reading views are NOT re-rendered by it)

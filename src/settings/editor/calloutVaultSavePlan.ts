@@ -43,8 +43,10 @@ export function stageRenameAliases(
 			const current = registry.getReal(def.id);
 			if (!current) throw new Error("Renamed callout no longer exists");
 			const aliases = current.aliases?.filter((id) => !protectedIds.has(calloutIdentity(id)));
-			// A newer form preview may have arrived while file work awaited. Edit
-			// the committed row beneath it without baking draft colors into disk.
+			// A preview may stand over this callout by now (a demo on a real id,
+			// such as the welcome splash's `demo`; the callout editor's draft
+			// never does). Edit the committed row beneath it without baking the
+			// preview's colors into disk.
 			const preview = registry.getPreviewDefinition();
 			const shadowed = preview?.id === def.id;
 			const demo = registry.isPreviewDemo();

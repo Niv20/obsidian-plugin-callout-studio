@@ -172,8 +172,10 @@ and [legacy archival](19-upgrading-manual-discovery.md) for the recovery policie
 toggle (the README states this explicitly under "What is stored locally").
 
 ```ts
-loadCachedCss(): string | null    // synchronous read
-persist(cssText: string): void     // called by every inject() with no preview registered
+loadCachedCss(): string | null      // synchronous read
+persistSoon(cssText: string): void   // called by every inject() with no preview registered
+flush(): void                        // a write persistSoon is still waiting on, now (CSSInjector.destroy)
+persist(cssText: string): void       // the write itself, at once
 ```
 
 The key is vault-scoped:
@@ -190,6 +192,18 @@ literal first statement of `onload()`, before `loadData()` is even awaited
 (see [Plugin lifecycle](03-plugin-lifecycle.md#startup)).
 A stale snapshot self-heals automatically: the very next `inject()` (once the
 registry is populated) persists fresh CSS over it.
+
+**The write waits for the sheet to be still.** `setItem` is synchronous and the
+snapshot is the whole stylesheet - three quarters of a megabyte in a vault with
+750 callouts - and only the next launch reads it, so a pass hands its text to
+`persistSoon()` instead of writing it: each new text restarts a one-second
+wait (`PERSIST_QUIET_MS`), and only the last is written. Text the snapshot
+already holds drops a write still waiting. `CSSInjector.destroy()` flushes it,
+and `CSSInjector.releasePreview()` - the one way a preview comes down without a
+pass - hands it the main sheet, so a change made while a preview was up still
+reaches the snapshot. A write lost to the app quitting inside the wait costs
+one change of staleness, which the next launch's first pass repairs. Where
+`window` has no timer (a test's), it writes at once.
 
 The versioned key deliberately never falls back to the old
 `callout-studio-css` key, whose text may contain icon CSS generated before the

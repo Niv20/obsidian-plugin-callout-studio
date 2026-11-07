@@ -65,13 +65,15 @@ import { getLocale, t } from "../../i18n";
 import { getSortedCalloutIds } from "../../utils/sorting";
 import { renderColorCircles, resolveCurrentModeColors, type SwatchColors } from "../../ui/ColorCircles";
 import type { CalloutDefinition } from "../../types";
-import { renderIconInto, renderNoIcon } from "../../icons/renderIcon";
+import { iconRenderKey, renderIconInto, renderNoIcon } from "../../icons/renderIcon";
 import { createStatusIconResolver } from "../../icons/resolver";
+import { IconPaintMemo } from "../../icons/iconPaintMemo";
+import { userImageFor } from "../../icons/packs/userImages";
 import type { SettingsContext } from "./types";
 import type { RowKind } from "./rowOwnership";
 import { addThemeRowControls, openThemeRowMenu } from "./themeRowActions";
 import { addRowMenuButton, type RowMenuTrigger } from "./calloutRowMenu";
-import { renderThemeIconInto } from "../../manager/theme/renderThemeIcon";
+import { renderThemeIconInto, themeIconKey } from "../../manager/theme/renderThemeIcon";
 import { addBlockableIconButton } from "../../ui/blockedButton";
 import { fitIdsLine } from "./idsLineFit";
 
@@ -112,17 +114,7 @@ export function drawCalloutRow(
 	const rowEl = setting.settingEl;
 	setting.setClass("cs-callout-row");
 
-	const iconEl = rowIconElement(rowEl);
-	if (fromTheme) {
-		// The theme's real icon, measured off a rendered callout. The stored
-		// `def.icon` is still on disk but nothing draws it while the theme owns
-		// the id, so showing it would advertise an appearance the reader will
-		// never see. An unmeasured row gets the neutral dashed ring rather than
-		// a guess.
-		renderThemeIconInto(iconEl, ctx.plugin.registry.themeAppearanceOf(def).icon);
-	} else {
-		renderRowIcon(ctx, iconEl, def);
-	}
+	paintRowIcon(ctx, rowIconElement(rowEl), def, fromTheme);
 
 	// The name is one line and ends in "…" when it is too long, with its tag
 	// beside it (styles.css). Its words are a span of their own, because only
@@ -176,7 +168,8 @@ export function drawCalloutRow(
 
 /**
  * The row's icon element, at the start of the row, where Obsidian puts a row's
- * icon: the one an earlier draw of this row left, emptied, or else a new one.
+ * icon: the one an earlier draw of this row left, as it left it, or else a new
+ * one. {@link paintRowIcon} decides whether what it shows can stay.
  *
  * Why it is reused and not removed by the row's cleanup. Obsidian runs every
  * row's cleanup both when it draws the row again and when the reader leaves
@@ -189,12 +182,7 @@ export function drawCalloutRow(
  */
 function rowIconElement(rowEl: HTMLElement): HTMLElement {
 	const existing = rowEl.querySelector<HTMLElement>(".callout-studio-row-icon");
-	if (existing) {
-		// Back to how a new element starts; the painters add what the icon needs.
-		existing.empty();
-		existing.removeAttribute("aria-label");
-		return existing;
-	}
+	if (existing) return existing;
 	// Made at the end of the row and then moved to the front (`insertBefore`
 	// with the first child), because `createDiv` always appends.
 	const iconEl = rowEl.createDiv({ cls: "callout-studio-row-icon" });
@@ -278,12 +266,55 @@ function setRowVariable(rowEl: HTMLElement, name: string, value: string | undefi
 	else rowEl.style.removeProperty(name);
 }
 
-function renderRowIcon(ctx: SettingsContext, container: HTMLElement, def: CalloutDefinition): void {
+/**
+ * What each row's icon element was last painted with — see
+ * `icons/iconPaintMemo.ts`. Obsidian draws every row of the page again on each
+ * update, 750 of them in a large vault, for a change to one; a row whose icon
+ * is the same keeps the drawing it has.
+ */
+const rowIcons = new IconPaintMemo();
+
+/**
+ * Paint the row's icon, unless the element already shows it.
+ *
+ * A theme's row wears the theme's real icon, measured off a rendered callout.
+ * The stored `def.icon` is still on disk but nothing draws it while the theme
+ * owns the id, so showing it would advertise an appearance the reader will
+ * never see. An unmeasured row gets the neutral dashed ring rather than a
+ * guess.
+ *
+ * Only a finished drawing is kept: a download in progress or a failed one is
+ * drawn again on every update, so its spinner or its "?" moves on as the
+ * download does. A picture of the user's own is always drawn again, since it
+ * can be replaced under the same name.
+ */
+function paintRowIcon(ctx: SettingsContext, iconEl: HTMLElement, def: CalloutDefinition, fromTheme: boolean): void {
+	const themeIcon = fromTheme ? ctx.plugin.registry.themeAppearanceOf(def).icon : null;
+	const resolver = createStatusIconResolver(ctx.plugin);
+	let key: string | null;
+	if (themeIcon) key = themeIconKey(themeIcon);
+	else if (def.hideIcon === true) key = "none";
+	else key = userImageFor(def.icon) ? null : iconRenderKey(def.icon, resolver, "regular");
+	if (key !== null && rowIcons.holds(iconEl, key)) return;
+
+	// Back to how a new element starts; the painters add what the icon needs.
+	iconEl.empty();
+	iconEl.removeAttribute("aria-label");
+	const drawn = themeIcon ? renderThemeIconInto(iconEl, themeIcon) : renderRowIcon(iconEl, def, resolver);
+	rowIcons.record(iconEl, drawn ? key : null);
+}
+
+/** Paint an own row's icon; says whether the drawing is finished. */
+function renderRowIcon(
+	container: HTMLElement,
+	def: CalloutDefinition,
+	resolver: ReturnType<typeof createStatusIconResolver>,
+): boolean {
 	if (def.hideIcon === true) {
 		renderNoIcon(container);
-		return;
+		return true;
 	}
-	renderIconInto(container, def.icon, createStatusIconResolver(ctx.plugin), {
+	const result = renderIconInto(container, def.icon, resolver, {
 		role: "regular",
 		fill: "currentColor",
 		// The settings list is where a stalled download has to be visible, so
@@ -292,4 +323,5 @@ function renderRowIcon(ctx: SettingsContext, container: HTMLElement, def: Callou
 		errorText: "?",
 		errorAriaLabel: t("notice.iconDownloadFailed", { name: def.icon.value }),
 	});
+	return result === "painted";
 }

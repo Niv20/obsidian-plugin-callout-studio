@@ -14,6 +14,15 @@
  * handoff to the live-generated CSS is invisible. A stale snapshot self-heals:
  * the next launch's inject() persists the fresh CSS again.
  *
+ * Written once the stylesheet has been still for a moment
+ * ({@link StartupStyleCache.persistSoon}), not inside the pass that made it.
+ * `setItem` is synchronous and the snapshot is the whole stylesheet — three
+ * quarters of a megabyte in a vault with 750 callouts — and it only matters at
+ * the next launch, so it has no business holding up a save, an import step or
+ * a theme switch. `CSSInjector.destroy` flushes a write still waiting; one
+ * lost to the app quitting inside the wait costs only a snapshot one change
+ * old, which the next launch's first pass replaces.
+ *
  * What this deliberately does NOT cover is the window before the plugin is
  * loaded at all — nothing running inside a plugin can. Versions up to 2.5.0
  * covered it with a second copy of the CSS written into the vault as an
@@ -25,12 +34,19 @@ import type { App } from "obsidian";
 import { WriteMemo } from "../utils/writeMemo";
 import { STARTUP_CSS_STORAGE_KEY } from "./startupStyleKeys";
 
+/** How long the stylesheet has to be still before its snapshot is written. */
+const PERSIST_QUIET_MS = 1000;
+
 export class StartupStyleCache {
 	private app: App;
 	/** What the snapshot is believed to hold — dedupes the no-op injects that
 	 * follow every external css-change event. See utils/writeMemo.ts, which
 	 * also records why this must only move after a write lands. */
 	private readonly memo = new WriteMemo();
+	/** The text {@link persistSoon} is waiting to write, or null. */
+	private pending: string | null = null;
+	/** The wait under way, or null. */
+	private timer: number | null = null;
 
 	constructor(app: App) {
 		this.app = app;
@@ -57,7 +73,44 @@ export class StartupStyleCache {
 		}
 	}
 
-	/** Record freshly generated CSS for the next launch's fast path. */
+	/**
+	 * Record freshly generated CSS for the next launch's fast path, once the
+	 * stylesheet has been still for {@link PERSIST_QUIET_MS}: each new text
+	 * restarts the wait, and only the last is written. Text the snapshot
+	 * already holds drops any write still waiting. Where there is no timer to
+	 * wait with, it is written at once.
+	 */
+	persistSoon(cssText: string): void {
+		if (this.memo.matches(cssText)) {
+			this.cancelPending();
+			return;
+		}
+		this.pending = cssText;
+		if (typeof window.setTimeout !== "function") {
+			this.flush();
+			return;
+		}
+		if (this.timer !== null) window.clearTimeout(this.timer);
+		this.timer = window.setTimeout(() => {
+			this.timer = null;
+			this.flush();
+		}, PERSIST_QUIET_MS);
+	}
+
+	/** Write a snapshot {@link persistSoon} is still waiting on, now. */
+	flush(): void {
+		const text = this.pending;
+		this.cancelPending();
+		if (text !== null) this.persist(text);
+	}
+
+	private cancelPending(): void {
+		this.pending = null;
+		if (this.timer !== null) window.clearTimeout(this.timer);
+		this.timer = null;
+	}
+
+	/** Record freshly generated CSS for the next launch's fast path, now. */
 	persist(cssText: string): void {
 		if (this.memo.prepare(cssText) === null) return;
 		try {

@@ -202,7 +202,7 @@ describe("class names in styles.css and src/ agree", () => {
 		"callout-studio-local", // localStorage key for the device-local state
 		"callout-studio-theme-claims-v1", // localStorage key for the claim check's verdicts
 		"callout-studio-dynamic-css", // <style> element id
-		"callout-studio-preview-css", // <style> element id of the demo preview layer
+		"callout-studio-preview-css", // <style> element id of the preview layer
 		"callout-studio-do-not-delete", // the legacy vault snippet's filename
 		"callout-studio-custom", // the exported vault snippet's filename
 		"callout-studio-welcome", // obsidian:// URI action

@@ -587,13 +587,46 @@ describe("what a css-change re-reads, and how often", () => {
 	});
 
 	it("announces readings only when they moved, and regenerates only for those", () => {
-		const { t, probe, injects } = start(reading("red"));
+		const { t, probe, injects, clock } = start(reading("red"));
 		t.cssChange(); // the same readings come back
-		assert.strictEqual(injects.length, 1, "the handler's own inject, and none for equal readings");
+		assert.strictEqual(injects.length, 1, "the handler's own pass, and none for equal readings");
 		injects.length = 0;
 		probe.set(reading("blue"));
-		t.cssChange({ source: "style-settings" }); // outside the quiet window? no - folded
+		t.cssChange({ source: "style-settings" }); // inside the burst: folded
+		assert.strictEqual(injects.length, 0, "a nudge inside a burst waits for the burst to end");
+		clock.advance(1000);
+		assert.strictEqual(injects.length, 2, "the burst's last pass, and one for the readings that moved");
+	});
+
+	it("folds a drag of nudges into a pass at its start and one at its end", () => {
+		// Each step of a Style Settings drag is a css-change, and each used to
+		// run the whole stylesheet pass.
+		const { t, injects, clock } = start();
+		for (let step = 0; step < 10; step++) {
+			t.cssChange({ source: "style-settings" });
+			clock.advance(20);
+		}
+		assert.strictEqual(injects.length, 1, "the first step only, while the drag goes on");
+		clock.advance(1000);
+		assert.strictEqual(injects.length, 2, "and the state it ended on");
+	});
+
+	it("passes at once for a new theme text, even inside a burst of nudges", () => {
+		const { t, injects } = start();
+		t.cssChange({ source: "style-settings" });
+		t.cssChange({ source: "style-settings" });
 		assert.strictEqual(injects.length, 1);
+
+		t.setTheme({ css: '.callout[data-callout="tip"] { color: blue; }' });
+		t.cssChange();
+		assert.strictEqual(injects.length, 2, "a restyle does not wait");
+	});
+
+	it("passes at once for this plugin's own css-change", () => {
+		const { t, injects } = start();
+		t.cssChange({ source: "style-settings" });
+		t.cssChange(OWN_CSS_CHANGE);
+		assert.strictEqual(injects.length, 2);
 	});
 
 	it("regenerates for readings that moved", () => {
