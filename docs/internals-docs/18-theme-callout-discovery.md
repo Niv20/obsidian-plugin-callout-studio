@@ -757,10 +757,14 @@ a source-scan assertion that `themeOverlayRows.ts` is the **only** file in
 `src/` that constructs a `source: "theme"` row, which is what makes "no other
 path can mint machine-local state" a failing test rather than a claim.
 
-**Making one permanent.** `ManualCalloutDiscovery` seeds its found-set with the
-same declared ids, so **Scan for callouts** promotes them to durable
-`source: "fallback"` rows - retiring the ephemeral row first, since `add` would
-otherwise refuse the id. JSON, Callout Manager and Admonition imports can also
+**Making one permanent.** `buildKnownCalloutIds` skips overlay rows, so a
+declared id that a note uses is unknown to **Scan for callouts**, which promotes
+it to a durable `source: "fallback"` row - retiring the ephemeral row first,
+since `add` would otherwise refuse the id. A declared id no note uses is never
+promoted: `ManualCalloutDiscovery` once seeded its found-set with every declared
+id, and a theme's whole catalogue then landed in *My callout types* and the
+`[!` dropdown whenever the theme let go of it (see
+[11-vault-discovery.md](11-vault-discovery.md#one-discovery-entry-point)). JSON, Callout Manager and Admonition imports can also
 create durable definitions. Their planners ignore temporary rows; replacement
 checks all id/alias conflicts before removing any overlay and publishes one
 batched change. A planned create never overwrites a saved row added in the meantime.
@@ -847,7 +851,7 @@ the Note appearance, but that native behaviour must not be generalized into a
 promise that an arbitrary theme-owned type can be spread.
 
 **The supported durable routes stay explicit.** **Scan for callouts** can
-promote a theme id to a saved `source: "fallback"` definition, but it preserves
+promote a theme id that a note uses to a saved `source: "fallback"` definition, but it preserves
 the id by copying the current Studio fallback appearance; it does not copy the
 theme's CSS. While the active theme still claims that id, the emission gate
 continues to stand down. For a stable selectable target, use a built-in or

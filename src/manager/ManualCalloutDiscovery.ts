@@ -57,8 +57,15 @@ export class ManualCalloutDiscovery {
 		}
 		const before = snapshot(registry);
 		const known = buildKnownCalloutIds(registry);
+		// Notes are the only source of new rows. A type the active theme declares
+		// is saved like any other unknown type: when a note uses it. Seeding this
+		// set with every declared id saved a theme's whole catalogue - dozens of
+		// types no note used - and they all poured into My callout types and the
+		// `[!` dropdown the moment the theme let go of them (another theme, or
+		// "Use your theme's callout styles" off). The theme's ids are still read,
+		// but only for the freshness check below.
 		const themeIds = usableThemeIds(this.host.themeIds());
-		const found = new Set(themeIds);
+		const found = new Set<string>();
 		// A scan reads saved notes only. Any failure or changing file cancels the
 		// whole operation, leaving both the registry and data.json untouched.
 		const files = app.vault.getMarkdownFiles().map((file) => ({
@@ -72,7 +79,10 @@ export class ManualCalloutDiscovery {
 			entry.file.path === entry.path &&
 			entry.file.stat.mtime === entry.mtime &&
 			entry.file.stat.size === entry.size;
-		// What the new rows are built from and saved over: the settings and the theme.
+		// What the new rows are built from and saved over: the settings. The theme
+		// is checked as well: it no longer adds rows, but a theme switch during a
+		// scan has always cancelled it, and still does - one more click, and the
+		// scan stays all-or-nothing against the inputs it started with.
 		const settingsCurrent = (): boolean => {
 			if (this.destroyed || !this.host.canApply() || snapshot(registry) !== before) return false;
 			const now = usableThemeIds(this.host.themeIds());
@@ -122,8 +132,8 @@ export class ManualCalloutDiscovery {
 			const latestFallback = fallbackSourceFor(registry, registry.settings.fallbackCalloutId);
 			registry.batch(() => {
 				for (const row of added) {
-					// The theme overlay may be holding this id — it is one of the
-					// places the scan takes ids from. `add` would refuse, leaving
+					// The theme overlay may be holding this id — a note uses a type
+					// the active theme declares. `add` would refuse, leaving
 					// the row on disk but not in the live registry. Retiring the
 					// ephemeral row first is what promotes it to real settings.
 					if (registry.get(row.id)?.source === "theme") registry.remove(row.id);

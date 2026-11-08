@@ -1034,7 +1034,7 @@ nothing left the definition, only what the renderer acts on.
 
 ### Theme callout definitions are added manually
 
-A user-requested scan may add the theme's declared ids as durable fallback rows.
+A user-requested scan may add a theme's declared id as a durable fallback row, when a note uses it.
 Automatic theme appearance inspection updates only ownership and measured artwork.
 Switching themes never adds or removes definitions, writes a retirement list, or
 starts a vault discovery pass. See [theme appearance](18-theme-callout-discovery.md).

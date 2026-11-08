@@ -7,8 +7,15 @@ The single **Scan for callouts** button beside **My callout types**, just inside
 open-editor sweeps, pruning passes, ignored-id settings, completion flags,
 rediscovery suppression or local discovery storage.
 
-The operation reads saved Markdown files and the current theme's declared ids.
-The shared tokenizer ignores code and frontmatter, recognizes block/heading/inline
+The operation reads saved Markdown files; notes are its only source of new rows.
+A type the active theme declares is added like any other unknown type, only when
+a note uses it (`buildKnownCalloutIds` skips the theme's overlay rows, so such a
+type counts as unknown). Earlier builds also seeded the found-set with every
+declared id, which saved a theme's whole catalogue; those rows were unused, and
+they all landed in *My callout types* and the `[!` dropdown once the theme let go
+of them (`tests/manualDiscovery.test.ts`,
+`tests/manualDiscoveryEdgeCases.test.ts`). Rows saved that way are ordinary
+definitions now and are not migrated. The shared tokenizer ignores code and frontmatter, recognizes block/heading/inline
 roles, and folds equivalent spellings. `buildKnownCalloutIds` includes saved
 ids, aliases and reserved demo ids. Before publication, the staged registry also
 checks attribute-id collisions. A scan only adds unknown rows; it never rewrites
@@ -18,12 +25,12 @@ another marker line with a language label remains part of the code block.
 
 File identity, modification time, size, Markdown-file membership and the theme's
 usable declared ids are checked. A failure, added/changed/deleted/renamed note or
-changed theme-id set cancels the whole pass. Settings and all scan inputs are
+changed theme-id set cancels the whole pass. The theme no longer adds rows, so
+that last check is conservative rather than load-bearing: it keeps a scan
+all-or-nothing against the inputs it started with, as it always was. Settings and all scan inputs are
 checked after scanning and again after the asynchronous disk freshness check,
 immediately before the write (only the settings and the theme there when the
-caller waited, see below). Theme attribute values that cannot form a Markdown
-callout token (including brackets, metadata pipes and CSS escapes) are skipped.
-A successful save precedes the one registry batch that publishes the new rows.
+caller waited, see below). A successful save precedes the one registry batch that publishes the new rows.
 Failed saves leave no partial rows. Another click joins the same promise;
 unloading invalidates the scan.
 

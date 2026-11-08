@@ -60,18 +60,29 @@ describe("manual discovery is an explicit additive transaction", () => {
 			"saved to disk",
 		);
 	});
-	it("adds current theme ids only on request and preserves an existing definition", async () => {
-		const h = discoveryHarness();
-		h.state.themes.add("themed");
-		h.state.themes.add("owned");
+	it("saves a theme's type only when a note uses it, and preserves an existing definition", async () => {
+		// A theme declares a catalogue; a vault uses a little of it. Saving every
+		// declared id filled My callout types and the `[!` dropdown with types
+		// no note was written with, as soon as the theme let go of them.
+		const h = discoveryHarness({ "a.md": "> [!used]\n> [!owned]" });
 		h.registry.add(definition({ id: "owned", displayName: "My work", colorLight: "#abcdef" }));
 		h.syncBaseline();
+		for (const id of ["used", "unused", "owned"]) h.state.themes.add(id);
+		syncThemeOverlayRows(h.registry, h.state.themes);
 		const owned = structuredClone(h.registry.get("owned"));
+
 		assert.equal(await h.discovery.run(), 1);
+		assert.equal(h.registry.get("used")?.source, "fallback");
+		assert.equal(h.registry.get("unused")?.source, "theme", "still the theme's, never saved");
+		assert.ok(!h.state.disk?.callouts.some((d) => d.id === "unused"), "not in data.json");
 		assert.deepEqual(h.registry.get("owned"), owned);
+
+		// The theme letting go leaves exactly what the notes use.
 		h.state.themes.clear();
+		syncThemeOverlayRows(h.registry, h.state.themes);
+		assert.equal(h.registry.get("unused"), undefined);
+		assert.ok(h.registry.get("used"));
 		assert.equal(await h.discovery.run(), 0);
-		assert.ok(h.registry.get("themed"));
 	});
 	it("persists uncustomized results across restart, JSON export, and another device", async () => {
 		const h = discoveryHarness({ "a.md": "> [!saved]" });

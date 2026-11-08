@@ -4,7 +4,7 @@ Callout Studio saves only the callout types you explicitly create, import, or di
 
 ## Discover callouts already in your vault
 
-Open **Settings → Callout Studio → My callout types** and click **Scan for callouts**, below the list. Callout Studio scans your saved notes and adds types that are not already in the list. It does not alter notes, overwrite existing types, or change your custom styles. While a scan runs, the row says **Scanning…**. The new types appear in the list together with the message that says how many were added.
+Open **Settings → Callout Studio → My callout types** and click **Scan for callouts**, below the list. Callout Studio scans your saved notes and adds types that are not already in the list. A type your theme defines is added only when a note uses it, like any other type; the rest of your theme's types stay with your theme. It does not alter notes, overwrite existing types, or change your custom styles. While a scan runs, the row says **Scanning…**. The new types appear in the list together with the message that says how many were added.
 
 ![Research and Meeting types saved through discovery, both marked Auto as following the default fallback](../../assets/user-guide/fallback-discovery.svg)
 
@@ -30,7 +30,7 @@ Inline tokens remain Callout Studio surfaces and use the full fallback design.
 
 To change it, find **Default fallback callout** in the settings and choose the style that unknown callouts should inherit. The fallback can be one of your own custom callouts.
 
-A callout that only your theme defines can't be the fallback, so it isn't in the picker. The fallback is saved in your settings and synced to your other devices, but the theme's callout exists only on a device where that theme is active. On any other device the setting would point at nothing. To use one, save it first with **Scan for callouts** or an import. It then belongs to Callout Studio and appears in the picker.
+A callout that only your theme defines can't be the fallback, so it isn't in the picker. The fallback is saved in your settings and synced to your other devices, but the theme's callout exists only on a device where that theme is active. On any other device the setting would point at nothing. To use one, save it first: **Scan for callouts** saves it once a note uses it, or import it. It then belongs to Callout Studio and appears in the picker.
 
 After choosing a different fallback, click **Reset to default** beside the picker to select **Note** again.
 

@@ -50,7 +50,9 @@ describe("manual discovery validates its whole input before saving", () => {
 			});
 		}
 	}
-	it("ignores theme values that cannot name a Markdown callout", async () => {
+	it("saves nothing from a theme's declared types when no note uses them", async () => {
+		// The reported case: an empty vault and a theme with a catalogue of
+		// types, values a Markdown callout could never name among them.
 		const h = discoveryHarness();
 		for (const id of [
 			"",
@@ -62,19 +64,18 @@ describe("manual discovery validates its whole input before saving", () => {
 			"bad\nline",
 			"bad\rline",
 			"bad\0name",
+			"VALID",
+			"valid",
+			"סוג",
+			"aside",
+			"infobox",
 		])
 			h.state.themes.add(id);
-		h.state.themes.add("VALID");
-		h.state.themes.add("valid");
-		h.state.themes.add("סוג");
-		assert.equal(await h.discovery.run(), 2);
-		assert.deepEqual(
-			h.registry
-				.getUserDefined()
-				.map((row) => row.id)
-				.sort(),
-			["valid", "סוג"],
-		);
+		syncThemeOverlayRows(h.registry, h.state.themes);
+		assert.equal(await h.discovery.run(), 0);
+		assert.equal(h.state.writes, 0);
+		assert.deepEqual(h.registry.getUserDefined(), []);
+		assert.equal(h.registry.get("aside")?.source, "theme");
 	});
 });
 
@@ -137,7 +138,7 @@ describe("manual discovery reconciles local changes during the write", () => {
 describe("manual discovery with a live theme overlay", () => {
 	for (const during of ["read", "write"] as const) {
 		it(`handles a theme switch during the ${during} without publishing temporary styles`, async () => {
-			const h = discoveryHarness({ "a.md": "> [!from-note]" });
+			const h = discoveryHarness({ "a.md": "> [!from-note]\n> [!old-theme]" });
 			h.state.themes = new Set(["old-theme"]);
 			syncThemeOverlayRows(h.registry, h.state.themes);
 			const changeTheme = () => {
