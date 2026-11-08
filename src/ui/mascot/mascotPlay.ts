@@ -17,7 +17,8 @@
  * - **A poke.** Pressing it dents it where it was pressed (the brush goes in on
  *   that side, stays in while the press lasts, and springs back), with a ring of
  *   paint spreading from the spot, and it screws its eyes shut for as long as it
- *   is pressed.
+ *   is pressed. A finger's tap is too short for that to be seen, so for a finger
+ *   it lets go {@link TAP_AFTERGLOW_MS} after the finger lifts.
  * - **Too many pokes.** Four within a couple of seconds and it has had enough:
  *   it glares, goes red, stamps and blows steam, for as long as the poking goes
  *   on. The same everywhere, the welcome window's included.
@@ -33,6 +34,12 @@ import { toFace, type Vec } from "./mascotFace";
 /** This many pokes within {@link ANGER_WINDOW_MS} and the mascot loses its temper. */
 const ANGER_PRESSES = 4;
 const ANGER_WINDOW_MS = 2200;
+/**
+ * A fingertip is gone almost as soon as it lands (a tap lasts about 80 ms), so a
+ * poke that lasted only as long as the press would be over before it could be
+ * seen. After a finger lifts, the squint and the dent stay this much longer.
+ */
+const TAP_AFTERGLOW_MS = 500;
 /** How far the eyes turn toward the pointer, in face units (an eye is about two across). */
 const GAZE_REACH = 0.7;
 /** The icon is drawn on a 24 × 24 grid. */
@@ -79,6 +86,8 @@ export function playWith(mascot: BrushMascot, zone: HTMLElement): () => void {
 	on("pointerdown", (event) => {
 		// The main button, a finger or a pen; not a right click.
 		if (event.button !== 0) return;
+		// Tapped again while the last tap is still showing: the press carries on from here.
+		endAfterglow();
 		const now = performance.now();
 		presses.push(now);
 		while (presses.length > 0 && now - presses[0]! > ANGER_WINDOW_MS) presses.shift();
@@ -89,17 +98,39 @@ export function playWith(mascot: BrushMascot, zone: HTMLElement): () => void {
 		if (presses.length >= ANGER_PRESSES) void mascot.play("angry");
 	});
 
+	/** The timer that ends a tap's afterglow, while a finger has lifted and the press is still being shown. */
+	let afterglow: number | null = null;
+	const endAfterglow = (): void => {
+		if (afterglow === null) return;
+		window.clearTimeout(afterglow);
+		afterglow = null;
+	};
+
 	/** The press is over, or the pointer left with the button still down. */
 	const letGo = (): void => {
+		endAfterglow();
 		letGoOfDent?.();
 		letGoOfDent = null;
 		sore?.release();
 		sore = null;
 	};
-	on("pointerup", letGo);
+	on("pointerup", (event) => {
+		// A tap is over before it can be seen: keep the press going a little after the finger lifts.
+		if (event.pointerType === "touch" && (letGoOfDent || sore)) {
+			endAfterglow();
+			afterglow = window.setTimeout(() => {
+				afterglow = null;
+				letGo();
+			}, TAP_AFTERGLOW_MS);
+		} else {
+			letGo();
+		}
+	});
+	// A finger that went on to scroll is no tap: it lets go at once.
 	on("pointercancel", letGo);
-	on("pointerleave", () => {
-		letGo();
+	on("pointerleave", (event) => {
+		// A finger always leaves right after it lifts; that must not cut the afterglow short.
+		if (event.pointerType !== "touch" || afterglow === null) letGo();
 		near?.release();
 		near = null;
 		mascot.lookToward(null);

@@ -170,7 +170,14 @@ pieces: `poke()`, `lookToward()` and `holdCount`.
 | presses a fourth time within 2.2 s | plays `angry`: the squint first, then glare, red cheeks (they grow out of a point as they fade in over about 230 ms and shrink away over 420 ms, at an even speed), two stamps, steam (drops with an upward pull) | the same, over the mood |
 | leaves, or lets go | hold released, the dent springs back | the same, and the mood shows again |
 
-A finger has no hover, so a touch is only ever a poke. Only the coming-near
+A finger has no hover, so a touch is only ever a poke. A tap is also over in
+about 80 ms, which is less than the squint and the dent take to be seen, so for a
+finger (`pointerType === "touch"`) the release waits `TAP_AFTERGLOW_MS` (500 ms)
+after `pointerup`: the `ouch` hold and the dent stay, then let go together. A
+touch always fires `pointerleave` right after `pointerup`, which does not cut the
+wait short; a `pointercancel` (the finger went on to scroll) lets go at once, and
+a new press during the wait cancels the timer and carries on. A mouse or pen lets
+go on `pointerup`, as before. Only the coming-near
 reaction looks at whether a mood is held (`holdCount` minus the two holds the
 play layer keeps itself): the squint and the glare do not, because the engine's
 hold stack already does the right thing, showing the newest hold and going back to

@@ -10,7 +10,7 @@
  * test says when time passes.
  */
 // First, so the fake DOM exists before anything that needs a page is loaded.
-import { asEl, el, type FakeElement } from "./support/fakeDom";
+import { asEl, el, fakeDom, type FakeElement } from "./support/fakeDom";
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it } from "node:test";
 import { BrushMascot } from "../src/ui/mascot/brushMascot";
@@ -117,6 +117,72 @@ describe("a mascot the pointer can play with", () => {
 		fire("pointerleave");
 		run(2500);
 		assert.equal(mascot.current, null);
+	});
+
+	describe("a tap with a finger", () => {
+		beforeEach(() => fakeDom.window.clearTimers());
+		afterEach(() => fakeDom.window.clearTimers());
+
+		it("stays squinting and dented for a moment after the finger lifts, then lets go", () => {
+			const { mascot, body, fire, run } = setup();
+			fire("pointerdown", { pointerType: "touch", clientX: 46, clientY: 26 });
+			run(100);
+			fire("pointerup", { pointerType: "touch" });
+			fire("pointerleave", { pointerType: "touch" }); // a finger leaves right after it lifts
+			run(1500);
+			assert.equal(mascot.current, "ouch", "the squint outlasts the tap");
+			assert.match(body.getAttribute("transform") ?? "", /matrix\(/, "and so does the dent");
+			fakeDom.window.flushTimers();
+			run(2500);
+			assert.equal(mascot.current, null);
+			assert.equal(body.hasAttribute("transform"), false, "flat again");
+		});
+
+		it("lets go at once when the finger went on to scroll", () => {
+			const { mascot, fire, run } = setup();
+			fire("pointerdown", { pointerType: "touch" });
+			run(100);
+			fire("pointercancel", { pointerType: "touch" });
+			fire("pointerleave", { pointerType: "touch" });
+			run(1500);
+			assert.equal(mascot.current, null);
+			assert.equal(fakeDom.window.pendingTimers(), 0);
+		});
+
+		it("carries on from where it is when tapped again during the afterglow", () => {
+			const { mascot, fire, run } = setup();
+			fire("pointerdown", { pointerType: "touch" });
+			run(100);
+			fire("pointerup", { pointerType: "touch" });
+			fire("pointerdown", { pointerType: "touch" });
+			assert.equal(fakeDom.window.pendingTimers(), 0, "the first tap's timer is gone");
+			run(1500);
+			assert.equal(mascot.current, "ouch", "pressed, so it stays pressed");
+			fire("pointerup", { pointerType: "touch" });
+			fakeDom.window.flushTimers();
+			run(2500);
+			assert.equal(mascot.current, null);
+		});
+
+		it("lets go straight away for a mouse, as before", () => {
+			const { mascot, fire, run } = setup();
+			fire("pointerdown");
+			run(100);
+			fire("pointerup");
+			assert.equal(fakeDom.window.pendingTimers(), 0);
+			run(1500);
+			assert.equal(mascot.current, null);
+		});
+
+		it("takes the afterglow away when the mascot is destroyed", () => {
+			const { mascot, fire, run } = setup();
+			fire("pointerdown", { pointerType: "touch" });
+			run(100);
+			fire("pointerup", { pointerType: "touch" });
+			assert.equal(fakeDom.window.pendingTimers(), 1);
+			mascot.destroy();
+			assert.equal(fakeDom.window.pendingTimers(), 0);
+		});
 	});
 
 	it("loses its temper at the fourth quick press", () => {
