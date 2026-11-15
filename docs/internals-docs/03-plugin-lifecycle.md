@@ -13,7 +13,14 @@ settings-display, theme-change, or modal-close hook runs callout discovery.
    before adoption, including existing excess left by older builds. This best-effort
    cleanup has a bounded wait and does not write settings or the checkpoint.
    Read and validate `data.json`
-   through `loadSettingsSafely()`; load definitions and ordinary settings. A
+   through `loadSettingsSafely()`; load definitions and ordinary settings. An
+   ordinary launch reads the file once: when it holds what this device last
+   accepted, or when there is no file and no sign there ever was one, the 150 ms
+   settling window is not spent inside `onload`
+   ([which launches wait](08-settings-sync-and-recovery.md#which-launches-wait-for-the-window)).
+   Every other launch settles first. Such a launch also joins nothing with its
+   recovery copy and checks and parses the file once
+   ([what a launch works out once](08-settings-sync-and-recovery.md#what-a-launch-works-out-once)). A
    legacy `autocomplete.enabled: false` is normalized to `true` and flushed
    through the ordinary migration-save path. Unreadable, unsupported or
    unexpectedly missing settings freeze writes, and so does any other error
@@ -36,7 +43,11 @@ settings-display, theme-change, or modal-close hook runs callout discovery.
    changes are debounced independently of manual discovery.
    Missing custom-command targets are paused, never deleted as part of startup.
 6. Begin existing icon/locale preparation. At layout-ready, release the startup
-   migration notices and run `runLaunchSequence`. After confirming whether this
+   migration notices and run `runLaunchSequence`. A launch that skipped the
+   settling window pays for it here: a loaded file's second read
+   (`confirmLaunchRead`) starts beside the sequence and is not awaited by it,
+   and a provisional fresh install waits the skipped pause before it is
+   confirmed. After confirming whether this
    is a fresh install, it runs `initializeSidebarTabs` before showing the welcome
    screen where appropriate. Sidebar initialization detaches any restored
    **Review conversion** leaf on every launch. It offers **Find callouts** only
@@ -60,7 +71,9 @@ request is deduplicated against the committed file.
 ## External settings changes
 
 Desktop settings events pass through `ReloadQueue`. Foreground checks use the
-same queue on the real plugin. `onExternalSettingsChange` first waits for launch
+same queue on the real plugin, and so does the second read of a launch that
+skipped the settling window, when it finds the file changed.
+`onExternalSettingsChange` first waits for launch
 to finish loading settings: boot rebuilds the registry under a hold, and an
 adoption started meanwhile would rebuild it again underneath. Calls arriving during an adoption request another
 read after it; calls arriving during a preview or settings write are deferred.

@@ -174,10 +174,88 @@ This is a bounded observation window, not proof of provider completion. A later
 independent check can observe that a previously corrupt file really is absent;
 explicit restoration still requires its own checks and confirmation.
 
+### Which launches wait for the window
+
+The window costs at least 150 ms, and at launch that is 150 ms inside `onload`
+with Obsidian waiting behind it. It exists so that a sync snapshot is seen twice
+before it is adopted, and two launches have nothing to adopt. `atRest()` in
+`settingsBoot.ts` takes launch's first read as it stands for exactly those two:
+
+| First read | Evidence | Why no second read is needed inside `onload` |
+| --- | --- | --- |
+| Loaded, supported format | The device's recovery copy holds the same settings (`sameRead()`: the same text, or the same content with keys in another order) | The copy is what this device last accepted, kept outside the synced folder. The first of the two matching observations was made when the last session saved, and a file caught midway through being replaced cannot equal it. |
+| Absent | No prior-use marker and no recovery copy | The launch is only provisionally fresh. The writer stays silently frozen until `confirmFreshInstall()` has read again, with its own settling, at layout-ready, after the pause skipped here. |
+
+Every other first read settles exactly as before, with the same reads and the
+same pauses: a file this device has not seen (another device changed it, or
+there is no recovery copy), a file from a later build even where the copy
+matches, an absent file on a device with a marker or a copy, unreadable content,
+and recovery storage that does not answer. A failed recovery read is not a
+verdict here; the launch settles and the ordinary read of the copy reports it.
+
+The recovery copy is read once per launch. `atRest()` and whichever of
+`recoverSettingsAtBoot()` or the missing-file branch runs next share that read,
+so a rested launch costs one read of `data.json` and one of the copy.
+
+A rested launch returns `confirmLater`, and `runLaunchSequence()` pays at
+layout-ready what the window would have seen. The pause is moved out of
+`onload`, not dropped:
+
+- **A loaded file** owes its second read, unless the launch ended frozen: a
+  paused session is rechecked by its own means. `confirmLaunchRead()` is started
+  without being awaited. It waits one settling pause, so it never comes sooner
+  than the read it stands in for, reads the file once, and stops if the content
+  is still what the writer last accepted (`matchesLastWrite`), which covers this
+  session's own save in between. Anything else, a changed file, an absent one,
+  an unreadable one, is handed to `onExternalSettingsChange()` and becomes an
+  ordinary external change: settled, merged, backed up, retried and deferred
+  behind an open editor like any other.
+- **A provisional fresh install** owes the pause itself. It is awaited before
+  `confirmFreshInstall()`, so the confirmation looks at the folder exactly as
+  late as it did when the pause sat inside `onload`, and a file that lands in
+  between is still adopted instead of greeted.
+
+What this trades is when a change is seen, never whether it is protected. A file
+replaced between launch's read and the layout-ready read is adopted a moment
+after launch instead of during it. Until then the registry shows the file as it
+was, and any save still passes the writer's freshness check against the disk.
+A rested launch with a load-time migration to flush writes it at once, through
+that same check, where it used to write it 150 ms later. A file caught mid-write
+at the second read is retried by the queue (250, 750, 2000 ms); before, the same
+moment froze the launch as `unreadable` until a later event. With a file that is
+broken and then replaced more than once inside those seconds, which passing
+version is read first depends on that schedule, as it always depended on the
+150 ms one.
+
+### What a launch works out once
+
+With the pause out of `onload`, what was left of a rested launch was the
+settings file being gone over again: its sync envelope checked against its
+content five times, its text parsed four times, and the file joined with a
+recovery copy that `atRest()` had just found equal to it. That cost grows with
+the stamp map, which keeps a stamp for every field ever written, deleted rows
+included. Three of the repeats are gone. Each has a condition, and outside it
+the work is done in full as before:
+
+| Work | Skipped when | Still done when |
+| --- | --- | --- |
+| The join of the file with the recovery copy, in `recoverSettingsAtBoot()` | The launch is at rest, no conflict copy lies beside the file, and `rejoinsAsItself()` says the join would hand the file back: it has no envelope, or an envelope of exactly version 2's three fields with no stamp on a field inside an icon | The launch settled, or a conflict copy is there (joined with the same snapshot as before), or the join would rewrite the file: a version 1 envelope is brought up to version 2, a stamp inside an icon is folded into the icon's own, and an envelope field this build does not write is dropped. Those files are joined and written back exactly as they were. |
+| The envelope check on adoption, in `SettingsSync.adopt()` | The text adopted is the one `readSettingsFile()` returned (`isCheckedRead()`). It was taken from the file's object in the same step that checked the object, so the text parsed again passes the same check | The read was put together anywhere else: a merge's result, a recovery copy displayed for a missing file, a read built by a caller. A read whose `json` was replaced afterwards no longer counts either. |
+| The second and third parse of the adopted text, in `SettingsWriter.adopt()` | What is adopted is the file as it stands (`diskJson === json`): one parse then serves the sync state, the write guard's baseline (`SaveGuard.adoptParsed()`) and the saved content | A merge's result is adopted over a file that differs from it: the file's own text is parsed for the baseline and the saved content. |
+
+None of the three changes what a launch reads, writes, backs up or freezes.
+The join and the envelope check are functions of content alone, and each skip
+is taken only where that content is already known to give the answer the full
+work would. What a rested launch still does with the whole file: one envelope
+check on the file as read, one on the recovery copy as read from IndexedDB, the
+comparison of the two, one write of the copy on adoption (the storage
+preflight), and one pass to build the sync state.
+
 ### Launch decision table
 
 `loadSettingsInto()` follows the classification rather than assuming that a
-nullish `loadData()` result means a new user:
+nullish `loadData()` result means a new user. The table holds whichever way the
+read was taken, rested or settled:
 
 | Primary at launch | Additional evidence | Result |
 | --- | --- | --- |
@@ -330,7 +408,10 @@ here. Loading or syncing a settings file never starts a scan.
 ### Scheduling and ownership
 
 The real plugin routes external-settings events and document-foreground checks
-through `ReloadQueue`. Obsidian's settings-change hook is a useful signal, not a
+through `ReloadQueue`. A rested launch's second read enters the same queue when
+it finds the file changed (see
+[Which launches wait for the window](#which-launches-wait-for-the-window)).
+Obsidian's settings-change hook is a useful signal, not a
 promise that every deletion, placeholder eviction, or conflict-sidecar arrival
 will generate a notification. Pre-save reads remain necessary.
 
@@ -1372,6 +1453,8 @@ Related existing suites verify other layers:
 | Layer | Tests |
 | --- | --- |
 | Read/shape/settling | [`settingsFileRead.test.ts`](../../tests/settingsFileRead.test.ts), [`settingsPayloadSafety.test.ts`](../../tests/settingsPayloadSafety.test.ts), [`settingsSettledRead.test.ts`](../../tests/settingsSettledRead.test.ts) |
+| Which launches wait, and the read a rested launch owes | [`settingsBootRest.test.ts`](../../tests/settingsBootRest.test.ts), [`launchSequence.test.ts`](../../tests/launchSequence.test.ts) |
+| What a rested launch works out once, and what it must still work out | [`settingsLaunchOnce.test.ts`](../../tests/settingsLaunchOnce.test.ts) |
 | Writer and recovery boundaries | [`settingsWriter.test.ts`](../../tests/settingsWriter.test.ts), [`settingsRecoveryActions.test.ts`](../../tests/settingsRecoveryActions.test.ts), [`settingsRecoverySafety.test.ts`](../../tests/settingsRecoverySafety.test.ts), [`recoveryBoundaryEdges.test.ts`](../../tests/recoveryBoundaryEdges.test.ts) |
 | Merge and restart scenarios | [`settingsSync.test.ts`](../../tests/settingsSync.test.ts), [`syncRecoveryScenarios.test.ts`](../../tests/syncRecoveryScenarios.test.ts), [`settingsConflictFiles.test.ts`](../../tests/settingsConflictFiles.test.ts) |
 | Checkpoint and backups | [`settingsCheckpoint.test.ts`](../../tests/settingsCheckpoint.test.ts), [`settingsBackup.test.ts`](../../tests/settingsBackup.test.ts), [`settingsConflictBackup.test.ts`](../../tests/settingsConflictBackup.test.ts) |

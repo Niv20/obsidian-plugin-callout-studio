@@ -295,6 +295,131 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 	});
 });
 
+describe("what a launch that skipped the settling window still owes at onLayoutReady", () => {
+	// What the second read then does with the file is `settingsBootRest.test.ts`'s
+	// subject, against a whole device. Pinned here: that this is where it is
+	// made, only when boot says it is owed, and beside the launch, not in it;
+	// and that a fresh install's skipped pause comes before its confirmation.
+	type Queued = {
+		onExternalSettingsChange(): Promise<void>;
+		waitForSettingsSettle(): Promise<void>;
+		loadData(): Promise<unknown>;
+	};
+
+	/** The order in which a launch pauses and reads the (absent) settings file. */
+	function traced(l: ReturnType<typeof launch>): string[] {
+		const order: string[] = [];
+		const plugin = l.plugin as unknown as Queued;
+		plugin.waitForSettingsSettle = () => {
+			order.push("pause");
+			return Promise.resolve();
+		};
+		plugin.loadData = () => {
+			order.push("read");
+			return Promise.resolve(null);
+		};
+		return order;
+	}
+
+	it("spends a fresh install's skipped pause before confirming it", async () => {
+		const l = launch({ welcomeSeen: true });
+		const order = traced(l);
+
+		await runLaunchSequence(l.plugin, { isFreshInstall: true, confirmLater: true });
+
+		assert.deepStrictEqual(order, ["pause", "read", "pause", "read"], "the confirmation looked too soon");
+		assert.strictEqual(l.settingsWriter.isFrozen, false);
+	});
+
+	it("adds no pause for a fresh install that settled inside onload", async () => {
+		const l = launch({ welcomeSeen: true });
+		const order = traced(l);
+
+		await l.run(true);
+
+		assert.deepStrictEqual(order, ["read", "pause", "read"]);
+		assert.strictEqual(l.settingsWriter.isFrozen, false);
+	});
+
+	it("makes no second read of its own for a fresh install: the confirmation is that read", async () => {
+		const l = launch({ welcomeSeen: true });
+		const queue = queued(l);
+
+		await runLaunchSequence(l.plugin, { isFreshInstall: true, confirmLater: true });
+		await turns();
+
+		assert.strictEqual(queue.reloads, 0);
+	});
+
+	const turns = async () => {
+		for (let turn = 0; turn < 20; turn++) await Promise.resolve();
+	};
+
+	/** The plugin's entry to the reload queue, counted. The harness has no file, so the read hands on. */
+	function queued(l: ReturnType<typeof launch>, answer: () => Promise<void> = () => Promise.resolve()) {
+		const seen = { reloads: 0 };
+		(l.plugin as unknown as Queued).onExternalSettingsChange = () => {
+			seen.reloads++;
+			return answer();
+		};
+		return seen;
+	}
+
+	it("makes the read boot left owing", async () => {
+		const l = launch({ frozen: false, welcomeSeen: true });
+		const queue = queued(l);
+
+		await runLaunchSequence(l.plugin, { isFreshInstall: false, confirmLater: true });
+		await turns();
+
+		assert.strictEqual(queue.reloads, 1, "the second read was never made");
+	});
+
+	it("makes none for a launch that settled inside onload", async () => {
+		const l = launch({ frozen: false, welcomeSeen: true });
+		const queue = queued(l);
+
+		await l.run(false);
+		await turns();
+
+		assert.strictEqual(queue.reloads, 0);
+	});
+
+	it("does not hold the rest of the launch behind it", async () => {
+		const l = launch({ frozen: false, welcomeSeen: true });
+		const queue = queued(l);
+		let release!: () => void;
+		(l.plugin as unknown as Queued).waitForSettingsSettle = () =>
+			new Promise<void>((resolve) => {
+				release = resolve;
+			});
+
+		const running = runLaunchSequence(l.plugin, { isFreshInstall: false, confirmLater: true });
+		await turns();
+		try {
+			assert.strictEqual(l.seen.conversionCleanups, 1, "the sidebar step waited for the settling pause");
+			assert.strictEqual(queue.reloads, 0, "the read came before its pause was over");
+		} finally {
+			release();
+		}
+		await running;
+		await turns();
+		assert.strictEqual(queue.reloads, 1);
+	});
+
+	it("reports a read that fails instead of losing the launch to it", async (context) => {
+		const errors = context.mock.method(console, "error", () => {});
+		const l = launch({ frozen: false, welcomeSeen: true });
+		queued(l, () => Promise.reject(new Error("the queue said no")));
+
+		await runLaunchSequence(l.plugin, { isFreshInstall: false, confirmLater: true });
+		await turns();
+
+		assert.strictEqual(l.seen.conversionCleanups, 1);
+		assert.strictEqual(errors.mock.callCount(), 1);
+	});
+});
+
 describe("launch never discovers callouts", () => {
 	it("does not scan, prune, or subscribe, even on a fresh device", async () => {
 		for (const firstRunCompleted of [false, true]) {

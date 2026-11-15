@@ -11,7 +11,7 @@
 import type { ExternalReloadHost } from "./settingsAdopt";
 import { reloadFrom } from "./settingsAdopt";
 import { readSettingsFile } from "./settingsFile";
-import { readSettledSettingsFile } from "./settingsSettledRead";
+import { readSettledSettingsFile, settleWait } from "./settingsSettledRead";
 import { warnSettingsUnreadable } from "./settingsNotices";
 import { registryIsOwned } from "./registryOwnership";
 
@@ -71,6 +71,29 @@ export async function confirmFreshInstall(host: ExternalReloadHost): Promise<boo
 
 	if (stillFresh) host.settingsWriter.thaw();
 	return stillFresh;
+}
+
+/**
+ * The second read of a launch that did not wait for it: one whose first read
+ * was the file this device last accepted (`atRest` in `settingsBoot.ts`).
+ *
+ * It asks what the settling window asked, whether the file is still what
+ * launch read, and nothing more. A file that is, or that holds this session's
+ * own write since, ends it there. Anything else, a changed file, a missing
+ * one, one that cannot be read, goes to `onExternalSettingsChange`, where an
+ * incoming file is settled, merged and backed up as it is at any other moment.
+ *
+ * Kept one settling pause after layout-ready, so it never comes sooner than
+ * the read it stands in for, however early the layout is ready.
+ */
+export async function confirmLaunchRead(host: ExternalReloadHost): Promise<void> {
+	if (!host.onExternalSettingsChange || host.settingsWriter.isDestroyed) return;
+	await settleWait(host)();
+	if (host.settingsWriter.isDestroyed) return;
+	const read = await readSettingsFile(host);
+	if (host.settingsWriter.isDestroyed) return;
+	if (read.kind === "loaded" && host.settingsWriter.matchesLastWrite(read.json)) return;
+	await host.onExternalSettingsChange();
 }
 
 /**

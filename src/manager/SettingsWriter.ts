@@ -121,12 +121,22 @@ export class SettingsWriter {
 		return this.followUp;
 	}
 
-	adopt(json: string, diskJson = json): void {
+	/**
+	 * `envelopeChecked`: `json` is the text of a file whose sync envelope the
+	 * read has already checked against its content (`isCheckedRead`), so the
+	 * check is not made a second time on the same text.
+	 */
+	adopt(json: string, diskJson = json, envelopeChecked = false): void {
 		const data: unknown = JSON.parse(json);
 		const before = this.persistedContent;
-		this.sync?.adopt(data);
-		this.guard.adopt(diskJson);
-		if (this.sync) this.persistedContent = canonical(content(JSON.parse(diskJson)));
+		this.sync?.adopt(data, envelopeChecked);
+		// What is adopted is usually the file as it stands, and one parse of
+		// it then serves the baseline and the saved content too: nothing here
+		// changes `data`, and each of the three takes a copy of its own.
+		const asOnDisk = diskJson === json;
+		if (asOnDisk) this.guard.adoptParsed(data);
+		else this.guard.adopt(diskJson);
+		if (this.sync) this.persistedContent = canonical(content(asOnDisk ? data : JSON.parse(diskJson)));
 		this.revision++;
 		this.stale.clear();
 		this.status.clear();

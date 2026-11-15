@@ -60,8 +60,39 @@ export function validSyncEnvelope(data: Record<string, unknown>): boolean {
 	return validSyncMetadata(meta) && (meta?.version !== 2 || meta.fingerprint === syncFingerprint(data, meta.stamps));
 }
 
-function read(data: unknown): State {
-	if (!validSyncEnvelope(data as Record<string, unknown>))
+/**
+ * Whether joining `data` with a replica that holds the same state hands `data`
+ * back, so the join need not be run to know what it returns.
+ *
+ * Launch joins the settings file with this device's recovery copy, and on an
+ * ordinary launch the two are one state (`atRest` in `settingsBoot.ts`). The
+ * join then compares every stamp with itself and rebuilds the file it was
+ * given: with a long history of stamps, a third of the launch.
+ *
+ * Equal sides come back changed in two cases only, and both are rewrites of
+ * an older file that the join must still be run for: an envelope that is not
+ * exactly version 2's, which `serialize` replaces, and a stamp on a field
+ * inside an icon, which `read` folds into the icon's own. A file with no
+ * envelope is returned as it is.
+ *
+ * `data` has passed {@link validSyncEnvelope}.
+ */
+export function rejoinsAsItself(data: Record<string, unknown>): boolean {
+	const meta = data[SYNC_KEY] as Metadata | undefined;
+	if (meta === undefined) return true;
+	if (meta.version !== 2 || Object.keys(meta).length !== 3) return false;
+	for (const key of Object.keys(meta.stamps)) {
+		// A valid key is its path's own JSON, so the text decides most of them.
+		if (!key.startsWith('["callouts",') || !key.includes(',"icon",')) continue;
+		const path = JSON.parse(key) as string[];
+		if (path.length > 3 && path[2] === "icon") return false;
+	}
+	return true;
+}
+
+/** `envelopeChecked`: the caller has made the first line's check on this same content. */
+function read(data: unknown, envelopeChecked = false): State {
+	if (!envelopeChecked && !validSyncEnvelope(data as Record<string, unknown>))
 		throw new Error("Settings sync envelope does not match its content");
 	const meta = (data as Record<string, unknown>)[SYNC_KEY] as Metadata | undefined;
 	const stamps = structuredClone(meta?.stamps ?? {});
@@ -180,8 +211,8 @@ export class SettingsSync {
 		private readonly genesis?: GenesisSource,
 	) {}
 
-	adopt(data: unknown): void {
-		this.state = read(data);
+	adopt(data: unknown, envelopeChecked = false): void {
+		this.state = read(data, envelopeChecked);
 		this.hasMetadata = (data as Record<string, unknown>)[SYNC_KEY] !== undefined;
 	}
 

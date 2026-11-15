@@ -4,18 +4,66 @@ import { reportSettingsSaveFailure } from "./settingsSaveReporter";
 import { isFromNewerBuild } from "./foreignFields";
 import type { PluginData } from "../types";
 import { recoverSettingsAtBoot, recoveryDisplay } from "./settingsRecovery";
-import { readSettledSettingsFile } from "./settingsSettledRead";
+import { readSettledSettingsFile, sameRead } from "./settingsSettledRead";
 import { warnSettingsUnreadable } from "./settingsNotices";
 import { watchForLateSettings } from "./settingsLateArrival";
 import { applySettingsRead } from "./settingsAdopt";
 import { hasSafeSettingsFileShape } from "./settingsFileShape";
 import type { ExternalReloadHost } from "./settingsAdopt";
 import { pruneSettingsBackups } from "./settingsBackup";
-import { PRIMARY_IO_TIMEOUT_MS } from "./settingsFile";
+import { PRIMARY_IO_TIMEOUT_MS, readSettingsFile, type SettingsRead } from "./settingsFile";
 import { withTimeout } from "../utils/withTimeout";
 
 export interface SettingsBootResult {
 	isFreshInstall: boolean;
+	/**
+	 * Launch took its first read of the settings file without the settling
+	 * window (see {@link atRest}), so what the window would have seen is still
+	 * owed. `runLaunchSequence` pays it once the layout is ready: the second
+	 * read for a file, the skipped pause for a provisional fresh install.
+	 */
+	confirmLater?: true;
+}
+
+/** Launch's one read of the device's recovery copy; a failure is thrown to each asker. */
+type RecoveryCopy = () => Promise<Partial<PluginData> | null>;
+
+/**
+ * Whether launch may take its first read as it stands, without the settling
+ * window of `readSettledSettingsFile`. That window is 150 ms every launch
+ * spent waiting inside `onload`, with Obsidian waiting behind it.
+ *
+ * The window is there so a sync snapshot is seen twice before it is adopted,
+ * and two launches bring nothing to adopt:
+ *
+ * - **The file is what this device last accepted.** Its recovery copy is that
+ *   state, kept outside the synced folder, so the first of the two matching
+ *   observations was made when the last session saved. A file caught midway
+ *   through being replaced cannot equal it.
+ * - **No file, and no sign there ever was one.** That launch is only
+ *   provisionally fresh: the writer stays frozen until `confirmFreshInstall`
+ *   has read again, settling, at layout-ready, after the pause skipped here.
+ *
+ * Everything else settles as it always did: a file this device has not seen,
+ * one from a later build, a missing file where one is expected, unreadable
+ * content, and recovery storage that does not answer (which the caller's own
+ * read then reports).
+ */
+async function atRest(host: ExternalReloadHost, first: SettingsRead, recoveryCopy: RecoveryCopy): Promise<boolean> {
+	const writer = host.settingsWriter;
+	if (first.kind === "unreadable") return false;
+	if (first.kind === "absent" && host.localState.hasInitialized) return false;
+	if (first.kind === "loaded" && (!writer.hasCheckpoint || isFromNewerBuild(first.data))) return false;
+	let copy: Partial<PluginData> | null = null;
+	if (writer.hasCheckpoint) {
+		try {
+			copy = await recoveryCopy();
+		} catch {
+			return false;
+		}
+	}
+	if (first.kind === "absent") return copy === null;
+	return copy !== null && sameRead(first, { kind: "loaded", data: copy, json: JSON.stringify(copy) });
 }
 
 /** Cleanup is best effort; an offline provider must not prevent startup. */
@@ -43,10 +91,17 @@ export async function loadSettingsInto(host: ExternalReloadHost): Promise<Settin
 	if (host.settingsWriter.isDestroyed) return { isFreshInstall: false };
 	await pruneAtBoot(host);
 	if (host.settingsWriter.isDestroyed) return { isFreshInstall: false };
-	const read = await readSettledSettingsFile(host, {
-		isCancelled: () => host.settingsWriter.isDestroyed,
-	});
-	if (host.settingsWriter.isDestroyed) return { isFreshInstall: false };
+	const isCancelled = () => host.settingsWriter.isDestroyed;
+	let copy: Promise<Partial<PluginData> | null> | undefined;
+	const recoveryCopy: RecoveryCopy = () =>
+		(copy ??= host.settingsWriter.recoveryCopy() as Promise<Partial<PluginData> | null>);
+	const first = await readSettingsFile(host);
+	if (isCancelled()) return { isFreshInstall: false };
+	const resting = await atRest(host, first, recoveryCopy);
+	if (isCancelled()) return { isFreshInstall: false };
+	// Not at rest: the same reads, the same pauses, as before the shortcut existed.
+	const read = resting ? first : await readSettledSettingsFile(host, { initial: first, isCancelled });
+	if (isCancelled()) return { isFreshInstall: false };
 
 	if (read.kind === "unreadable") {
 		host.settingsWriter.freeze(read.newer ? "newer-version" : "unreadable");
@@ -67,7 +122,7 @@ export async function loadSettingsInto(host: ExternalReloadHost): Promise<Settin
 	let missingRecovery: Partial<PluginData> | null = null;
 	if (read.kind === "absent" && host.settingsWriter.hasCheckpoint) {
 		try {
-			missingRecovery = (await host.settingsWriter.recoveryCopy()) as Partial<PluginData> | null;
+			missingRecovery = await recoveryCopy();
 		} catch (error) {
 			host.settingsWriter.freeze("recovery-read");
 			reportSettingsSaveFailure(host.settingsWriter, error);
@@ -108,8 +163,11 @@ export async function loadSettingsInto(host: ExternalReloadHost): Promise<Settin
 		// a background save meeting it is not a lost change.
 		host.settingsWriter.freeze("missing", false);
 	}
+	// At rest with a file means `atRest` found the recovery copy equal to it.
 	const recovered =
-		read.kind === "loaded" && host.settingsWriter.hasCheckpoint ? await recoverSettingsAtBoot(host, read) : read;
+		read.kind === "loaded" && host.settingsWriter.hasCheckpoint
+			? await recoverSettingsAtBoot(host, read, recoveryCopy, resting)
+			: read;
 	try {
 		await applySettingsRead(host, recovered, read.kind === "loaded" ? read.json : undefined);
 	} catch (error) {
@@ -119,7 +177,12 @@ export async function loadSettingsInto(host: ExternalReloadHost): Promise<Settin
 	}
 
 	if (!host.settingsWriter.isDestroyed) watchForLateSettings(host);
-	return { isFreshInstall: read.kind === "absent" };
+	const isFreshInstall = read.kind === "absent";
+	// A paused session is rechecked by its own means; it owes no second read.
+	// A provisional fresh install is frozen too, and owes the pause it skipped.
+	return resting && (isFreshInstall || !host.settingsWriter.isFrozen)
+		? { isFreshInstall, confirmLater: true }
+		: { isFreshInstall };
 }
 
 /**
