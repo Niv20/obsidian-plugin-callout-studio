@@ -64,6 +64,23 @@ export interface SettingsFileHost {
 	loadData(): Promise<unknown>;
 }
 
+/** Each read this module has returned as loaded, with the text it returned. */
+const checkedReads = new WeakMap<object, string>();
+
+/**
+ * Whether `read` came from {@link readSettingsFile} and still holds the text
+ * it was returned with.
+ *
+ * That text was taken from the file's object in the same step that checked the
+ * object's sync envelope against its content, so the text parsed again is
+ * known to pass the same check. Adoption relies on it to check the envelope of
+ * a file once, not once on reading and once more on adopting what was read.
+ * A read put together anywhere else, a merge's result among them, is not one.
+ */
+export function isCheckedRead(read: SettingsRead): boolean {
+	return read.kind === "loaded" && checkedReads.get(read) === read.json;
+}
+
 /**
  * Where `data.json` lives. `manifest.dir` is typed optional, hence the
  * reconstruction fallback — the same one `PackDataStore` and `LocaleStore` use.
@@ -96,11 +113,13 @@ export async function readSettingsFile(host: SettingsFileHost): Promise<Settings
 		const data = raw as Record<string, unknown>;
 		if (!hasSafeSettingsFileShape(data))
 			return isNewerSettingsFormat(data) ? { kind: "unreadable", newer: true } : { kind: "unreadable" };
-		return {
+		const read: SettingsRead = {
 			kind: "loaded",
 			data: raw,
 			json: JSON.stringify(raw),
 		};
+		checkedReads.set(read, read.json);
+		return read;
 	}
 	if (raw !== null && raw !== undefined) return { kind: "unreadable" };
 

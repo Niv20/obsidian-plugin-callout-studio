@@ -5,6 +5,7 @@ import { SettingsPersistenceError } from "./settingsSaveStatus";
 import { isFromNewerBuild } from "./foreignFields";
 import { backUpBeforeAdoption } from "./settingsConflictBackup";
 import { canonical } from "./syncTree";
+import { rejoinsAsItself } from "./settingsSync";
 import { hasSafeSettingsFileShape } from "./settingsFileShape";
 import type { SettingsBootHost } from "./settingsAdopt";
 import type { SettingsRead } from "./settingsFile";
@@ -12,17 +13,35 @@ import type { PluginData } from "../types";
 
 type Loaded = Extract<SettingsRead, { kind: "loaded" }>;
 
-export async function recoverSettingsAtBoot(host: SettingsBootHost, incoming: Loaded): Promise<Loaded> {
+/**
+ * `recoveryCopy` is launch's one read of the device's recovery copy, where it
+ * has already made it (see `atRest` in `settingsBoot.ts`); a failure there is
+ * thrown again here and handled as this function's own read always was.
+ *
+ * `copyIsTheFile` says that read found the copy holding what `incoming` holds.
+ * Joining a file with itself returns it (`rejoinsAsItself`), so with no
+ * conflict copy beside it there is nothing to work out and nothing to back up.
+ */
+export async function recoverSettingsAtBoot(
+	host: SettingsBootHost,
+	incoming: Loaded,
+	recoveryCopy: () => Promise<unknown> = () => host.settingsWriter.recoveryCopy(),
+	copyIsTheFile = false,
+): Promise<Loaded> {
 	if (isFromNewerBuild(incoming.data)) return incoming;
 	try {
-		const saved = (await host.settingsWriter.recoveryCopy()) as Partial<PluginData> | null;
+		const saved = (await recoveryCopy()) as Partial<PluginData> | null;
 		if (host.settingsWriter.isDestroyed) return incoming;
 		if (isFromNewerBuild(saved))
 			throw new SettingsPersistenceError("newer-version", "Settings recovery copy is from a newer build");
-		const recovered = saved ? host.settingsWriter.recover(incoming.data, saved) : incoming.data;
+		const itself = copyIsTheFile && saved !== null && rejoinsAsItself(incoming.data as Record<string, unknown>);
+		const joined = () => (saved ? host.settingsWriter.recover(incoming.data, saved) : incoming.data);
+		const recovered = itself ? incoming.data : joined();
 		const conflicts = await readSettingsConflictFiles(host);
-		// Each join uses the preceding snapshot as an unchanged local view.
-		let merged = recovered as Partial<PluginData>;
+		if (itself && conflicts.length === 0) return incoming;
+		// Each join uses the preceding snapshot as an unchanged local view. A
+		// conflict copy is joined with the same snapshot it always was.
+		let merged = (itself ? joined() : recovered) as Partial<PluginData>;
 		for (const conflict of conflicts) merged = host.settingsWriter.recover(conflict, merged) as Partial<PluginData>;
 		if (canonical(merged) === canonical(incoming.data)) return incoming;
 		const batch = new Set<string>();

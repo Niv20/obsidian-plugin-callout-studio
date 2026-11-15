@@ -11,7 +11,7 @@
 import type { ExternalReloadHost } from "./settingsAdopt";
 import { reloadFrom } from "./settingsAdopt";
 import { readSettingsFile } from "./settingsFile";
-import { readSettledSettingsFile } from "./settingsSettledRead";
+import { readSettledSettingsFile, settleWait } from "./settingsSettledRead";
 import { warnSettingsUnreadable } from "./settingsNotices";
 import { registryIsOwned } from "./registryOwnership";
 
@@ -71,6 +71,39 @@ export async function confirmFreshInstall(host: ExternalReloadHost): Promise<boo
 
 	if (stillFresh) host.settingsWriter.thaw();
 	return stillFresh;
+}
+
+/**
+ * The look a launch takes at the settings file once the layout is ready.
+ * `loadSettingsInto` says which launches owe it: every one that ended with a
+ * file loaded and saving not paused.
+ *
+ * Two things make it necessary. A launch that found the file at rest (`atRest`
+ * in `settingsBoot.ts`) did not wait for a second read, and this is that read.
+ * And Obsidian starts watching the configuration folder only after every
+ * community plugin has loaded: a file a sync client replaces after launch's
+ * last read and before then raises no `onExternalSettingsChange`, however the
+ * launch read it. Without this the session shows the old settings, saving not
+ * paused, until something else makes it look. Layout-ready comes after the
+ * watcher has started, so a change is either found here or reported after.
+ *
+ * It asks whether the file is still what launch took, and nothing more. A
+ * file that is, or that holds this session's own write since, ends it there.
+ * Anything else, a changed file, a missing one, one that cannot be read, goes
+ * to `onExternalSettingsChange`, where an incoming file is settled, merged
+ * and backed up as it is at any other moment.
+ *
+ * Kept one settling pause after layout-ready, so it never comes sooner than
+ * the read it stands in for, however early the layout is ready.
+ */
+export async function confirmLaunchRead(host: ExternalReloadHost): Promise<void> {
+	if (!host.onExternalSettingsChange || host.settingsWriter.isDestroyed) return;
+	await settleWait(host)();
+	if (host.settingsWriter.isDestroyed) return;
+	const read = await readSettingsFile(host);
+	if (host.settingsWriter.isDestroyed) return;
+	if (read.kind === "loaded" && host.settingsWriter.matchesLastWrite(read.json)) return;
+	await host.onExternalSettingsChange();
 }
 
 /**

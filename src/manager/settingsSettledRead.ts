@@ -12,7 +12,22 @@ export interface SettledSettingsFileHost extends SettingsFileHost {
 	waitForSettingsSettle?: () => Promise<void>;
 }
 
-function sameRead(a: SettingsRead, b: SettingsRead): boolean {
+/** How long two reads of a settling file are kept apart. */
+const SETTLE_MS = 150;
+
+/** One settling pause: the host's own, or a browser timer. */
+export function settleWait(host: SettledSettingsFileHost): () => Promise<void> {
+	return (
+		host.waitForSettingsSettle ??
+		(() =>
+			new Promise<void>((resolve) => {
+				window.setTimeout(resolve, SETTLE_MS);
+			}))
+	);
+}
+
+/** Whether two reads hold the same settings, whatever order their keys came in. */
+export function sameRead(a: SettingsRead, b: SettingsRead): boolean {
 	if (a.kind === "absent" && b.kind === "absent") return true;
 	// A later build's file stays a later build's file; say so rather than "unreadable".
 	if (a.kind === "unreadable" && b.kind === "unreadable" && a.newer && b.newer) return true;
@@ -35,13 +50,7 @@ export async function readSettledSettingsFile(
 	options: SettledReadOptions = {},
 ): Promise<SettingsRead> {
 	const cancelled = options.isCancelled ?? (() => false);
-	const wait =
-		options.wait ??
-		host.waitForSettingsSettle ??
-		(() =>
-			new Promise<void>((resolve) => {
-				window.setTimeout(resolve, 150);
-			}));
+	const wait = options.wait ?? settleWait(host);
 	if (cancelled()) return { kind: "unreadable" };
 	let previous = options.initial ?? (await readSettingsFile(host));
 	let observedFile = previous.kind !== "absent";

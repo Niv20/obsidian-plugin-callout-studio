@@ -114,6 +114,15 @@ export class SaveGuard {
 	}
 
 	/**
+	 * {@link adopt} for a caller that has already parsed the file's text, and
+	 * hands over the object rather than have it parsed a second time.
+	 */
+	adoptParsed(data: unknown): void {
+		this.memo.adopt(canonical(data));
+		this.hasBaseline = true;
+	}
+
+	/**
 	 * Whether `json` is exactly what the file is believed to hold.
 	 *
 	 * Lets the reload path recognise its own write coming back — Obsidian's

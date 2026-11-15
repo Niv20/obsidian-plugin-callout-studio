@@ -5,7 +5,7 @@ import type { PluginData } from "../types";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import type { SettingsWriter } from "./SettingsWriter";
 import type { DeviceLocalStore } from "./DeviceLocalStore";
-import { readSettingsFile } from "./settingsFile";
+import { isCheckedRead, readSettingsFile } from "./settingsFile";
 import { readSettledSettingsFile, type SettledSettingsFileHost } from "./settingsSettledRead";
 import { isFromNewerBuild } from "./foreignFields";
 import { registryIsOwned } from "./registryOwnership";
@@ -62,7 +62,7 @@ export async function applySettingsRead(
 			host.settingsWriter.freeze("unreadable");
 			throw error;
 		}
-		if (read.kind === "loaded") host.settingsWriter.adopt(read.json, diskJson);
+		if (read.kind === "loaded") host.settingsWriter.adopt(read.json, diskJson, isCheckedRead(read));
 		if (savedData) host.localState.markInitialized();
 		if (canContinue && savedData && !host.settingsWriter.isFrozen && host.settingsWriter.hasCheckpoint) {
 			await host.settingsWriter.rememberIfPossible(savedData);
