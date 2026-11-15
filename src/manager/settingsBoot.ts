@@ -17,10 +17,17 @@ import { withTimeout } from "../utils/withTimeout";
 export interface SettingsBootResult {
 	isFreshInstall: boolean;
 	/**
-	 * Launch took its first read of the settings file without the settling
-	 * window (see {@link atRest}), so what the window would have seen is still
-	 * owed. `runLaunchSequence` pays it once the layout is ready: the second
-	 * read for a file, the skipped pause for a provisional fresh install.
+	 * Launch owes the settings file one more look, which `runLaunchSequence`
+	 * takes once the layout is ready.
+	 *
+	 * A launch that ends with a file loaded and saving not paused owes it,
+	 * however it read the file. Obsidian starts watching the configuration
+	 * folder only after every community plugin has loaded, so a file that is
+	 * replaced after launch's last read and before then is reported to no one.
+	 * For a launch that took its first read without the settling window (see
+	 * {@link atRest}) it is also the second read the window would have made.
+	 *
+	 * A provisional fresh install owes the pause it skipped instead.
 	 */
 	confirmLater?: true;
 }
@@ -178,11 +185,12 @@ export async function loadSettingsInto(host: ExternalReloadHost): Promise<Settin
 
 	if (!host.settingsWriter.isDestroyed) watchForLateSettings(host);
 	const isFreshInstall = read.kind === "absent";
-	// A paused session is rechecked by its own means; it owes no second read.
-	// A provisional fresh install is frozen too, and owes the pause it skipped.
-	return resting && (isFreshInstall || !host.settingsWriter.isFrozen)
-		? { isFreshInstall, confirmLater: true }
-		: { isFreshInstall };
+	// A fresh install owes only the pause it skipped, when it skipped one. A
+	// loaded file owes a second look whether it was settled here or not: no
+	// one reports a change that lands while the other plugins are loading. A
+	// paused session is rechecked by its own means and owes nothing.
+	const owed = isFreshInstall ? resting : !host.settingsWriter.isFrozen;
+	return owed ? { isFreshInstall, confirmLater: true } : { isFreshInstall };
 }
 
 /**

@@ -18,6 +18,12 @@
  * paid once the layout is ready: the second read of a file, through the
  * ordinary external-change path, and the pause before a fresh install is
  * confirmed.
+ *
+ * And a fourth, which is not about the window. Obsidian starts watching the
+ * configuration folder only after every community plugin has loaded, so a file
+ * replaced after launch's last read and before then is reported to no one. A
+ * launch that settled has that gap as much as one that rested, and takes the
+ * same look at layout-ready, unless it ended paused.
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -202,6 +208,8 @@ interface Settled {
 	arrange: (world: World) => Promise<void> | void;
 	/** How many settling pauses the launch makes: as many as before the shortcut existed. */
 	waits: number;
+	/** Ends with a file loaded and saving not paused, so it owes the look at layout-ready. */
+	owesLook?: true;
 	check: (world: World, device: ReturnType<typeof launchDevice>) => void;
 }
 
@@ -219,6 +227,7 @@ const settled: Settled[] = [
 			world.disk = await fileFromAnotherDevice(world, (registry) => registry.add(definition({ id: "theirs" })));
 		},
 		waits: 1,
+		owesLook: true,
 		check: (_world, device) => {
 			assert.ok(device.registry.get("theirs"));
 			assert.ok(device.registry.get("mine"));
@@ -231,6 +240,7 @@ const settled: Settled[] = [
 			world.checkpoint = undefined;
 		},
 		waits: 1,
+		owesLook: true,
 		check: (_world, device) => assert.ok(device.registry.get("mine")),
 	},
 	{
@@ -240,6 +250,7 @@ const settled: Settled[] = [
 			forgetDevice(world);
 		},
 		waits: 1,
+		owesLook: true,
 		check: (_world, device) => assert.ok(device.registry.get("mine")),
 	},
 	{
@@ -255,6 +266,7 @@ const settled: Settled[] = [
 			world.disk = before;
 		},
 		waits: 1,
+		owesLook: true,
 		check: (_world, device) => assert.ok(device.registry.get("unsaved-here"), "the unsaved change was dropped"),
 	},
 	{
@@ -363,7 +375,14 @@ describe("every other launch settles as it always did", () => {
 			const boot = await device.boot();
 
 			assert.equal(world.waits, launch.waits, "the settling window is not what it was");
-			assert.deepEqual(boot, { isFreshInstall: false }, "a launch that settled owes no second read");
+			// Settling is what it was. What a launch owes afterwards is decided by
+			// how it ended: a file loaded and saving not paused owes the look.
+			assert.deepEqual(
+				boot,
+				launch.owesLook ? { isFreshInstall: false, confirmLater: true } : { isFreshInstall: false },
+				launch.owesLook ? "a file was loaded and nothing looks at it again" : "a paused launch owes no look",
+			);
+			assert.equal(device.host.settingsWriter.isFrozen, !launch.owesLook);
 			launch.check(world, device);
 			device.close();
 		});
@@ -557,5 +576,104 @@ describe("the read a rested launch did not wait for", () => {
 		await confirmLaunchRead(device.host);
 
 		assert.equal(world.reads, 0);
+	});
+});
+
+describe("the look a settled launch takes once the layout is ready", () => {
+	// Obsidian loads every community plugin and only then starts watching the
+	// configuration folder. These launches read the file twice inside onload,
+	// and then nothing would tell them about a file replaced while the other
+	// plugins were still loading.
+
+	/** A launch that settled on a file another device wrote, booted, counters at zero. */
+	async function settledOn(world: World) {
+		world.disk = await fileFromAnotherDevice(world, (registry) => registry.add(definition({ id: "theirs" })));
+		const device = launchDevice(world);
+		const boot = await device.boot();
+		assert.equal(world.waits, 1, "this launch was meant to settle");
+		assert.deepEqual(boot, { isFreshInstall: false, confirmLater: true });
+		resetCounters(world);
+		return { device, boot };
+	}
+
+	it("costs one read and one pause, and changes nothing when the file is what launch took", async (context) => {
+		quiet(context);
+		const world = await usedWorld();
+		const { device, boot } = await settledOn(world);
+		const disk = world.disk;
+		const copy = JSON.stringify(world.checkpoint);
+
+		await device.layoutReady(boot);
+
+		assert.equal(world.reads, 1);
+		assert.equal(world.waits, 1);
+		assert.equal(world.writes, 0);
+		assert.equal(world.rebuilds, 0, "an unchanged file rebuilt the registry");
+		assert.equal(world.disk, disk);
+		assert.equal(JSON.stringify(world.checkpoint), copy);
+		assert.equal(world.files.size, 0, "an unchanged file left a backup");
+		assert.equal(device.host.settingsWriter.isFrozen, false);
+		assert.equal(device.host.settingsWriter.status.failure ?? null, null);
+		device.close();
+	});
+
+	it("adopts a file replaced after launch's last read, which nothing else reports", async (context) => {
+		quiet(context);
+		const world = await usedWorld();
+		const { device, boot } = await settledOn(world);
+		// While the other plugins load: after both of launch's reads, before any watcher.
+		world.disk = await fileFromAnotherDevice(world, (registry) => registry.add(definition({ id: "later" })));
+
+		await device.layoutReady(boot);
+
+		assert.ok(device.registry.get("later"), "the file replaced during startup was never adopted");
+		assert.ok(device.registry.get("theirs") && device.registry.get("mine"), "adopting it dropped earlier rows");
+		assert.equal(device.host.settingsWriter.isFrozen, false);
+		assert.equal(device.host.settingsWriter.status.failure ?? null, null);
+		device.close();
+	});
+
+	it("finds its own write after a load-time migration, and stops there", async (context) => {
+		// An old build's file from another device: unstamped, autocomplete off.
+		// Launch settles, normalizes it and writes it back; the look then reads
+		// that write and has nothing to do.
+		quiet(context);
+		const world = await usedWorld();
+		const legacy = JSON.parse(world.disk!) as Record<string, unknown> & { settings: Record<string, unknown> };
+		delete legacy[SYNC_KEY];
+		legacy.settings.autocomplete = { enabled: false };
+		world.disk = JSON.stringify(legacy);
+		world.checkpoint = undefined;
+		const device = launchDevice(world);
+		const boot = await device.boot();
+		assert.equal(world.waits, 1);
+		assert.equal(world.writes, 1, "the migration was not written");
+		assert.equal(boot.confirmLater, true);
+		resetCounters(world);
+
+		await device.layoutReady(boot);
+
+		assert.equal(world.reads, 1);
+		assert.equal(world.writes, 0, "the look wrote the file again");
+		assert.equal(world.rebuilds, 0);
+		assert.equal(device.host.settingsWriter.isFrozen, false);
+		device.close();
+	});
+
+	it("is not taken by a launch that settled and ended paused", async (context) => {
+		quiet(context);
+		const world = await usedWorld();
+		world.checkpointFails = true;
+		const device = launchDevice(world);
+		const boot = await device.boot();
+		assert.equal(device.host.settingsWriter.isFrozen, true);
+		assert.deepEqual(boot, { isFreshInstall: false });
+		resetCounters(world);
+
+		await device.layoutReady(boot);
+
+		assert.equal(world.reads, 0, "a paused launch looked at the file again at layout-ready");
+		assert.equal(world.waits, 0);
+		device.close();
 	});
 });

@@ -199,7 +199,9 @@ so a rested launch costs one read of `data.json` and one of the copy.
 
 A rested launch returns `confirmLater`, and `runLaunchSequence()` pays at
 layout-ready what the window would have seen. The pause is moved out of
-`onload`, not dropped:
+`onload`, not dropped. A launch that settled returns `confirmLater` for a
+loaded file as well, for a reason of its own
+([the look every launch takes at layout-ready](#the-look-every-launch-takes-at-layout-ready)):
 
 - **A loaded file** owes its second read, unless the launch ended frozen: a
   paused session is rechecked by its own means. `confirmLaunchRead()` is started
@@ -226,6 +228,33 @@ moment froze the launch as `unreadable` until a later event. With a file that is
 broken and then replaced more than once inside those seconds, which passing
 version is read first depends on that schedule, as it always depended on the
 150 ms one.
+
+### The look every launch takes at layout-ready
+
+`confirmLaunchRead()` is not only the read a rested launch skipped. Every
+launch that ends with a file loaded and saving not paused runs it, a launch
+that settled inside `onload` included, because of the order Obsidian starts in.
+It loads every enabled community plugin first and only then starts watching
+the vault, the configuration folder with it (`plugins.initialize()` before
+`vault.load()` in 1.15). A `data.json` that a sync client replaces after this
+plugin's last read and before that watcher is live raises no
+`onExternalSettingsChange()`, on any launch, for as long as the other plugins
+take to load. The session then shows the settings as they were, with saving not
+paused, until the next file event, the next return to the app, or the freshness
+check of the next save.
+
+Layout-ready comes after the watcher has started, so one read there leaves no
+gap: a change before it is found by the read, and a change after it is
+reported. The read stops at `matchesLastWrite` when the file is what launch
+took, or this session's own write since, which is the ordinary case and costs
+one read and no rebuild. Anything else enters the queue as an external change.
+
+| Launch ended with | Owes at layout-ready |
+| --- | --- |
+| A file loaded, saving not paused, rested or settled | `confirmLaunchRead()` |
+| No file, provisionally fresh, the window skipped | The skipped pause, then `confirmFreshInstall()` |
+| No file, the window not skipped | `confirmFreshInstall()` alone |
+| Saving paused, for any reason | Nothing: the queue's retries and `pausedRecheck.ts` look again on their own schedule, and a second adoption attempt here would repeat the launch's notice |
 
 ### What a launch works out once
 
@@ -408,9 +437,9 @@ here. Loading or syncing a settings file never starts a scan.
 ### Scheduling and ownership
 
 The real plugin routes external-settings events and document-foreground checks
-through `ReloadQueue`. A rested launch's second read enters the same queue when
-it finds the file changed (see
-[Which launches wait for the window](#which-launches-wait-for-the-window)).
+through `ReloadQueue`. The look a launch takes at layout-ready enters the same
+queue when it finds the file changed (see
+[The look every launch takes at layout-ready](#the-look-every-launch-takes-at-layout-ready)).
 Obsidian's settings-change hook is a useful signal, not a
 promise that every deletion, placeholder eviction, or conflict-sidecar arrival
 will generate a notification. Pre-save reads remain necessary.
@@ -1453,7 +1482,7 @@ Related existing suites verify other layers:
 | Layer | Tests |
 | --- | --- |
 | Read/shape/settling | [`settingsFileRead.test.ts`](../../tests/settingsFileRead.test.ts), [`settingsPayloadSafety.test.ts`](../../tests/settingsPayloadSafety.test.ts), [`settingsSettledRead.test.ts`](../../tests/settingsSettledRead.test.ts) |
-| Which launches wait, and the read a rested launch owes | [`settingsBootRest.test.ts`](../../tests/settingsBootRest.test.ts), [`launchSequence.test.ts`](../../tests/launchSequence.test.ts) |
+| Which launches wait, and the look every launch takes at layout-ready | [`settingsBootRest.test.ts`](../../tests/settingsBootRest.test.ts), [`launchSequence.test.ts`](../../tests/launchSequence.test.ts) |
 | What a rested launch works out once, and what it must still work out | [`settingsLaunchOnce.test.ts`](../../tests/settingsLaunchOnce.test.ts) |
 | Writer and recovery boundaries | [`settingsWriter.test.ts`](../../tests/settingsWriter.test.ts), [`settingsRecoveryActions.test.ts`](../../tests/settingsRecoveryActions.test.ts), [`settingsRecoverySafety.test.ts`](../../tests/settingsRecoverySafety.test.ts), [`recoveryBoundaryEdges.test.ts`](../../tests/recoveryBoundaryEdges.test.ts) |
 | Merge and restart scenarios | [`settingsSync.test.ts`](../../tests/settingsSync.test.ts), [`syncRecoveryScenarios.test.ts`](../../tests/syncRecoveryScenarios.test.ts), [`settingsConflictFiles.test.ts`](../../tests/settingsConflictFiles.test.ts) |

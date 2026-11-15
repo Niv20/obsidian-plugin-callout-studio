@@ -8,7 +8,7 @@ import type CalloutStudioPlugin from "../main";
 
 export async function runLaunchSequence(plugin: CalloutStudioPlugin, boot: SettingsBootResult): Promise<void> {
 	if (plugin.settingsWriter.isDestroyed) return;
-	// What a launch that skipped the settling window still owes (`atRest` in settingsBoot.ts).
+	// What launch still owes the settings file (`confirmLater` in settingsBoot.ts).
 	if (boot.confirmLater && boot.isFreshInstall) {
 		// The pause itself, spent here where nothing waits behind it, so the
 		// confirmation below looks at the folder exactly as late as it always did.

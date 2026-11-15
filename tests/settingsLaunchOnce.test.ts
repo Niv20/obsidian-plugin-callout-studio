@@ -345,11 +345,10 @@ describe("a launch at rest joins nothing, and checks its file once", () => {
 		const device = launchDevice(world);
 		const seen = watched(device);
 
-		const boot = await device.boot();
+		await device.boot();
 
 		assert.equal(world.waits, 1, "a file this device has not seen was taken on one read");
 		assert.equal(seen.joins, 1);
-		assert.equal(boot.confirmLater, undefined);
 		assert.ok(device.registry.get("theirs") && device.registry.get("mine"));
 		device.close();
 	});

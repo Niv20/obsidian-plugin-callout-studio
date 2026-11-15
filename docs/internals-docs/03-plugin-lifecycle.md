@@ -43,11 +43,15 @@ settings-display, theme-change, or modal-close hook runs callout discovery.
    changes are debounced independently of manual discovery.
    Missing custom-command targets are paused, never deleted as part of startup.
 6. Begin existing icon/locale preparation. At layout-ready, release the startup
-   migration notices and run `runLaunchSequence`. A launch that skipped the
-   settling window pays for it here: a loaded file's second read
-   (`confirmLaunchRead`) starts beside the sequence and is not awaited by it,
-   and a provisional fresh install waits the skipped pause before it is
-   confirmed. After confirming whether this
+   migration notices and run `runLaunchSequence`. Every launch that loaded a
+   file and is not paused looks at the file once more here
+   (`confirmLaunchRead`, started beside the sequence and not awaited by it):
+   Obsidian starts watching the configuration folder only after every plugin
+   has loaded, so a file replaced before then is reported to no one
+   ([the look every launch takes](08-settings-sync-and-recovery.md#the-look-every-launch-takes-at-layout-ready)).
+   For a launch that skipped the settling window this is also the read it
+   skipped, and a provisional fresh install waits the skipped pause before it
+   is confirmed. After confirming whether this
    is a fresh install, it runs `initializeSidebarTabs` before showing the welcome
    screen where appropriate. Sidebar initialization detaches any restored
    **Review conversion** leaf on every launch. It offers **Find callouts** only
@@ -71,8 +75,8 @@ request is deduplicated against the committed file.
 ## External settings changes
 
 Desktop settings events pass through `ReloadQueue`. Foreground checks use the
-same queue on the real plugin, and so does the second read of a launch that
-skipped the settling window, when it finds the file changed.
+same queue on the real plugin, and so does the look a launch takes at
+layout-ready, when it finds the file changed.
 `onExternalSettingsChange` first waits for launch
 to finish loading settings: boot rebuilds the registry under a hold, and an
 adoption started meanwhile would rebuild it again underneath. Calls arriving during an adoption request another
