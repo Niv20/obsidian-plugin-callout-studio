@@ -90,6 +90,17 @@ export default tseslint.config(
 		},
 	},
 	{
+		// The web runtime never runs inside Obsidian. It is bundled on its own
+		// (scripts/lib/webAssets.mjs) and executed by a visitor's browser on a
+		// published site, where `createSpan` and `activeDocument` do not exist —
+		// so the rule that steers plugin code towards them points the wrong
+		// way here. Scoped to the one folder, like the fixtures below.
+		files: ["src/web/**/*.ts"],
+		rules: {
+			"obsidianmd/prefer-create-el": "off",
+		},
+	},
+	{
 		// Browser cascade fixtures deliberately use native DOM nodes and style
 		// sheets in an isolated page; they neither ship nor run inside Obsidian.
 		files: ["tests/browser/**/*.ts"],
@@ -104,6 +115,11 @@ export default tseslint.config(
 		"scripts",
 		// Node-only artwork generator for the personal website, same status as scripts/.
 		"assets/website/generator",
+		// Node-only generator of the Digital Garden gallery picture, same status as scripts/.
+		"assets/digital-garden/generator",
+		// The Quartz plugin's hand-written files, published as they are in their
+		// own repository: its index.d.ts is for a Quartz site's type check.
+		"web-plugins/quartz",
 		// Bundled test output (npm test) — generated, and a copy of tests/.
 		".test-out",
 		"versions.json",

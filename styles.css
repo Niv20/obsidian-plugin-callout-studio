@@ -5551,6 +5551,15 @@ button.cs-portable-after-button:focus-visible {
    unmodified built-in it resolves to Obsidian's own --callout-* variable,
    so these surfaces follow the active theme.                      */
 
+/* Everything between the two `@cs-web` markers is also what a published site
+   gets: scripts/lib/webAssets.mjs copies it, comments stripped, into the
+   website export (Settings → Export → Website), where no other line of
+   this file exists. So a rule in here must stand on its own — a var() with a
+   fallback, never one of Obsidian's variables bare — and a rule a heading bar
+   or an inline pill needs in order to look right belongs inside the markers,
+   not after them. tests/webExport.test.ts holds the pair in place. */
+/* @cs-web:start */
+
 /* Inline pill: icon + display name at body-text scale.
    ONE box for both kinds of pill. `[!warning]` puts its display name in the
    second flex item and `[!warning]{…}` puts the author's payload there; nothing
@@ -5881,6 +5890,7 @@ button.cs-portable-after-button:focus-visible {
 .cs-heading-token .cs-callout-icon {
 	transform: translateY(var(--cs-heading-icon-offset, 0.1em));
 }
+/* @cs-web:end */
 
 /* Fold chevron trailing a heading callout (Live Preview). Rendered as an
    end-of-line widget after the heading title, so it mirrors a block callout's

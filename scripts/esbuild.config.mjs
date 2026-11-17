@@ -1,6 +1,11 @@
 import esbuild from "esbuild";
 import process from "process";
+import path from "node:path";
 import { builtinModules } from 'node:module';
+import { fileURLToPath } from "node:url";
+import { webAssetsPlugin } from "./lib/webAssets.mjs";
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const banner =
 `/*
@@ -18,6 +23,10 @@ const context = await esbuild.context({
 	entryPoints: ["src/main.ts"],
 	tsconfig: "scripts/tsconfig.json",
 	bundle: true,
+	// Answers `virtual:callout-studio-web-assets`: the web renderer and its
+	// hosts, each compiled on its own, and the heading/inline slice of
+	// styles.css. All are embedded as text and written out by the website export.
+	plugins: [webAssetsPlugin(root)],
 	external: [
 		"obsidian",
 		"electron",

@@ -22,6 +22,7 @@ import type { SettingsWriter } from "./manager/SettingsWriter";
 import { createSettingsWriter } from "./manager/settingsWriterHost";
 import { saveSettingsWithFeedback } from "./manager/settingsSaveFeedback";
 import { DeviceLocalStore } from "./manager/DeviceLocalStore";
+import { WebAutoUpdate } from "./manager/web/autoUpdate";
 import { reportLegacyDiscoveryMigration } from "./manager/legacyDiscoveryNotices";
 import { trackStartupMigrationNotices } from "./manager/startupMigrationNotices";
 import { loadSettingsSafely } from "./manager/settingsBoot";
@@ -100,6 +101,12 @@ export default class CalloutStudioPlugin extends Plugin {
 	recovery!: SettingsRecoveryService;
 	/** Local UI/onboarding preferences and a prior-install marker. */
 	localState!: DeviceLocalStore;
+	/** Rewrites exported website files after a change, where this device answers for them. */
+	webAutoUpdate!: WebAutoUpdate;
+	/** Which website files this device answers for (`manager/web/fileMemory.ts`). */
+	get webFiles(): DeviceLocalStore {
+		return this.localState;
+	}
 	/** Re-derives the theme's overlay rows — see registerThemeAppearance. */
 	refreshThemeAppearance!: () => void;
 	/** Takes the theme's callout styling away when the user switched it off. */
@@ -323,6 +330,23 @@ export default class CalloutStudioPlugin extends Plugin {
 			if (!this.settingsWriter.isDestroyed) readingStructure.check();
 		});
 
+		// Website files written on the Publish to the web panel are kept current
+		// from then on. A vault with none costs a few "is it there?" questions.
+		// Never while saving is paused: the callouts in memory are then defaults
+		// or a recovery copy, and the files would carry them to every device.
+		this.webAutoUpdate = new WebAutoUpdate(this.app, this, { held: () => this.settingsWriter.isFrozen });
+		this.register(() => this.webAutoUpdate.destroy());
+		this.registry.onChange(() => {
+			if (!this.settingsWriter.isDestroyed) this.webAutoUpdate.schedule();
+		});
+		// A change made on another device arrives as settings, not as an edit
+		// here: a device that was closed catches up once when it starts, and one
+		// that was running is told by `refreshCallouts`, below.
+		this.app.workspace.onLayoutReady(() => this.webAutoUpdate.schedule());
+		// A refresh that found an icon still on its way wrote nothing; this is
+		// the signal that it has arrived (see `manager/web/webData.pendingIcons`).
+		this.register(this.onIconCacheChange(() => this.webAutoUpdate.schedule()));
+
 		// A paused session stays visible and keeps checking for its file.
 		registerPausedIndicator(this);
 		registerPausedRecheck(this);
@@ -469,6 +493,11 @@ export default class CalloutStudioPlugin extends Plugin {
 	/** @see editor/renderRefresh.ts */
 	refreshCallouts(): void {
 		refreshCallouts(this);
+		// Settings another device saved, or an earlier setup put back, replace
+		// the registry without it announcing a change, and all of them repaint
+		// through here. Absent while the plugin is still loading; the start's
+		// own refresh covers that.
+		this.webAutoUpdate?.schedule();
 	}
 
 	/** @see editor/renderRefresh.ts */

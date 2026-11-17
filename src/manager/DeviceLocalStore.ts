@@ -31,10 +31,78 @@ interface DeviceLocalState {
 	iconCategories?: Record<string, string>;
 	emojiSkinTone?: number;
 	quickInsertSource?: string;
+	webExport?: WebExportMemory;
+	/**
+	 * The website files this device answers for: per file, a hash of what it
+	 * last wrote there or last found there the same as its own
+	 * (`manager/web/fileMemory.ts`). A field of its own, not part of
+	 * `webExport`: the panel writes that one whole, from a copy it took a
+	 * moment before, and would put an older list back over a refresh's.
+	 */
+	webFiles?: Record<string, string>;
 	// `listsExpanded`, which sections of the old settings page were folded,
 	// is gone with that page. Older blobs still carry it; the state is rebuilt
 	// from the fields above, so the next write drops it, and an older build
 	// reading a blob without it shows every section open.
+}
+
+/**
+ * Where the Publish to the web panel was left on this device — see
+ * `manager/web/`. Remembered here and not in the synced settings on purpose:
+ * it is a place in a panel, and in the synced file every choice of a service
+ * would be a settings write every other device then had to adopt.
+ *
+ * `auto`, the targets a device kept current, was here until 2026-11-15. Every
+ * target is kept current now (`manager/web/autoUpdate.ts`); older blobs still
+ * carry the field, and the next write drops it. So with `ticks`, the steps
+ * the user ticked on the panel, until 2026-11-16 night, when the panel lost
+ * its ticks (`manager/web/webChecklist.ts`). Which files a device may refresh
+ * by itself is `webFiles`, beside this.
+ */
+export interface WebExportMemory {
+	/** The service chosen last, so the panel reopens on it. */
+	service?: string;
+	quartzVersion?: 4 | 5;
+	/** The vault is the Quartz repository itself, so files go under `content/`. */
+	quartzInVault?: boolean;
+	/**
+	 * Services the settings page no longer offers to set up: dismissed, seen on
+	 * the Publish to the web panel, or found set up already
+	 * (`manager/web/webOffer.ts`).
+	 */
+	offered?: string[];
+}
+
+/** A stored `webExport`, reduced to the fields and values this build knows. */
+function webExportFrom(value: unknown): WebExportMemory | undefined {
+	if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+	const stored = value as Record<string, unknown>;
+	const out: WebExportMemory = {};
+	if (typeof stored.service === "string" && stored.service.length <= 32) out.service = stored.service;
+	const ids = (list: unknown): string[] | undefined =>
+		Array.isArray(list)
+			? list.filter((id): id is string => typeof id === "string" && id.length <= 32).slice(0, 8)
+			: undefined;
+	const offered = ids(stored.offered);
+	if (offered) out.offered = offered;
+	if (stored.quartzVersion === 4 || stored.quartzVersion === 5) out.quartzVersion = stored.quartzVersion;
+	if (stored.quartzInVault === true) out.quartzInVault = true;
+	return out;
+}
+
+/** The most files a device remembers; there are a dozen names at most. */
+const WEB_FILES_MAX = 24;
+
+/** A stored `webFiles`, reduced to names and SHA-256 hashes. */
+function webFilesFrom(value: unknown): Record<string, string> | undefined {
+	if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+	const entries = Object.entries(value as Record<string, unknown>)
+		.filter(
+			(entry): entry is [string, string] =>
+				entry[0].length <= 64 && typeof entry[1] === "string" && /^[0-9a-f]{64}$/.test(entry[1]),
+		)
+		.slice(0, WEB_FILES_MAX);
+	return entries.length > 0 ? Object.fromEntries(entries) : undefined;
 }
 
 type ParsedState = Partial<Record<keyof DeviceLocalState, unknown>> & { v?: number };
@@ -55,6 +123,10 @@ function memoryFrom(parsed: ParsedState): Partial<DeviceLocalState> {
 	if (typeof tone === "number" && Number.isInteger(tone) && tone >= 0 && tone <= 5) out.emojiSkinTone = tone;
 	if (typeof parsed.quickInsertSource === "string" && parsed.quickInsertSource.length <= 32)
 		out.quickInsertSource = parsed.quickInsertSource;
+	const webExport = webExportFrom(parsed.webExport);
+	if (webExport) out.webExport = webExport;
+	const webFiles = webFilesFrom(parsed.webFiles);
+	if (webFiles) out.webFiles = webFiles;
 	return out;
 }
 
@@ -249,6 +321,37 @@ export class DeviceLocalStore {
 
 	setQuickInsertSource(source: string): void {
 		this.state.quickInsertSource = source;
+		this.persist();
+	}
+
+	get webExport(): WebExportMemory {
+		return { ...this.state.webExport };
+	}
+
+	setWebExport(next: WebExportMemory): void {
+		this.state.webExport = next;
+		this.persist();
+	}
+
+	/** The hash this device holds for a website file — see `webFiles` above. */
+	webFile(name: string): string | undefined {
+		const files = this.state.webFiles;
+		return files && Object.prototype.hasOwnProperty.call(files, name) ? files[name] : undefined;
+	}
+
+	/**
+	 * Kept for the session even where storage cannot be written; such a device
+	 * starts the next one answering for nothing, which only costs it a look.
+	 */
+	setWebFile(name: string, hash: string): void {
+		if (this.webFile(name) === hash) return;
+		const files = { ...this.state.webFiles };
+		// The oldest goes first: an object keeps its keys in the order they were added.
+		delete files[name];
+		const names = Object.keys(files);
+		for (const old of names.slice(0, Math.max(0, names.length + 1 - WEB_FILES_MAX))) delete files[old];
+		files[name] = hash;
+		this.state.webFiles = files;
 		this.persist();
 	}
 

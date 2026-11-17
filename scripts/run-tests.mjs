@@ -31,6 +31,7 @@ import { spawn } from "node:child_process";
 import { readdirSync, rmSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { webAssetsPlugin } from "./lib/webAssets.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const testDir = path.join(root, "tests");
@@ -65,6 +66,9 @@ await build({
 	sourcemap: "inline",
 	logLevel: "warning",
 	alias: { obsidian: obsidianStub },
+	// The same web runtime and stylesheet slice `npm run build` embeds, so a
+	// suite that evaluates the exported file is running the shipped bytes.
+	plugins: [webAssetsPlugin(root)],
 });
 
 // Explicit file list rather than `--test <dir>` or a glob. The directory form

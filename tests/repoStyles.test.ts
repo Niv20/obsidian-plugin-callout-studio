@@ -205,6 +205,10 @@ describe("class names in styles.css and src/ agree", () => {
 		"callout-studio-preview-css", // <style> element id of the preview layer
 		"callout-studio-do-not-delete", // the legacy vault snippet's filename
 		"callout-studio-custom", // the exported vault snippet's filename
+		"callout-studio-web", // the exported website script's filename, and its <style> element id on a published page
+		"callout-studio-quartz", // the exported Quartz plugin's folder (manager/web/targets.ts)
+		"callout-studio-stylesheet", // the garden plugin's virtual template for its stylesheet (web/static/garden.ts)
+		"callout-studio-web-assets", // virtual module the build resolves (scripts/lib/webAssets.mjs)
 		"callout-studio-welcome", // obsidian:// URI action
 		"callout-studio-context-menu", // Menu section id
 		"callout-studio-occurrences", // Registered ItemView type, not a DOM class
