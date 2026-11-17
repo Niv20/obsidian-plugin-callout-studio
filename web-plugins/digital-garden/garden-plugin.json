@@ -1,0 +1,9 @@
+{
+	"id": "callout-studio",
+	"name": "Callout Studio",
+	"version": "1.0.1",
+	"description": "Draws the heading and inline callouts of the Callout Studio Obsidian plugin while your garden is built.",
+	"author": "Niv Libovitch",
+	"hooks": "index.js",
+	"slots": { "common.head": "head.njk" }
+}
