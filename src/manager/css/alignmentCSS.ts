@@ -12,15 +12,21 @@ interface BlockAlignmentRules {
 	contentRules: string[];
 }
 
+/**
+ * `important` is on for a vault, where a theme's own callout rules have to be
+ * outweighed, and off for a published site (`webBlockCSS.ts`), where the
+ * site's owner must stay able to restyle a callout with an ordinary rule.
+ */
 export function blockAlignmentCSS(
 	calloutSelectors: readonly string[],
 	alignContentWithTitle: boolean,
+	important = true,
 ): BlockAlignmentRules {
 	const iconRules: string[] = [];
 	const contentRules: string[] = [];
 	if (calloutSelectors.length === 0) return { iconRules, contentRules };
 
-	const imp = " !important";
+	const imp = important ? " !important" : "";
 	const selectorsFor = (tail: string): string => calloutSelectors.map((selector) => `${selector}${tail}`).join(",\n");
 
 	// Obsidian's title row has a 4px gap. Its regular icon is larger than the

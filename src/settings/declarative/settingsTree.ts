@@ -21,6 +21,8 @@
  *   Global styling                         stylePages.ts
  *   Editor                                 autocompletePage.ts, menuPage.ts,
  *                                            commandsPage.ts
+ *   Website                                mainPageGroups.ts
+ *     Publish to the web (opens a panel) webPanel/registerWebPanel.ts
  *   Import and export                      mainPageGroups.ts
  *   Danger zone                            mainPageGroups.ts
  *   (the footer: language, links, License, version)
@@ -39,7 +41,7 @@ import { commandsPage } from "./commandsPage";
 import { footerGroup } from "./footerGroup";
 import { fallbackRow } from "./generalRows";
 import { iconLibrariesRow } from "./iconLibrariesRow";
-import { dangerZoneGroup, importExportGroup } from "./mainPageGroups";
+import { dangerZoneGroup, importExportGroup, websiteGroup } from "./mainPageGroups";
 import { menuPage } from "./menuPage";
 import { palettesPage } from "./palettesPage";
 import { PLUGIN_BOX_CLASS } from "./rowParts";
@@ -68,6 +70,7 @@ export function settingsTree(ctx: TreeContext, visitRow: CsRender): CsItem[] {
 		colorsAndIconsBox(ctx),
 		calloutStyleGroup(ctx),
 		menusBox(ctx),
+		websiteGroup(ctx),
 		importExportGroup(ctx),
 		dangerZoneGroup(ctx),
 		footerGroup(ctx),

@@ -242,6 +242,18 @@ export async function exportSvg(page, selector, options = {}) {
 		function bullet(element, style, r) {
 			if (style.display !== "list-item" || style.listStyleImage !== "none" || style.listStylePosition !== "outside") return "";
 			const kind = style.listStyleType;
+			// A numbered step (`<ol>`): "1." as text, ending where Chrome ends it,
+			// one space before the item, on the item's first line.
+			if (kind === "decimal") {
+				const list = element.parentElement;
+				const items = [...list.children].filter(child => getComputedStyle(child).display === "list-item");
+				const label = `${Number(list.getAttribute("start") ?? 1) + items.indexOf(element)}.`;
+				metrics.font = font(style);
+				const width = metrics.measureText(label).width, gap = metrics.measureText(" ").width;
+				const line = px(style.lineHeight) || px(style.fontSize) * 1.2;
+				const top = r.y + px(style.paddingTop) + px(style.borderTopWidth);
+				return text(label, style, { x: r.x - gap - width, y: top, width, height: line }, width, getComputedStyle(element, "::marker").color || style.color);
+			}
 			if (!["disc", "circle", "square"].includes(kind)) return "";
 			metrics.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
 			const measured = metrics.measureText("x");

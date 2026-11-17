@@ -32,13 +32,15 @@ fallback and language controls, the palette flows, the backup import, the
 scan, and the shared `SettingsContext` (`sections/types.ts`) every flow is
 handed.
 
-The main page, top to bottom: the notices (saving paused, the import offer);
+The main page, top to bottom: the notices (saving paused, the import offer,
+the website offer);
 the callouts box (Callouts from your theme, My callout types, Built-in
 callouts, Default fallback callout); Colors and icons (Saved color palettes, a
 page, and Icon libraries, a row whose button opens the Manage icon libraries
 window - [`iconLibrariesRow.ts`](../../src/settings/declarative/iconLibrariesRow.ts));
 Global styling (Heading, Inline and Block callout); Editor (Autocomplete and
-metadata, the right-click menu, the commands); Import and export; Danger zone (first row: Restore an earlier version); the
+metadata, the right-click menu, the commands); Website (its one row opens
+the Publish to the web panel in the sidebar); Import and export; Danger zone (first row: Restore an earlier version); the
 language notice (a box that shows only while the chosen language is not
 downloaded); and the footer, one row of tiles (the language, the project's
 links, License, the version). The table in 26 § The main page, part by part says which module
@@ -356,8 +358,10 @@ the buttons to the bottom of the drawer): a whole row for one icon. Under it,
 the content's fixed part: Find callouts' type field in Obsidian's `.search-row`;
 Review conversion's **Convert selected** across the pane in a row of its own
 (`.cs-portable-convert-row`, with help at its end); and in both, the count over
-a single line, Obsidian's `.search-results-info >
-.search-results-result-count` (a live region). Until 2026-10-24 each pane began
+one line, Obsidian's `.search-results-info >
+.search-results-result-count` (a live region), which wraps only where the pane
+is too narrow for it (`.cs-sidebar-summary-row`; see
+[15-import-export.md](15-import-export.md), the web panel's narrow pane). Until 2026-10-24 each pane began
 with a large bold title (now only the tab's name, its tooltip on a computer, as
 for Search), a sentence (the conversion one says what **About conversion**
 already opens with; neither is shown now), the format as a second field beside
@@ -786,8 +790,11 @@ size, corners, colour, gated hover, 3px focus ring and dimmed state.
 ### Corners
 
 The plugin rounds its chrome the way Obsidian does: from tokens, never from px.
-A box, card, row, banner or panel takes `--radius-m`, and a small chip or
-badge takes `--radius-s`. A plain button takes `--button-radius` with
+A box, card, row or panel takes `--radius-m`, and a small chip or badge takes
+`--radius-s`. Anything that stands among the settings boxes as one of them
+takes the boxes' own `--setting-items-radius`: the banners (`.cs-banner`,
+[Saving-status banner](#saving-status-banner)), the callout editor's preview
+and the website export's tabs. A plain button takes `--button-radius` with
 `--button-corner-shape`, and a field keeps the input tokens. Every rule with a
 radius also sets a `corner-shape` (`--corner-shape` unless the component has
 its own). That gives superellipse corners on macOS, and the touch radii on
@@ -3412,22 +3419,39 @@ actions apply. The title is chosen from the writer, not from the message -
 fails a retry still says it is paused. The action row is `flex-start`-aligned
 with the prose and stacks full width under 600px.
 
+**Every banner is drawn in one box.** This banner, the first-install import
+prompt and the website offer each build their box with `createBanner`
+([`bannerBox.ts`](../../src/settings/bannerBox.ts)). It gives the box
+`.cs-banner`, a tone class (`.cs-banner-warning` here, `.cs-banner-accent` for
+the offers) and the banner's own layout class, and it announces the box as a
+status. The box's whole look is the one `.cs-banner` rule in `styles.css`, so
+changing it there changes every banner. The tone classes set only
+`--cs-banner-tint`, which the tint and the brush are drawn in. A banner's own
+rules (`.cs-readonly-banner`, `.cs-competitor-import-banner`) lay out only
+what is inside the box. They never set its margins, padding, corners, fill or
+edge.
+
 **It looks like the warning box Obsidian's Keychain settings show** (finding
-GAP-08), and so does the first-install import prompt, in the accent instead of
-the warning colour: Obsidian's callout corners and padding (`--callout-radius`,
-`--callout-padding`, which core mirrors for right-to-left), the title in
-`--text-warning` and `--callout-title-weight`, and a 10% tint mixed as Obsidian
-mixes a callout's (`color-mix(in oklch, var(--text-warning) 10%, transparent)`).
-Both stay the plugin's own markup rather than a real
+GAP-08), with the corners of the settings boxes around it. It has a callout's
+padding (`--callout-padding`, which core mirrors for right-to-left) and the
+corners of an Obsidian settings box (`--setting-items-radius`, with
+`--corner-shape`), so a banner on the settings page is rounded like the grey
+boxes it sits among. Until 2026-11-16 it had a callout's `--callout-radius`.
+The title is in `--text-warning` and `--callout-title-weight`, and the tint is
+10%, mixed as Obsidian mixes a callout's
+(`color-mix(in oklch, var(--cs-banner-tint) 10%, transparent)`). Every banner
+stays the plugin's own markup rather than a real
 `.callout[data-callout=warning]`: the plugin styles every such callout and
 paints icons into it, so the user's own Warning callout design would have
-reached the banner. The colour is `--text-warning` (or `--interactive-accent`),
-never `--callout-warning`, which some themes still declare as an RGB triplet,
-and never `rgba(var(--callout-…))`, invalid since Obsidian 1.13 made those full
-colours. There is no outline, as Obsidian's box has none; until 2026-10-24 the
-card was outlined on all four sides (rather than barred down one edge, so it
-read the same in an RTL locale). `tests/statusBannerLook.test.ts` holds all of
-this.
+reached the banner. The colour is `--text-warning` (or `--interactive-accent`).
+It is never `--callout-warning`, which some themes still declare as an RGB
+triplet, and never `rgba(var(--callout-…))`, which has been invalid since
+Obsidian 1.13 made those full colours. There is no outline, as Obsidian's box
+has none. Until 2026-10-24 the card was outlined on all four sides (rather than
+barred down one edge, so it read the same in an RTL locale).
+`tests/statusBannerLook.test.ts` holds all of this, including that no rule
+but `.cs-banner` draws the box. `tests/declarativeBannerRows.test.ts` checks
+that both builders draw into it.
 
 The action choices, before/after behavior, confirmation policy, failure reasons
 and editor restrictions are owned by

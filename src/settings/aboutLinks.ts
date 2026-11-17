@@ -17,8 +17,8 @@ export const REPOSITORY_URL = "https://github.com/Niv20/obsidian-plugin-callout-
 /** The plugin's license, on GitHub. */
 export const LICENSE_URL = `${REPOSITORY_URL}/blob/master/LICENSE`;
 
-/** Where a bug report or an idea goes. */
-const ISSUE_URL = `${REPOSITORY_URL}/issues/new/choose`;
+/** Where a bug report or an idea goes: the footer's tile, and the Publish to the web panel's last line. */
+export const ISSUE_URL = `${REPOSITORY_URL}/issues/new/choose`;
 
 /** One link to the project: its icon, its name and its address. */
 export interface ProjectLink {

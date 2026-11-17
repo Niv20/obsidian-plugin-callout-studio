@@ -205,12 +205,17 @@ describe("class names in styles.css and src/ agree", () => {
 		"callout-studio-preview-css", // <style> element id of the preview layer
 		"callout-studio-do-not-delete", // the legacy vault snippet's filename
 		"callout-studio-custom", // the exported vault snippet's filename
+		"callout-studio-web", // the exported website script's filename, and its <style> element id on a published page
+		"callout-studio-quartz", // the exported Quartz plugin's folder (manager/web/targets.ts)
+		"callout-studio-stylesheet", // the garden plugin's virtual template for its stylesheet (web/static/garden.ts)
+		"callout-studio-web-assets", // virtual module the build resolves (scripts/lib/webAssets.mjs)
 		"callout-studio-welcome", // obsidian:// URI action
 		"callout-studio-context-menu", // Menu section id
 		"callout-studio-occurrences", // Registered ItemView type, not a DOM class
 		"callout-studio-portable-conversion", // Registered conversion ItemView type, not a DOM class
 		"callout-studio-quick-insert", // Registered icon ID, not a DOM class
 		"callout-studio-statistics", // Registered icon ID, not a DOM class
+		"callout-studio-publish-to-web", // Registered icon ID and Publish to the web's ItemView type, not a DOM class
 		"callout-studio-export", // export filename stem
 		"callout-studio-upgrade-recovery", // recovery archive format identifier
 		"callout-studio-recovery", // inert legacy snippet archive directory
@@ -231,6 +236,8 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-import-issue-field", // the field a problem is about; Obsidian's .setting-item-description code draws it
 		"cs-import-report-group", // one entry's group in the import report; Obsidian's SettingGroup draws it
 		"cs-occurrences-summary", // view-specific lookup; Obsidian's .search-results-result-count supplies the presentation
+		"cs-web-summary", // the Publish to the web panel's live region of how a service stands; tests read it, cs-visually-hidden keeps it to screen readers (the service list says it)
+		"cs-web-row", // one step of the Publish to the web panel, its heading and its box; tests and the guide's scenes find steps by it, and nothing is drawn from it since steps stopped folding
 		"cs-occurrences-file", // per-view hook; shared cs-sidebar-file supplies the layout
 		"cs-portable-file", // per-view hook; shared cs-sidebar-file supplies the layout
 		"cs-occurrences-result", // identity/query hook; shared cs-sidebar-result supplies the card

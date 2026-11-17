@@ -19,7 +19,8 @@ function mountChooser(ModalClass: typeof ImportSourceModal | typeof ExportFormat
 	destroy: () => void;
 } {
 	const app = { keymap: new TestKeymap(), scope: new TestScope() };
-	const modal = new ModalClass({ app } as unknown as SettingsContext);
+	const ctx = { app } as unknown as SettingsContext;
+	const modal = new ModalClass(ctx);
 	const container = fakeDom.document.body.createDiv({ cls: "modal-container" });
 	const modalEl = container.createDiv({ cls: "modal" });
 	const title = modalEl.createDiv({ cls: "modal-header" }).createDiv({ cls: "modal-title" });
@@ -77,11 +78,14 @@ describe("Import and Export choose with a button per row", () => {
 		}
 	});
 
-	it("Export: one group, the backup recommended", () => {
+	it("Export: one group of two, the backup recommended", () => {
 		const h = mountChooser(ExportFormatModal);
 		try {
 			const groups = readGroups(h.content);
 			assert.equal(groups.length, 1);
+			// The backup and the snippet, and no Website row: the Publish to the
+			// web page is reached from its own box on the main page.
+			assert.equal(groups[0]!.rows.length, 2);
 			// The backup's name line also holds the Recommended tag.
 			assert.ok(groups[0]!.rows[0]!.name?.startsWith(t("export.formatJson")));
 			assert.equal(groups[0]!.rows[0]!.button, t("settings.export"));

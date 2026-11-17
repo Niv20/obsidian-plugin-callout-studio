@@ -47,6 +47,17 @@ explains a lot of otherwise surprising behaviour:
   fall back to.
 - The CSS snippet export only carries the block role, for the same reason: a
   stylesheet can style an element, but it cannot create one.
+- The website export is the other half of that sentence. It carries the
+  heading and inline roles to a published site as code, which *can* create
+  the elements - run in the site's own build where the service has one (Quartz,
+  Digital Garden) and in the reader's browser where it does not (Obsidian
+  Publish). For Quartz and Digital Garden that code is a plugin of the site's,
+  released on its own, and the vault is written only the callouts, as a note
+  each. See [Render roles § A published site](09-render-roles.md#a-published-site-one-renderer-three-hosts).
+  The block role travels with it as a stylesheet: the site builds that
+  element, but knows only Obsidian's thirteen callouts, so the user's own
+  colours and icons are written for it in each site's terms
+  ([Import and export § Block callouts](15-import-export.md#block-callouts-a-stylesheet-in-each-sites-own-terms)).
 
 The roles also matter to icon artwork: a pack may draw the same icon differently
 per role (Octicons ships 16px and 24px drawings), so the icon cache is keyed per

@@ -129,7 +129,15 @@ one-time **Find callouts** offer (`occurrencesTabOffered`), the
 import prompt's dismissal (`importBannerHandled`, for a device that has no
 settings file to record it in), the device's name for backup files
 (`deviceId`), where the icon picker and Quick Insert were left
-(`iconCategories`, `emojiSkinTone`, `quickInsertSource`), and optional
+(`iconCategories`, `emojiSkinTone`, `quickInsertSource`), where the Publish
+to the web panel was left (`webExport`: the service chosen last, the Quartz
+version, and which services the settings page no longer offers to set up;
+its `auto` list went on 2026-11-15, when every target became kept up to
+date, and its `ticks`, the boxes the user ticked, on 2026-11-16 night, when
+the panel lost them; a stored one of either is dropped at the next write), a SHA-256 per website
+file of what this device last wrote there or found there identical to its own
+(`webFiles`, at most 24 names; an automatic refresh replaces only a file that
+still carries it - [Import and export § Two devices](15-import-export.md#two-devices)), and optional
 `pending | seen` markers for the one-time personal-CSS-retirement and
 autocomplete-migration notices in vault-scoped browser storage. Until
 2026-10-25 it also kept which sections of the old settings page were folded

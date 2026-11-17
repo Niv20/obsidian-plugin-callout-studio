@@ -52,6 +52,9 @@ export const fr: Record<string, string> = {
 	"importBanner.message": "Nous avons remarqué que vous utilisez {{plugins}}. Souhaitez-vous importer vos callouts ?",
 	"importBanner.action": "Importer",
 	"importBanner.dismiss": "Ignorer",
+	"webOffer.message":
+		"Il semble que ce coffre soit publié avec {{services}}. Souhaitez-vous que vos callouts aient le même rendu sur votre site ?",
+	"webOffer.action": "Montre-moi",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio vous permet de créer des callouts avec une icône, des couleurs et un nom personnalisés.\n\n" +
@@ -1122,6 +1125,7 @@ export const fr: Record<string, string> = {
 	"locale.retry": "Réessayer",
 	"locale.diskWriteFailed":
 		"Callout Studio n’a pas pu enregistrer la traduction sur le disque. Elle devra être téléchargée à nouveau la prochaine fois.",
+	"settings.websiteBox": "Site web",
 	"notice.exportedCssCreated": "Extrait CSS enregistré dans {{path}}",
 	"notice.exportedCssUpdated": "Extrait CSS mis à jour dans {{path}}",
 	"notice.exportedCssUnchanged": "L’extrait CSS est déjà à jour.",
@@ -1130,8 +1134,17 @@ export const fr: Record<string, string> = {
 		"Impossible d’enregistrer l’extrait CSS. Consultez la console de développement pour plus de détails.",
 	"notice.exportCssEnabled":
 		"Cet extrait est activé dans ce vault. Callout Studio applique déjà un style à ces callouts et l’extrait conserve le style présent lors de l’exportation.",
+	"notice.webFilesCreated": "Fichiers du site enregistrés.",
+	"notice.webFilesUpdated": "Fichiers du site mis à jour.",
+	"notice.webFilesUnchanged": "Les fichiers du site sont déjà à jour.",
+	"notice.webFilesFailed":
+		"Impossible d'enregistrer les fichiers du site. Consultez la console des développeurs pour plus de détails.",
+	"notice.webCopied": "Copié.",
 	"confirm.titleOverwriteSnippet": "Écraser l’extrait CSS",
 	"confirm.subtitleOverwriteSnippet": "Modifié depuis que Callout Studio l'a écrit",
+	"confirm.titleOverwriteWebFiles": "Remplacer les fichiers modifiés",
+	"confirm.subtitleOverwriteWebFiles": "Modifiés depuis que Callout Studio les a écrits",
+	"confirm.overwriteWebFiles": "Une nouvelle écriture remplace ce qui a été modifié dans : {{files}}",
 	"confirm.overwriteSnippet":
 		"L’extrait CSS de votre dossier snippets a changé depuis que Callout Studio l’a écrit. Une nouvelle exportation remplacera tout le fichier.",
 	"confirm.overwriteSnippetOk": "Écraser",
@@ -1144,6 +1157,102 @@ export const fr: Record<string, string> = {
 	"export.formatCssDesc":
 		"Pour les sites web ou les vaults où Callout Studio ne s’exécute pas. Couvre uniquement les callouts de type bloc et doit être exporté à nouveau après chaque modification.",
 	"export.formatCssAction": "Exporter",
+	"web.title": "Publier sur le web",
+	"web.command": "Publier sur le web",
+	"web.desc":
+		"Affichez vos callouts tels que vous les avez configurés sur Obsidian Publish, Quartz ou Digital Garden.",
+	"web.open": "Ouvrir",
+	"web.beta": "Bêta",
+	"web.openFailed": "Impossible d'ouvrir la barre latérale Publier sur le web.",
+	"web.closeSettings": "Fermez les paramètres pour voir Publier sur le web dans la barre latérale.",
+	"web.intro": "Choisissez le service qui héberge votre site.",
+	"web.serviceLabel": "Service d'hébergement du site",
+	"web.serviceChoose": "Choisissez votre service…",
+	"web.servicePublish": "Obsidian Publish",
+	"web.serviceQuartz": "Quartz",
+	"web.serviceGarden": "Digital Garden",
+	"web.summaryNone": "Non configuré",
+	"web.markWarning": "Demande votre attention.",
+	"web.actionGardenPlugins": "Ouvrir les plugins du jardin",
+	"web.actionPublicationCenter": "Ouvrir Publication Center",
+	"web.actionPublishChanges": "Ouvrir Publier les modifications",
+	"web.actionOpenNote": "Ouvrir la note",
+	"web.actionRevealFinder": "Afficher dans le Finder",
+	"web.actionReveal": "Afficher dans l'explorateur du système",
+	"web.actionFailed": "Impossible de l'ouvrir. Le plugin nécessaire est peut-être désactivé.",
+	"web.rowFiles": "Créer les fichiers",
+	"web.rowNote": "Créer la note",
+	"web.filesPublish":
+		"Callout Studio ajoute deux fichiers à la racine de votre coffre : publish.js et publish.css. Ces fichiers n'apparaissent pas ici dans la liste des fichiers d'Obsidian, car ce sont des fichiers de code et non du Markdown.",
+	"web.filesNote": "Cette note est indispensable au fonctionnement de vos callouts. Veuillez la lire.",
+	"web.noteChooseToo": "Si un plugin ne publie que les notes que vous choisissez, publiez aussi celle-ci avec lui.",
+	"web.statusStale": "Obsolète. Vos callouts ont changé depuis l'écriture de ces fichiers.",
+	"web.statusElsewhere":
+		"Écrits sur un autre appareil, avec d'autres callouts ou versions. Cet appareil les laisse tels quels. Mettre à jour maintenant les remplace par la version de cet appareil.",
+	"web.statusEdited":
+		"Modifié à la main, votre site ne peut donc pas le lire. Mettre à jour maintenant rétablit vos callouts.",
+	"web.statusDuplicates":
+		"D'autres notes ont aussi la propriété {{key}} : {{files}}. Supprimez-les pour que votre site ne lise que celle-ci.",
+	"web.noteSwitchedOff":
+		"dg-publish est désactivé, donc Digital Garden ne publiera pas cette note. Activez-le dans ses propriétés.",
+	"web.noteNotMarked":
+		"{{key}} est désactivé, donc {{publisher}} ne publiera pas cette note. Activez-le dans ses propriétés.",
+	"web.noteOutsideFolder": "{{publisher}} ne publie que depuis {{folder}}. Déplacez-y la note.",
+	"web.noteExcludedFolder": "{{publisher}} ne publie pas depuis ce dossier. Déplacez la note dans un autre.",
+	"web.write": "Créer les fichiers",
+	"web.writeNote": "Créer la note",
+	"web.update": "Mettre à jour maintenant",
+	"web.copy": "Copier",
+	"web.rowQuartzPlugin": "Installer le plugin Quartz",
+	"web.quartzVersion": "Version de Quartz",
+	"web.quartzVersionDesc": "Un site avec un fichier quartz.config.yaml est un Quartz 5. Sinon, c'est un Quartz 4.",
+	"web.quartzVersion4": "Quartz 4",
+	"web.quartzVersion5": "Quartz 5",
+	"web.stepQuartzTerminal": "Ouvrez un terminal dans le dossier de votre site, celui qui contient {{file}}.",
+	"web.stepQuartzRun": "Exécutez :",
+	"web.stepQuartz5Commit": "Faites un commit et un push de quartz.config.yaml et quartz.lock.json.",
+	"web.stepQuartz4Import": "Dans quartz.config.ts, ajoutez cette ligne après les autres lignes d'import :",
+	"web.stepQuartz4Use": "Ajoutez cette ligne à transformers, juste avant Plugin.Description() :",
+	"web.stepQuartz4Commit": "Faites un commit et un push de package.json, package-lock.json et quartz.config.ts.",
+	"web.quartzOk": "{{file}} charge Callout Studio.",
+	"web.quartzNone": "{{file}} ne charge pas encore Callout Studio.",
+	"web.quartzNoImport": "{{file}} utilise CalloutStudio() mais n'a pas de ligne d'import pour celui-ci.",
+	"web.quartzNoUse": "{{file}} a la ligne d'import, mais CalloutStudio() n'est pas dans transformers.",
+	"web.quartzMisplaced":
+		"Dans {{file}}, CalloutStudio() vient après Plugin.Description(), donc la recherche et le RSS affichent le texte que vous avez saisi. Déplacez-le sur la ligne juste avant.",
+	"web.quartzOff": "Dans {{file}}, Callout Studio est présent avec enabled: false. Mettez-le à true.",
+	"web.rowGardenPlugin": "Installer le plugin du jardin",
+	"web.prereqTitle": "Avant de commencer",
+	"web.prereqGarden": "Installer Digital Garden",
+	"web.stepGardenOpenPlugins":
+		"Dans le Publication Center de Digital Garden, allez dans Site → Plugins → Browse & install.",
+	"web.stepGardenGoPlugins": "Allez dans Site → Plugins → Browse & install.",
+	"web.stepGardenSearch": "Recherchez Callout Studio et installez-le.",
+	"web.gardenNotListed":
+		"Vous ne trouvez pas Callout Studio dans la liste ? Descendez jusqu'à Install from GitHub URL et collez cette adresse :",
+	"web.rowPublishDomain": "Domaine personnalisé",
+	"web.stepPublishDomain":
+		"Pour utiliser des callouts en ligne ou de titre, vous devez configurer un domaine personnalisé.",
+	"web.stepPublishDomainWhy":
+		"Obsidian Publish ignore publish.js sur les adresses publish.obsidian.md par défaut, donc seuls les callouts de bloc standard y fonctionneront.",
+	"web.stepPublishDomainLink": "Comment configurer un domaine personnalisé",
+	"web.domainNotNeeded": "Inutile tant que les callouts de titre et en ligne sont désactivés.",
+	"web.siteNote": "Publier la note",
+	"web.stepGardenOpenCenter": "Ouvrez le Publication Center de Digital Garden.",
+	"web.stepGardenPublish": "Sous Notes, sélectionnez {{note}} et publiez-la.",
+	"web.stepSyncerOpenCenter": "Ouvrez le Publication Center de Quartz Syncer.",
+	"web.stepSyncerPublish": "Sélectionnez {{note}} et publiez-la.",
+	"web.stepEnveloppeUpload": "Avec la note ouverte, exécutez Enveloppe: Upload single current active note.",
+	"web.siteFiles": "Publier les deux fichiers",
+	"web.stepPublishOpen": "Ouvrez Publier les modifications.",
+	"web.stepPublishSelect": "Sélectionnez publish.js et publish.css, et publiez-les.",
+	"web.rowDone": "Tout est prêt",
+	"web.doneNote":
+		"Quand vos callouts changent, Callout Studio met la note à jour tout seul. Pour voir le changement sur votre site, vous devez publier de nouveau la note.",
+	"web.donePublish":
+		"Quand vos callouts changent, Callout Studio met à jour les deux fichiers tout seul. Il suffit de les publier de nouveau.",
+	"web.doneQuartz":
+		"Quand vos callouts changent, Callout Studio met la note à jour tout seul. Votre prochain build la prendra en compte.",
 	"quickInsert.readingViewHint": "Cette note est ouverte en mode lecture, donc rien ne peut être inséré.",
 	"quickInsert.readingView": "Passez en mode source ou en aperçu en direct pour insérer un callout.",
 	"quickInsert.noCursorHint": "Il n'y a pas de curseur dans cette note, donc il n'y a nulle part où insérer.",

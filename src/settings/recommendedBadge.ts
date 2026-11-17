@@ -12,6 +12,6 @@
  */
 import { t } from "../i18n";
 
-export function renderRecommendedBadge(parent: HTMLElement): HTMLElement {
-	return parent.createSpan({ cls: "flair mod-flat cs-recommended-badge", text: t("settings.recommended") });
+export function renderRecommendedBadge(parent: HTMLElement, text = t("settings.recommended")): HTMLElement {
+	return parent.createSpan({ cls: "flair mod-flat cs-recommended-badge", text });
 }

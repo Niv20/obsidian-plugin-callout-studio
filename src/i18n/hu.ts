@@ -53,6 +53,9 @@ export const hu: Record<string, string> = {
 		"Észrevettük, hogy Ön a következőt használja: {{plugins}}. Szeretné importálni a callout-jait?",
 	"importBanner.action": "Importálás",
 	"importBanner.dismiss": "Elutasítás",
+	"webOffer.message":
+		"Úgy tűnik, ez a tároló a következővel van közzétéve: {{services}}. Szeretné, ha a callout-jai ugyanígy néznének ki a webhelyén?",
+	"webOffer.action": "Mutasd meg",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"A Callout Studio segítségével egyéni ikonnal, színekkel és névvel hozhat létre callout-okat.\n\n" +
@@ -1040,6 +1043,7 @@ export const hu: Record<string, string> = {
 	"locale.retry": "Újrapróbálkozás",
 	"locale.diskWriteFailed":
 		"A Callout Studio nem tudta lemezre menteni a fordítást, ezért legközelebb újra le kell tölteni.",
+	"settings.websiteBox": "Webhely",
 	"notice.exportedCssCreated": "A CSS-részlet mentve ide: {{path}}",
 	"notice.exportedCssUpdated": "A CSS-részlet frissítve itt: {{path}}",
 	"notice.exportedCssUnchanged": "A CSS-részlet már naprakész.",
@@ -1047,8 +1051,16 @@ export const hu: Record<string, string> = {
 	"notice.exportCssFailed": "A CSS-részlet mentése nem sikerült. Részletekért nézd meg a fejlesztői konzolt.",
 	"notice.exportCssEnabled":
 		"Ez a részlet engedélyezve van ebben a vaultban. A Callout Studio már formázza ezeket a calloutokat, a részlet pedig az exportáláskori stílust őrzi.",
+	"notice.webFilesCreated": "A webhely fájljai elmentve.",
+	"notice.webFilesUpdated": "A webhely fájljai frissítve.",
+	"notice.webFilesUnchanged": "A webhely fájljai már naprakészek.",
+	"notice.webFilesFailed": "A webhely fájljait nem sikerült elmenteni. A részleteket a fejlesztői konzolban találja.",
+	"notice.webCopied": "Másolva.",
 	"confirm.titleOverwriteSnippet": "CSS-részlet felülírása",
 	"confirm.subtitleOverwriteSnippet": "Azóta szerkesztették, hogy a Callout Studio megírta",
+	"confirm.titleOverwriteWebFiles": "Szerkesztett fájlok cseréje",
+	"confirm.subtitleOverwriteWebFiles": "Módosultak, mióta a Callout Studio megírta őket",
+	"confirm.overwriteWebFiles": "Az újraírás lecseréli, ami módosult itt: {{files}}",
 	"confirm.overwriteSnippet":
 		"A snippets mappában lévő CSS-részlet megváltozott azóta, hogy a Callout Studio létrehozta. Az újbóli exportálás a teljes fájlt lecseréli.",
 	"confirm.overwriteSnippetOk": "Felülírás",
@@ -1061,6 +1073,104 @@ export const hu: Record<string, string> = {
 	"export.formatCssDesc":
 		"Olyan webhelyekhez vagy vaultokhoz, ahol a Callout Studio nem fut. Csak a blokk-calloutokat tartalmazza, és módosítások után újra exportálni kell.",
 	"export.formatCssAction": "Exportálás",
+	"web.title": "Közzététel a weben",
+	"web.command": "Közzététel a weben",
+	"web.desc":
+		"Jelenítse meg a callout-jait úgy, ahogy beállította őket az Obsidian Publishen, a Quartzon vagy a Digital Gardenen.",
+	"web.open": "Megnyitás",
+	"web.beta": "Béta",
+	"web.openFailed": "A Közzététel a weben oldalsáv nem nyitható meg.",
+	"web.closeSettings": "Zárja be a beállításokat, hogy lássa a Közzététel a weben részt az oldalsávban.",
+	"web.intro": "Válassza ki a webhelyét üzemeltető szolgáltatást.",
+	"web.serviceLabel": "A webhely tárhelyszolgáltatása",
+	"web.serviceChoose": "Válassza ki a szolgáltatást…",
+	"web.servicePublish": "Obsidian Publish",
+	"web.serviceQuartz": "Quartz",
+	"web.serviceGarden": "Digital Garden",
+	"web.summaryNone": "Nincs beállítva",
+	"web.markWarning": "Figyelmet igényel.",
+	"web.actionGardenPlugins": "A kert bővítményeinek megnyitása",
+	"web.actionPublicationCenter": "Publication Center megnyitása",
+	"web.actionPublishChanges": "Változások közzététele megnyitása",
+	"web.actionOpenNote": "Jegyzet megnyitása",
+	"web.actionRevealFinder": "Megjelenítés a Finderben",
+	"web.actionReveal": "Megjelenítés a rendszer fájlkezelőjében",
+	"web.actionFailed": "Nem sikerült megnyitni. Lehet, hogy a szükséges bővítmény ki van kapcsolva.",
+	"web.rowFiles": "Fájlok létrehozása",
+	"web.rowNote": "Jegyzet létrehozása",
+	"web.filesPublish":
+		"A Callout Studio két fájlt ad a tárolója gyökeréhez: publish.js és publish.css. Ezek a fájlok nem jelennek meg itt az Obsidian fájllistájában, mert kódfájlok, nem Markdown.",
+	"web.filesNote": "Erre a jegyzetre szükség van ahhoz, hogy a callout-jai működjenek. Kérjük, olvassa el.",
+	"web.noteChooseToo":
+		"Ha egy bővítmény csak az Ön által kiválasztott jegyzeteket teszi közzé, ezt is tegye közzé vele.",
+	"web.statusStale": "Elavult. A callout-jai megváltoztak, mióta ezeket a fájlokat megírták.",
+	"web.statusElsewhere":
+		"Másik eszközön íródtak, más callout-okkal vagy verziókkal. Ez az eszköz békén hagyja őket. A Frissítés most lecseréli őket erre az eszközre jellemző verzióra.",
+	"web.statusEdited":
+		"Kézzel módosították, ezért a webhelye nem tudja elolvasni. A Frissítés most visszaállítja a callout-jait.",
+	"web.statusDuplicates":
+		"Más jegyzeteknek is van {{key}} tulajdonságuk: {{files}}. Törölje őket, hogy a webhelye csak ezt olvassa.",
+	"web.noteSwitchedOff":
+		"A dg-publish ki van kapcsolva, ezért a Digital Garden nem teszi közzé ezt a jegyzetet. Kapcsolja be a tulajdonságai között.",
+	"web.noteNotMarked":
+		"A(z) {{key}} ki van kapcsolva, ezért a(z) {{publisher}} nem teszi közzé ezt a jegyzetet. Kapcsolja be a tulajdonságai között.",
+	"web.noteOutsideFolder": "A(z) {{publisher}} csak innen tesz közzé: {{folder}}. Helyezze oda a jegyzetet.",
+	"web.noteExcludedFolder": "A(z) {{publisher}} nem tesz közzé ebből a mappából. Helyezze a jegyzetet másik mappába.",
+	"web.write": "Fájlok létrehozása",
+	"web.writeNote": "Jegyzet létrehozása",
+	"web.update": "Frissítés most",
+	"web.copy": "Másolás",
+	"web.rowQuartzPlugin": "A Quartz-bővítmény telepítése",
+	"web.quartzVersion": "Quartz-verzió",
+	"web.quartzVersionDesc": "A quartz.config.yaml fájlt tartalmazó webhely Quartz 5. Egyébként Quartz 4.",
+	"web.quartzVersion4": "Quartz 4",
+	"web.quartzVersion5": "Quartz 5",
+	"web.stepQuartzTerminal": "Nyisson meg egy terminált a webhelye mappájában, abban, amelyikben a(z) {{file}} van.",
+	"web.stepQuartzRun": "Futtassa:",
+	"web.stepQuartz5Commit": "Commitolja és pusholja a quartz.config.yaml és a quartz.lock.json fájlt.",
+	"web.stepQuartz4Import": "A quartz.config.ts fájlban adja hozzá ezt a sort a többi import sor után:",
+	"web.stepQuartz4Use": "Adja hozzá ezt a sort a transformers listához, közvetlenül a Plugin.Description() elé:",
+	"web.stepQuartz4Commit": "Commitolja és pusholja a package.json, a package-lock.json és a quartz.config.ts fájlt.",
+	"web.quartzOk": "A(z) {{file}} betölti a Callout Studiót.",
+	"web.quartzNone": "A(z) {{file}} még nem tölti be a Callout Studiót.",
+	"web.quartzNoImport": "A(z) {{file}} használja a CalloutStudio()-t, de nincs hozzá import sora.",
+	"web.quartzNoUse":
+		"A(z) {{file}} fájlban megvan az import sor, de a CalloutStudio() nincs a transformers listában.",
+	"web.quartzMisplaced":
+		"A(z) {{file}} fájlban a CalloutStudio() a Plugin.Description() után áll, ezért a keresés és az RSS az Ön által beírt szöveget mutatja. Helyezze át a közvetlenül előtte lévő sorba.",
+	"web.quartzOff": "A(z) {{file}} fájlban a Callout Studio enabled: false értékkel szerepel. Állítsa true-ra.",
+	"web.rowGardenPlugin": "A kert bővítményének telepítése",
+	"web.prereqTitle": "Mielőtt elkezdené",
+	"web.prereqGarden": "A Digital Garden telepítése",
+	"web.stepGardenOpenPlugins":
+		"A Digital Garden Publication Centerében lépjen a Site → Plugins → Browse & install részre.",
+	"web.stepGardenGoPlugins": "Lépjen a Site → Plugins → Browse & install részre.",
+	"web.stepGardenSearch": "Keresse meg a Callout Studiót, és telepítse.",
+	"web.gardenNotListed":
+		"Nem találja a Callout Studiót a listában? Görgessen le az Install from GitHub URL részhez, és illessze be ezt a címet:",
+	"web.rowPublishDomain": "Egyéni domain",
+	"web.stepPublishDomain": "A soron belüli vagy címsor-callout-ok használatához egyéni domaint kell beállítania.",
+	"web.stepPublishDomainWhy":
+		"Az Obsidian Publish figyelmen kívül hagyja a publish.js fájlt az alapértelmezett publish.obsidian.md címeken, ezért ott csak a szokásos blokk-callout-ok működnek.",
+	"web.stepPublishDomainLink": "Egyéni domain beállítása",
+	"web.domainNotNeeded": "Nem szükséges, amíg a címsor- és a soron belüli callout-ok ki vannak kapcsolva.",
+	"web.siteNote": "A jegyzet közzététele",
+	"web.stepGardenOpenCenter": "Nyissa meg a Digital Garden Publication Centerét.",
+	"web.stepGardenPublish": "A Notes alatt válassza ki a(z) {{note}} jegyzetet, és tegye közzé.",
+	"web.stepSyncerOpenCenter": "Nyissa meg a Quartz Syncer Publication Centerét.",
+	"web.stepSyncerPublish": "Válassza ki a(z) {{note}} jegyzetet, és tegye közzé.",
+	"web.stepEnveloppeUpload":
+		"Megnyitott jegyzettel futtassa az Enveloppe: Upload single current active note parancsot.",
+	"web.siteFiles": "A két fájl közzététele",
+	"web.stepPublishOpen": "Nyissa meg a Változások közzététele részt.",
+	"web.stepPublishSelect": "Válassza ki a publish.js és a publish.css fájlt, és tegye őket közzé.",
+	"web.rowDone": "Minden kész",
+	"web.doneNote":
+		"Ha a callout-jai megváltoznak, a Callout Studio magától frissíti a jegyzetet. Hogy a változás megjelenjen a webhelyén, újra közzé kell tennie a jegyzetet.",
+	"web.donePublish":
+		"Ha a callout-jai megváltoznak, a Callout Studio magától frissíti mindkét fájlt. Csak tegye őket újra közzé.",
+	"web.doneQuartz":
+		"Ha a callout-jai megváltoznak, a Callout Studio magától frissíti a jegyzetet. A következő buildje fel fogja venni.",
 	"quickInsert.readingViewHint": "Ez a jegyzet olvasó módban van megnyitva, ezért semmit sem lehet beszúrni.",
 	"quickInsert.readingView": "Váltson forrás módra vagy élő előnézetre a callout beszúrásához.",
 	"quickInsert.noCursorHint": "Ebben a jegyzetben nincs kurzor, ezért nincs hova beszúrni.",

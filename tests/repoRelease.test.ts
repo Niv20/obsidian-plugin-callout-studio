@@ -356,6 +356,7 @@ describe("command ids have not moved since release", () => {
 		"callout-unwrap",
 		"open-quick-insert",
 		"show-callout-occurrences",
+		"open-publish-to-web",
 	] as const;
 
 	it("the fixed ids are exactly the released ones, in order", () => {

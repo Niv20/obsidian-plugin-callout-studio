@@ -209,6 +209,13 @@ const wink: Step[] = [
 	wait(640),
 	{ ms: 170, to: { eyeR: "dot", rot: -3, x: 0 } },
 ];
+/** The way into `hello`, and into `greet`, which starts as `hello` does: eyes out and a smile. */
+const helloIntro: Step[] = [
+	crouch,
+	face({ eyes: "dot", mouth: "smile", fill: 0, y: -0.55, rot: -3, sx: 0.99, sy: 1.02 }, 290),
+	{ ms: 200, to: { y: -0.35, sx: 1, sy: 1 } },
+];
+const helloBody: Step[] = [...blink("dot"), wait(220)];
 
 // ---- The animations ------------------------------------------------------------
 
@@ -227,18 +234,25 @@ export const ANIMATIONS = {
 
 	/** Eyes out, a smile, one blink. The friendly default. */
 	hello: {
-		intro: [
-			crouch,
-			face({ eyes: "dot", mouth: "smile", fill: 0, y: -0.55, rot: -3, sx: 0.99, sy: 1.02 }, 290),
-			{ ms: 200, to: { y: -0.35, sx: 1, sy: 1 } },
-		],
-		body: [...blink("dot"), wait(220)],
+		intro: helloIntro,
+		body: helloBody,
 		loop: [
 			{ ms: 1000, to: { y: -0.6, sy: 1.015 } },
 			{ ms: 1000, to: { y: -0.35, sy: 1 } },
 			...blink("dot"),
 			wait(500),
 		],
+	},
+
+	/**
+	 * `hello`, then carries straight on as `happy` (a little jump, once) and only
+	 * then goes home: for an offer at the top of the settings, glad to be seen.
+	 * Meant to be played once, never held.
+	 */
+	greet: {
+		intro: helloIntro,
+		body: helloBody,
+		then: "happy",
 	},
 
 	/** A smile, held a moment, then one long wink and the smile again. Meant to be played once, never held. */

@@ -100,6 +100,91 @@ describe("device UI state without a discovery cache", () => {
 		assert.strictEqual(restored.hasInitialized, true);
 		assert.strictEqual(restored.quickInsertSource, "theme");
 	});
+	// Where the Publish to the web page was left is a fact about this device,
+	// like the icon picker's last category.
+	it("remembers where the Publish to the web page was left, and only what it understands", () => {
+		const store = fresh();
+		assert.deepStrictEqual(store.webExport, {});
+		store.setWebExport({ service: "quartz", quartzVersion: 5, quartzInVault: true });
+		assert.deepStrictEqual(new DeviceLocalStore(app).webExport, {
+			service: "quartz",
+			quartzVersion: 5,
+			quartzInVault: true,
+		});
+
+		// `auto` was a switch per target until every target was kept current.
+		const odd = fresh({
+			v: 3,
+			initialized: true,
+			welcomeSeen: true,
+			webExport: { service: 7, auto: ["publish", 3, null], quartzVersion: 6, quartzInVault: "yes", extra: 1 },
+		});
+		assert.deepStrictEqual(odd.webExport, {});
+
+		// Which services the settings page stopped offering to set up.
+		store.setWebExport({ offered: ["quartz", "publish"] });
+		assert.deepStrictEqual(new DeviceLocalStore(app).webExport, { offered: ["quartz", "publish"] });
+		const oddOffer = fresh({ v: 3, initialized: true, welcomeSeen: true, webExport: { offered: ["garden", 4] } });
+		assert.deepStrictEqual(oddOffer.webExport, { offered: ["garden"] });
+		assert.deepStrictEqual(fresh({ v: 3, initialized: true, welcomeSeen: true, webExport: [] }).webExport, {});
+	});
+	// Which website files this device answers for decides what it may replace
+	// by itself (`manager/web/fileMemory.ts`), so losing it — or having the
+	// page's own memory written over it — would leave a site's files behind.
+	it("remembers the website files it answers for, apart from the page's memory", () => {
+		const hash = (digit: string): string => digit.repeat(64);
+		const store = fresh();
+		assert.strictEqual(store.webFile("publish.js"), undefined);
+		store.setWebFile("publish.js", hash("a"));
+		store.setWebFile("garden", hash("b"));
+		// The page writes its memory whole, from a copy it took when it opened.
+		store.setWebExport({ service: "quartz" });
+		const restored = new DeviceLocalStore(app);
+		assert.strictEqual(restored.webFile("publish.js"), hash("a"));
+		assert.strictEqual(restored.webFile("garden"), hash("b"));
+		assert.deepStrictEqual(restored.webExport, { service: "quartz" });
+
+		// The same answer is not a write.
+		const before = storage.writes();
+		restored.setWebFile("publish.js", hash("a"));
+		assert.strictEqual(storage.writes(), before);
+
+		// Only names and SHA-256 hashes are read back, and no inherited name answers.
+		const odd = fresh({
+			v: 3,
+			initialized: true,
+			welcomeSeen: true,
+			webFiles: { "publish.js": hash("c"), short: "abc", number: 7, [`${"n".repeat(65)}`]: hash("d") },
+		});
+		assert.strictEqual(odd.webFile("publish.js"), hash("c"));
+		assert.strictEqual(odd.webFile("short"), undefined);
+		assert.strictEqual(odd.webFile("number"), undefined);
+		assert.strictEqual(odd.webFile("toString"), undefined);
+		assert.strictEqual(
+			fresh({ v: 3, initialized: true, welcomeSeen: true, webFiles: [] }).webFile("publish.js"),
+			undefined,
+		);
+
+		// A list that cannot grow without end: the oldest name goes first.
+		const many = fresh();
+		for (let i = 0; i < 30; i++) many.setWebFile(`file-${i}`, hash("e"));
+		assert.strictEqual(many.webFile("file-0"), undefined);
+		assert.strictEqual(many.webFile("file-29"), hash("e"));
+		assert.strictEqual(
+			Object.keys((JSON.parse(storage.map.get(KEY)!) as { webFiles: object }).webFiles).length,
+			24,
+		);
+	});
+	it("keeps the website files it answers for through the session where storage refuses the write", () => {
+		const store = fresh();
+		storage.failWrites(true);
+		try {
+			store.setWebFile("publish.js", "f".repeat(64));
+			assert.strictEqual(store.webFile("publish.js"), "f".repeat(64));
+		} finally {
+			storage.failWrites(false);
+		}
+	});
 	// The old settings page remembered which of its sections were folded; the
 	// page is gone, and so is the memory, from the stored blob too.
 	it("drops the old settings page's folded sections when it loads", () => {

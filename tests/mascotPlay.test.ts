@@ -311,14 +311,15 @@ describe("a mascot the pointer can play with", () => {
 		});
 	}
 
-	it("is not played with when it is a notice's: nothing is added to the box", () => {
+	it("is played with at every size, the small one of a banner too, unless the place asks it not to be", () => {
 		const parent = el();
-		const mascot = addMascot(asEl(parent), "notice");
-		assert.ok(mascot);
-		assert.equal(parent.querySelector(".cs-mascot-box")?.hasClass("is-playful"), false);
-		const box = addMascot(asEl(parent), "medium");
-		assert.ok(box);
-		assert.equal(parent.querySelectorAll(".cs-mascot-box")[1]?.hasClass("is-playful"), true, "every other size is");
+		assert.ok(addMascot(asEl(parent), "notice"));
+		assert.ok(addMascot(asEl(parent), "medium"));
+		assert.ok(addMascot(asEl(parent), "notice", "end", { interactive: false }));
+		const boxes = parent.querySelectorAll(".cs-mascot-box");
+		assert.equal(boxes[0]?.hasClass("is-playful"), true, "a banner's");
+		assert.equal(boxes[1]?.hasClass("is-playful"), true);
+		assert.equal(boxes[2]?.hasClass("is-playful"), false, "a notice's: nothing is added to the box");
 	});
 
 	it("takes its marks and its listeners away when it is destroyed", () => {

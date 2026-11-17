@@ -59,7 +59,7 @@ mutate → CSS → repaint loop everything else builds on.
 | [06-css-generation.md](06-css-generation.md) | How the registry becomes a stylesheet: the injector's two write targets, icon painting, theme ownership and selector escaping. |
 | [07-persistence-and-caching.md](07-persistence-and-caching.md) | What is stored in `data.json`, device storage and vault caches; what is runtime-only; the startup CSS snapshot. |
 | [08-settings-sync-and-recovery.md](08-settings-sync-and-recovery.md) | Saving and sync authorization, the recovery incident and repair, causal merges, verified writes, checkpoints and backups, recovery UI, provider differences, and edge cases. |
-| [09-render-roles.md](09-render-roles.md) | The token grammar, and how heading/inline callouts render in Live Preview and Reading view. |
+| [09-render-roles.md](09-render-roles.md) | The token grammar, and how heading/inline callouts render in Live Preview, Reading view and on a published site (one renderer, a host per service). |
 | [10-editor-integrations.md](10-editor-integrations.md) | Autocomplete, wrap/unwrap, built-in command registration and availability, custom commands, the right-click menu, Outline/link cleanup, the landing flash. |
 
 ## Subsystems - reference, as needed
@@ -73,7 +73,7 @@ covering whatever you're touching.
 | [12-color-system.md](12-color-system.md) | The translucent-tint nesting invariant, palette derivation and baking, the Obsidian 1.13 colour-format split. |
 | [13-icons.md](13-icons.md) | The icon-pack model, fetch/cache/verify pipeline, rendering, SVG sanitization, and "Your images." |
 | [14-callout-editor.md](14-callout-editor.md) | The edit/create modal: the concrete-form-vs-optional-field tension, the live preview, validation, and save pipeline. |
-| [15-import-export.md](15-import-export.md) | The JSON backup format and validator, the CSS-snippet export, and the Callout Manager / Admonition importers. |
+| [15-import-export.md](15-import-export.md) | The JSON backup format and validator, the CSS-snippet export, the website export and its per-service targets, and the Callout Manager / Admonition importers. |
 | [16-settings-ui-and-modals.md](16-settings-ui-and-modals.md) | What the settings tab's rows are made of (the callout row and its menus, the signals that redraw it, the scan), the two vault sidebars, the shared modal chrome and autofocus, how controls take Obsidian's colours, the individual modals, and how reduced motion is honoured. |
 | [17-i18n.md](17-i18n.md) | How `t()` resolves strings, the locale download/verification pipeline, and the contribution workflow. |
 | [18-theme-callout-discovery.md](18-theme-callout-discovery.md) | How the active theme's callout types are found, read back and represented - and the compatibility guide for **theme authors**. |

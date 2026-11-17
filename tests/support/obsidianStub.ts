@@ -82,6 +82,7 @@ const seams = globalThis as unknown as TestGlobals;
 export const Platform = {
 	isMobile: false,
 	isDesktop: true,
+	isDesktopApp: true,
 	isPhone: false,
 	isTablet: false,
 	isMacOS: seams.__CS_MACOS__ === true,
@@ -505,8 +506,14 @@ export class ItemView {
 	register(dispose: () => void): void {
 		this.disposers.push(dispose);
 	}
-	registerEvent(_ref: unknown): void {
-		/* The view explicitly removes its event refs on close. */
+	/**
+	 * As Obsidian's: the ref is given back to the emitter that made it (its
+	 * `e`) when the view unloads, which Obsidian does just before `onClose`.
+	 * A test's emitter that hands out bare refs is left alone.
+	 */
+	registerEvent(ref: unknown): void {
+		const emitter = (ref as { e?: { offref?(ref: unknown): void } } | null)?.e;
+		if (emitter?.offref) this.register(() => emitter.offref?.(ref));
 	}
 	registerDomEvent(el: EventTarget, name: string, listener: EventListener): void {
 		el.addEventListener(name, listener);
@@ -672,6 +679,55 @@ export class ToggleComponent {
 	}
 }
 
+/**
+ * Obsidian's dropdown, as far as a window under test uses one: its options in
+ * order, the value shown, and a way for the test to pick one as a user would.
+ */
+export class DropdownComponent {
+	readonly selectEl: ElementLike;
+	readonly options: Array<{ value: string; label: string }> = [];
+	disabled = false;
+	private value = "";
+	private changeCb: ((value: string) => unknown) | null = null;
+
+	constructor(containerEl: ElementLike) {
+		this.selectEl = containerEl.createDiv({ cls: "dropdown" });
+		createdDropdowns.push(this);
+	}
+
+	addOption(value: string, label: string): this {
+		this.options.push({ value, label });
+		return this;
+	}
+
+	setValue(value: string): this {
+		this.value = value;
+		return this;
+	}
+
+	getValue(): string {
+		return this.value;
+	}
+
+	setDisabled(disabled: boolean): this {
+		this.disabled = disabled;
+		return this;
+	}
+
+	onChange(cb: (value: string) => unknown): this {
+		this.changeCb = cb;
+		return this;
+	}
+
+	/** Pick `value`, as a user choosing it from the list would. */
+	select(value: string): unknown {
+		this.value = value;
+		return this.changeCb?.(value);
+	}
+}
+
+export const createdDropdowns: DropdownComponent[] = [];
+
 export class SliderComponent {
 	readonly sliderEl: ElementLike;
 	min = 0;
@@ -773,7 +829,9 @@ export class ButtonLike {
 		return this;
 	}
 
+	/** Obsidian's accent button class. */
 	setCta(): this {
+		this.buttonEl.addClass?.("mod-cta");
 		return this;
 	}
 
@@ -802,6 +860,9 @@ export class ButtonLike {
 		if (!this.disabled) this.click?.();
 	}
 }
+
+/** Obsidian's icon button, built on any element: the same chainable shape. */
+export class ExtraButtonComponent extends ButtonLike {}
 
 export class Setting {
 	readonly settingEl: ElementLike;
@@ -1014,6 +1075,13 @@ export class Setting {
 		this.sliders.push(slider);
 		this.components.push(slider);
 		cb(slider);
+		return this;
+	}
+
+	addDropdown(cb: (dropdown: DropdownComponent) => unknown): this {
+		const dropdown = new DropdownComponent(this.controlEl);
+		this.components.push(dropdown);
+		cb(dropdown);
 		return this;
 	}
 

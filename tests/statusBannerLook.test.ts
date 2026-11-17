@@ -1,14 +1,20 @@
 /**
- * tests/statusBannerLook.test.ts — the two banners under the settings title,
- * "Saving is paused" and the import prompt, look like the warning box
- * Obsidian's Keychain settings show (finding GAP-08).
+ * tests/statusBannerLook.test.ts — the banners, "Saving is paused" and the
+ * offers (import, website), are drawn in one box, `.cs-banner`
+ * (settings/bannerBox.ts), which looks like the warning box Obsidian's
+ * Keychain settings show (finding GAP-08) with the corners of the settings
+ * boxes around it.
  *
- * - Obsidian's callout geometry: `--callout-radius`, `--callout-padding`, and
- *   the paused banner's title in `--callout-title-weight`.
- * - A 10% tint mixed as Obsidian mixes a callout's, of `--text-warning` or
- *   `--interactive-accent`; never `--callout-warning`, which some themes still
- *   declare as an RGB triplet, and never `rgba(var(--callout-…))`, which is
- *   invalid since Obsidian 1.13 made those full colours.
+ * - One place: the box's corners, padding, margins, fill and edge are set by
+ *   `.cs-banner` alone; a banner's own rules lay out only its insides.
+ * - The corners of an Obsidian settings box, `--setting-items-radius`; a
+ *   callout's padding, `--callout-padding`; the paused banner's title in
+ *   `--callout-title-weight`.
+ * - A 10% tint mixed as Obsidian mixes a callout's, of the banner's tone:
+ *   `--text-warning` or `--interactive-accent`; never `--callout-warning`,
+ *   which some themes still declare as an RGB triplet, and never
+ *   `rgba(var(--callout-…))`, which is invalid since Obsidian 1.13 made those
+ *   full colours.
  * - No outline, as Obsidian's box has none.
  */
 import assert from "node:assert/strict";
@@ -33,22 +39,51 @@ function only(selector: string): CssRule {
 	return hits[0]!;
 }
 
+/** A property that draws the box rather than laying out what is in it. */
+const drawsTheBox = (prop: string): boolean =>
+	/^(?:margin|padding|border|background|corner-shape|outline|box-shadow)(?:-|$)/.test(prop);
+
+/** A selector whose last part is a banner itself, not something inside it. */
+const targetsABanner = (selector: string): boolean =>
+	/\.cs-(?:banner|readonly-banner|competitor-import-banner)(?![\w-])[^\s>+~]*$/.test(selector.trim());
+
 describe("the banners under the settings title", () => {
-	for (const [selector, colour] of [
-		[".cs-readonly-banner", "--text-warning"],
-		[".cs-competitor-import-banner", "--interactive-accent"],
+	it("are drawn in one box: the settings boxes' corners, a callout's padding and a 10% tint, with no outline", () => {
+		const box = only(".cs-banner");
+		assert.equal(valueOf(box, "border-radius"), "var(--setting-items-radius)");
+		assert.equal(valueOf(box, "corner-shape"), "var(--corner-shape)");
+		assert.equal(valueOf(box, "padding"), "var(--callout-padding)");
+		assert.equal(valueOf(box, "background"), "color-mix(in oklch, var(--cs-banner-tint) 10%, transparent)");
+		assert.deepEqual(
+			box.props.filter((p) => p === "border" || (p.startsWith("border-") && p !== "border-radius")),
+			[],
+		);
+	});
+
+	for (const [tone, colour] of [
+		["warning", "--text-warning"],
+		["accent", "--interactive-accent"],
 	] as const) {
-		it(`${selector} takes Obsidian's callout geometry and a 10% tint, with no outline`, () => {
-			const rule = only(selector);
-			assert.equal(valueOf(rule, "border-radius"), "var(--callout-radius)");
-			assert.equal(valueOf(rule, "padding"), "var(--callout-padding)");
-			assert.equal(valueOf(rule, "background"), `color-mix(in oklch, var(${colour}) 10%, transparent)`);
-			assert.deepEqual(
-				rule.props.filter((p) => p === "border" || (p.startsWith("border-") && p !== "border-radius")),
-				[],
-			);
+		it(`tints a ${tone} banner in ${colour}`, () => {
+			assert.equal(valueOf(only(`.cs-banner-${tone}`), "--cs-banner-tint"), `var(${colour})`);
 		});
 	}
+
+	it("draws the box in that one rule, so a banner's own rules never set it", () => {
+		const offenders = rules.flatMap((rule) =>
+			rule.selector
+				.split(",")
+				.filter((s) => targetsABanner(s) && s.trim() !== ".cs-banner")
+				.flatMap((s) =>
+					rule.props
+						.filter(drawsTheBox)
+						// A row on the settings page lets the page space it.
+						.filter((p) => !(s.trim() === ".cs-banner-row .cs-banner" && p === "margin"))
+						.map((p) => `${[...rule.at, s.trim()].join(" ")} { ${p} }`),
+				),
+		);
+		assert.deepEqual(offenders, []);
+	});
 
 	it("titles the paused banner as Obsidian titles its warning box", () => {
 		const title = only(".cs-readonly-banner-title");
@@ -57,8 +92,10 @@ describe("the banners under the settings title", () => {
 	});
 
 	it("never reads a callout colour token", () => {
-		const banners = rules.filter((r) => /\.cs-(?:readonly-banner|competitor-import-banner)/.test(r.selector));
-		assert.ok(banners.length >= 4, "found the banner rules");
+		const banners = rules.filter((r) =>
+			/\.cs-(?:banner(?:-warning|-accent)?(?![\w-])|readonly-banner|competitor-import-banner)/.test(r.selector),
+		);
+		assert.ok(banners.length >= 6, "found the banner rules");
 		for (const rule of banners) {
 			for (const decl of rule.decls)
 				assert.doesNotMatch(decl, /--callout-(?:warning|color)\b/, `${rule.selector}: ${decl}`);

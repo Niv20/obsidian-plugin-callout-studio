@@ -393,7 +393,15 @@ describe("nothing else paints --background-primary unexamined", () => {
  * raw is never right — the raised half is Obsidian's box colour — so every
  * entry here is outside one, or is not a window surface at all, and says why.
  */
-const KNOWN_RAW_SECONDARY: string[] = [];
+const KNOWN_RAW_SECONDARY: string[] = [
+	// Deliberate, and not a window: the box of steps on the Publish to the web
+	// panel, in a phone's or tablet's sidebar drawer in light mode. That drawer
+	// is `--background-primary` (white), and so are both of Obsidian's tokens
+	// for a box on it (`--search-result-background`, `--setting-items-background`),
+	// so the box takes the grey a desktop sidebar is painted, to show at all.
+	// Light mode only: in dark mode the drawer IS `--background-secondary`.
+	".is-mobile.theme-light .cs-web-view | --cs-web-box-background",
+];
 
 describe("nothing else paints --background-secondary unexamined", () => {
 	const found = rules

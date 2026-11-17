@@ -215,9 +215,41 @@ jobs:
             # esbuild's `charset: "utf8"` writes the emoji picker's dataset as
             # UTF-8 instead of escapes, taking the build to 2,367,031 bytes -
             # about 36.4 KiB of headroom - with the same program inside.
+            # Raised by 32 KiB for the website export's per-service targets:
+            # Quartz and Digital Garden draw heading and inline callouts at
+            # build time, which takes a second set of hosts and the small DOM
+            # they run the renderer on (10.2 KB embedded as text), beside the
+            # renderer itself, now a bundle of its own (12.6 KB) with a browser
+            # host (1.9 KB); the setup window with its per-service steps, the
+            # service detection, the managed block in publish.js/publish.css
+            # and the automatic refresh are the rest. The build was at
+            # 2,423,328 bytes, about 13.5 KiB under the limit. Digital Garden's
+            # hooks then moved out of main.js into the Callout Studio garden
+            # plugin, which is released on its own, with a note written in the
+            # vault in their place: 2,427,029 bytes, about 9.9 KiB under it.
+            # Later work on the export took the build to 2,435,243 bytes, and
+            # the settings page's offer to set it up (about 1.8 KB) to 53 bytes
+            # under the limit. Raised by 8 KiB on 2026-11-15, when the setup
+            # window became a page of the settings with the services as cards
+            # and the steps down a rail: 2,437,739 bytes, about 7.4 KiB under.
+            # Further work on that page took it to 2,442,398 bytes. Raised by
+            # 4 KiB the same day, when each device came to keep only its own
+            # version of the website files current (manager/web/fileMemory.ts),
+            # with copies of the garden note and a refresh after settings are
+            # adopted: 3.0 KB, 127 bytes past the limit; 2,445,439 bytes, about
+            # 3.9 KiB under. Raised by 20 KiB on 2026-11-16, when Publish to the
+            # web moved from a page of the settings into a sidebar panel
+            # (webPanel/: a checklist that follows the vault, 14.4 KB, to
+            # 2,459,818 bytes) and its steps became buttons that open Digital
+            # Garden's plugins and Publication Center, Publish changes and
+            # Finder (webPanel/siteActions.ts, 4.5 KB): 2,464,365 bytes, about
+            # 5.4 KiB under. Not lowered on 2026-11-17, when Quartz's host left
+            # main.js for the Callout Studio Quartz plugin, released on its own
+            # like the garden plugin, with a file of data written in the vault
+            # in its place: 2,444,128 bytes, about 25.2 KiB under.
             - name: Check bundle size
               run: |
-                  limit=2404352  # 2 MiB + 300 KiB
+                  limit=2469888  # 2 MiB + 364 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

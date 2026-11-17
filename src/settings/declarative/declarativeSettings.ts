@@ -22,10 +22,11 @@
  *   nothing on screen, drawn on every opening of the main page, starts one
  *   (one version in the history per visit, the theme's styles switch in the
  *   settings window, Escape for the plugin's own pickers, the brush mascot of
- *   an empty list). `hide()` ends it.
+ *   an empty list, a look at whether the vault is published). `hide()` ends it.
  */
 import type { App } from "obsidian";
 import { getLocale } from "../../i18n";
+import { refreshWebOffer, webServicesToOffer } from "../../manager/web/webOffer";
 import { registerMenuScopeHost } from "../../ui/menuEscape";
 import { watchEmptyListMascots } from "../../ui/mascot/mascotPlaces";
 import { competitorsToOffer } from "../competitorImportBanner";
@@ -175,6 +176,12 @@ export class DeclarativeSettings {
 		plugin.themeCalloutsOff?.ensure(containerEl.ownerDocument);
 		// A language that is still not on the device is told once per visit.
 		tellMissingLanguage(plugin, () => this.ctx.redraw());
+		// A vault that looks published is offered the website export. Looking
+		// takes file reads, so the answer comes a moment later, and the page is
+		// drawn again only if it changed (manager/web/webOffer.ts).
+		void refreshWebOffer(app, plugin).then((changed) => {
+			if (changed) this.ctx.redraw();
+		});
 		// Escape closes the plugin's own pickers first, not the settings. On the
 		// content area, not the main page: sub-pages are drawn beside it.
 		const releaseEscape = registerMenuScopeHost(containerEl.parentElement ?? containerEl, app);
@@ -210,6 +217,7 @@ export class DeclarativeSettings {
 				languageDownloading(plugin),
 				scanRunning(plugin),
 				competitorsToOffer(app, plugin).map((competitor) => competitor.id),
+				webServicesToOffer(plugin),
 			],
 			(key, value: unknown) => (key === "userImages" ? undefined : value),
 		);

@@ -9,7 +9,8 @@
  * (saveStatusCopy.ts), so the text never names a button that is not there.
  * The notice redraws itself when the saving status changes. (The settings keep
  * the same notice through their own redraws, bannerRows.ts, so it remembers an
- * action under way.)
+ * action under way.) The box is every banner's (bannerBox.ts), in the
+ * warning colour.
  */
 import { setIcon, type App } from "obsidian";
 import { t } from "../i18n";
@@ -21,6 +22,7 @@ import type { SettingsWriter } from "../manager/SettingsWriter";
 import { DESTRUCTIVE_BUTTON_CLASSES } from "../ui/destructiveButton";
 import { KeptMascot } from "../ui/mascot/mascotPlaces";
 import { ConfirmModal } from "../utils/ConfirmModal";
+import { createBanner } from "./bannerBox";
 import { diagnosisKey, pausedCopy, type PausedButtons } from "./saveStatusCopy";
 import type { SettingsTabPlugin } from "./sections/types";
 
@@ -154,7 +156,7 @@ export function renderSaveStatusBanner(
 				});
 		}
 		if (!status?.reason && !host.settingsWriter.isFrozen && !busy) return;
-		const banner = slot.createDiv({ cls: "cs-readonly-banner", attr: { role: "status" } });
+		const banner = createBanner(slot, "warning", "cs-readonly-banner");
 		// A heading before the prose: the title is the one line everybody reads.
 		// Paused and failed are different states — a frozen session is not saving
 		// at all, a write failure lost one save — so the title says which rather

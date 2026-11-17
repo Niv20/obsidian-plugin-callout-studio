@@ -48,7 +48,9 @@ import { calloutTokenLabel, obsidianCalloutAttrId } from "../utils/calloutId";
 import { StudioWeightCache } from "./theme/StudioWeightCache";
 import type { ThemeCalloutStore } from "./theme/ThemeCalloutStore";
 import { ThemeMetadataCatalog } from "./theme/ThemeMetadataCatalog";
-import { generateFallbackCSS } from "./css/fallbackCSS";
+import { generateFallbackCSS, type FallbackCssContext } from "./css/fallbackCSS";
+import { fallbackTokenCSS } from "./css/fallbackTokenCSS";
+import { roleFrameRules } from "./css/roleFrameCSS";
 import { generateMetadataColorCSS } from "./css/metadataColorCSS";
 import { PreviewRepaint } from "./css/previewRepaint";
 import {
@@ -72,6 +74,13 @@ import {
 } from "./css/fallbackIcon";
 import { calloutSelAt, calloutSelDeferring, tokenAttrSel } from "../utils/calloutSelector";
 import { coreAccentShimCSS } from "./css/coreAccentShim";
+import {
+	WEB_BLOCK_WEIGHT,
+	webBlockAccentProps,
+	webBlockCSS,
+	type WebBlockArtwork,
+	type WebBlockSite,
+} from "./css/webBlockCSS";
 import { CORE_ACCENT_SPELLING } from "../utils/calloutColorFormat";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import { StartupStyleCache } from "./StartupStyleCache";
@@ -1439,10 +1448,14 @@ export class CSSInjector {
 	 * (0.06em here, 0.1em there) until this rewrite, which made any slider move
 	 * lift the heading icon by the 0.04em difference.
 	 */
-	private getIconTransformCSS(def: CalloutDefinition, name = def.id): string {
+	private getIconTransformCSS(
+		def: CalloutDefinition,
+		name = def.id,
+		roles: readonly CalloutRenderRole[] = CALLOUT_RENDER_ROLES,
+	): string {
 		const parts: string[] = [];
 
-		for (const role of CALLOUT_RENDER_ROLES) {
+		for (const role of roles) {
 			// A name left to the theme or to Obsidian keeps its block icon where
 			// they put it.
 			if (role === "regular" && !this.paintsBlockName(def, name)) continue;
@@ -1877,79 +1890,10 @@ export class CSSInjector {
 
 		parts.push(...alignment.contentRules);
 
-		// Heading-bar frame. Borders are drawn directly; radius and vertical
-		// text spacing go through CSS variables consumed by the static
-		// .cs-heading-callout rule in styles.css (whose fallbacks are the
-		// defaults, so nothing is emitted while a value is untouched).
-		const headingProps = this.roleBorderProps(gs.heading);
-		if (gs.heading.borderRadius !== 4) {
-			headingProps.push(`  --cs-heading-radius: ${gs.heading.borderRadius}px;`);
-		}
-		if (gs.heading.paddingTop !== 0.25) {
-			headingProps.push(`  --cs-heading-pad-top: ${gs.heading.paddingTop}em;`);
-		}
-		if (gs.heading.paddingBottom !== 0.25) {
-			headingProps.push(`  --cs-heading-pad-bottom: ${gs.heading.paddingBottom}em;`);
-		}
-		// Gap above the bar (the outer margin, reading view only — see the
-		// static .cs-heading-callout:not(.cm-line) rule in styles.css; Live
-		// Preview gets the same visual effect from HeadingGapWidget, a real
-		// block-level DOM node, since a margin can't safely reach .cm-line).
-		// Rides this same variable-then-static-fallback rule as its siblings
-		// above so the default (0) is an explicit, enforced value rather than
-		// "whatever the theme's own heading margin happens to be".
-		if (gs.heading.marginTop !== 0) {
-			headingProps.push(`  --cs-heading-gap-top: ${gs.heading.marginTop}em;`);
-		}
-		if (headingProps.length > 0 && !standalone && roleFrames) {
-			parts.push(`.${CSS_HEADING_LINE} {\n${headingProps.join("\n")}\n}`);
-		}
-
-		// The static 1em radius covers the default 16px inline-pill setting.
-		const inlineProps = this.roleBorderProps(gs.inline);
-		if (gs.inline.borderRadius !== 16) inlineProps.push(`  --cs-inline-radius: ${gs.inline.borderRadius}px;`);
-		if (gs.inline.fontScale !== 1) {
-			inlineProps.push(
-				`  --cs-inline-scale: ${gs.inline.fontScale};`,
-				// Pill-em compensation keeps the lift fixed to the surrounding line.
-				`  --cs-inline-center-lift: ${(0.1 / gs.inline.fontScale).toFixed(3)}em;`,
-			);
-		}
-		if (inlineProps.length > 0 && !standalone && roleFrames) {
-			parts.push(`.${CSS_INLINE_TOKEN} {\n${inlineProps.join("\n")}\n}`);
-		}
+		// The heading-bar and inline-pill frames — see `css/roleFrameCSS.ts`.
+		if (!standalone && roleFrames) parts.push(...roleFrameRules(gs));
 
 		return parts.join("\n\n");
-	}
-
-	/**
-	 * Border declarations for a role frame (heading callout / inline callout),
-	 * mirroring the regular-callout border logic: tinted by the element's own
-	 * per-callout accent (--cs-color-rgb). Empty when no side is enabled.
-	 */
-	private roleBorderProps(frame: {
-		borderSides: {
-			top: boolean;
-			right: boolean;
-			bottom: boolean;
-			left: boolean;
-		};
-		borderWidth: number;
-	}): string[] {
-		const { top, right, bottom, left } = frame.borderSides;
-		const anySide = top || right || bottom || left;
-		if (!anySide) return [];
-		const bStyle =
-			`${frame.borderWidth}px solid ` + `color-mix(in oklch, var(--cs-accent, currentColor) 45%, transparent)`;
-		if (top && right && bottom && left) {
-			return [`  border: ${bStyle};`];
-		}
-		const props: string[] = [`  border: none;`];
-		if (top) props.push(`  border-top: ${bStyle};`);
-		if (right) props.push(`  border-right: ${bStyle};`);
-		if (bottom) props.push(`  border-bottom: ${bStyle};`);
-		if (left) props.push(`  border-left: ${bStyle};`);
-		return props;
 	}
 
 	/**
@@ -1957,7 +1901,11 @@ export class CSSInjector {
 	 * the nine emitters it used to reach through `this`.
 	 */
 	private generateFallbackCSS(callouts: CalloutDefinition[]): string {
-		return generateFallbackCSS(callouts, {
+		return generateFallbackCSS(callouts, this.fallbackContext());
+	}
+
+	private fallbackContext(): FallbackCssContext {
+		return {
 			settings: this.registry.settings,
 			alwaysKnown: [...RESERVED_DEMO_IDS],
 			themeOwns: (def) => this.registry.themeOwns(def),
@@ -1969,14 +1917,112 @@ export class CSSInjector {
 				transparentBorderProps(this.registry.settings.globalStyle.borderSides, important),
 			needsDarkBlock: (def) => this.needsDarkBlock(def),
 			printGradientCSS: (def, selector, isPill) => this.printGradientCSS(def, selector, isPill),
+		};
+	}
+
+	/**
+	 * The heading-bar and inline-pill half of the sheet, for a page where
+	 * neither Obsidian nor this plugin runs — the stylesheet inside the
+	 * website export (`manager/web/webData.ts`). `defs` are the callouts a
+	 * note may name; the fallback and the metadata colours come along as they
+	 * do in the live sheet, in the same order.
+	 *
+	 * Two things keep it standing on a foreign page. An untouched built-in is
+	 * written in its stored colour rather than deferring to Obsidian's
+	 * `--callout-default`, which a published site does not define —
+	 * `emitThemeOff` is the existing switch for exactly that. And no rule here
+	 * names `.callout`: a block callout on that site is the site's own.
+	 */
+	generateWebTokenCSS(defs: readonly CalloutDefinition[]): string {
+		const themeOffWas = this.emitThemeOff;
+		this.emitThemeOff = true;
+		try {
+			const fallback = this.registry.get(this.registry.settings.fallbackCalloutId);
+			// The icon nudges a user set for the two roles a page draws, for the
+			// id and every alias, as `generateCalloutCSS` writes them.
+			const iconAdjust = (def: CalloutDefinition): string[] =>
+				def.hideIcon === true
+					? []
+					: [def.id, ...(def.aliases ?? [])].map((name) =>
+							this.getIconTransformCSS(def, name, ["heading", "inline"]),
+						);
+			const parts = [
+				...roleFrameRules(this.registry.settings.globalStyle),
+				...defs.flatMap((def) => [this.generateTokenColorCSS(def), ...iconAdjust(def)]),
+				...(fallback ? fallbackTokenCSS(fallback, this.fallbackContext()) : []),
+				this.generateMetadataColorCSS(false, defs, true),
+			];
+			return parts.filter((part) => part.trim()).join("\n\n");
+		} finally {
+			this.emitThemeOff = themeOffWas;
+		}
+	}
+
+	/**
+	 * The block-callout half of the website export's stylesheet: the look of
+	 * `> [!id]` on a site that draws that element itself, for the callouts the
+	 * vault defines — see `css/webBlockCSS.ts`, which owns what each `site`
+	 * needs. The metadata colours come last, as in the live sheet, through the
+	 * snippet's cut of `css/metadataColorCSS.ts`: the same block rules, at this
+	 * sheet's weight and with the site's own spelling of a colour.
+	 *
+	 * Reads nothing of the active theme, like {@link generateWebTokenCSS}: the
+	 * weight is fixed, nothing is `!important`, and an untouched built-in is
+	 * the site's to draw rather than the theme's.
+	 */
+	generateWebBlockCSS(
+		defs: readonly CalloutDefinition[],
+		site: WebBlockSite,
+		artwork: (def: CalloutDefinition) => WebBlockArtwork,
+	): string {
+		const settings = this.registry.settings;
+		const textSweepRules = (def: CalloutDefinition, selectorsFor: (themePrefix: string) => string): string[] =>
+			this.textSweepRules(def, selectorsFor, false);
+		const blocks = webBlockCSS(defs, site, {
+			settings,
+			artwork,
+			followsSite: (def) => this.registry.isUnmodifiedBuiltIn(def),
+			textSweepRules,
 		});
+		const entries = activeMetadataColorEntries(settings);
+		const metadata =
+			entries.length === 0
+				? ""
+				: generateMetadataColorCSS(
+						entries,
+						{
+							weight: WEB_BLOCK_WEIGHT,
+							important: "",
+							clears: {
+								gradient: defs.some((d) => d.bgGradient !== undefined && d.transparentBg !== true),
+								sweep: defs.some((d) =>
+									Boolean(d.bgGradient?.textGradient && d.bgGradient.textToColorLight),
+								),
+							},
+							themeOwnedAttrIds: [],
+							transparentBorderProps: () => transparentBorderProps(settings.globalStyle.borderSides),
+							accentProps: (def, mode) => webBlockAccentProps(def, mode, site),
+							ownAccentProps: (def, mode) => webBlockAccentProps(def, mode, site),
+							bgProps: (def, mode) => bgProps(def, mode),
+							// As `needsDarkBlock`, for a colour that defers to no theme.
+							needsDarkBlock: (def) =>
+								def.colorLight !== def.colorDark || Boolean(def.bgColorLight || def.bgColorDark),
+							textSweepRules: (def, selectorsFor) => textSweepRules(def, selectorsFor),
+							// Print repaints and the theme's surface are a vault's concerns.
+							printGradientCSS: () => "",
+							themeSurface: () => "",
+						},
+						"standalone",
+					);
+		return [blocks, metadata].filter((part) => part.trim()).join("\n\n");
 	}
 
 	/**
 	 * Every colour a callout can take from its own metadata — see
 	 * `css/metadataColorCSS.ts`. Empty while the `metadataColors` switch
 	 * (Settings → Editor → Metadata → Metadata colors) is off. `standalone`
-	 * is the exported snippet's cut, as for {@link generateCalloutCSS}.
+	 * is the exported snippet's cut, as for {@link generateCalloutCSS}, and
+	 * `tokensOnly` the website export's: the heading and inline rules alone.
 	 *
 	 * Sets the ambient weight and importance the shared emitters read
 	 * (`themeSurface`, `printGradientCSS`) for the duration, like
@@ -1986,9 +2032,16 @@ export class CSSInjector {
 	 * the theme owns): every one by default, and all but a reserved preview's
 	 * demo for the main sheet (see {@link repaintPreview}).
 	 */
-	generateMetadataColorCSS(standalone = false, defs: readonly CalloutDefinition[] = this.registry.getAll()): string {
+	generateMetadataColorCSS(
+		standalone = false,
+		defs: readonly CalloutDefinition[] = this.registry.getAll(),
+		tokensOnly = false,
+	): string {
 		const settings = this.registry.settings;
-		const entries = this.metadataColorEntries();
+		// A published site has none of this device's snippets, so the website
+		// cut stands down on none of their words (and so reads the same on
+		// every device).
+		const entries = tokensOnly ? activeMetadataColorEntries(settings) : this.metadataColorEntries();
 		if (entries.length === 0) return "";
 		this.emitWeight = this.studioWeights.resolve();
 		this.emitImportant = " !important";
@@ -2014,7 +2067,7 @@ export class CSSInjector {
 						this.printGradientCSS(def, selFor, hideElementGradient, imp),
 					themeSurface: (def, selectorsAt) => this.themeSurface(def, selectorsAt),
 				},
-				standalone,
+				tokensOnly ? "tokens" : standalone ? "standalone" : "live",
 			);
 		} finally {
 			this.emitWeight = 1;

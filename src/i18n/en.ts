@@ -410,6 +410,13 @@ export const en: Record<string, string> = {
 	"importBanner.message": "We noticed you are using {{plugins}}. Would you like to import your callouts?",
 	"importBanner.action": "Import",
 	"importBanner.dismiss": "Dismiss",
+	// The offer to set up the website export (manager/web/webOffer.ts).
+	// `{{services}}` is a list of product names ("Quartz", "Quartz and Obsidian
+	// Publish"). "Looks like": some of the signs are only hints.
+	"webOffer.message":
+		"It looks like this vault is published with {{services}}. Would you like your callouts to look the same on your site?",
+	// Plain: it scrolls to the Publish to the web row and flashes it.
+	"webOffer.action": "Show me",
 	"welcome.demoName": "Callout Studio",
 	// `{{id}}` is the demo callout the splash styles itself with, so the three
 	// examples cannot be hijacked by a theme that restyles `tip` or `warning`
@@ -465,6 +472,8 @@ export const en: Record<string, string> = {
 	"locale.diskWriteFailed":
 		"Callout Studio could not save the translation to disk, so it will need downloading again next time.",
 
+	// The heading of the box with the Publish to the web row, above Import and export.
+	"settings.websiteBox": "Website",
 	"settings.importExport": "Import and export",
 	"settings.import": "Import…",
 	"settings.export": "Export…",
@@ -764,6 +773,11 @@ export const en: Record<string, string> = {
 	"notice.exportCssFailed": "Could not save the CSS snippet. Check the developer console for details.",
 	"notice.exportCssEnabled":
 		"This snippet is switched on in this vault. Callout Studio already styles these callouts here, and the snippet keeps the styling it had when you exported.",
+	"notice.webFilesCreated": "Website files saved.",
+	"notice.webFilesUpdated": "Website files updated.",
+	"notice.webFilesUnchanged": "The website files are already up to date.",
+	"notice.webFilesFailed": "Could not save the website files. Check the developer console for details.",
+	"notice.webCopied": "Copied.",
 	"notice.importedJSON": "Imported {{count}} callout type(s) from JSON.",
 	"notice.importedSettings": "Imported plugin settings.",
 	"notice.importedCalloutManager": "Imported from Callout Manager: {{created}} created, {{updated}} updated.",
@@ -1401,6 +1415,9 @@ export const en: Record<string, string> = {
 	"confirm.titleResetLibraries": "Reset icon libraries",
 	"confirm.titleOverwriteSnippet": "Overwrite CSS snippet",
 	"confirm.subtitleOverwriteSnippet": "Edited since Callout Studio wrote it",
+	"confirm.titleOverwriteWebFiles": "Replace edited files",
+	"confirm.subtitleOverwriteWebFiles": "Changed since Callout Studio wrote them",
+	"confirm.overwriteWebFiles": "Writing again replaces what was changed in: {{files}}",
 	"confirm.overwriteSnippet": "Exporting again replaces the whole file.",
 	"confirm.overwriteSnippetOk": "Overwrite",
 	"confirm.titleRestoreSettings": "Restore these settings",
@@ -1589,9 +1606,178 @@ export const en: Record<string, string> = {
 		"A .json file — the only supported format for fully restoring your callouts and settings in another vault with Callout Studio.",
 	"export.formatCss": "Standalone CSS snapshot",
 	"export.formatCssDesc":
-		"For websites or vaults where Callout Studio isn't running. Covers block callouts only; export again after changes.",
+		"For another vault without Callout Studio, or a site other than Obsidian Publish, Quartz and Digital Garden. Covers block callouts only; export again after changes.",
 	// The CSS snapshot row's button. Plain: it writes the snippet at once.
 	"export.formatCssAction": "Export",
+
+	// Publish to the web: a sidebar panel (webPanel/). The service names are
+	// product names and stay as they are in every language.
+	"web.title": "Publish to the web",
+	// The command that opens the panel, in the command palette.
+	"web.command": "Publish to the web",
+	// The line under the panel's row on the main settings page, in the Website
+	// box, and the row's button.
+	"web.desc": "Show your callouts as you set them up on Obsidian Publish, Quartz or Digital Garden.",
+	"web.open": "Open",
+	// A small grey tag after the row's name: the whole feature is still new.
+	"web.beta": "Beta",
+	"web.openFailed": "The Publish to the web sidebar could not be opened.",
+	"web.closeSettings": "Close settings to see Publish to the web in the sidebar.",
+	// The panel before a service is chosen (under the mascot), the caption over
+	// the list of services (also its name for a screen reader), and the words
+	// in the list until one is chosen.
+	"web.intro": "Choose the service that hosts your site.",
+	"web.serviceLabel": "Website hosting service",
+	"web.serviceChoose": "Choose your service…",
+	"web.servicePublish": "Obsidian Publish",
+	"web.serviceQuartz": "Quartz",
+	"web.serviceGarden": "Digital Garden",
+	// The chosen service has no files in the vault yet: read out to a screen
+	// reader when it changes.
+	"web.summaryNone": "Not set up",
+	// What the triangle after a service's name says, to a screen reader and
+	// when pointed at.
+	"web.markWarning": "Needs your attention.",
+
+	// The panel's buttons that lead somewhere else (webPanel/siteActions.ts).
+	// Publication Center and Publish changes are the names Digital Garden,
+	// Quartz Syncer and Obsidian give them on the screen.
+	"web.actionGardenPlugins": "Open garden plugins",
+	"web.actionPublicationCenter": "Open Publication Center",
+	"web.actionPublishChanges": "Open Publish changes",
+	"web.actionOpenNote": "Open note",
+	// The same words as Obsidian's own file menu: on a Mac, and elsewhere.
+	"web.actionRevealFinder": "Reveal in Finder",
+	"web.actionReveal": "Show in system explorer",
+	// A button whose plugin was turned off after the panel was drawn.
+	"web.actionFailed": "Couldn't open it. The plugin it needs may be turned off.",
+
+	// The first step: the files. Its name, per service. Its words stay the
+	// same once it is done; only its button changes (Create, then Open note or
+	// Reveal in Finder, or Update now).
+	"web.rowFiles": "Create the files",
+	"web.rowNote": "Create the note",
+	// Obsidian Publish's: it stands beside the step's button, after a
+	// hairline, as the note services' sentence does. publish.js and
+	// publish.css are code files, which Obsidian's file list does not show.
+	"web.filesPublish":
+		"Callout Studio adds two files to your vault's root: publish.js and publish.css. Those files won't appear in Obsidian's file list here since they are code files rather than Markdown.",
+	// Digital Garden's and Quartz's: it stands beside the step's buttons,
+	// after a vertical rule, and asks to read the note, which starts with
+	// READ THIS.
+	"web.filesNote": "This note is required for your callouts to work. Please read it.",
+	// Quartz, where no plugin that publishes notes was found: a site built
+	// from the vault gets the note with the rest, but one fed by such a
+	// plugin (Pressroom, Private Quartz Publish…) needs it chosen too.
+	"web.noteChooseToo": "If a plugin publishes only the notes you choose, publish this one with it too.",
+	"web.statusStale": "Out of date. Your callouts changed since these files were written.",
+	// The files are another device's version of them: an automatic refresh
+	// leaves those alone, and only a write from here replaces them.
+	"web.statusElsewhere":
+		"Written on another device, with other callouts or versions. This device leaves them alone. Update now replaces them with this device's version.",
+	"web.statusEdited": "Changed by hand, so your site can't read it. Update now puts your callouts back.",
+	// {{key}} is the property's name (callout-studio-web, callout-studio-quartz),
+	// and {{files}} a comma-separated list of note paths.
+	"web.statusDuplicates":
+		"Other notes also have the {{key}} property: {{files}}. Delete them, so your site reads only this one.",
+	// dg-publish is the name of a property, and stays as it is.
+	"web.noteSwitchedOff":
+		"dg-publish is off, so Digital Garden won't publish this note. Turn it on in its properties.",
+	// Quartz: {{key}} is the property the plugin publishes a note by (publish,
+	// share…), {{publisher}} that plugin's name (Quartz Syncer, Enveloppe).
+	"web.noteNotMarked": "{{key}} is off, so {{publisher}} won't publish this note. Turn it on in its properties.",
+	// {{folder}} is a folder of the vault.
+	"web.noteOutsideFolder": "{{publisher}} publishes only from {{folder}}. Move the note there.",
+	"web.noteExcludedFolder": "{{publisher}} doesn't publish from this folder. Move the note to another one.",
+	"web.write": "Create files",
+	"web.writeNote": "Create note",
+	"web.update": "Update now",
+	"web.copy": "Copy",
+
+	// Quartz: the step that installs the Callout Studio Quartz plugin, as
+	// smaller steps: a terminal in the site's folder, a command to run, then
+	// (Quartz 4) two lines to add, and the files to commit. The file names,
+	// transformers and Plugin.Description() are code, and stay as they are.
+	"web.rowQuartzPlugin": "Install the Quartz plugin",
+	"web.quartzVersion": "Quartz version",
+	// A tooltip wraps where it likes: the no-break spaces keep each number with "Quartz".
+	"web.quartzVersionDesc": "A site with a quartz.config.yaml file is Quartz 5. Otherwise it is Quartz 4.",
+	"web.quartzVersion4": "Quartz 4",
+	"web.quartzVersion5": "Quartz 5",
+	// {{file}} is quartz.config.yaml or quartz.config.ts. The step's button,
+	// where there is one, shows that folder.
+	"web.stepQuartzTerminal": "Open a terminal in your site's folder, the one with {{file}}.",
+	"web.stepQuartzRun": "Run:",
+	"web.stepQuartz5Commit": "Commit and push quartz.config.yaml and quartz.lock.json.",
+	"web.stepQuartz4Import": "In quartz.config.ts, add this line after the other import lines:",
+	"web.stepQuartz4Use": "Add this line to transformers, just before Plugin.Description():",
+	"web.stepQuartz4Commit": "Commit and push package.json, package-lock.json and quartz.config.ts.",
+	// What Callout Studio found in the configuration file, where the file is in
+	// the vault. {{file}} is the file's name. CalloutStudio(),
+	// Plugin.Description(), transformers and enabled are code, and stay as
+	// they are.
+	"web.quartzOk": "{{file}} loads Callout Studio.",
+	"web.quartzNone": "{{file}} doesn't load Callout Studio yet.",
+	"web.quartzNoImport": "{{file}} uses CalloutStudio() but has no import line for it.",
+	"web.quartzNoUse": "{{file}} has the import line, but CalloutStudio() is not in transformers.",
+	"web.quartzMisplaced":
+		"In {{file}}, CalloutStudio() comes after Plugin.Description(), so search and RSS show the text you typed. Move it to the line just before.",
+	"web.quartzOff": "In {{file}}, Callout Studio is there with enabled: false. Set it to true.",
+
+	// Digital Garden: the garden plugin step, as smaller steps. The names of
+	// Digital Garden's tabs and sections stay in English: that is how they
+	// appear on the screen. web.stepGardenOpenPlugins and
+	// web.stepGardenGoPlugins stand in for the button where Digital Garden has
+	// none for it.
+	"web.rowGardenPlugin": "Install the garden plugin",
+	// Shown above step 1, with no number, only while Digital Garden is not
+	// installed and on: a button to its page in Community plugins.
+	"web.prereqTitle": "Before you start",
+	"web.prereqGarden": "Install Digital Garden",
+	"web.stepGardenOpenPlugins": "In Digital Garden's Publication Center, go to Site → Plugins → Browse & install.",
+	"web.stepGardenGoPlugins": "Go to Site → Plugins → Browse & install.",
+	"web.stepGardenSearch": "Search for Callout Studio and install it.",
+	// Under the steps, after a hairline, with the repository address as a line to copy.
+	"web.gardenNotListed":
+		"Can't find Callout Studio in the list? Scroll down to Install from GitHub URL and paste this address:",
+
+	// Obsidian Publish: the custom domain step. The reason is said by a "?"
+	// after the sentence (web.stepPublishDomainWhy), when it is pointed at, and
+	// a button under it leads to Obsidian's help page on custom domains.
+	"web.rowPublishDomain": "Custom domain",
+	"web.stepPublishDomain": "To use inline or heading callouts, you must set up a custom domain.",
+	"web.stepPublishDomainWhy":
+		"Obsidian Publish ignores publish.js on default publish.obsidian.md addresses, meaning only standard block callouts will work there.",
+	"web.stepPublishDomainLink": "How to set up a custom domain",
+	"web.domainNotNeeded": "Not needed while heading and inline callouts are off.",
+
+	// The step that publishes the files, on Digital Garden, Obsidian Publish,
+	// and a Quartz site a plugin publishes the notes of.
+	"web.siteNote": "Publish the note",
+	// Where Digital Garden has no button for it.
+	"web.stepGardenOpenCenter": "Open Digital Garden's Publication Center.",
+	// {{note}} is the note's name, as the file list shows it.
+	"web.stepGardenPublish": "Under Notes, select {{note}} and publish it.",
+	// Quartz Syncer, where its command is not there to give a button.
+	"web.stepSyncerOpenCenter": "Open Quartz Syncer's Publication Center.",
+	"web.stepSyncerPublish": "Select {{note}} and publish it.",
+	// Enveloppe: the name of its command, as its command palette shows it.
+	"web.stepEnveloppeUpload": "With the note open, run Enveloppe: Upload single current active note.",
+	"web.siteFiles": "Publish the two files",
+	// Where the Publish core plugin is off, so there is no button for it.
+	"web.stepPublishOpen": "Open Publish changes.",
+	"web.stepPublishSelect": "Select publish.js and publish.css, and publish them.",
+	// The last step, its name and what happens from now on.
+	"web.rowDone": "All done",
+	// Ends with what the user has to do for a change to reach the site: the
+	// note is rewritten by itself, but only publishing it again puts it there.
+	// Digital Garden's, and Quartz's where a plugin publishes the notes.
+	"web.doneNote":
+		"When your callouts change, Callout Studio updates the note by itself. To see the change on your site, you need to publish the note again.",
+	"web.donePublish":
+		"When your callouts change, Callout Studio updates both files by itself. Just publish them again.",
+	"web.doneQuartz":
+		"When your callouts change, Callout Studio updates the note by itself. Your next build picks it up.",
 
 	// Import — Callout Manager
 	"import.cmTitle": "Import from Callout Manager",

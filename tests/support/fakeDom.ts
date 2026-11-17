@@ -112,6 +112,11 @@ export class FakeText {
 		if (parent) parent.ownerDocument.recordMutation("characterData", parent);
 	}
 
+	/** A detached copy, as the real `Text.cloneNode` gives. */
+	cloneNode(): FakeText {
+		return new FakeText(this.text);
+	}
+
 	/**
 	 * The other name every `Text` answers to. Both spellings are live in the code
 	 * under test — the post-processor reads `.data` while the outline decorator
@@ -970,6 +975,9 @@ const SIMPLE_RE = /([.#]?[\w-]+)|(\[[^\]]+\])/g;
 const SCOPE_CHILD_RE = /^:scope\s*>\s*(.+)$/;
 
 function matchesCompound(el: FakeElement, compound: string): boolean {
+	// The universal selector, standing alone: `isolateSvgCopy` walks a whole
+	// picture with it. Said in so many words, so it is not the fall-through.
+	if (compound.trim() === "*") return true;
 	const pieces = compound.trim().match(SIMPLE_RE);
 	// An unparseable selector must never silently match everything.
 	if (!pieces || pieces.length === 0) return false;
@@ -1218,6 +1226,11 @@ export class FakeWindow {
 		);
 	}
 
+	/** Fire every listener of a type on the window, as a real dispatch would (a `focus` coming back, say). */
+	fire(type: string, event: unknown = { type }): void {
+		for (const fn of [...(this.listeners.get(type) ?? [])]) fn(event);
+	}
+
 	/* ---- timers ---- */
 
 	/**
@@ -1297,8 +1310,19 @@ export class FakeDocument {
 		this.documentElement.appendChild(this.body);
 	}
 
+	/**
+	 * Always past loading: nothing here parses a page. Present because a script
+	 * that may run from `<head>` (the web runtime) branches on it, and an absent
+	 * property reads as "not loading" only by accident.
+	 */
+	readonly readyState: "loading" | "interactive" | "complete" = "complete";
+
 	createElement(tag: string): FakeElement {
 		return new FakeElement(tag, this);
+	}
+
+	getElementById(id: string): FakeElement | null {
+		return this.querySelectorAll(`#${id}`)[0] ?? null;
 	}
 
 	createTextNode(text: string): FakeText {
@@ -1575,7 +1599,24 @@ const HTML_VOID = new Set(["br", "hr", "img", "input"]);
  */
 export function html(markup: string): FakeElement {
 	const root = new FakeElement("root", sharedDocument);
-	const stack: FakeElement[] = [root];
+	parseMarkupInto(root, markup);
+
+	const roots = root.children;
+	if (roots.length !== 1 || root.childNodes.length !== 1) {
+		throw new Error(`html(): expected exactly one root element in ${markup}`);
+	}
+	const only = roots[0] as FakeElement;
+	root.removeChild(only);
+	return only;
+}
+
+/**
+ * Parse `markup` and append what it describes to `container`, in order — any
+ * number of roots, and bare text. {@link html} is this with exactly one root;
+ * `fakeDomParser.ts` is this with a `<body>` to hold the result.
+ */
+export function parseMarkupInto(container: FakeElement, markup: string): void {
+	const stack: FakeElement[] = [container];
 	let at = 0;
 	HTML_TOKEN_RE.lastIndex = 0;
 	let match: RegExpExecArray | null;
@@ -1594,7 +1635,7 @@ export function html(markup: string): FakeElement {
 			continue;
 		}
 		const tag = (match[2] ?? "").toLowerCase();
-		const node = new FakeElement(tag, sharedDocument);
+		const node = new FakeElement(tag, container.ownerDocument);
 		HTML_ATTR_RE.lastIndex = 0;
 		let attr: RegExpExecArray | null;
 		while ((attr = HTML_ATTR_RE.exec(match[3] ?? "")) !== null) {
@@ -1607,14 +1648,6 @@ export function html(markup: string): FakeElement {
 		if (!HTML_VOID.has(tag) && match[4] !== "/") stack.push(node);
 	}
 	text(markup.slice(at));
-
-	const roots = root.children;
-	if (roots.length !== 1 || root.childNodes.length !== 1) {
-		throw new Error(`html(): expected exactly one root element in ${markup}`);
-	}
-	const only = roots[0] as FakeElement;
-	root.removeChild(only);
-	return only;
 }
 
 /** Cast helper: the code under test is typed against the real DOM. */

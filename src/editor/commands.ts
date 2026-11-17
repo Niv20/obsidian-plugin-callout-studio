@@ -14,7 +14,7 @@ import { insertAtCursor, wrapAtCursor } from "./smartCallout";
 import { unwrapCalloutAtCursor } from "./unwrapAnyCallout";
 import { t } from "../i18n";
 import type { PluginSettings } from "../types";
-import { QUICK_INSERT_ICON_ID, STATISTICS_ICON_ID } from "../icons/uiIcons";
+import { QUICK_INSERT_ICON_ID, STATISTICS_ICON_ID, WEB_PANEL_ICON_ID } from "../icons/uiIcons";
 
 interface SettingsApi {
 	open?: () => void;
@@ -30,6 +30,7 @@ export const FIXED_COMMAND_IDS = [
 	"callout-unwrap",
 	"open-quick-insert",
 	"show-callout-occurrences",
+	"open-publish-to-web",
 ] as const;
 
 /** Stable API — never rename a command id after release. */
@@ -51,6 +52,7 @@ export const FIXED_COMMAND_NAME_KEYS: Record<FixedCommandId, string> = {
 	"callout-unwrap": "cmd.calloutUnwrap",
 	"open-quick-insert": "cmd.openQuickInsert",
 	"show-callout-occurrences": "usage.command",
+	"open-publish-to-web": "web.command",
 };
 
 interface CommandHostPlugin extends Plugin {
@@ -71,6 +73,8 @@ export interface FixedCommandDeps {
 	openEditor: () => CalloutEditor;
 	openQuickInsert: () => void;
 	openOccurrences: () => void;
+	/** Open the Publish to the web panel in the sidebar. */
+	openWebPanel: () => void;
 }
 
 /**
@@ -146,6 +150,13 @@ function buildFixedCommand(id: FixedCommandId, plugin: CommandHostPlugin, deps: 
 				name,
 				icon: STATISTICS_ICON_ID,
 				callback: () => deps.openOccurrences(),
+			};
+		case "open-publish-to-web":
+			return {
+				id,
+				name,
+				icon: WEB_PANEL_ICON_ID,
+				callback: () => deps.openWebPanel(),
 			};
 	}
 	return assertNever(id);

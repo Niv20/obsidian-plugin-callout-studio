@@ -99,6 +99,7 @@ const deps = (): Parameters<typeof registerCalloutCommands>[1] => ({
 	openEditor: noEditor,
 	openQuickInsert: () => void (quickInsertOpens += 1),
 	openOccurrences: () => {},
+	openWebPanel: () => {},
 });
 
 const idsOf = (commands: Command[]): string[] => commands.map((c) => c.id);
@@ -198,7 +199,7 @@ describe("open-quick-insert", () => {
 		assert.deepStrictEqual(h.triggered, []);
 	});
 
-	it("appends Find callouts after the existing built-ins", () => {
+	it("appends Find callouts, then Publish to the web, after the existing built-ins", () => {
 		assert.deepStrictEqual(FIXED_COMMAND_IDS.slice(0, 6), [
 			"open-settings",
 			"create-callout",
@@ -207,7 +208,7 @@ describe("open-quick-insert", () => {
 			"callout-unwrap",
 			"open-quick-insert",
 		]);
-		assert.equal(FIXED_COMMAND_IDS.at(-1), "show-callout-occurrences");
+		assert.deepStrictEqual(FIXED_COMMAND_IDS.slice(6), ["show-callout-occurrences", "open-publish-to-web"]);
 	});
 });
 
@@ -224,6 +225,27 @@ describe("show-callout-occurrences", () => {
 		const command = h.added.find((item) => item.id === "show-callout-occurrences");
 		assert.ok(command?.callback);
 		assert.equal(command.name, "Find callouts");
+		command.callback();
+		assert.equal(opens, 1);
+	});
+});
+
+describe("open-publish-to-web", () => {
+	it("opens the Publish to the web panel through its injected owner, with no note in front", () => {
+		const h = host();
+		let opens = 0;
+		registerCalloutCommands(h.plugin, {
+			...deps(),
+			openWebPanel: () => {
+				opens += 1;
+			},
+		});
+		const command = h.added.find((item) => item.id === "open-publish-to-web");
+		// A plain callback: setting a site up needs no editor.
+		assert.ok(command?.callback);
+		assert.equal(command.editorCallback, undefined);
+		assert.equal(command.name, "Publish to the web");
+		assert.equal(command.icon, "callout-studio-publish-to-web");
 		command.callback();
 		assert.equal(opens, 1);
 	});
@@ -319,6 +341,7 @@ describe("registerCalloutCommands — skipping the disabled", () => {
 			"callout-unwrap",
 			"open-quick-insert",
 			"show-callout-occurrences",
+			"open-publish-to-web",
 		]);
 	});
 
@@ -428,6 +451,7 @@ describe("refreshFixedCommandNames", () => {
 			"cmd.calloutUnwrap": "Désenvelopper",
 			"cmd.openQuickInsert": "Insertion rapide",
 			"usage.command": "Trouver des callouts",
+			"web.command": "Publier sur le web",
 		});
 		setLocale("cs-test");
 		try {
@@ -436,7 +460,11 @@ describe("refreshFixedCommandNames", () => {
 			const again = h.added.slice(before);
 			assert.deepStrictEqual(idsOf(again), [...FIXED_COMMAND_IDS]);
 			assert.strictEqual(again[0]?.name, "Ouvrir les paramètres");
-			assert.strictEqual(again.at(-1)?.name, "Trouver des callouts");
+			assert.strictEqual(
+				again.find((command) => command.id === "show-callout-occurrences")?.name,
+				"Trouver des callouts",
+			);
+			assert.strictEqual(again.at(-1)?.name, "Publier sur le web");
 			// Never removed and re-added — Obsidian keys the hotkey by id, so
 			// re-adding in place is exactly what preserves it.
 			assert.deepStrictEqual(h.removed, []);

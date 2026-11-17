@@ -8,6 +8,8 @@ npm run build      # i18n:generate (prebuild), typecheck with scripts/tsconfig.j
 npm run lint       # eslint with scripts/eslint.config.mts (obsidianmd recommended config + project rules)
 npm run format     # prettier --write over src/ and tests/ (format:check is the read-only CI form)
 npm test           # scripts/run-tests.mjs
+npm run garden:build      # the Callout Studio garden plugin → dist/garden-plugin/ (see The Digital Garden plugin)
+npm run quartz:build      # the Callout Studio Quartz plugin → dist/quartz-plugin/ (see The Quartz plugin)
 npm run icons:generate    # regenerate icon pack search indexes + manifest - NEVER auto-run
 npm run i18n:generate      # regenerate locales/*.json + localeManifest.ts - runs as `prebuild`
 ```
@@ -66,6 +68,288 @@ where an escaped emoji costs up to 10 bytes against UTF-8's 4. Obsidian reads
 text through the vault adapter. `tests/repoRelease.test.ts` fails if the
 option is removed.
 
+### The web renderer: four bundles
+
+`main.js` is not the only thing esbuild compiles. The website export writes
+code that runs where neither Obsidian nor this plugin exists - in a visitor's
+browser, or inside a Quartz or Digital Garden build - so
+[`scripts/lib/webAssets.mjs`](../../scripts/lib/webAssets.mjs) compiles that
+code on its own and hands it to the plugin as text through a virtual module:
+
+```ts
+import {
+	WEB_CORE_JS, WEB_CORE_GLOBAL,       // src/web/core.ts          the renderer
+	WEB_BROWSER_JS, WEB_BROWSER_GLOBAL, // src/web/browser.ts       host: a browser
+	WEB_STATIC_JS, WEB_STATIC_GLOBAL,   // src/web/static/index.ts  host: Quartz (the Quartz plugin)
+	WEB_GARDEN_JS, WEB_GARDEN_GLOBAL,   // src/web/static/gardenPlugin.ts  hooks: Digital Garden
+	WEB_STRUCTURAL_CSS,
+} from "virtual:callout-studio-web-assets";
+```
+
+Each `*_JS` is one script - `format: "iife"`, `platform: "neutral"`,
+minified, with **no** `obsidian` external - that assigns the global named
+beside it.
+
+Four bundles rather than one per service, so that the renderer exists once.
+A host imports the core **for its types only** and takes it as the first
+argument of every function it exports; the exporter then joins text
+(`manager/web/targets.ts`): `core + browser + one call` for a browser. The
+two build-time hosts are joined the same way, but not by the plugin: nothing
+in `src/` imports the static or the garden bundle, so the production build
+tree-shakes both out of `main.js`, and only the Callout Studio Quartz plugin
+and garden plugin are made of them (`core + static + one export`,
+`core + garden + one export`; see [The Quartz plugin](#the-quartz-plugin) and
+[The Digital Garden plugin](#the-digital-garden-plugin)). A vault is only ever
+written their data: a file for Quartz, a note for a garden. The grammar exists
+once however many hosts there are, and a reader on Obsidian Publish downloads
+no build-time code. `buildWebBundle` enforces it: each host declares the sources
+it may be built from (`only`), and a host whose bundle reaches outside them -
+which is what a value import of the core would do - fails the build. So does
+any bundle that ends up needing `require()`: reaching one is a build failure
+here, not a runtime error on someone's site.
+
+`WEB_STRUCTURAL_CSS` is the slice of `styles.css` between the
+`/* @cs-web:start */` and `/* @cs-web:end */` markers, comments stripped: the
+structural rules for the heading bar and the inline pill, which a published
+page needs and which exist nowhere else. A rule inside the markers must stand
+on its own (a `var()` with a fallback, never one of Obsidian's variables bare).
+
+It is a virtual module rather than a generated file checked into `src/`
+because the renderer shares its grammar with the editor, and a generated copy
+could go stale against it. The same plugin is installed in `run-tests.mjs`, so
+the suites evaluate the bytes that ship, and in
+`scripts/user-guide/guideRuntime.mjs`, because every picture renderer that
+draws the settings bundles the Export chooser and would otherwise fail to
+resolve the import. The types for the specifier are in
+`src/web/webAssets.d.ts`; `tests/tsconfig.json` lists that file too, since the
+linter resolves each tree's own project.
+
+The two `main.js` embeds cost it about 14 KiB (core 12.3, browser 1.8) and
+the stylesheet slice about 2.5 KiB, against the budget `release.yml`
+enforces. The static and garden bundles are not among them: the static one
+was, until it went to the Quartz plugin on 2026-11-17.
+
+#### Checking a host against the real thing
+
+The suites can prove that a host has the shape a platform's source asks for;
+they cannot prove the platform accepts it. That is checked by hand, against a
+checkout of each, whenever a host or `targets.ts` changes:
+
+- **Quartz 4** (`v4` branch) and **Quartz 5** (`v5`): run `npm run
+  quartz:build`, make `dist/quartz-plugin/` a Git repository with one commit,
+  and install it the way [the user guide](../user-guide/19-publish-to-the-web.md#quartz)
+  says, with its address in place of GitHub's: `npx quartz plugin add
+  git+file://<that folder>` on Quartz 5, `npm install git+file://<that folder>`
+  and the two lines on Quartz 4 (a local folder works too: `npx quartz
+  plugin add <folder>` links it, and `npm pack` gives npm a copy). Put the
+  vault's `callout-studio-quartz.md`, as **Create note** wrote it, in the
+  content folder, run `npx quartz build`, and look at `public/`: a heading
+  has `cs-heading-callout` and the id it had before; `index.xml`,
+  `sitemap.xml` and `static/contentIndex.json` hold no `[!` outside code and
+  no `READ THIS`; no page was made of the note ("Filtered out" counts it);
+  the contents list is clean; the page's `<style>` holds the sheet with its
+  quotes intact. Then the ways the note reaches a site: with its properties
+  replaced by `title:` only (what Pressroom sends), renamed into a subfolder,
+  and on a site that publishes its drafts (Quartz 5:
+  `configuration.drafts.publish: true`, still left out; Quartz 4: no
+  `RemoveDrafts()`, left out only with `CalloutStudio()` in `filters`) or
+  only `publish: true` notes (Quartz 4 `ExplicitPublish()`). Change a value
+  in the data and delete the note: one `[Callout Studio]` line each in the
+  log, a clean build, `[!tip]` as text. Build once with a theme too: Quartz
+  5's `@quartz-themes/core` and, on Quartz 4, a Quartz Themes `_index.scss`
+  in `quartz/styles/themes/` with `@use "themes";`, and look at dark mode.
+  Then build the way a host does: commit the site, clone it into a new
+  folder (no `.quartz/`, no `node_modules/`), and run `npm ci`, then
+  `npx quartz plugin install && npx quartz build` (Quartz 5) or `npx quartz
+  build` (Quartz 4) with `CI` set. Do it once with the files the user guide
+  says to push, where the callouts are drawn, and once with each left out.
+  Quartz 5 still draws them without `quartz.lock.json` or without `plugin
+  install`, since its build installs what `quartz.config.yaml` lists; without
+  `quartz.config.yaml` the build is clean and silent, `[!tip]` as text. On
+  Quartz 4, `package.json` and `package-lock.json` without `quartz.config.ts`
+  are the same; `quartz.config.ts` without them stops the build, and
+  `package.json` without `package-lock.json` stops `npm ci`. What
+  [the guide's *When the callouts don't show*](../user-guide/19-publish-to-the-web.md#when-the-callouts-dont-show)
+  says has to match.
+- **Quartz Syncer**: in an isolated Obsidian with Quartz Syncer set to
+  publish to a local folder (`publishTarget: "local"`, `quartzRepoPath` a
+  Quartz 5 checkout), write the note from the panel, publish it with Syncer
+  (its Publication Center, or `getPublisher().publishBatch` from the console),
+  and build: Syncer drops the `callout-studio-quartz` property and rewrites
+  the body, and the data block must still read.
+- **Digital Garden**: run `npm run garden:build` and copy
+  `dist/garden-plugin/` to `src/plugins/callout-studio/` of a garden checkout.
+  Publish the note from a vault with the Digital Garden plugin (or copy it to
+  `src/site/notes/callout-studio-web.md` with the front matter
+  rewritten as that plugin's compiler writes it - one-line JSON, the user's
+  properties under `dg-note-properties`). Run the Eleventy build and look at
+  `dist/`: the same for a note's page, `feed.xml` and `searchIndex.json`; a
+  `> [!tip]` block callout is still the garden's own; the note has no page, no
+  file-tree entry and no search entry;
+  `plugins/callout-studio/callout-studio.css` exists and every page's `<head>`
+  links it. Then delete the note and build again: one `[Callout Studio]` line
+  in the log, a clean build, `[!tip]` as text.
+- **Block callouts**, on each of them: a callout of the user's own wears its
+  colour, background and icon in both modes; a built-in nobody changed looks
+  as the site draws it; a note written `> [!tip|pink]` is pink. This is a
+  claim about a page, so it is looked at in a browser, not asserted: load the
+  built page, or a fixture of the site's own block markup under the site's own
+  stylesheet, with the target's stylesheet from `buildWebBundleData`.
+
+Four things a real build shows that the sources do not: a Quartz 5 site from
+the `obsidian` template wears a converted Obsidian theme in cascade layers,
+which reads `--callout-color` and gives a callout it has no rule for a
+quotation's background (see [Import & export § Block
+callouts](15-import-export.md#block-callouts-a-stylesheet-in-each-sites-own-terms));
+Quartz escapes an inline `css` resource (so the sheet travels as a head
+element - see `web/static/quartz.ts`); a garden plugin is on unless its registry entry
+says otherwise, so it needs no registration; and Quartz 5 builds its typed
+plugin index (`.quartz/plugins/index.ts`) from each plugin's
+`dist/index.d.ts`, printing *Skipping <name>: no dist/index.d.ts found* for a
+plugin without one, which is why the Quartz plugin ships one.
+
+### The Digital Garden plugin
+
+The Callout Studio garden plugin is a product of its own, released apart from
+this plugin: one plugin, the same for every garden, holding nobody's
+callouts. What it is and why is in
+[Import & export § Digital Garden: the snapshot as a note](15-import-export.md#digital-garden-the-snapshot-as-a-note).
+
+- **Source.** The hand-written files are in `web-plugins/digital-garden/`: the
+  manifest (`garden-plugin.json`, which carries the plugin's version),
+  `head.njk` and the README the Digital Garden plugin shows. `index.js` is generated: the core
+  bundle, the garden bundle, and one line handing the hooks Node's `fs`,
+  `path` and `crypto` (`scripts/lib/gardenPluginIndex.mjs`). Unminified, since
+  a garden owner is told to read a plugin before letting it run in their build.
+- **Build.** `npm run garden:build` writes `dist/garden-plugin/` - the
+  manifest, `head.njk`, the README, `index.js` and `LICENSE`
+  (`GARDEN_PLUGIN_STATIC_FILES` in `scripts/lib/gardenPlugin.mjs`). It does
+  not write `screenshot.png`, which lives in the plugin's repository
+  beside them.
+- **Gallery picture.** `screenshot.png` at the top of the plugin's repository
+  is the picture Digital Garden's list of community garden plugins shows; the
+  list reads it from the repository's default branch, so it needs no release.
+  Its source is `assets/digital-garden/screenshot.png`, rendered by hand with
+  `node assets/digital-garden/generator/build.mjs` from two real builds of the
+  Digital Garden template, without and with this plugin. What it needs and how
+  to publish it is in `assets/digital-garden/README.md`.
+- **Where it is published.** Its own public repository,
+  `GARDEN_PLUGIN_REPO_URL` in `manager/web/targets.ts`
+  (`github.com/Callout-Studio/digital-garden`), with `garden-plugin.json`
+  at the top. Not this repository: the Digital Garden plugin's installer copies
+  every file of the repository it is given, except `.git*`, `.github` and
+  `node_modules`. The repository's name does not matter to it: it installs
+  the files under the manifest's `id` and records the repository's address
+  to update from. Until 2026-11-17 the repository was
+  `Niv20/garden-plugin-callout-studio`, an address GitHub now forwards.
+- **Releasing it.** Bump `version` in
+  `web-plugins/digital-garden/garden-plugin.json`, build, replace the
+  repository's files with `dist/garden-plugin/` - keeping
+  `screenshot.png`, which the build does not write - and publish a
+  GitHub release tagged `v` plus that version (`v1.0.0`), the way Digital
+  Garden's own plugins are tagged - unlike this plugin's tags, which carry no
+  `v`. The installer installs the latest release, and the default branch only
+  when there is none. Users update from the Digital Garden plugin's list of
+  garden plugins.
+- **When.** Whenever what it is built from changes in a way a garden would
+  see: `web/core.ts`, anything under `web/static/` that the garden bundle
+  pulls in, or the note's format. Changing the note's format in a way an
+  installed plugin cannot read means raising `GARDEN_NOTE_FORMAT`, releasing
+  the garden plugin first, and only then the Obsidian plugin: an installed
+  plugin refuses a newer format and says so in the build log, rather than
+  misreading it.
+- **The community directory.** Listing it in Digital Garden's directory is a
+  pull request adding one entry to `community-plugins.json` in
+  `oleeskild/digitalgarden-plugins`. Until then it is installed from its
+  address. The Publish to the web panel and the guide are worded for both:
+  search Digital Garden's list for it, and paste the address if it is not
+  there. The manifest's name stays **Callout Studio**, without "for Digital
+  Garden": every entry of that list is for Digital Garden, its own companion
+  plugins are named after what they pair with (**Charts**), and it is the
+  name a user of this plugin searches for. Only the repository's README title
+  says "for Digital Garden", where the page is read out of that context.
+
+`tests/webGarden.test.ts` builds the same `index.js` from the bundles
+`npm test` already has and runs it on a pretend garden.
+
+### The Quartz plugin
+
+The Callout Studio Quartz plugin is the garden plugin's twin for Quartz,
+released apart from this plugin: one plugin, the same for every site, holding
+nobody's callouts. What it is and why is in
+[Import & export § Quartz: the snapshot as a note](15-import-export.md#quartz-the-snapshot-as-a-note).
+
+- **Source.** The hand-written files are in `web-plugins/quartz/`: `package.json`
+  (which carries the plugin's version, and its `quartz` manifest:
+  `category: ["transformer", "filter"]` - the filter keeps the note off a
+  site that publishes its drafts, and Quartz 5 uses the same default export
+  for both -, `defaultOrder: 65` - after GitHub Flavored
+  Markdown at 30, which gives headings their ids, and before Description at
+  70, in Quartz 5.1's default configuration), the README a site owner reads,
+  and `index.d.ts`. `dist/index.js` is generated: an ES module that imports
+  `node:fs`, `node:path` and `node:crypto`, then the core bundle, the static
+  bundle, and one line handing the host those three
+  (`scripts/lib/quartzPluginIndex.mjs`). Unminified, for the same reason as the
+  garden plugin. ESLint skips `web-plugins/quartz/`: its files are published as
+  they are.
+- **Build.** `npm run quartz:build` writes `dist/quartz-plugin/` - those files,
+  `dist/index.js`, `dist/index.d.ts` and `LICENSE` - ready to be the whole
+  content of the plugin's repository.
+- **Why its shape.** Quartz 5 clones a `github:` source into
+  `.quartz/plugins/<repository name>/`, uses a committed `dist/` as it is
+  (building nothing, and installing nothing), imports the `import` entry of
+  `exports["."]`, and refuses an entry point that imports a package it does not
+  provide unless the plugin bundles it (`validatePluginExternals`; Node's own
+  modules are always allowed). It builds its typed plugin index from
+  `dist/index.d.ts`. Quartz 4 has no plugin installer: npm installs the same
+  repository as a package (`files` lists what it takes), the site's
+  configuration imports it by its package name, and `index.d.ts` keeps
+  Quartz 4's own type check, and an editor open on `quartz.config.ts`, from
+  calling it an untyped module (TS7016). The package has no dependency of any
+  kind, so neither installer fetches anything else.
+- **Where it is published.** Its own public repository,
+  `QUARTZ_PLUGIN_REPO_URL` in `manager/web/targets.ts`
+  (`github.com/Callout-Studio/quartz`). Not this repository: both
+  installers take the whole repository they are given. Quartz 5 names the
+  plugin after the repository's name, `quartz`: its folder
+  (`.quartz/plugins/quartz/`), its `quartz.lock.json` entry, and the name
+  `plugin install --latest` is given. npm names it after the package's name,
+  `quartz-plugin-callout-studio` (`QUARTZ_PLUGIN_PACKAGE`), which is what
+  Quartz 4's configuration imports, so the two names differ. Until
+  2026-11-17 the repository was `Niv20/quartz-plugin-callout-studio`, its
+  name the package's; GitHub forwards that address, and a Quartz 5 site that
+  added it from there has the plugin under that name.
+- **Releasing it.** Bump `version` in `web-plugins/quartz/package.json`, build,
+  replace the repository's files with `dist/quartz-plugin/`, commit to `main`,
+  and tag `v` plus that version with a GitHub release, as the garden plugin is
+  tagged. The tag is for people: Quartz 5 installs the default branch's latest
+  commit and pins it in the site's `quartz.lock.json`, and npm pins it in
+  `package-lock.json`, so a site moves to a new version only when its owner
+  runs `npx quartz plugin install --latest quartz` (Quartz 5) or `npm install
+  github:Callout-Studio/quartz` again (Quartz 4).
+- **When.** Whenever what it is built from changes in a way a site would see:
+  `web/core.ts`, anything under `web/static/` that the static bundle pulls in,
+  or the note's format. The note's format is `WebBundleData.version`; changing
+  it in a way an installed plugin cannot read means releasing the Quartz plugin
+  first, and only then the Obsidian plugin: an installed plugin refuses a newer
+  format and says so in the build log, rather than misreading it. Since sites
+  pin a commit, a release of the Quartz plugin does not reach them by itself:
+  the Obsidian plugin's release notes say when one is needed.
+- **The marketplace.** Quartz's plugin marketplace
+  (`quartz-community/marketplace`, which Quartz Syncer's plugin browser reads)
+  lists every public repository with the `quartz-plugin` topic and a `quartz`
+  field in its `package.json`, within six hours, taking the README's first
+  heading and paragraph. The topic is not set yet: the plugin does nothing
+  without the note a released Callout Studio writes, so it waits for that
+  release, as the garden plugin's directory entry does.
+
+`tests/webQuartzPlugin.test.ts` builds the same `dist/index.js` from the
+bundles `npm test` already has, writes it and the package's `package.json` into
+a temporary site, imports it as Quartz does, and draws a page from the note the
+real exporter wrote - once as the vault sends it, once with its properties
+replaced and renamed into a folder, as a publishing plugin sends it - and asks
+its filter about the note and a page.
+
 Both the plugin's Obsidian API package and the linter's copy pin Moment
 2.29.4. The npm override resolves both to 2.31.0, which fixes
 [GHSA-4p3w-j4w9-5jqw](https://github.com/advisories/GHSA-4p3w-j4w9-5jqw).
@@ -119,6 +403,80 @@ the TypeScript source directly. Two reasons, both structural:
    instead - a minimal, hand-maintained stand-in kept in `tests/` rather than
    inlined, specifically because it needs to import `@codemirror/state` for
    `editorLivePreviewField` to be a real `StateField`.
+
+The bundle step also installs `webAssetsPlugin`, so a suite that imports
+`virtual:callout-studio-web-assets` gets the bundles the build embeds (see
+[The web renderer](#the-web-renderer-four-bundles)). Eight suites cover the
+website export:
+
+- `webRuntime.test.ts` drives the renderer's passes directly - and runs every
+  case over `web/static/liteDom.ts` as well as the fake DOM, comparing the two
+  results. That comparison is what holds "`liteDom` implements exactly what
+  the renderer calls": a DOM member the renderer starts using and `liteDom`
+  lacks fails there.
+- `webStatic.test.ts` covers the build-time side: the fragment parser's
+  byte-for-byte round trip, the HAST bridge, and the Quartz and Digital Garden
+  hosts.
+- `webExport.test.ts` covers what is written into the vault for each target,
+  by hand and automatically, and evaluates the generated files.
+- `webBlockCSS.test.ts` covers the block callout's rules for each site: the
+  colour in that site's own variable, the icon where that site keeps one,
+  what stays the site's (an untouched built-in, an unknown id without a
+  fallback, no `!important`), and that nothing of the active theme reaches
+  them.
+- `webServices.test.ts` covers service detection, the managed block and the
+  automatic refresh: on for every target with no switch, nothing created,
+  nothing built for a target that is not in the vault, an edited file left
+  alone.
+- `webTwoDevices.test.ts` covers the website files on two devices over one
+  synced vault: a device with other callouts, with settings that are behind
+  or not the user's, or with another build leaves the files alone; two
+  devices with the same callouts both keep them current without being told;
+  a device adopting settings while running is refreshed; the Digital Garden
+  note is compared by its data, repaired after a merge, and its sync copies
+  kept current. The devices that adopt settings are real launches.
+- `webPanel.test.ts` drives the Publish to the web panel: a detected service
+  first in the list (Obsidian's menu, each service with its icon and a
+  triangle while it needs the user, in the menu and in the field), nothing
+  written before **Create files**; each row a number with a period and a
+  name, with no sign of done and no box to tick anywhere, and none held back;
+  every row on one page in its place, ending with **All done**; a row's words
+  the same before and after it is done, and after the files are rewritten;
+  no way to fold a row (a heading is plain text with no role, no `tabindex`,
+  and no stop for the keyboard, and every box stays open); the keyboard kept
+  where its control is drawn again, and on the first control of the steps
+  when it went; Digital Garden's note step with its button first and its
+  sentence beside it, in each state of the note; every Copy button working,
+  at the end of its well;
+  smaller steps as lines of a row's box, unnumbered; each button that leads
+  elsewhere (Digital Garden's plugins and Publication Center, an older
+  Digital Garden's command, Publish changes, Reveal in Finder, and for
+  Quartz's configuration the vault's own folder in a vault named `content`) offered only
+  where it can run, said in words otherwise, and telling when its plugin went
+  away; the panel reading the vault again for its own files only, and
+  releasing its listeners once closed; and that opening it ends the settings
+  page's offer. How each row stands is `webChecklist.test.ts`'s.
+- `svgCopyToken.test.ts` covers the tag a copy of an uploaded picture is
+  fenced with: a number of its own on screen, the caller's inside
+  `withSvgCopyToken`, which is what makes a website file the same bytes for
+  the same callouts.
+- `webOffer.test.ts` covers which services the settings page offers to set
+  up: nothing before the vault was looked at, every service in one answer,
+  each offered once, one whose files are already there not at all, and one
+  that turns up later offered then. The offer's row - one at a time, behind
+  the saving notice and the import offer - is in
+  `declarativeBannerRows.test.ts`.
+- `webGarden.test.ts` follows the Digital Garden note from the vault to the
+  garden build: its format, the writer's rules (found by its property, the
+  body replaced and the properties kept, a note that only has the name left
+  alone), the garden hooks on a pretend garden, through Digital Garden's
+  rewrite of the front matter, and the garden plugin's `index.js` as bytes.
+  It needs a dropdown, so `obsidianStub.ts` has a `DropdownComponent`.
+
+The suites that run the renderer as a browser does install
+`tests/support/fakeDomParser.ts`, a `DOMParser` stand-in that is deliberately
+*not* part of `fakeDom.ts`: Node has none, and other suites pin what the icon
+painter and the SVG sanitiser do without one.
 
 Test files are named **explicitly**, not discovered via `--test <dir>` or a
 glob - Node's test walker silently skips dot-prefixed directories
@@ -251,7 +609,9 @@ background image that is an SVG data URL is drawn as a vector at its size and
 position (Obsidian's up-down chevrons on every dropdown), and a list item's
 disc, circle or square bullet (`::marker`, which is not an element) is drawn
 beside its first line, so a bulleted list shows its bullets and not only the
-indent they leave.
+indent they leave. A numbered list's marker is drawn the same way, as text
+(`1.`, from the item's place in its list and the list's `start`), ending a
+space before the item.
 The render page sets `scrollbar-width: none` on everything: a browser that
 reserves a classic scrollbar's gutter makes the icon picker inset its content
 by 15px on both sides, and the picture shows no scrollbar.
@@ -614,7 +974,7 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 1. Verify manifest.json / package.json / versions.json all agree with the pushed tag exactly
 2. npm ci, npm run build, npm run lint, npm test (all required on the tagged commit)
 3. Re-verify locales/ has no diff (same reasoning as lint.yml, but against the release build)
-4. Check main.js is under the 2 MiB + 300 KiB bundle-size budget (2,404,352 bytes)
+4. Check main.js is under the 2 MiB + 364 KiB bundle-size budget (2,469,888 bytes)
 5. Attest build provenance for main.js and styles.css
 6. Wait (poll, up to 15×2s) for the tag to be visible via the GitHub API
  - the tag-push webhook can fire before the tag itself propagates
@@ -628,7 +988,7 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 > can't correctly resolve as an update.
 
 > [!NOTE]
-> **The bundle-size budget (2 MiB + 300 KiB) is deliberately tight against the current
+> **The bundle-size budget (2 MiB + 364 KiB) is deliberately tight against the current
 > size**, not generously padded - "a careless import trips it here rather
 > than in users' vaults; raise it consciously when a feature earns it." The
 > ceiling's own history is documented right in the workflow file: it moved
@@ -702,6 +1062,22 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 > Writing `main.js` as UTF-8 (`charset: "utf8"`, see Build above) then took a
 > build that was 4.8 KiB *over* the limit, at 2,409,217 bytes, down to
 > 2,367,031 bytes - about 36.4 KiB under it - with the limit left alone.
+> The website export then took most of that back and more: a renderer, two
+> sets of hosts and a small DOM embedded as text (see
+> [The web renderer](#the-web-renderer-four-bundles)), the setup window, the
+> service detection and the automatic refresh. The allowance grew by 32 KiB:
+> 2,423,328 bytes, about 13.5 KiB under the limit. Moving Digital Garden's
+> hooks out of `main.js` into the garden plugin, with a note written in their
+> place, then came to 3.6 KB: 2,427,029 bytes, about 9.9 KiB under it.
+> Later work on the export took the build to 2,435,243 bytes, and the offer
+> on the settings page (about 1.8 KB) to 53 bytes under the limit. The
+> allowance grew by another 8 KiB on 2026-11-15, when the setup window became
+> a page of the settings: 2,437,739 bytes, about 7.4 KiB under the limit.
+> Further work on that page took it to 2,442,398 bytes, and each device
+> keeping only its own version of the website files current
+> ([Import and export § Two devices](15-import-export.md#two-devices)) came to
+> 3.0 KB, 127 bytes past the limit. The allowance grew by 4 KiB the same day:
+> 2,445,439 bytes, about 3.9 KiB under the limit.
 
 > [!NOTE]
 > **The release is created as a `draft`, on purpose.** The `$release` skill
@@ -825,7 +1201,14 @@ discovery; for the VS Code ESLint extension the committed
 Public API documentation, contribution guidance, and third-party notices live
 in `docs/`. README and the plugin's contribution/credits links point to those
 paths. Development configuration and hooks live in `scripts/` alongside the
-build tools. `README.md`, `LICENSE`, the package and plugin manifests,
+build tools. `web-plugins/` holds the hand-written files of the plugins
+Callout Studio publishes for site generators, each released from a repository
+of its own: `web-plugins/quartz/` for Quartz (see
+[The Quartz plugin](#the-quartz-plugin)) and `web-plugins/digital-garden/` for
+Digital Garden (see [The Digital Garden plugin](#the-digital-garden-plugin)).
+Each folder is named after its repository (`Callout-Studio/quartz`,
+`Callout-Studio/digital-garden`). `README.md`,
+`LICENSE`, the package and plugin manifests,
 `versions.json`, `.editorconfig`, `.prettierignore`, `.git-blame-ignore-revs`,
 `.vscode/`, `.npmrc`, and `.gitignore` remain at the root for their conventional
 consumers. `styles.css` remains the maintained root stylesheet and the release

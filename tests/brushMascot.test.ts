@@ -31,6 +31,7 @@ import {
 	SearchMascot,
 	watchEmptyListMascots,
 } from "../src/ui/mascot/mascotPlaces";
+import { buildOfferBanner } from "../src/settings/offerBanner";
 import { ConfirmModal } from "../src/utils/ConfirmModal";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";
 
@@ -369,6 +370,18 @@ describe("the brush mascot", () => {
 		assert.equal(at[3680], NO_RESULTS_MOOD);
 	});
 
+	it("greets: hello, then happy straight after, then the icon, never passing through it on the way", () => {
+		const m = mascot();
+		void m.play("greet");
+		const seen: (MascotAnimationName | null)[] = [];
+		for (let t = 0; t <= 8000; t += 16) {
+			m.advance(16);
+			if (seen[seen.length - 1] !== m.current) seen.push(m.current);
+		}
+		assert.deepEqual(seen, ["greet", "happy", null]);
+		assert.ok(isIcon(m));
+	});
+
 	it('shakes its head "no" after the two glances, with its eyes open again, and only then goes on as sad', () => {
 		const m = mascot();
 		void m.play("lookTwice");
@@ -576,11 +589,75 @@ describe("the mascot's places", () => {
 		beforeEach(installSvg);
 		afterEach(removeSvg);
 
-		it("puts a notice's mascot beside its words", () => {
+		it("puts a notice's mascot beside its words, where the pointer leaves it alone", () => {
 			const notice = showNotice("success", "Imported 3 callout types.");
 			const container = notice.containerEl as unknown as FakeElement;
 			assert.ok(container.hasClass("cs-mascot-notice"));
 			assert.ok(container.children[0]?.hasClass("cs-mascot-box"));
+			assert.equal(container.children[0]?.hasClass("is-playful"), false);
+		});
+
+		it("puts an offer's mascot at the start of the banner, where the pointer can play with it", () => {
+			const parent = el();
+			buildOfferBanner(asEl(parent), "Import your callouts?", "Import", { onAction() {}, onDismiss() {} });
+			const banner = child(parent, 0);
+			assert.ok(banner.hasClass("has-mascot"));
+			assert.ok(child(banner, 0).hasClass("cs-mascot-box"));
+			assert.ok(child(banner, 0).hasClass("is-playful"));
+			// It greets at once; the banner then leaves the page, and the engine
+			// stops on its next frame, leaving no frame behind for the next case.
+			const svg = child(child(banner, 0), 0);
+			svg.isConnected = true;
+			assert.equal(fakeDom.window.pendingFrames(), 1, "it moves");
+			fakeDom.window.flushFrames();
+			svg.isConnected = false;
+			fakeDom.window.flushFrames();
+			assert.equal(fakeDom.window.pendingFrames(), 0);
+		});
+
+		it("is happy over an offer's button and cries over its ✕, with no mood held underneath", () => {
+			// What each target is made to hold while the pointer is on it, and
+			// every mood held for its own sake.
+			const hovers: { target: unknown; name: MascotAnimationName; how: string | undefined }[] = [];
+			const holds: MascotAnimationName[] = [];
+			// eslint-disable-next-line @typescript-eslint/unbound-method -- called back with its own `this` below
+			const realHover = BrushMascot.prototype.hover;
+			// eslint-disable-next-line @typescript-eslint/unbound-method -- called back with its own `this` below
+			const realHold = BrushMascot.prototype.hold;
+			BrushMascot.prototype.hover = function (target, name, how) {
+				hovers.push({ target, name, how });
+				return realHover.call(this, target, name, how);
+			};
+			BrushMascot.prototype.hold = function (name, how) {
+				holds.push(name);
+				return realHold.call(this, name, how);
+			};
+			const parent = el();
+			try {
+				buildOfferBanner(asEl(parent), "Import your callouts?", "Import", { onAction() {}, onDismiss() {} });
+			} finally {
+				BrushMascot.prototype.hover = realHover;
+				BrushMascot.prototype.hold = realHold;
+			}
+			const banner = child(parent, 0);
+			const reaction = (selector: string) =>
+				hovers.find((h) => h.target === banner.querySelector(selector))?.name;
+			assert.equal(reaction(".cs-competitor-import-banner-action"), "happy");
+			assert.equal(reaction(".cs-competitor-import-banner-dismiss"), "cry");
+			assert.equal(hovers.length, 2, "nothing else in the banner is watched");
+			assert.ok(
+				hovers.every((h) => h.how === undefined),
+				"held for as long as the pointer stays, as in a confirmation",
+			);
+			assert.deepEqual(holds, [], "between visits it is the still icon, not a confirmation's held fear");
+			// The greeting asked for a frame: on the page for one, then off it,
+			// and the engine stops, leaving no frame behind for the next case.
+			const svg = child(child(banner, 0), 0);
+			svg.isConnected = true;
+			fakeDom.window.flushFrames();
+			svg.isConnected = false;
+			fakeDom.window.flushFrames();
+			assert.equal(fakeDom.window.pendingFrames(), 0);
 		});
 
 		describe("a notice's mascot", () => {

@@ -8,12 +8,14 @@ import {
 	QUICK_INSERT_ICON_ID,
 	STATISTICS_ICON_ID,
 	UI_ICON_CONTENT,
+	WEB_PANEL_ICON_ID,
 } from "../src/icons/uiIcons";
 
 const exports = [
 	[QUICK_INSERT_ICON_ID, "quick-insert"],
 	[STATISTICS_ICON_ID, "statistics"],
 	[PORTABLE_CONVERSION_ICON_ID, "conversion"],
+	[WEB_PANEL_ICON_ID, "web"],
 ] as const;
 
 describe("plugin action icon artwork", () => {

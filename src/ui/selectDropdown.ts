@@ -28,6 +28,10 @@
  *   languages) is made to scroll with the wheel instead of by the mouse's
  *   position, as Obsidian's own does on a computer (ui/menuScroll.ts).
  *
+ * The Publish to the web panel's list of services also shows the chosen
+ * service's icon in the field (`fieldIcon`), and a sign after each name that
+ * says how it stands (`SelectOption.badge`), in the field and in the menu.
+ *
  * Who calls it. The modules above create one with `new SelectDropdown(parent,
  * name)`, fill it with `addOption`/`setOptions`, and listen with `onChange`.
  * The methods return `this`, so the calls can be chained.
@@ -50,6 +54,12 @@ export interface SelectOption {
 	 * column of icons with gaps in it reads as a mistake.
 	 */
 	icon?: string;
+	/**
+	 * Draws a small sign after the words, into an empty element of its own,
+	 * in the field and in the menu: how the option stands, say. The caller
+	 * names it for a screen reader where it means something.
+	 */
+	badge?: (el: HTMLElement) => void;
 }
 
 /** How the field is drawn. */
@@ -66,6 +76,13 @@ export interface SelectDropdownOptions {
 	 * tooltip, because the words are the name. Ignored without an `icon`.
 	 */
 	showValue?: boolean;
+	/**
+	 * A field (no `icon`) shows the chosen option's own icon before its words,
+	 * as the menu shows it beside each option.
+	 */
+	fieldIcon?: boolean;
+	/** The words in the field while no option is chosen (`setValue` of a value none has). */
+	placeholder?: string;
 }
 
 /**
@@ -86,6 +103,10 @@ export class SelectDropdown {
 	private readonly valueEl: HTMLElement;
 	/** The field, or `null` for an icon button. */
 	private readonly field: DropdownField | null;
+	/** After the words in the field: the chosen option's `badge`. */
+	private readonly badgeEl: HTMLElement | null;
+	private readonly fieldIcon: boolean;
+	private readonly placeholder: string;
 
 	private options: SelectOption[] = [];
 	private value = "";
@@ -105,13 +126,17 @@ export class SelectDropdown {
 	 *   (An icon button shows it as its tooltip.)
 	 */
 	constructor(parent: HTMLElement, accessibleName: string, options: SelectDropdownOptions = {}) {
+		this.fieldIcon = options.fieldIcon === true && options.icon === undefined;
+		this.placeholder = options.placeholder ?? "";
 		if (options.icon === undefined) {
 			this.field = new DropdownField(parent, { accessibleName, popup: "menu" });
 			this.el = this.controlEl = this.field.el;
 			this.el.addClass("cs-select-dropdown");
 			this.valueEl = this.field.labelEl;
+			this.badgeEl = this.el.createSpan({ cls: "cs-select-badge" });
 		} else {
 			this.field = null;
+			this.badgeEl = null;
 			// An icon button hides the words unless it is asked to show them.
 			const hidesValue = !options.showValue;
 			this.el = parent.createDiv({ cls: "cs-select-dropdown" });
@@ -171,7 +196,15 @@ export class SelectDropdown {
 	setValue(value: string): this {
 		const option = this.options.find((candidate) => candidate.value === value);
 		this.value = option ? option.value : "";
-		this.valueEl.setText(option?.label ?? "");
+		this.valueEl.setText(option?.label ?? this.placeholder);
+		if (this.field && this.fieldIcon) {
+			this.field.iconEl.empty();
+			if (option?.icon) setIcon(this.field.iconEl, option.icon);
+		}
+		if (this.badgeEl) {
+			this.badgeEl.empty();
+			option?.badge?.(this.badgeEl);
+		}
 		return this;
 	}
 
@@ -254,8 +287,16 @@ export class SelectDropdown {
 		const everyOptionHasIcon = this.options.every((option) => option.icon !== undefined);
 		if (!everyOptionHasIcon) menu.setNoIcon();
 		for (const option of this.options) {
+			const { badge } = option;
+			// A sign after the words goes into the title, as the words' neighbour.
+			const title = badge
+				? createFragment((frag) => {
+						frag.appendText(option.label);
+						badge(frag.createSpan({ cls: "cs-select-badge" }));
+					})
+				: option.label;
 			menu.addItem((item) => {
-				item.setTitle(option.label)
+				item.setTitle(title)
 					.setChecked(option.value === this.value)
 					.onClick(() => this.choose(option.value));
 				if (everyOptionHasIcon && option.icon) item.setIcon(option.icon);

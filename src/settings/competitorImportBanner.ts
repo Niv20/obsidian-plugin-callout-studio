@@ -1,7 +1,10 @@
-/** First-install migration prompt shown beneath the settings title. */
-import { setIcon, type App } from "obsidian";
-import { getLocale, t } from "../i18n";
-import { addMascot } from "../ui/mascot/mascotPlaces";
+/**
+ * First-install migration prompt shown beneath the settings title: which
+ * plugins to name, and the sentence. It is drawn by settings/offerBanner.ts.
+ */
+import type { App } from "obsidian";
+import { t } from "../i18n";
+import { nameList } from "./offerBanner";
 import type { SettingsContext } from "./sections/types";
 import { isCompetitorImportBannerForced, shouldShowCompetitorImportBanner } from "./competitorImportState";
 
@@ -51,13 +54,7 @@ export function detectEnabledCompetitors(app: App): DetectedCompetitor[] {
 /** One placeholder carries a locale-aware list of every detected plugin. */
 export function competitorImportMessage(competitors: readonly DetectedCompetitor[]): string {
 	if (competitors.length === 0) return "";
-	const plugins = new Intl.ListFormat(getLocale(), {
-		style: "long",
-		type: "conjunction",
-	}).format(competitors.map(({ name }) => name));
-	return t("importBanner.message", {
-		plugins,
-	});
+	return t("importBanner.message", { plugins: nameList(competitors.map(({ name }) => name)) });
 }
 
 /**
@@ -72,54 +69,4 @@ export function competitorsToOffer(app: App, plugin: SettingsContext["plugin"]):
 		return COMPETITORS.map(({ id, name }) => ({ id, name }));
 	}
 	return competitors;
-}
-
-/** What the prompt's two buttons do. */
-export interface CompetitorImportHandlers {
-	/** Import: take the reader to the Import row. `fromKeyboard`: pressed with a key. */
-	onImport(fromKeyboard: boolean): void;
-	/** ✕: stop offering. */
-	onDismiss(): void;
-}
-
-/**
- * Build the prompt into `parent`: the brush (where it can be drawn) waving
- * hello once, the message naming the plugins, **Import**, and ✕. The settings page shows it as a row (declarative/bannerRows.ts).
- */
-export function buildCompetitorImportBanner(
-	parent: HTMLElement,
-	competitors: readonly DetectedCompetitor[],
-	handlers: CompetitorImportHandlers,
-): HTMLElement {
-	const banner = parent.createDiv({
-		cls: "cs-competitor-import-banner",
-		attr: { role: "status" },
-	});
-	// Waves once and goes back to being the icon: the offer can stay up for days.
-	const mascot = addMascot(banner, "notice", "start");
-	if (mascot) {
-		banner.addClass("has-mascot");
-		void mascot.play("hello");
-	}
-	banner.createDiv({
-		cls: "cs-competitor-import-banner-message",
-		text: competitorImportMessage(competitors),
-	});
-
-	const importButton = banner.createEl("button", {
-		cls: "mod-cta cs-competitor-import-banner-action",
-		text: t("importBanner.action"),
-	});
-	// A click from Enter or Space carries no pointer detail; it shows the ring.
-	importButton.addEventListener("click", (event) => {
-		handlers.onImport(event.detail === 0);
-	});
-
-	const dismissButton = banner.createEl("button", {
-		cls: "clickable-icon cs-competitor-import-banner-dismiss",
-		attr: { "aria-label": t("importBanner.dismiss") },
-	});
-	setIcon(dismissButton, "x");
-	dismissButton.addEventListener("click", () => handlers.onDismiss());
-	return banner;
 }

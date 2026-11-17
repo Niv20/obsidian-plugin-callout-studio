@@ -923,6 +923,48 @@ that function (`studioCalloutSelectors`, `themeOwnedAttrIds`) are handed the
 flag. A callout the theme owns outright is still left out of the export, as it
 always was (`cssSnippetExport.ts`).
 
+The website export is a third cut, in two halves. `generateWebTokenCSS(defs)`
+is the mirror image of the snippet's: only the `.cs-*` token rules - the role
+frames, each callout's token colours and icon adjustment, the fallback's token
+rules and the metadata colours' `"tokens"` cut (`MetadataColorCut`), which
+takes every metadata word rather than standing down on the ones this device's
+snippets style - and no `.callout` rule at all. It sets `emitThemeOff` for the
+duration, so an untouched built-in is written in its stored colour instead of
+deferring to a core variable the site does not have. Every target carries this
+half unchanged.
+
+`generateWebBlockCSS(defs, site, artwork)` is the other half: the block callout
+on a site that builds that element itself. It is **not** `generateCalloutCSS`
+run again. That function answers the theme active in this vault - its weight,
+its importance and its spelling of `--callout-color` are all read off it - and
+a published site has another theme or none, and must get the same bytes from
+every device. So the block rules for a site are written by their own module,
+[`css/webBlockCSS.ts`](../../src/manager/css/webBlockCSS.ts), from the pure
+helpers the live sheet uses (`bgProps`, `transparentBorderProps`, the three
+icon overrides, `blockAlignmentCSS`) and nothing of the injector's state:
+
+- **One accent, one line per site.** A callout states its colour in
+  `--cs-accent` and `--cs-color-rgb`; `SITE_ACCENT[site]` is the line that
+  points the site's own variable at it (Quartz's `--color`/`--border`/`--bg`,
+  Obsidian's `--callout-color` as a colour for Publish and as a bare triplet
+  for Digital Garden, plain properties for a site whose variables are
+  unknown). The dark rule restates the accent alone.
+- **A fixed weight, no importance.** Every selector repeats `.callout`
+  (`WEB_BLOCK_WEIGHT`), which outranks a site's own
+  `.callout[data-callout="tip"]` wherever the sheet lands in the page, and
+  leaves the site's owner able to override with an ordinary rule.
+- **An untouched built-in is the site's.** `registry.isUnmodifiedBuiltIn` is
+  the same line the live sheet draws for the theme: no colour, no fill, no
+  icon - only `--cs-accent` pointed at the site's colour, so the global border
+  has one to read.
+- **The metadata colours** go through `generateMetadataColorCSS`'s
+  `"standalone"` cut with a context of this sheet's own: its weight, no
+  importance, the site's accent line, no print repaint and no theme surface.
+
+Both halves are written with `.theme-dark`; the Quartz target alone rewrites
+that to `[saved-theme="dark"]`, in `manager/web/targets.ts`, after the sheet is
+generated. See [Import and export](15-import-export.md#the-website-export).
+
 **A generic `.callout {}` rule owns nothing.** 55 of the 257 themes in the dev
 vault style callouts without naming a single id. Counting those would hand the
 plugin's entire job to the theme on half the corpus, for rules that mostly set a

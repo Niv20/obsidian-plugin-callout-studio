@@ -11,13 +11,18 @@
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { installFakeDom } from "./support/fakeDom";
+import { installFakeDom, type FakeElement } from "./support/fakeDom";
 import { openDropdownMenu } from "./support/selectDropdown";
 import { getSelectableLocales } from "../src/i18n";
 import { DeclarativeHarness, searchSettings } from "./support/declarativeRenderer";
 import { PluginSettingTab, type ButtonLike } from "./support/obsidianStub";
 import { footerGroup } from "../src/settings/declarative/footerGroup";
-import { dangerZoneGroup, importExportGroup, MAIN_PAGE_ROWS } from "../src/settings/declarative/mainPageGroups";
+import {
+	dangerZoneGroup,
+	importExportGroup,
+	MAIN_PAGE_ROWS,
+	websiteGroup,
+} from "../src/settings/declarative/mainPageGroups";
 import { PersistentParts } from "../src/settings/declarative/persistentParts";
 import { RowRegistry } from "../src/settings/declarative/rowRegistry";
 import { toObsidianItems, type TreeContext } from "../src/settings/declarative/types";
@@ -48,7 +53,8 @@ function treeContext(options: { paused?: boolean; recovery?: boolean; downloadin
 /** Draw the boxes at the foot of the page. */
 function drawMainPage(ctx: TreeContext) {
 	const tab = new PluginSettingTab({}, {});
-	tab.getSettingDefinitions = () => toObsidianItems([importExportGroup(ctx), dangerZoneGroup(ctx), footerGroup(ctx)]);
+	tab.getSettingDefinitions = () =>
+		toObsidianItems([websiteGroup(ctx), importExportGroup(ctx), dangerZoneGroup(ctx), footerGroup(ctx)]);
 	const harness = new DeclarativeHarness(tab);
 	tab.update();
 	return { tab, harness };
@@ -66,6 +72,7 @@ describe("the boxes at the foot of the main page", () => {
 			.filter((box) => box.def.heading)
 			.map((box) => [box.def.heading, box.children.map((row) => row.def.name)]);
 		assert.deepEqual(boxes, [
+			["Website", ["Publish to the web"]],
 			["Import and export", ["Import callouts", "Export callouts"]],
 			["Danger zone", ["Restore an earlier version", "Convert to standard Markdown", "Reset everything"]],
 		]);
@@ -75,6 +82,47 @@ describe("the boxes at the foot of the main page", () => {
 			.map((box) => [box.def.id, box.children.map((row) => row.def.name)]);
 		assert.deepEqual(unheaded, [["footer", [""]]]);
 		assert.deepEqual(harness.duplicateKeys, []);
+	});
+
+	it("marks Publish to the web as Beta with a tag after its name, and takes it away with the row", () => {
+		const { harness } = drawMainPage(treeContext());
+		const row = harness.row("Publish to the web")!;
+		const nameEl = row.setting.nameEl as unknown as FakeElement;
+		const tag = nameEl.querySelector(".cs-beta-badge");
+		assert.ok(tag, "a tag after the name");
+		assert.equal(tag.textContent, "Beta");
+		// Obsidian's flat flair, as the Recommended tag is, and outside the words.
+		assert.ok(tag.classList.contains("flair") && tag.classList.contains("mod-flat"));
+		// The other rows of the page carry none.
+		const other = harness.row("Import callouts")!.setting.nameEl as unknown as FakeElement;
+		assert.equal(other.querySelector(".cs-beta-badge"), null);
+		// The row's cleanup takes the tag away before the next draw.
+		row.cleanup?.();
+		assert.equal(nameEl.querySelector(".cs-beta-badge"), null);
+	});
+
+	it("knows where the Publish to the web row is, for the website offer's Show me", () => {
+		// The row opens a sidebar panel (webPanel/), so it is an ordinary button
+		// row that registers itself. Until 2026-11-16 it opened a page of the
+		// settings, whose row Obsidian draws itself, and a hidden row beside it
+		// did the registering.
+		const ctx = treeContext();
+		const { tab, harness } = drawMainPage(ctx);
+		const row = harness.row("Publish to the web")!;
+		assert.ok(row.settingEl.isShown());
+		// What the website offer's Show me scrolls to and flashes. The registry
+		// answers only for a row on the page; the fake DOM leaves that to the
+		// test to say.
+		const connect = (el: HTMLElement): HTMLElement => {
+			(el as unknown as { isConnected: boolean }).isConnected = true;
+			return el;
+		};
+		const el = connect(row.settingEl);
+		assert.equal(ctx.rows.get(MAIN_PAGE_ROWS.website), el);
+		// A redraw keeps the answer, for the row as drawn again.
+		tab.update();
+		const again = connect(harness.row("Publish to the web")!.settingEl);
+		assert.equal(ctx.rows.get(MAIN_PAGE_ROWS.website), again);
 	});
 
 	it("hides Restore an earlier version on a host that keeps no versions", () => {
@@ -87,6 +135,7 @@ describe("the boxes at the foot of the main page", () => {
 		const { tab } = drawMainPage(treeContext());
 		const names = (query: string): string[] => searchSettings(tab.settingItems, query).map((hit) => hit.name);
 		assert.deepEqual(names("Admonition"), ["Import callouts"]);
+		assert.deepEqual(names("publish to the web"), ["Publish to the web"]);
 		// The Icon libraries row is not at the foot of the page: it is in the
 		// Colors and icons box (declarativeIconLibrariesRow.test.ts).
 		assert.deepEqual(names("icon"), []);

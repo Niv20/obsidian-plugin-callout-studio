@@ -1,19 +1,24 @@
 /**
  * settings/ExportFormatModal.ts — Chooser shown by the settings tab's Export
- * button: a Callout Studio backup, or a plain CSS snippet.
+ * button: a Callout Studio backup or a plain CSS snippet.
  *
  * The mirror image of {@link ImportSourceModal}, and deliberately so — Import
  * has been one row opening a chooser for a while, and a second top-level row
  * for one more export format would have left the two halves of "Import /
  * export" shaped differently for no reason the user could see.
  *
- * The two formats are not just two file extensions, which is why this is a
- * modal with a line of prose per row rather than a menu: the backup leaves the
- * vault through the browser's download dialog, while the snippet is written
- * *into* the vault. Both handlers live here, so "everything Export does" is one
- * file. Each format is a row with its own button (settings/choiceRow.ts), in
- * one of Obsidian's setting groups, as Import's source chooser draws its
- * sources.
+ * The formats are not just file extensions, which is why this is a modal with a
+ * line of prose per row rather than a menu: the backup leaves the vault through
+ * the browser's download dialog, the snippet is written *into* the vault. Each
+ * format is a row with its own button (settings/choiceRow.ts), in one of
+ * Obsidian's setting groups, as Import's source chooser draws its sources.
+ *
+ * The website export is not a row here. Until 2026-11-16 it was a third one,
+ * leading to Publish to the web; it said again what that feature's own row
+ * on the main page says, and the row has a box of its own there now
+ * (`declarative/mainPageGroups.ts`). What is left for the snippet is what the
+ * website export does not reach: another vault without the plugin, and a site
+ * other than the three services — hence its description.
  */
 import { Modal, SettingGroup } from "obsidian";
 import { t } from "../i18n";

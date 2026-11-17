@@ -4615,13 +4615,360 @@ body:not(.is-phone) .cs-choice-row {
    `.cs-fallback-tag` above): sit on the name's baseline, raised 1px, with 1px
    of vertical padding so a flex line is no taller than its title. The same goes
    for the "Custom" tag of a conversion row, which is a flair inside a text
-   line. The selectors repeat `.flair.mod-flat` because Obsidian's own
+   line, and for the "Beta" tag after the Publish to the web row's name. The
+   selectors repeat `.flair.mod-flat` because Obsidian's own
    `vertical-align` rule is (0,2,0): a lone class loses to it. */
 .flair.mod-flat.cs-recommended-badge,
-.flair.mod-flat.cs-portable-custom-badge {
+.flair.mod-flat.cs-portable-custom-badge,
+.flair.mod-flat.cs-beta-badge {
 	vertical-align: baseline;
 	padding-block: 1px;
 	top: -1px;
+}
+
+/* ── Publish to the web (webPanel/) ──────────────────────────── */
+/* A panel in the sidebar: the service as a list at the top, then the steps,
+   each drawn as Obsidian draws a group of settings: its number and name as
+   the heading, and under it a rounded box of lines with a hairline between
+   them. It was a page of the settings until 2026-11-16, with the
+   services as a row of tabs and the steps down a rail; see
+   webPanel/WebPanelView.ts for why it moved. The steps were a bare list on
+   the sidebar's grey until 2026-11-16 night, under small uppercase headings,
+   and read as one long column of text; then, until later that night, rows in
+   one box under a heading for each of two groups, each step's words at an
+   indent under its name and its smaller steps numbered. The pane itself is
+   laid out by the rule the other two sidebars share
+   (`.view-content.cs-web-view`, further down). */
+
+/* The box a step's lines sit in. Obsidian's own settings box,
+   `--setting-items-background`, is `--background-primary-alt`, which is the
+   grey of a desktop sidebar give or take a shade, so the box would not show
+   there. A sidebar's own cards (Backlinks' matches) are painted
+   `--search-result-background`, which is the note's colour on a desktop:
+   that is what the box takes. On a phone or tablet that token is the
+   drawer's own colour, light or dark, so there the box goes back to
+   Obsidian's settings box, which steps off the drawer in dark mode; in light
+   mode that one is the drawer's white too, and the box is the grey a desktop
+   sidebar is painted (tests/modalSurfaces.test.ts lists it). In the main
+   area, where the note's colour is the ground, it is the settings box again,
+   as in Settings. */
+.cs-web-view {
+	--cs-web-box-background: var(--search-result-background);
+	--cs-web-box-padding: var(--size-4-3);
+}
+
+.is-mobile .cs-web-view,
+.mod-root .cs-web-view {
+	--cs-web-box-background: var(--setting-items-background);
+}
+
+.is-mobile.theme-light .cs-web-view {
+	--cs-web-box-background: var(--background-secondary);
+}
+
+/* The top, which stays put above the scrolling steps: a caption, then the
+   list of services, Obsidian's own dropdown across the pane, as Search's
+   field is, opening Obsidian's menu (ui/selectDropdown.ts). The field shows
+   the chosen service's icon, its name, and a triangle right after the name
+   while something needs the user, as each row of the menu does; the chevron
+   stays at the field's end. It was a native `<select>` of words until
+   2026-11-16 night.
+
+   It ends in a hairline the width of the pane, drawn as the other two
+   sidebars draw theirs under the field row and the count
+   (`.search-results-info` in Obsidian's app.css: `--border-width` in
+   `--background-modifier-border`, no side margin). Until 2026-11-17 there
+   was none, and the list ran into the steps. */
+.cs-web-top {
+	flex: none;
+	padding: var(--size-4-3);
+	border-bottom: var(--border-width) solid var(--background-modifier-border);
+}
+
+/* The caption over the list. It stands level with the field's edge, small and
+   muted, as the labels of Obsidian's own panes are. */
+.cs-web-top-label {
+	margin-block-end: var(--size-4-2);
+	padding-inline: var(--size-4-1);
+	font-size: var(--font-ui-smaller);
+	line-height: var(--line-height-normal);
+	color: var(--text-muted);
+}
+
+.cs-web-top > .cs-select-dropdown {
+	display: flex;
+	inline-size: 100%;
+}
+
+.cs-web-top > .cs-select-dropdown > .cs-dropdown-field-label {
+	flex: 0 1 auto;
+}
+
+/* After an option's words, in a field and in Obsidian's menu: the sign of how
+   it stands (SelectOption.badge), on the Publish to the web panel a warning
+   triangle. In a menu row it sits in the title's line of text, so it is an
+   inline box, centred on the words. */
+.cs-select-badge {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	vertical-align: middle;
+}
+
+.cs-select-badge:empty {
+	display: none;
+}
+
+.menu-item-title > .cs-select-badge {
+	margin-inline-start: var(--size-4-2);
+}
+
+.cs-web-scroll {
+	flex: 1 1 auto;
+	min-block-size: 0;
+	overflow-y: auto;
+	padding: var(--size-4-3) var(--size-4-3) var(--size-4-8);
+}
+
+/* Before a service is chosen there are no steps: the mascot and its quiet
+   line sit in the middle of the height the pane has under the list, not at the
+   top of it, as Find callouts' do when it found nothing (`.cs-sidebar-empty`).
+   The scroller is the pane's free height, so centring in it is enough; the
+   padding is the same above and below, which the steps' extra room under
+   their last box is not. Until 2026-11-17 the line stood alone, right under
+   the list, from the boxes' edge, and until 2026-11-16 night a second one
+   said why the vault points at the service. */
+.cs-web-scroll.is-choosing {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding-block: var(--size-4-3);
+}
+
+/* Obsidian's line has a margin under it and a start padding of its own;
+   centred under the mascot, it would sit that much off. */
+.cs-web-scroll > .cs-web-choose {
+	margin-block-end: 0;
+	padding-inline: var(--cs-web-box-padding);
+	line-height: var(--line-height-normal);
+}
+
+.cs-web-rows {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-5);
+}
+
+/* A step's heading, as Obsidian names a group of settings: in the normal
+   colour and semibold, above its box, starting where the words in the box
+   start. It is only a heading: a step does not fold, and until 2026-11-16
+   night it did, with an arrow hung in the margin before the number, a slide,
+   and a hand on the heading. */
+.cs-web-row-head {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--size-2-3);
+	padding-inline: var(--cs-web-box-padding);
+	font-size: var(--font-ui-small);
+	font-weight: var(--setting-group-heading-weight);
+	line-height: var(--line-height-tight);
+	color: var(--setting-group-heading-color);
+}
+
+/* What comes before step 1, with no number (Digital Garden not installed): a
+   heading over a box like a step's, so the steps' numbers never move. */
+.cs-web-prereq {
+	min-inline-size: 0;
+}
+
+/* The step's number, with its period: in the heading's own words, muted so
+   the name reads first, and with figures of one width, so the names stand in
+   one column. The period is what Obsidian's numbered lists draw after a
+   figure (`--list-numbered-style: decimal`). */
+.cs-web-row-number {
+	flex: none;
+	color: var(--text-muted);
+	font-variant-numeric: tabular-nums;
+}
+
+.cs-web-row-title {
+	flex: 0 1 auto;
+	min-inline-size: 0;
+	overflow-wrap: anywhere;
+}
+
+/* A step's box: Obsidian's settings box, its corners, border and hairlines,
+   in the colour above. */
+.cs-web-row-box {
+	display: flex;
+	flex-direction: column;
+	margin-block-start: var(--size-4-2);
+	border: var(--setting-items-border-width) solid var(--setting-items-border-color);
+	border-radius: var(--setting-items-radius);
+	corner-shape: var(--corner-shape);
+	background-color: var(--cs-web-box-background);
+}
+
+/* A line in the box: a smaller step, or what is said about the step, from the
+   box's own edge. The hairline between two lines stops short of the box's
+   sides, as Obsidian's does between two settings. */
+.cs-web-line {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-2);
+	min-inline-size: 0;
+	padding: var(--size-4-3) var(--cs-web-box-padding);
+}
+
+.cs-web-line + .cs-web-line::before {
+	content: "";
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline: var(--cs-web-box-padding);
+	border-block-start: var(--setting-items-divider-width) solid var(--setting-items-divider-color);
+}
+
+/* What a step says, in the normal text colour, at the size of the step's
+   name: these are the instructions, and they are read. The words can be selected and copied, as the lines of
+   configuration can: Obsidian makes its interface unselectable
+   (`body { user-select: none }`), and these name files, folders and notes
+   that are typed elsewhere. */
+.cs-web-row-text {
+	font-size: var(--font-ui-small);
+	line-height: var(--line-height-normal);
+	color: var(--text-normal);
+	overflow-wrap: anywhere;
+	user-select: text;
+}
+
+/* A sentence with a "?" after it (drawHelpMark): on one line, the mark beside
+   the last of its words. */
+.cs-web-row-text-help {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-3);
+}
+
+.cs-web-row-text.is-warning {
+	color: var(--text-warning);
+}
+
+/* After a service's name in the list at the top, while something needs the
+   user: Obsidian's warning triangle, at the size of the menu's own icons.
+   Until 2026-11-16 night it was one of a set of signs, also drawn before
+   every step's name, with a ticked disc for a service that was all done; and
+   a step the plugin could not see ended with a checkbox of the user's. */
+.cs-web-warning {
+	display: flex;
+	flex: none;
+	align-items: center;
+	color: var(--text-warning);
+	--icon-size: var(--icon-s);
+}
+
+/* Buttons at the start of their line. The one that writes the files is in
+   the accent: it is the one thing on the panel that changes the vault. The
+   others lead somewhere else (siteActions.ts) and are Obsidian's plain
+   buttons. Buttons that follow one another share the line, and wrap. */
+.cs-web-row-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--size-4-2);
+}
+
+/* Obsidian's button is one line that never wraps, at a fixed height
+   (`white-space: nowrap`, `height: var(--input-height)`), so a button whose
+   words are longer than the pane, a long label or a translated one, would
+   stick out of it however the row wraps. Here it may wrap its own words: the
+   height becomes a minimum, which is still what a one-line button has. */
+.cs-web-row-actions > button {
+	flex: 0 1 auto;
+	min-inline-size: 0;
+	max-inline-size: 100%;
+	block-size: auto;
+	min-block-size: var(--input-height);
+	white-space: normal;
+	overflow-wrap: anywhere;
+	text-align: center;
+	line-height: var(--line-height-tight);
+}
+
+/* Quartz 4 or 5, where the configuration file is not in the vault to say:
+   the question, its "?" and Obsidian's dropdown on one line. */
+.cs-web-version {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--size-4-2);
+	font-size: var(--font-ui-small);
+	color: var(--text-normal);
+}
+
+.cs-web-version > select {
+	min-inline-size: 0;
+	max-inline-size: 100%;
+}
+
+.cs-web-version-label {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--size-2-3);
+}
+
+/* A "?" after a question: Obsidian's own icon, one size down so it reads as
+   part of the question, muted, with the help cursor. It is not a button
+   (drawHelpMark): it says its words when pointed at, and does nothing else. */
+.cs-web-help {
+	display: inline-flex;
+	align-items: center;
+	flex: none;
+	color: var(--text-muted);
+	cursor: help;
+	--icon-size: var(--icon-s);
+}
+
+/* A line to paste into a site's configuration: a well that holds the line
+   and, at the line's end, the button that copies it. The button was beside the
+   sentence above it until 2026-11-15, where it read as copying the sentence.
+   Always left-to-right: it is code, whatever the interface language, so the
+   button is at the right in both. */
+.cs-web-code {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--size-2-2);
+	padding: var(--size-2-1);
+	padding-inline-start: var(--size-4-2);
+	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
+	/* Obsidian's hover tint, laid over the box: a well that shows on any
+	   ground, in either colour scheme. Never `--background-primary`, which is
+	   pure black on a phone or tablet in dark mode
+	   (tests/modalSurfaces.test.ts). */
+	background: var(--background-modifier-hover);
+	direction: ltr;
+}
+
+/* The line. A long one wraps rather than running off the edge, where its end
+   would be out of sight and read as a different line; soft wraps are not
+   copied, and the button copies it whole anyway. Its padding makes one line as
+   tall as the button, so the two share a middle. */
+.cs-web-code > pre {
+	flex: 1 1 auto;
+	min-inline-size: 0;
+	margin: 0;
+	padding: var(--size-2-2) 0;
+	background: none;
+	font-size: var(--font-ui-smaller);
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	user-select: text;
+}
+
+.cs-web-code > .clickable-icon {
+	flex: none;
 }
 
 /* ── Icon licenses & credits modal ───────────────────────────── */
@@ -5075,7 +5422,8 @@ button.cs-sidebar-result[aria-current="true"],
 }
 
 .view-content.cs-portable-view,
-.view-content.cs-occurrences-view {
+.view-content.cs-occurrences-view,
+.view-content.cs-web-view {
 	container: cs-sidebar / inline-size;
 	display: flex;
 	flex-direction: column;
@@ -5100,6 +5448,15 @@ button.cs-sidebar-result[aria-current="true"],
 	white-space: normal;
 }
 
+/* Obsidian's count does not shrink (`.search-results-result-count` is
+   `flex-shrink: 0`), so in a narrow pane its words stay on their one line and
+   run past the edge, whatever `white-space` says. It may shrink here, and so
+   wrap. */
+.cs-sidebar-summary-row > .search-results-result-count {
+	flex-shrink: 1;
+	min-inline-size: 0;
+}
+
 /* Review conversion's Convert selected, across the pane in a row of its own,
    spaced as Search's field row is, with the small help button at the row's
    end. */
@@ -5112,6 +5469,12 @@ button.cs-sidebar-result[aria-current="true"],
 
 .cs-portable-convert-row button {
 	flex: 1 1 auto;
+	min-inline-size: 0;
+	block-size: auto;
+	min-block-size: var(--input-height);
+	white-space: normal;
+	overflow-wrap: anywhere;
+	line-height: var(--line-height-tight);
 }
 
 /* The pane's small icon button (help beside Convert selected, the format filter
@@ -5551,6 +5914,15 @@ button.cs-portable-after-button:focus-visible {
    unmodified built-in it resolves to Obsidian's own --callout-* variable,
    so these surfaces follow the active theme.                      */
 
+/* Everything between the two `@cs-web` markers is also what a published site
+   gets: scripts/lib/webAssets.mjs copies it, comments stripped, into the
+   website export (Settings → Export → Website), where no other line of
+   this file exists. So a rule in here must stand on its own — a var() with a
+   fallback, never one of Obsidian's variables bare — and a rule a heading bar
+   or an inline pill needs in order to look right belongs inside the markers,
+   not after them. tests/webExport.test.ts holds the pair in place. */
+/* @cs-web:start */
+
 /* Inline pill: icon + display name at body-text scale.
    ONE box for both kinds of pill. `[!warning]` puts its display name in the
    second flex item and `[!warning]{…}` puts the author's payload there; nothing
@@ -5881,6 +6253,7 @@ button.cs-portable-after-button:focus-visible {
 .cs-heading-token .cs-callout-icon {
 	transform: translateY(var(--cs-heading-icon-offset, 0.1em));
 }
+/* @cs-web:end */
 
 /* Fold chevron trailing a heading callout (Live Preview). Rendered as an
    end-of-line widget after the heading title, so it mirrors a block callout's
@@ -6445,39 +6818,60 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
    `.notice-cta` (ui/noticeAction.ts), drawn by app.css: accent text, brighter
    under the pointer. It used to be an underlined white link of the plugin's. */
 
+/* Every banner's box (settings/bannerBox.ts): the saving notice below, and the
+   import and website offers (`.cs-competitor-import-banner`). The box is drawn
+   here and nowhere else, so changing it changes every banner; a banner's own
+   rule lays out only what is inside it.
+
+   It looks like the warning box Obsidian's Keychain settings show (finding
+   GAP-08): a callout's padding, from Obsidian's own `--callout-padding`
+   (mirrored for right-to-left by core), and a 10% tint of the banner's colour,
+   mixed as Obsidian mixes a callout's. Its corners are an Obsidian settings
+   box's, `--setting-items-radius`, so a banner is rounded like the grey boxes
+   it sits among (it had a callout's `--callout-radius` until 2026-11-16). It
+   stays the plugin's own markup, not a real `.callout[data-callout=warning]`:
+   the plugin styles every such callout, so the user's own Warning callout
+   design would have reached the banner. No outline, as Obsidian's box has
+   none (the cards had a 1px outline until 2026-10-24). */
+.cs-banner {
+	/* In the callout editor the saving notice sits above the form: a small top
+	   margin, and a larger one below to keep it off the first box. (In the
+	   settings its row sets both to 0, as the page already spaces its boxes.) */
+	margin: 4px 0 16px;
+	padding: var(--callout-padding);
+	border-radius: var(--setting-items-radius);
+	corner-shape: var(--corner-shape);
+	/* A translucent tint rather than a surface token: a banner sits on more
+	   than one surface (a settings page, a window), and a raised-shade token
+	   would be a claim about what it is sitting on (see
+	   tests/modalSurfaces.test.ts). */
+	background: color-mix(in oklch, var(--cs-banner-tint) 10%, transparent);
+}
+
+/* A banner's colour, which its tint and its brush are drawn in. A problem is
+   in the warning colour: `--text-warning`, never `--callout-warning`, which
+   some themes still declare as an RGB triplet. An offer is in the theme's
+   accent, so it reads as an opportunity rather than an error. */
+.cs-banner-warning {
+	--cs-banner-tint: var(--text-warning);
+}
+
+.cs-banner-accent {
+	--cs-banner-tint: var(--interactive-accent);
+}
+
 /* A session that is not writing its settings file, said where the user is
    actually making changes: the settings' notices box and the callout editor
    (settings/saveStatusBanner.ts).
    The launch notice that announces the same thing is long gone by then. Styled
    as a warning rather than an error: nothing is broken, and in the common case
-   — a sync client mid-swap — it resolves itself.
-
-   It looks like the warning box Obsidian's Keychain settings show (finding
-   GAP-08): a callout's corners, padding and title weight, from Obsidian's own
-   `--callout-radius`, `--callout-padding` (mirrored for right-to-left by core)
-   and `--callout-title-weight`, and a 10% tint of the warning colour, mixed as
-   Obsidian mixes a callout's. It stays the plugin's own markup, not a real
-   `.callout[data-callout=warning]`: the plugin styles every such callout, so
-   the user's own Warning callout design would have reached this banner. The
-   colour is `--text-warning`, never `--callout-warning`, which some themes
-   still declare as an RGB triplet. No outline, as Obsidian's box has none (the
-   card had a 1px warning outline until 2026-10-24). */
+   — a sync client mid-swap — it resolves itself. Its title has a callout
+   title's weight, `--callout-title-weight`, as the title of Obsidian's warning
+   box does. */
 .cs-readonly-banner {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	/* In the callout editor it sits above the form: a small top margin, and a
-	   larger one below to keep it off the first box. (In the settings its row
-	   sets both to 0, as the page already spaces its boxes.) */
-	margin: 4px 0 16px;
-	padding: var(--callout-padding);
-	border-radius: var(--callout-radius);
-	corner-shape: var(--corner-shape);
-	/* A translucent tint rather than a surface token: the banner sits on more
-	   than one surface (a settings page, a window), and a raised-shade token
-	   would be a claim about what it is sitting on (see
-	   tests/modalSurfaces.test.ts). */
-	background: color-mix(in oklch, var(--text-warning) 10%, transparent);
 }
 
 .cs-readonly-banner-header {
@@ -7527,31 +7921,21 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	}
 }
 
-/* First-install migration suggestion. It shares the title-adjacent notice slot
-   with the save-status banner, and the same Obsidian callout geometry (see
-   `.cs-readonly-banner`, finding GAP-08), but uses the active theme's accent so
-   it reads as an opportunity rather than an error. No outline (it had a 1px
-   accent one until 2026-10-24). */
+/* An offer (settings/offerBanner.ts): the import from another callout plugin
+   and the website export. It shares the notices' box with the save-status
+   banner, and so the banners' box (`.cs-banner`), in the accent; this lays out
+   its sentence, its button and its ✕. */
 .cs-competitor-import-banner {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) auto auto;
 	align-items: center;
 	gap: 10px;
-	margin: 4px 0 16px;
-	padding: var(--callout-padding);
-	border-radius: var(--callout-radius);
-	corner-shape: var(--corner-shape);
-	background: color-mix(in oklch, var(--interactive-accent) 10%, transparent);
 }
 
-/* With the brush at its start (it waves hello once): one more, leading column,
-   and the brush in the accent colour the banner is tinted with. */
+/* With the brush at its start (it says hello and jumps for joy once, then
+   is the icon, which the pointer can play with): one more, leading column. */
 .cs-competitor-import-banner.has-mascot {
 	grid-template-columns: auto minmax(0, 1fr) auto auto;
-}
-
-.cs-competitor-import-banner .cs-mascot {
-	color: var(--interactive-accent);
 }
 
 /* On the declarative settings page each notice is a row of one box without a
@@ -7577,7 +7961,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	display: none;
 }
 
-.cs-banner-row :is(.cs-readonly-banner, .cs-competitor-import-banner) {
+.cs-banner-row .cs-banner {
 	margin: 0;
 }
 
@@ -8169,12 +8553,15 @@ body:not(.is-mobile) .modal .modal-header.cs-confirm-heading {
 	color: var(--notice-color);
 }
 
-/* The saving banner: the brush takes the warning triangle's place, in the
-   triangle's orange, centred on the first title line. */
-.cs-readonly-banner-header .cs-mascot-box {
-	margin-block: calc((var(--font-ui-medium) * 1.4 - var(--cs-mascot-size)) / 2);
+/* The brush in a banner is in the banner's colour (`.cs-banner-warning`,
+   `.cs-banner-accent`): the saving banner's in the warning triangle's orange,
+   an offer's in the accent it is tinted with. */
+.cs-banner .cs-mascot {
+	color: var(--cs-banner-tint);
 }
 
-.cs-readonly-banner .cs-mascot {
-	color: var(--text-warning);
+/* The saving banner: the brush takes the warning triangle's place, centred on
+   the first title line. */
+.cs-readonly-banner-header .cs-mascot-box {
+	margin-block: calc((var(--font-ui-medium) * 1.4 - var(--cs-mascot-size)) / 2);
 }

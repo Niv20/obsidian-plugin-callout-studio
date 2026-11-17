@@ -208,29 +208,39 @@ const sweeps = (def: CalloutDefinition): boolean =>
 	Boolean(def.bgGradient?.textGradient && def.bgGradient.textToColorLight);
 
 /**
+ * Which of a colour's rules to write:
+ *
+ * - `live` — all of them, for the sheet this plugin injects;
+ * - `standalone` — the exported CSS snippet: only the block callout rules, since
+ *   the token DOM is ours and the theme-owned exclusion and surface block name
+ *   the theme active *here*, exactly as `generateCalloutCSS` decides;
+ * - `tokens` — the website export: only the heading-bar and inline-pill rules,
+ *   since a published site's block callouts are its own.
+ */
+export type MetadataColorCut = "live" | "standalone" | "tokens";
+
+/**
  * Every metadata colour's rules, weakest colour first — see the module note
  * for why that order and those weights are the whole precedence story.
- *
- * `standalone` (the exported snippet) keeps only the block callout rules:
- * the token DOM is ours and the theme-owned exclusion and surface block name
- * the theme active *here*, exactly as `generateCalloutCSS` decides.
  */
 export function generateMetadataColorCSS(
 	entries: readonly MetadataColorEntry[],
 	ctx: MetadataColorCssContext,
-	standalone = false,
+	cut: MetadataColorCut = "live",
 ): string {
 	const out: string[] = [];
 	for (const entry of entries) {
-		const css = colorRules(entry, ctx, standalone);
+		const css = colorRules(entry, ctx, cut);
 		if (css) out.push(`/* metadata colour: ${entry.key} */\n${css}`);
 	}
 	return out.join("\n\n");
 }
 
-function colorRules(entry: MetadataColorEntry, ctx: MetadataColorCssContext, standalone: boolean): string {
+function colorRules(entry: MetadataColorEntry, ctx: MetadataColorCssContext, cut: MetadataColorCut): string {
 	const def = metadataDefinition(entry);
 	const words = metadataWordSelector(entryWords(entry));
+	if (cut === "tokens") return tokenBlocks(def, words, ctx).join("\n\n");
+	const standalone = cut === "standalone";
 	const imp = ctx.important;
 	const weight = Math.max(1, ctx.weight);
 	const themeDrawn = standalone ? [] : ctx.themeOwnedAttrIds;

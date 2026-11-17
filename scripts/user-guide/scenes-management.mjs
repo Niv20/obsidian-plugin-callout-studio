@@ -272,7 +272,7 @@ export const scenes = {
 	}),
 	"export-format": plugin => openModal(new ExportFormatModal(settingsContext(plugin)), {
 		title: "Choose an export format",
-		description: "The production ExportFormatModal displays its recommended JSON backup and CSS snippet choices with their actual labels and icons. The scene renders the chooser without downloading a file or writing a snippet.",
+		description: "The production ExportFormatModal displays its recommended JSON backup and the CSS snippet with their actual labels and icons. The scene renders the chooser without downloading a file or writing a snippet.",
 	}),
 	"language-selector": languageSelector,
 	"language-localized": languageLocalized,

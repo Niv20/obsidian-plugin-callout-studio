@@ -12,8 +12,13 @@
  * imports the test stub by its path, `./obsidianStub`. Its import is pointed
  * at the runtime too, or the settings would be drawn by the stub's simpler
  * stand-ins (no slider, no icons).
+ *
+ * It also installs scripts/lib/webAssets.mjs, as the plugin's own build and
+ * the test runner do: any bundle that reaches the Export chooser imports
+ * `virtual:callout-studio-web-assets`, and nothing else can resolve it.
  */
 import path from "node:path";
+import { webAssetsPlugin } from "../lib/webAssets.mjs";
 
 export function guideRuntimeOptions(root) {
 	const runtime = path.join(root, "scripts/user-guide/obsidian-runtime.ts");
@@ -25,6 +30,9 @@ export function guideRuntimeOptions(root) {
 			setup(build) {
 				build.onResolve({ filter: /^\.\/obsidianStub$/ }, (args) => (args.importer === renderer ? { path: runtime } : undefined));
 			},
-		}],
+		},
+		// The settings scenes bundle the Export chooser, which imports the
+		// website export's assets through a virtual module only this answers.
+		webAssetsPlugin(root)],
 	};
 }

@@ -1,6 +1,7 @@
 /**
  * settings/declarative/mainPageGroups.ts — the boxes at the foot of the main
- * settings page (Import and export, Danger zone).
+ * settings page (Website, with the row that opens the Publish to the web
+ * panel; Import and export; Danger zone).
  *
  * Who calls it. The settings tab, when it builds its tree.
  *
@@ -20,6 +21,7 @@ import { ExportFormatModal } from "../ExportFormatModal";
 import { ImportSourceModal } from "../ImportSourceModal";
 import { confirmAndResetEverything } from "../resetEverything";
 import { openPortableConversionFromSettings } from "../../portable/registerPortableConversionView";
+import { openWebPanel } from "../../webPanel/registerWebPanel";
 import { buttonRow, pausedReason } from "./rowParts";
 import type { CsGroup, TreeContext } from "./types";
 import { VERSION_HISTORY_PAGE, versionHistoryRow } from "./versionHistoryPage";
@@ -30,7 +32,43 @@ export const MAIN_PAGE_ROWS = {
 	importCallouts: "import-callouts",
 	/** The paused banner's Go to version history opens this page. */
 	earlierVersions: VERSION_HISTORY_PAGE,
+	/** The website offer's Show me scrolls to the Publish to the web row. */
+	website: "publish-to-web",
 } as const;
+
+/**
+ * Website: one row, which opens the panel that takes the callouts to a
+ * published site (`webPanel/`). A box of its own since 2026-11-16, above
+ * Import and export: it was that box's last row, and Export's window had a
+ * Website row leading to it as well.
+ *
+ * The row opened a page of the settings until 2026-11-16. It opens a sidebar
+ * panel now and closes the settings, as the conversion review's row does: the
+ * steps are done elsewhere in Obsidian, and the settings would be in the way.
+ * It stays usable while saving is paused: the panel changes no setting.
+ */
+export function websiteGroup(ctx: TreeContext): CsGroup {
+	return {
+		type: "group",
+		id: "website",
+		heading: t("settings.websiteBox"),
+		items: [
+			buttonRow({
+				id: MAIN_PAGE_ROWS.website,
+				name: t("web.title"),
+				desc: t("web.desc"),
+				tag: t("web.beta"),
+				// Names, not words to translate: the services it is for.
+				aliases: ["Obsidian Publish", "Quartz", "Digital Garden"],
+				buttonText: t("web.open"),
+				registerIn: ctx.rows,
+				onClick: () => {
+					void openWebPanel(ctx.app);
+				},
+			}),
+		],
+	};
+}
 
 /** Import and export: two rows, each opening its window. */
 export function importExportGroup(ctx: TreeContext): CsGroup {

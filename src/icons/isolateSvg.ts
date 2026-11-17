@@ -52,6 +52,35 @@ const SCOPE_ATTR = "data-cs-svg";
  */
 let copies = 0;
 
+/** The token every copy is tagged with right now, in place of the counter's; see {@link withSvgCopyToken}. */
+let pinned: string | null = null;
+
+/**
+ * Run `paint` with every copy it imports tagged `token` instead of the next
+ * number of the counter.
+ *
+ * For a copy that is read back as markup and written to a file — the website
+ * export (`manager/web/webData.ts`). The counter is right for a document, where
+ * all that matters is that no two copies share a tag. In a file it is wrong:
+ * the tag is in every id and every selector of the copy, so the same callouts
+ * came out as different bytes on every write, and a file that is compared with
+ * what would be written now was never current.
+ *
+ * The caller answers for what the counter otherwise guarantees: two different
+ * drawings that end up in one page must not be given one token. `[0-9a-z]`
+ * only, like the counter's own — the token is quoted in a selector and
+ * appended to ids as it is.
+ */
+export function withSvgCopyToken<T>(token: string, paint: () => T): T {
+	const before = pinned;
+	pinned = token;
+	try {
+		return paint();
+	} finally {
+		pinned = before;
+	}
+}
+
 /** At-rules whose body is itself a list of style rules, so it has to be walked. */
 const GROUP_AT_RULE_RE = /^@(media|supports|container|layer|scope)\b/i;
 
@@ -81,7 +110,7 @@ export function isolateSvgCopy(root: Element): void {
 	// self-contained and nothing below would find anything to do.
 	if (styles.length === 0 && ided.length === 0) return;
 
-	const token = (copies++).toString(36);
+	const token = pinned ?? (copies++).toString(36);
 	root.setAttribute(SCOPE_ATTR, token);
 
 	const renames = renameIds(ided, token);

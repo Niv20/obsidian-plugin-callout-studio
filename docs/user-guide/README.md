@@ -15,7 +15,7 @@ Every Callout Studio setting, and each of your own callouts, can be found from O
 | [07 - Global styling](07-global-styling.md)                                | Set shared borders, corners, spacing, alignment, and scale.                                                                     |
 | [08 - The right-click menu](08-the-right-click-menu.md)                    | Use and customize context-menu actions for each callout format.                                                                 |
 | [09 - Commands & hotkeys](09-commands-and-hotkeys.md)                      | Wrap and unwrap content, create commands, and assign shortcuts.                                                                 |
-| [10 - Import, export & sharing](10-import-export-and-sharing.md)           | Migrate from other plugins, import a backup, or export CSS.                                                                     |
+| [10 - Import, export & sharing](10-import-export-and-sharing.md)           | Migrate from other plugins, import a backup, export CSS, or set up a website.                                                   |
 | [11 - Languages](11-languages.md)                                          | Follow Obsidian's language or choose another interface language.                                                                |
 | [12 - Find callouts](12-find-callouts.md)                                  | Find where callouts are used across your notes.                                                                                 |
 | [13 - Syncing & backups](13-syncing-and-backups.md)                        | Compare, restore and delete earlier versions, understand backup retention, recover paused saving, and use synced vaults safely. |
@@ -24,6 +24,7 @@ Every Callout Studio setting, and each of your own callouts, can be found from O
 | [16 - Advanced heading callouts](16-advanced-heading-callouts.md)          | Use heading callouts in the Outline, links, and tables of contents.                                                             |
 | [17 - Theme integration](17-theme-integration.md)                          | Understand which callouts your theme controls, and how the windows follow it.                                                   |
 | [18 - Callout metadata](18-callout-metadata.md)                            | Color one callout with `[!type\|pink]`, combine words for your theme, and type them from the menu.                             |
+| [19 - Publish to the web](19-publish-to-the-web.md)                        | Show your callouts as you set them up on Obsidian Publish, Quartz, or Digital Garden.                                           |
 
 ---
 
