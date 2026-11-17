@@ -36,6 +36,23 @@ export function paintRoleIcon(
 	if (registry.themeOwns(def)) {
 		return renderThemeIconInto(iconEl, registry.themeAppearanceOf(def).icon);
 	}
+	return paintOwnRoleIcon(iconEl, def, registry, role);
+}
+
+/**
+ * {@link paintRoleIcon} without the theme: the icon the callout's own
+ * definition names, whoever draws it here.
+ *
+ * For a page the active theme is not on — the website export
+ * (`manager/web/webData.ts`), where the theme's artwork would be a reading of
+ * this device at this moment rather than anything the vault says.
+ */
+export function paintOwnRoleIcon(
+	iconEl: HTMLElement,
+	def: CalloutDefinition,
+	registry: CalloutRegistry,
+	role: CalloutRenderRole,
+): boolean {
 	const result = renderIconInto(iconEl, def.icon, createIconResolver(registry), {
 		role,
 		fill: "currentColor",

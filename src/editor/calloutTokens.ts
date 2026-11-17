@@ -417,6 +417,25 @@ export function scanLineForCalloutTokens(rawLine: string, options: ScanLineOptio
 		Array.from(iterateMarkdownSourceLines(rawLine))
 			.map((part) => part.visible)
 			.join("\n");
+	return scanVisibleLineForCalloutTokens(rawLine, visible, options);
+}
+
+/**
+ * {@link scanLineForCalloutTokens} for a caller that already knows which
+ * characters of the line are visible, and so needs no Markdown lexer.
+ *
+ * Split out for the web renderer (`web/core.ts`), which scans the text of a
+ * published page: every code span and comment there was resolved by whatever
+ * rendered the page, so the text is its own visible line — and the lexer, which
+ * that bundle would otherwise carry to every site for nothing, stays out of
+ * it. `visible` must be `rawLine` with hidden characters blanked, same length.
+ */
+export function scanVisibleLineForCalloutTokens(
+	rawLine: string,
+	visible: string,
+	options: ScanLineOptions = {},
+): LineCalloutToken[] {
+	if (rawLine.indexOf("[!") === -1) return [];
 	const line = stripWikilinks(visible);
 	const prefix = markdownPrefix(rawLine);
 	const contentFrom = options.contentFrom ?? prefix.from;
