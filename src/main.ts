@@ -75,6 +75,7 @@ import {
 	registerPortableConversionView,
 	refreshPortableConversionViewLocale,
 } from "./portable/registerPortableConversionView";
+import { openWebPanel, refreshWebPanelLocale, registerWebPanel } from "./webPanel/registerWebPanel";
 import { showNotice } from "./ui/mascot/mascotNotices";
 
 /**
@@ -360,6 +361,7 @@ export default class CalloutStudioPlugin extends Plugin {
 		registerOccurrenceIndex(this);
 		registerOccurrencesView(this);
 		registerPortableConversionView(this);
+		registerWebPanel(this);
 
 		// Commands
 		registerCalloutCommands(this, this.commandDeps());
@@ -433,6 +435,7 @@ export default class CalloutStudioPlugin extends Plugin {
 		refreshFixedCommandNames(this, this.commandDeps());
 		refreshOccurrencesViewLocale(this);
 		refreshPortableConversionViewLocale(this);
+		refreshWebPanelLocale(this);
 		this.customCommands.syncAll();
 		this.refreshRenderModes();
 	}
@@ -448,6 +451,9 @@ export default class CalloutStudioPlugin extends Plugin {
 			openQuickInsert: () => this.openQuickInsert(),
 			openOccurrences: () => {
 				void openCalloutOccurrences(this.app);
+			},
+			openWebPanel: () => {
+				void openWebPanel(this.app);
 			},
 		};
 	}

@@ -155,6 +155,7 @@ describe("the settings tab as a tree", () => {
 				"colors-and-icons",
 				"callout-style",
 				"menus-and-commands",
+				"website",
 				"import-export",
 				"danger-zone",
 				"footer",

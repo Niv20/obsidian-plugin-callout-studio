@@ -76,6 +76,7 @@ const PLACEHOLDER: readonly string[] = [
 	"settings.searchCallouts",
 	"editor.paletteSearchPlaceholder",
 	"import.cmPlaceholder",
+	"web.serviceChoose", // the first line of Publish to the web's list of services, which chooses nothing
 ];
 
 /** A list that was cut short; the dots stand for the rest of it. */

@@ -9,7 +9,9 @@
  *   └──────────────────────────────────────────────────┘
  *
  * Who calls it. pluginImport/pluginImportViews.ts and settings/noteQuestion.ts
- * (the latter for NoteChangesModal and PaletteNotesModal).
+ * (the latter for NoteChangesModal and PaletteNotesModal). Until 2026-11-16
+ * the Publish to the web page drew its services on these cards too, as a row
+ * of tabs; it is a sidebar panel now, with a list of its own (`webPanel/`).
  *
  * The main idea (findings S9-10 and S6-V2). A card is drawn like the radio
  * cards Obsidian asks with when you set up a vault on a phone: an outline, the

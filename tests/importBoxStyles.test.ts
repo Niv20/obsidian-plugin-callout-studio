@@ -20,6 +20,10 @@
  * - "Recommended" is Obsidian's own flat flair, painted by Obsidian: the plugin
  *   sets no fill, colour, corners or size for it, only drops the flair's margin
  *   where the title line's gap already spaces it.
+ * - A card never answers the pointer: only its own controls do, as Obsidian's.
+ *   (Until 2026-11-16 the Publish to the web page drew the same cards as a
+ *   row of tabs, which did; it is a sidebar panel now, with rules of its own,
+ *   checked in tests/webPanelStyles.test.ts.)
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";

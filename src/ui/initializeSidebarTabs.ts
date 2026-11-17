@@ -4,6 +4,7 @@ import type { PluginSettings } from "../types";
 import { PORTABLE_CONVERSION_VIEW } from "../portable/PortableConversionView";
 import { CALLOUT_OCCURRENCES_VIEW } from "../usage/CalloutOccurrencesView";
 import { ensureOccurrencesSidebarTab } from "../usage/registerOccurrencesView";
+import { WEB_PANEL_VIEW } from "../webPanel/viewType";
 
 interface SidebarStartupHost {
 	app: App;
@@ -17,6 +18,9 @@ export async function initializeSidebarTabs(
 	isFreshInstall: boolean,
 ): Promise<void> {
 	app.workspace.detachLeavesOfType(PORTABLE_CONVERSION_VIEW);
+	// Publish to the web is for setting a site up, which happens once: its
+	// panel is opened when asked for, and never comes back by itself.
+	app.workspace.detachLeavesOfType(WEB_PANEL_VIEW);
 	// Untouched older installs can still lack data.json. Their welcome markers
 	// distinguish them from a new install without imposing a tab during upgrade.
 	if (!isFreshInstall || settings.welcomeSeen || localState.hasSeenWelcome || localState.hasOfferedOccurrencesTab)

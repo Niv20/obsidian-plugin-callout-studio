@@ -119,7 +119,7 @@ export class WelcomeModal extends Modal {
 	 * as every mascot does.
 	 */
 	private showMascot(hero: HTMLElement): void {
-		const mascot = addMascot(hero, "large", "start", ["cs-welcome-mascot"]);
+		const mascot = addMascot(hero, "large", "start", { cls: ["cs-welcome-mascot"] });
 		if (!mascot) return;
 		this.mascot = mascot;
 		const box = mascot.svg.parentElement;

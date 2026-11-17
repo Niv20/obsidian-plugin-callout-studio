@@ -28,6 +28,8 @@ import type { App, PluginManifest } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { SettingsWriter } from "../src/manager/SettingsWriter";
 import { runLaunchSequence } from "../src/manager/launchSequence";
+import { PORTABLE_CONVERSION_VIEW } from "../src/portable/PortableConversionView";
+import { WEB_PANEL_VIEW } from "../src/webPanel/viewType";
 import type { SettingsBootResult } from "../src/manager/settingsBoot";
 import type CalloutStudioPlugin from "../src/main";
 import { installFakeDom } from "./support/fakeDom";
@@ -72,6 +74,8 @@ function launch(
 		sidebarOffers: 0,
 		sidebarMarks: 0,
 		conversionCleanups: 0,
+		/** The Publish to the web panel, closed at launch beside the conversion review. */
+		webPanelCleanups: 0,
 	};
 	let localWelcomeSeen = options.localWelcomeSeen ?? false;
 	let localBannerHandled = options.localBannerHandled ?? false;
@@ -84,8 +88,10 @@ function launch(
 			getMarkdownFiles: () => [],
 		},
 		workspace: {
-			detachLeavesOfType: () => {
-				seen.conversionCleanups++;
+			detachLeavesOfType: (type: string) => {
+				if (type === PORTABLE_CONVERSION_VIEW) seen.conversionCleanups++;
+				else if (type === WEB_PANEL_VIEW) seen.webPanelCleanups++;
+				else assert.fail(`a launch closes no other tab: ${type}`);
 			},
 			getLeavesOfType: () => [],
 			ensureSideLeaf: () => {
@@ -210,6 +216,7 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 		assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), false);
 		assert.strictEqual(l.seen.sidebarOffers, 0);
 		assert.strictEqual(l.seen.conversionCleanups, 1);
+		assert.strictEqual(l.seen.webPanelCleanups, 1, "a Publish to the web tab left open is closed too");
 	});
 	it("records the welcome locally without creating data.json or marking a prior save", async () => {
 		const prompt = Object.getOwnPropertyDescriptor(WelcomeModal.prototype, "prompt")!;
@@ -276,6 +283,7 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 		assert.strictEqual(l.seen.saves, 0);
 		assert.strictEqual(l.seen.sidebarOffers, 0);
 		assert.strictEqual(l.seen.conversionCleanups, 0);
+		assert.strictEqual(l.seen.webPanelCleanups, 0);
 	});
 	it("continues welcome onboarding when the automatic sidebar offer fails", async () => {
 		const prompt = Object.getOwnPropertyDescriptor(WelcomeModal.prototype, "prompt")!;

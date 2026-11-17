@@ -77,7 +77,8 @@ const STILL_MS = 400;
  * hand.
  */
 function addNoticeMascot(notice: Notice, name: MascotAnimationName, stillMs = STILL_MS): () => void {
-	const mascot = addMascot(notice.containerEl, "notice", "start");
+	// Not played with: the notice is gone in a few seconds.
+	const mascot = addMascot(notice.containerEl, "notice", "start", { interactive: false });
 	if (!mascot) return () => {};
 	notice.containerEl.addClass("cs-mascot-notice");
 	// Nothing to wait for: the engine itself stops once the notice has left the page.

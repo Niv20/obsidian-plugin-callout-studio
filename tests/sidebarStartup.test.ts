@@ -71,14 +71,22 @@ function harness() {
 	};
 }
 
-const cleanup = ["detach", "callout-studio-portable-conversion"];
+/**
+ * What every launch closes first: the tabs that are opened only when asked
+ * for, the conversion review's and Publish to the web's, so neither comes
+ * back by itself with a saved workspace.
+ */
+const cleanup = [
+	["detach", "callout-studio-portable-conversion"],
+	["detach", "callout-studio-publish-to-web"],
+];
 
 describe("sidebar tabs at startup", () => {
 	it("offers only an inactive, unrevealed tab on the first installation", async () => {
 		const h = harness();
 		await initializeSidebarTabs(h.host, true);
 		assert.deepEqual(h.events, [
-			cleanup,
+			...cleanup,
 			["ensure", "callout-studio-occurrences", "right", { active: false, reveal: false }],
 		]);
 		assert.equal(h.host.localState.hasInitialized, false);
@@ -92,7 +100,7 @@ describe("sidebar tabs at startup", () => {
 		h.events.length = 0;
 		h.reload();
 		await initializeSidebarTabs(h.host, true);
-		assert.deepEqual(h.events, [cleanup]);
+		assert.deepEqual(h.events, cleanup);
 		assert.equal(h.leaves.length, 0);
 	});
 
@@ -102,7 +110,7 @@ describe("sidebar tabs at startup", () => {
 			if (priorUse === "synced welcome") h.host.settings.welcomeSeen = true;
 			if (priorUse === "local welcome") h.host.localState.markWelcomeSeen();
 			await initializeSidebarTabs(h.host, priorUse !== "existing settings");
-			assert.deepEqual(h.events, [cleanup]);
+			assert.deepEqual(h.events, cleanup);
 			assert.equal(h.leaves.length, 0);
 		});
 	}
@@ -111,14 +119,14 @@ describe("sidebar tabs at startup", () => {
 		const h = harness();
 		h.leaves.push(h.leaf);
 		await initializeSidebarTabs(h.host, true);
-		assert.deepEqual(h.events, [cleanup]);
+		assert.deepEqual(h.events, cleanup);
 		assert.deepEqual(h.leaves, [h.leaf]);
 		// The user can close this existing tab without receiving a later offer.
 		h.leaves.length = 0;
 		h.reload();
 		h.events.length = 0;
 		await initializeSidebarTabs(h.host, true);
-		assert.deepEqual(h.events, [cleanup]);
+		assert.deepEqual(h.events, cleanup);
 	});
 
 	it("leaves a tab restored by a saved workspace intact after the initial offer", async () => {
@@ -127,7 +135,7 @@ describe("sidebar tabs at startup", () => {
 		h.reload();
 		h.events.length = 0;
 		await initializeSidebarTabs(h.host, false);
-		assert.deepEqual(h.events, [cleanup]);
+		assert.deepEqual(h.events, cleanup);
 		assert.deepEqual(h.leaves, [h.leaf]);
 	});
 
@@ -137,7 +145,7 @@ describe("sidebar tabs at startup", () => {
 		await initializeSidebarTabs(h.host, true);
 		h.reload();
 		await initializeSidebarTabs(h.host, true);
-		assert.deepEqual(h.events, [cleanup, cleanup]);
+		assert.deepEqual(h.events, [...cleanup, ...cleanup]);
 	});
 
 	it("does not retry an unsuccessful automatic offer on later launches", async () => {
@@ -147,6 +155,6 @@ describe("sidebar tabs at startup", () => {
 		h.reload();
 		h.events.length = 0;
 		await initializeSidebarTabs(h.host, true);
-		assert.deepEqual(h.events, [cleanup]);
+		assert.deepEqual(h.events, cleanup);
 	});
 });

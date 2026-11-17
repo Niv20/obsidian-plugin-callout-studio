@@ -50,6 +50,9 @@ export const el: Record<string, string> = {
 	"importBanner.message": "Παρατηρήσαμε ότι χρησιμοποιείτε {{plugins}}. Θέλετε να εισαγάγετε τα callouts σας;",
 	"importBanner.action": "Εισαγωγή",
 	"importBanner.dismiss": "Απόρριψη",
+	"webOffer.message":
+		"Φαίνεται ότι αυτό το vault δημοσιεύεται με {{services}}. Θέλετε τα callouts σας να φαίνονται το ίδιο και στον ιστότοπό σας;",
+	"webOffer.action": "Δείξε μου",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Το Callout Studio σάς επιτρέπει να δημιουργείτε callouts με προσαρμοσμένο εικονίδιο, χρώματα και όνομα.\n\n" +
@@ -1101,6 +1104,7 @@ export const el: Record<string, string> = {
 	"locale.retry": "Επανάληψη",
 	"locale.diskWriteFailed":
 		"Το Callout Studio δεν μπόρεσε να αποθηκεύσει τη μετάφραση στον δίσκο, οπότε θα χρειαστεί νέα λήψη την επόμενη φορά.",
+	"settings.websiteBox": "Ιστότοπος",
 	"notice.exportedCssCreated": "Το απόσπασμα CSS αποθηκεύτηκε στο {{path}}",
 	"notice.exportedCssUpdated": "Το απόσπασμα CSS ενημερώθηκε στο {{path}}",
 	"notice.exportedCssUnchanged": "Το απόσπασμα CSS είναι ήδη ενημερωμένο.",
@@ -1109,8 +1113,17 @@ export const el: Record<string, string> = {
 		"Δεν ήταν δυνατή η αποθήκευση του αποσπάσματος CSS. Ελέγξτε την κονσόλα προγραμματιστή για λεπτομέρειες.",
 	"notice.exportCssEnabled":
 		"Αυτό το απόσπασμα είναι ενεργοποιημένο σε αυτό το vault. Το Callout Studio μορφοποιεί ήδη αυτά τα callout και το απόσπασμα διατηρεί τη μορφή κατά την εξαγωγή.",
+	"notice.webFilesCreated": "Τα αρχεία του ιστότοπου αποθηκεύτηκαν.",
+	"notice.webFilesUpdated": "Τα αρχεία του ιστότοπου ενημερώθηκαν.",
+	"notice.webFilesUnchanged": "Τα αρχεία του ιστότοπου είναι ήδη ενημερωμένα.",
+	"notice.webFilesFailed":
+		"Δεν ήταν δυνατή η αποθήκευση των αρχείων του ιστότοπου. Δείτε την κονσόλα προγραμματιστή για λεπτομέρειες.",
+	"notice.webCopied": "Αντιγράφηκε.",
 	"confirm.titleOverwriteSnippet": "Αντικατάσταση αποσπάσματος CSS",
 	"confirm.subtitleOverwriteSnippet": "Τροποποιήθηκε μετά την εγγραφή του από το Callout Studio",
+	"confirm.titleOverwriteWebFiles": "Αντικατάσταση επεξεργασμένων αρχείων",
+	"confirm.subtitleOverwriteWebFiles": "Άλλαξαν από τότε που τα έγραψε το Callout Studio",
+	"confirm.overwriteWebFiles": "Η νέα εγγραφή αντικαθιστά ό,τι άλλαξε σε: {{files}}",
 	"confirm.overwriteSnippet":
 		"Το απόσπασμα CSS στον φάκελο snippets άλλαξε από τότε που το έγραψε το Callout Studio. Η νέα εξαγωγή αντικαθιστά ολόκληρο το αρχείο.",
 	"confirm.overwriteSnippetOk": "Αντικατάσταση",
@@ -1123,6 +1136,101 @@ export const el: Record<string, string> = {
 	"export.formatCssDesc":
 		"Για ιστότοπους ή vault όπου δεν εκτελείται το Callout Studio. Καλύπτει μόνο callout τύπου block και πρέπει να εξαχθεί ξανά μετά από αλλαγές.",
 	"export.formatCssAction": "Εξαγωγή",
+	"web.title": "Δημοσίευση στον ιστό",
+	"web.command": "Δημοσίευση στον ιστό",
+	"web.desc": "Εμφανίστε τα callouts σας όπως τα ρυθμίσατε στο Obsidian Publish, στο Quartz ή στο Digital Garden.",
+	"web.open": "Άνοιγμα",
+	"web.beta": "Beta",
+	"web.openFailed": "Δεν ήταν δυνατό το άνοιγμα της πλευρικής στήλης Δημοσίευση στον ιστό.",
+	"web.closeSettings": "Κλείστε τις ρυθμίσεις για να δείτε τη Δημοσίευση στον ιστό στην πλευρική στήλη.",
+	"web.intro": "Επιλέξτε την υπηρεσία που φιλοξενεί τον ιστότοπό σας.",
+	"web.serviceLabel": "Υπηρεσία φιλοξενίας ιστότοπου",
+	"web.serviceChoose": "Επιλέξτε την υπηρεσία σας…",
+	"web.servicePublish": "Obsidian Publish",
+	"web.serviceQuartz": "Quartz",
+	"web.serviceGarden": "Digital Garden",
+	"web.summaryNone": "Δεν έχει ρυθμιστεί",
+	"web.markWarning": "Χρειάζεται την προσοχή σας.",
+	"web.actionGardenPlugins": "Άνοιγμα πρόσθετων του κήπου",
+	"web.actionPublicationCenter": "Άνοιγμα του Publication Center",
+	"web.actionPublishChanges": "Άνοιγμα του Δημοσίευση αλλαγών",
+	"web.actionOpenNote": "Άνοιγμα σημείωσης",
+	"web.actionRevealFinder": "Εμφάνιση στο Finder",
+	"web.actionReveal": "Εμφάνιση στον εξερευνητή του συστήματος",
+	"web.actionFailed": "Δεν ήταν δυνατό το άνοιγμα. Το πρόσθετο που χρειάζεται μπορεί να είναι απενεργοποιημένο.",
+	"web.rowFiles": "Δημιουργία των αρχείων",
+	"web.rowNote": "Δημιουργία της σημείωσης",
+	"web.filesPublish":
+		"Το Callout Studio προσθέτει δύο αρχεία στη ρίζα του vault σας: publish.js και publish.css. Αυτά τα αρχεία δεν εμφανίζονται εδώ στη λίστα αρχείων του Obsidian, επειδή είναι αρχεία κώδικα και όχι Markdown.",
+	"web.filesNote": "Αυτή η σημείωση χρειάζεται για να λειτουργούν τα callouts σας. Παρακαλούμε διαβάστε την.",
+	"web.noteChooseToo": "Αν ένα πρόσθετο δημοσιεύει μόνο τις σημειώσεις που επιλέγετε, δημοσιεύστε και αυτή μαζί του.",
+	"web.statusStale": "Παλιό. Τα callouts σας άλλαξαν από τότε που γράφτηκαν αυτά τα αρχεία.",
+	"web.statusElsewhere":
+		"Γράφτηκαν σε άλλη συσκευή, με άλλα callouts ή εκδόσεις. Αυτή η συσκευή τα αφήνει ως έχουν. Το Ενημέρωση τώρα τα αντικαθιστά με την έκδοση αυτής της συσκευής.",
+	"web.statusEdited":
+		"Άλλαξε με το χέρι, οπότε ο ιστότοπός σας δεν μπορεί να το διαβάσει. Το Ενημέρωση τώρα επαναφέρει τα callouts σας.",
+	"web.statusDuplicates":
+		"Και άλλες σημειώσεις έχουν την ιδιότητα {{key}}: {{files}}. Διαγράψτε τες, ώστε ο ιστότοπός σας να διαβάζει μόνο αυτή.",
+	"web.noteSwitchedOff":
+		"Το dg-publish είναι απενεργοποιημένο, οπότε το Digital Garden δεν θα δημοσιεύσει αυτή τη σημείωση. Ενεργοποιήστε το στις ιδιότητές της.",
+	"web.noteNotMarked":
+		"Το {{key}} είναι απενεργοποιημένο, οπότε το {{publisher}} δεν θα δημοσιεύσει αυτή τη σημείωση. Ενεργοποιήστε το στις ιδιότητές της.",
+	"web.noteOutsideFolder": "Το {{publisher}} δημοσιεύει μόνο από το {{folder}}. Μετακινήστε τη σημείωση εκεί.",
+	"web.noteExcludedFolder": "Το {{publisher}} δεν δημοσιεύει από αυτόν τον φάκελο. Μετακινήστε τη σημείωση σε άλλον.",
+	"web.write": "Δημιουργία αρχείων",
+	"web.writeNote": "Δημιουργία σημείωσης",
+	"web.update": "Ενημέρωση τώρα",
+	"web.copy": "Αντιγραφή",
+	"web.rowQuartzPlugin": "Εγκατάσταση του πρόσθετου Quartz",
+	"web.quartzVersion": "Έκδοση Quartz",
+	"web.quartzVersionDesc": "Ένας ιστότοπος με αρχείο quartz.config.yaml είναι Quartz 5. Διαφορετικά είναι Quartz 4.",
+	"web.quartzVersion4": "Quartz 4",
+	"web.quartzVersion5": "Quartz 5",
+	"web.stepQuartzTerminal": "Ανοίξτε ένα τερματικό στον φάκελο του ιστότοπού σας, αυτόν με το {{file}}.",
+	"web.stepQuartzRun": "Εκτελέστε:",
+	"web.stepQuartz5Commit": "Κάντε commit και push στα quartz.config.yaml και quartz.lock.json.",
+	"web.stepQuartz4Import": "Στο quartz.config.ts, προσθέστε αυτή τη γραμμή μετά τις υπόλοιπες γραμμές import:",
+	"web.stepQuartz4Use": "Προσθέστε αυτή τη γραμμή στο transformers, ακριβώς πριν από το Plugin.Description():",
+	"web.stepQuartz4Commit": "Κάντε commit και push στα package.json, package-lock.json και quartz.config.ts.",
+	"web.quartzOk": "Το {{file}} φορτώνει το Callout Studio.",
+	"web.quartzNone": "Το {{file}} δεν φορτώνει ακόμη το Callout Studio.",
+	"web.quartzNoImport": "Το {{file}} χρησιμοποιεί το CalloutStudio() αλλά δεν έχει γραμμή import γι' αυτό.",
+	"web.quartzNoUse": "Το {{file}} έχει τη γραμμή import, αλλά το CalloutStudio() δεν είναι στο transformers.",
+	"web.quartzMisplaced":
+		"Στο {{file}}, το CalloutStudio() βρίσκεται μετά το Plugin.Description(), οπότε η αναζήτηση και το RSS εμφανίζουν το κείμενο που πληκτρολογήσατε. Μετακινήστε το στη γραμμή ακριβώς πριν.",
+	"web.quartzOff": "Στο {{file}}, το Callout Studio υπάρχει με enabled: false. Ορίστε το σε true.",
+	"web.rowGardenPlugin": "Εγκατάσταση του πρόσθετου του κήπου",
+	"web.prereqTitle": "Πριν ξεκινήσετε",
+	"web.prereqGarden": "Εγκατάσταση του Digital Garden",
+	"web.stepGardenOpenPlugins":
+		"Στο Publication Center του Digital Garden, μεταβείτε στο Site → Plugins → Browse & install.",
+	"web.stepGardenGoPlugins": "Μεταβείτε στο Site → Plugins → Browse & install.",
+	"web.stepGardenSearch": "Αναζητήστε το Callout Studio και εγκαταστήστε το.",
+	"web.gardenNotListed":
+		"Δεν βρίσκετε το Callout Studio στη λίστα; Κάντε κύλιση προς τα κάτω στο Install from GitHub URL και επικολλήστε αυτή τη διεύθυνση:",
+	"web.rowPublishDomain": "Προσαρμοσμένο domain",
+	"web.stepPublishDomain":
+		"Για να χρησιμοποιήσετε callouts εντός γραμμής ή επικεφαλίδων, πρέπει να ρυθμίσετε προσαρμοσμένο domain.",
+	"web.stepPublishDomainWhy":
+		"Το Obsidian Publish αγνοεί το publish.js στις προεπιλεγμένες διευθύνσεις publish.obsidian.md, οπότε εκεί λειτουργούν μόνο τα τυπικά callouts μπλοκ.",
+	"web.stepPublishDomainLink": "Πώς να ρυθμίσετε προσαρμοσμένο domain",
+	"web.domainNotNeeded": "Δεν χρειάζεται όσο τα callouts επικεφαλίδων και εντός γραμμής είναι απενεργοποιημένα.",
+	"web.siteNote": "Δημοσίευση της σημείωσης",
+	"web.stepGardenOpenCenter": "Ανοίξτε το Publication Center του Digital Garden.",
+	"web.stepGardenPublish": "Στο Notes, επιλέξτε το {{note}} και δημοσιεύστε το.",
+	"web.stepSyncerOpenCenter": "Ανοίξτε το Publication Center του Quartz Syncer.",
+	"web.stepSyncerPublish": "Επιλέξτε το {{note}} και δημοσιεύστε το.",
+	"web.stepEnveloppeUpload": "Με ανοιχτή τη σημείωση, εκτελέστε Enveloppe: Upload single current active note.",
+	"web.siteFiles": "Δημοσίευση των δύο αρχείων",
+	"web.stepPublishOpen": "Ανοίξτε το Δημοσίευση αλλαγών.",
+	"web.stepPublishSelect": "Επιλέξτε τα publish.js και publish.css και δημοσιεύστε τα.",
+	"web.rowDone": "Όλα έτοιμα",
+	"web.doneNote":
+		"Όταν αλλάζουν τα callouts σας, το Callout Studio ενημερώνει μόνο του τη σημείωση. Για να δείτε την αλλαγή στον ιστότοπό σας, πρέπει να δημοσιεύσετε ξανά τη σημείωση.",
+	"web.donePublish":
+		"Όταν αλλάζουν τα callouts σας, το Callout Studio ενημερώνει μόνο του και τα δύο αρχεία. Απλώς δημοσιεύστε τα ξανά.",
+	"web.doneQuartz":
+		"Όταν αλλάζουν τα callouts σας, το Callout Studio ενημερώνει μόνο του τη σημείωση. Το επόμενο build σας θα την πάρει.",
 	"quickInsert.readingViewHint":
 		"Αυτή η σημείωση είναι ανοιχτή σε λειτουργία ανάγνωσης, οπότε δεν μπορεί να γίνει εισαγωγή.",
 	"quickInsert.readingView":

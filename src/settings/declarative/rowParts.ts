@@ -25,6 +25,7 @@ import { explainIfBlocked, paintBlocked } from "../../ui/blockedButton";
 import { setButtonBusy } from "../../ui/busyButton";
 import { paintResetIdle } from "../../ui/resetArrow";
 import { settingGroupEl } from "../../ui/settingGroupEl";
+import { renderBetaBadge } from "../betaBadge";
 import type { RowRegistry } from "./rowRegistry";
 import { guardRender } from "./safeTree";
 import type { CsControl, CsGroup, CsRender } from "./types";
@@ -48,6 +49,8 @@ export interface ButtonRowSpec {
 	aliases?: string[];
 	/** Classes for the row's own look. */
 	cls?: string;
+	/** A small grey tag after the name (`betaBadge.ts`), such as "Beta". */
+	tag?: string;
 	buttonText: string;
 	/**
 	 * The button deletes something: red words on a light red wash, the look of
@@ -88,6 +91,9 @@ export function buttonRow(spec: ButtonRowSpec): CsRender {
 		aliases: spec.aliases,
 		render: guardRender(spec.name, (setting) => {
 			if (spec.cls) setting.setClass(spec.cls);
+			// After the name, outside the words, so the name stays the name; the
+			// row's cleanup takes it away before the next draw.
+			const tagEl = spec.tag ? renderBetaBadge(setting.nameEl, spec.tag) : null;
 			setting.addButton((button) => {
 				button.setButtonText(spec.buttonText);
 				if (spec.destructive) button.setDestructive();
@@ -99,8 +105,13 @@ export function buttonRow(spec: ButtonRowSpec): CsRender {
 					return spec.onClick();
 				});
 			});
-			// The registry's own undo is the row's cleanup (see rowRegistry.ts).
-			return spec.registerIn?.register(spec.id, setting.settingEl);
+			// The registry's own undo is part of the row's cleanup (see rowRegistry.ts).
+			const unregister = spec.registerIn?.register(spec.id, setting.settingEl);
+			if (!tagEl) return unregister;
+			return () => {
+				tagEl.remove();
+				unregister?.();
+			};
 		}),
 	};
 }

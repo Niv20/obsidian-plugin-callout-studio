@@ -1,15 +1,20 @@
 /**
- * settings/declarative/bannerRows.ts — the two notices at the top of the
- * settings page: "Saving is paused" (or "Saving failed"), and the offer to
- * import from another callout plugin.
+ * settings/declarative/bannerRows.ts — the notices at the top of the settings
+ * page: "Saving is paused" (or "Saving failed"), the offer to import from
+ * another callout plugin, and the offer to set up the website export.
  *
  * Who calls it. The settings tab, when it builds its tree; the box this
  * returns comes first on the main page.
  *
  * The main idea.
  * - Each notice is a render row of one box without a heading, and the box
- *   hides itself while neither notice shows (a box whose rows are all hidden
- *   is hidden by Obsidian).
+ *   hides itself while no notice shows (a box whose rows are all hidden is
+ *   hidden by Obsidian).
+ * - **One offer at a time.** The website offer waits while saving needs
+ *   attention (a problem comes before an invitation) and while the import
+ *   offer is up (callouts are brought in before they are published); see
+ *   {@link webOfferShows}. And one offer names every service the vault points
+ *   at, in one sentence, rather than a notice for each.
  * - They keep the plugin's own markup and look (`.cs-readonly-banner`,
  *   `.cs-competitor-import-banner`), not a real Obsidian callout: the plugin
  *   styles every `.callout[data-callout]` on screen, so a callout box would
@@ -17,28 +22,34 @@
  * - "Saving is paused" is a part that survives redraws (persistentParts.ts):
  *   while one of its actions runs, its buttons stay disabled, and a redraw in
  *   the middle must not enable them again and let a second restore start.
- * - A button that leads to a row (Import, Go to version history) jumps there
- *   with `ctx.jumpTo`.
+ * - A button that leads to a row (Import, Show me, Go to version history)
+ *   jumps there with `ctx.jumpTo`. Neither offer opens anything itself: the
+ *   row it scrolls to and flashes is where that thing lives, and the next
+ *   time the reader will know where to look.
  */
+import { t } from "../../i18n";
+import { markWebOfferHandled, webServicesToOffer } from "../../manager/web/webOffer";
 import { recoveryActionsOf, renderSaveStatusBanner } from "../saveStatusBanner";
-import { buildCompetitorImportBanner, competitorsToOffer } from "../competitorImportBanner";
+import { competitorImportMessage, competitorsToOffer } from "../competitorImportBanner";
 import { markCompetitorImportBannerHandled } from "../competitorImportState";
+import { buildOfferBanner, nameList } from "../offerBanner";
 import { canOpenSettingsPage } from "./jumpToRow";
 import { MAIN_PAGE_ROWS } from "./mainPageGroups";
 import type { PersistentPart } from "./persistentParts";
 import { guardRender } from "./safeTree";
 import type { CsGroup, CsRender, TreeContext } from "./types";
+import { serviceName } from "../../webPanel/webPanelCopy";
 
 /** The name the saving notice is kept under in the parts store. */
 const SAVING_NOTICE = "saving-notice";
 
-/** The box of notices: the saving notice first, then the import offer. */
+/** The box of notices: the saving notice first, then the offers. */
 export function bannersGroup(ctx: TreeContext): CsGroup {
 	return {
 		type: "group",
 		id: "banners",
 		cls: "cs-banners",
-		items: [savingNoticeRow(ctx), importOfferRow(ctx)],
+		items: [savingNoticeRow(ctx), importOfferRow(ctx), webOfferRow(ctx)],
 	};
 }
 
@@ -97,8 +108,9 @@ function importOfferRow(ctx: TreeContext): CsRender {
 			setting.setClass("cs-banner-row");
 			const competitors = competitorsToOffer(ctx.app, ctx.plugin);
 			if (competitors.length === 0) return;
-			const offer = buildCompetitorImportBanner(setting.settingEl, competitors, {
-				onImport: (fromKeyboard) => ctx.jumpTo(MAIN_PAGE_ROWS.importCallouts, fromKeyboard),
+			const message = competitorImportMessage(competitors);
+			const offer = buildOfferBanner(setting.settingEl, message, t("importBanner.action"), {
+				onAction: (fromKeyboard) => ctx.jumpTo(MAIN_PAGE_ROWS.importCallouts, fromKeyboard),
 				onDismiss: () => {
 					// Stops offering at once (the saving happens in the background),
 					// so the redraw that follows hides the row.
@@ -108,6 +120,48 @@ function importOfferRow(ctx: TreeContext): CsRender {
 			});
 			// The offer sits outside the row's controls, which a redraw empties,
 			// so the row's cleanup takes it away before the next draw.
+			return () => offer.remove();
+		}),
+	};
+}
+
+/**
+ * Whether the website offer shows now: there is a service to name, and no
+ * other notice is asking for something (see the module header).
+ */
+export function webOfferShows(ctx: TreeContext): boolean {
+	return (
+		!savingNeedsAttention(ctx.plugin.settingsWriter) &&
+		competitorsToOffer(ctx.app, ctx.plugin).length === 0 &&
+		webServicesToOffer(ctx.plugin).length > 0
+	);
+}
+
+/**
+ * The offer to set up the website export, when the vault looks published
+ * (manager/web/webOffer.ts). **Show me** scrolls to the Publish to the web row
+ * and flashes it, as the import offer does with its row; opening the panel
+ * from that row is what ends the offer. ✕ ends it too, for every service it
+ * names.
+ */
+function webOfferRow(ctx: TreeContext): CsRender {
+	return {
+		id: "web-offer",
+		name: "",
+		searchable: false,
+		visible: () => webOfferShows(ctx),
+		render: guardRender("website offer", (setting) => {
+			setting.setClass("cs-banner-row");
+			if (!webOfferShows(ctx)) return;
+			const services = webServicesToOffer(ctx.plugin);
+			const message = t("webOffer.message", { services: nameList(services.map(serviceName)) });
+			const offer = buildOfferBanner(setting.settingEl, message, t("webOffer.action"), {
+				onAction: (fromKeyboard) => ctx.jumpTo(MAIN_PAGE_ROWS.website, fromKeyboard),
+				onDismiss: () => {
+					markWebOfferHandled(ctx.plugin, services);
+					ctx.redraw();
+				},
+			});
 			return () => offer.remove();
 		}),
 	};

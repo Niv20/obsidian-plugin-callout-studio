@@ -38,7 +38,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 /**
- * Action icons composed from Lucide's paintbrush, plus, search and split.
+ * Action icons composed from Lucide's paintbrush, plus, search, split and globe.
  * Lucide / Feather licence notices: THIRD-PARTY-NOTICES.md.
  * The full-size brush is trimmed around each overlapping symbol at author time.
  * Plain paths avoid mask IDs colliding when Obsidian clones a registered icon.
@@ -47,6 +47,7 @@ SOFTWARE.
 export const QUICK_INSERT_ICON_ID = "callout-studio-quick-insert";
 export const STATISTICS_ICON_ID = "callout-studio-statistics";
 export const PORTABLE_CONVERSION_ICON_ID = "callout-studio-portable-conversion";
+export const WEB_PANEL_ICON_ID = "callout-studio-publish-to-web";
 
 // Keep Lucide's paintbrush contours up to the plain plus at (18.5, 18.5).
 // Trim only their lower-right ends; the nearest 2px strokes stay about 1.3px apart.
@@ -71,6 +72,15 @@ const conversionBrush = `
   <path d="M10.722 9.715L8.354 7.348C8.159 7.153 8.159 6.836 8.354 6.641L9.298 5.697C10.239 4.756 11.765 4.756 12.706 5.697L13.65 6.641C13.845 6.836 14.162 6.836 14.357 6.641L18.376 2.622C18.912 2.086 19.694 1.876 20.426 2.073C21.159 2.269 21.731 2.841 21.927 3.574C22.124 4.306 21.914 5.088 21.378 5.624L17.503 9.5"/>
   <path d="M9 8C7.196 10.71 5.03 11.46 2.417 11.948C2.241 11.98 2.094 12.103 2.032 12.271C1.97 12.44 2.002 12.628 2.115 12.767L9.435 21.65C9.74 21.974 10.224 22.058 10.62 21.854C10.658 21.828 10.697 21.801 10.737 21.773"/>`;
 
+// The globe is the largest badge: a 5.5px circle around (16.5, 16.5), since a
+// globe needs room inside it. The brush stops 8.7px from that centre, which
+// leaves 1.2px clear of the circle's 6.5px outer edge; its third path ends at
+// the corner the full brush turns at, 8.74px away.
+const webBrush = `
+  <path d="M7.812 16.039L3.942 14.984"/>
+  <path d="M10.872 9.866L8.354 7.348C8.159 7.153 8.159 6.836 8.354 6.641L9.298 5.697C10.239 4.756 11.765 4.756 12.706 5.697L13.65 6.641C13.845 6.836 14.162 6.836 14.357 6.641L18.376 2.622C18.912 2.086 19.694 1.876 20.426 2.073C21.159 2.269 21.731 2.841 21.927 3.574C22.124 4.306 21.914 5.088 21.378 5.624L18.872 8.13"/>
+  <path d="M9 8C7.196 10.71 5.03 11.46 2.417 11.948C2.241 11.98 2.094 12.103 2.032 12.271C1.97 12.44 2.002 12.628 2.115 12.767L9.435 21.65"/>`;
+
 const outline = (brush: string, badge: string): string =>
 	`<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${brush}${badge}</g>`;
 
@@ -94,5 +104,15 @@ export const UI_ICON_CONTENT: Readonly<Record<string, string>> = {
   <path d="M15.5 12.5H13V15"/>
   <path d="M17.5 22v-4.15a2 2 0 0 0-.586-1.436L13 12.5"/>
   <path d="m19 15.5 3-3"/>`,
+	),
+	// Lucide's globe at 0.55 of its size. Its circle keeps the 2px stroke; the
+	// equator and the meridians inside it are 1.5px, or at a sidebar tab's
+	// size the three of them close up into a disc.
+	[WEB_PANEL_ICON_ID]: outline(
+		webBrush,
+		`
+  <circle cx="16.5" cy="16.5" r="5.5"/>
+  <path stroke-width="1.5" d="M11 16.5h11"/>
+  <path stroke-width="1.5" d="M16.5 11a7.975 7.975 0 0 0 0 11 7.975 7.975 0 0 0 0-11"/>`,
 	),
 };

@@ -51,6 +51,18 @@ function place(parent: HTMLElement, box: HTMLElement, where: Where): void {
 	else parent.appendChild(box);
 }
 
+/** What else a place asks of the mascot's box. */
+interface AddMascotOptions {
+	/** Extra classes on the box, for the place's own layout. */
+	cls?: string[];
+	/**
+	 * Whether the pointer can play with it (mascotPlay.ts). Every mascot can,
+	 * a banner's of the notice size too; only a notice's is left alone, as the
+	 * notice is gone in a few seconds.
+	 */
+	interactive?: boolean;
+}
+
 /**
  * A mascot in a box of its own inside `parent`. Returns null where the
  * mascot cannot be drawn; the caller then simply goes on without it.
@@ -59,13 +71,12 @@ export function addMascot(
 	parent: HTMLElement,
 	size: MascotSize,
 	where: Where = "end",
-	extraCls: string[] = [],
+	{ cls = [], interactive = true }: AddMascotOptions = {},
 ): BrushMascot | null {
 	if (!canDrawMascot()) return null;
-	const box = mascotBox(size, extraCls);
+	const box = mascotBox(size, cls);
 	place(parent, box, where);
-	// A notice's mascot is not played with: the notice is gone in a few seconds.
-	return new BrushMascot(box, { interactive: size !== "notice" });
+	return new BrushMascot(box, { interactive });
 }
 
 /* ---- Empty states that are drawn again and again ---- */
