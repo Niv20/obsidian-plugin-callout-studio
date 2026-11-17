@@ -43,6 +43,14 @@ export type PackLoadState = "unavailable" | "loading" | "ready" | "failed";
  */
 export type PackDiskResult = "ready" | "missing" | "corrupt";
 
+/**
+ * What the session knows of a pack file on disk without reading it: listed in
+ * the folder or just written (`"present"`), not there (`"absent"`), or read and
+ * refused (`"bad"`, which a later listing does not undo: the file is still
+ * there, and still refused until something reads it again).
+ */
+type DiskPresence = "present" | "absent" | "bad";
+
 export class PackDataStore {
 	private readonly work = new IconTaskScope();
 	destroy(): void {
@@ -50,6 +58,7 @@ export class PackDataStore {
 		this.listeners.clear();
 		this.inFlight.clear();
 		this.states.clear();
+		this.onDisk.clear();
 	}
 	private readonly states = new Map<IconPackId, PackLoadState>();
 	/** De-duplicates concurrent requests for the same pack. */
@@ -57,6 +66,18 @@ export class PackDataStore {
 	private readonly listeners = new Set<() => void>();
 	/** Set once a write has failed, so the user is only told the once. */
 	private diskWriteBroken = false;
+	/** Each pack file's presence on disk, as far as the session knows (`isOnDevice`). */
+	private readonly onDisk = new Map<IconPackId, DiskPresence>();
+	/** Whether a look at the folder has finished this session; until then presence is unknown. */
+	private diskLooked = false;
+	/** The look under way, so a second request shares it. */
+	private looking: Promise<void> | null = null;
+	/**
+	 * The packs whose presence a read, write or deletion learned while a look
+	 * was under way: the look's listing may be older than that, so it leaves
+	 * them alone.
+	 */
+	private readonly learnedDuringLook = new Set<IconPackId>();
 
 	constructor(
 		private readonly app: App,
@@ -137,18 +158,91 @@ export class PackDataStore {
 		const expected = PACK_MANIFEST[id];
 		try {
 			const adapter = this.app.vault.adapter;
-			if (!(await this.work.wait(adapter.exists(path))) || this.work.destroyed) return "missing";
+			if (!(await this.work.wait(adapter.exists(path))) || this.work.destroyed) {
+				return this.learned(id, "absent", "missing");
+			}
 			const text = await this.work.wait(adapter.read(path));
 			if (this.work.destroyed) return "missing";
 			if (expected && !(await verifyPackText(text, expected, path, () => !this.work.destroyed))) {
-				return "corrupt";
+				return this.learned(id, "bad", "corrupt");
 			}
-			return this.accept(id, text, `disk (${path})`) ? "ready" : "corrupt";
+			return this.accept(id, text, `disk (${path})`)
+				? this.learned(id, "present", "ready")
+				: this.learned(id, "bad", "corrupt");
 		} catch (e) {
 			if (this.work.destroyed) return "missing";
 			console.warn(`[CalloutStudio] could not read pack "${id}"`, e);
-			return "corrupt";
+			return this.learned(id, "bad", "corrupt");
 		}
+	}
+
+	/**
+	 * Whether a pack file is on this device, as far as the session can tell
+	 * without reading it: loaded, or seen in the folder and never refused. A
+	 * guess is not an answer: undefined while it is not loaded and the folder has
+	 * not been looked at yet (`lookOnDisk`).
+	 *
+	 * Only the settings row's count of libraries asks this (iconLibraries.ts,
+	 * `availableCount`). What the picker offers goes by `state` alone, after it
+	 * has read the files back (`loadAllFromDisk`).
+	 */
+	isOnDevice(id: IconPackId): boolean | undefined {
+		if (this.state(id) === "ready") return true;
+		if (!this.diskLooked) return undefined;
+		return this.onDisk.get(id) === "present";
+	}
+
+	/**
+	 * Look at which pack files are in the folder, without reading any: one
+	 * listing (none at all when the folder is not there). Called in the
+	 * background at startup and on every visit to the settings, so the count
+	 * the settings show is known before they are drawn, and catches a file a
+	 * sync brought or someone dropped in. Listeners hear only of a change; a
+	 * listing that fails changes nothing, so no count is drawn from it.
+	 */
+	lookOnDisk(): Promise<void> {
+		if (this.work.destroyed) return Promise.resolve();
+		this.looking ??= this.runLook().finally(() => {
+			this.looking = null;
+			this.learnedDuringLook.clear();
+		});
+		return this.looking;
+	}
+
+	private async runLook(): Promise<void> {
+		this.learnedDuringLook.clear();
+		const adapter = this.app.vault.adapter;
+		const dir = this.packDir();
+		let listed: Set<string>;
+		try {
+			const exists = await this.work.wait(adapter.exists(dir));
+			if (this.work.destroyed) return;
+			const files = exists ? (await this.work.wait(adapter.list(dir))).files : [];
+			if (this.work.destroyed) return;
+			listed = new Set(files.map((file) => normalizePath(file)));
+		} catch (e) {
+			if (this.work.destroyed) return;
+			console.warn("[CalloutStudio] could not list the icon packs folder", e);
+			return;
+		}
+		let changed = !this.diskLooked;
+		for (const id of Object.keys(PACK_MANIFEST) as IconPackId[]) {
+			if (this.learnedDuringLook.has(id)) continue;
+			const before = this.onDisk.get(id);
+			const isListed = listed.has(this.packPath(id));
+			const now: DiskPresence = !isListed ? "absent" : before === "bad" ? "bad" : "present";
+			if (now !== before) changed = true;
+			this.onDisk.set(id, now);
+		}
+		this.diskLooked = true;
+		if (changed) this.notify();
+	}
+
+	/** Record what a read, write or deletion learned of a pack file; returns `result`. */
+	private learned<T>(id: IconPackId, presence: DiskPresence, result: T): T {
+		this.onDisk.set(id, presence);
+		if (this.looking) this.learnedDuringLook.add(id);
+		return result;
 	}
 
 	/**
@@ -198,6 +292,8 @@ export class PackDataStore {
 			if (!exists) await this.work.wait(adapter.mkdir(dir));
 			if (this.work.destroyed) return;
 			await this.work.wait(adapter.write(this.packPath(id), text));
+			if (this.work.destroyed) return;
+			this.learned(id, "present", undefined);
 		} catch (e) {
 			if (this.work.destroyed) return;
 			console.warn(`[CalloutStudio] could not cache pack "${id}" to disk`, e);
@@ -234,6 +330,7 @@ export class PackDataStore {
 		}
 		forgetPackData(id);
 		this.states.delete(id);
+		this.learned(id, "absent", undefined);
 		this.notify();
 		return true;
 	}

@@ -243,7 +243,8 @@ choice when the current theme owns no usable rows; that modal temporarily
 resolves it to `all` without erasing the preference. `iconSources.lastCategory`
 and `iconSources.lastEmojiSkinTone` follow the same rule for the icon picker.
 
-`iconLibraries` is what the **Manage icon libraries** window edits: `order` is every
+`iconLibraries` is what the **Manage icon libraries** window and the settings'
+**Icon libraries** page edit (the same list in both): `order` is every
 library in the order Pick an icon lists them (empty - the default - means the
 catalog order), and `hidden` the libraries that ship with the plugin that the
 user took out of the picker. Whether a *downloadable* library is offered is not

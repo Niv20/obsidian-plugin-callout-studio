@@ -188,6 +188,7 @@ hasFailed(icon, role): boolean
 ```text
 1. Filter registry.getAll() to icons whose callout actually shows one (hideIcon !== true)
 2. packs.loadUsed(types) - read from DISK only the packs this vault references
+   then packs.lookOnDisk() in the background - one folder listing, no reads
 3. cssInjector.inject() - repaint with whatever was already on disk
 4. fetch.ensureAll() - Material's per-icon sweep FIRST (one attempt per icon)
 5. ensureArtworkFor(icons) - repair whatever the packs would still need
@@ -254,7 +255,39 @@ Icons).
 loadFromDisk(id): Promise<PackDiskResult>   // "ready" | "missing" | "corrupt" - NEVER fetches
 download(id): Promise<boolean>               // fetches, verifies, persists
 remove(id): Promise<boolean>                 // deletes the file, forgets the artwork
+lookOnDisk(): Promise<void>                  // lists icon-packs/, reads nothing
+isOnDevice(id): boolean | undefined          // loaded, or listed and never refused
 ```
+
+**Knowing what is on disk without reading it.** The settings' Icon libraries
+row ends with how many libraries Pick an icon offers here, out of all of them
+(`availableCount` in `iconLibraries.ts`, the same rule as `isInPicker` with
+the file question left open, so the row and the page's Available libraries
+group cannot disagree). The main page is drawn long before anything has read
+the unused packs, and reading them all (`loadAllFromDisk`) just to count them
+would parse megabytes. So `lookOnDisk()` lists the folder once (and does not
+even list it when the folder is not there) and records each file as
+`present` or `absent`. `IconService.initialize()` calls it in the background
+right after `loadUsed`, so the count is known before the settings are first
+opened; each visit to the settings calls it again, which catches a file a sync
+brought or someone dropped in. Listeners hear only of a change, so the tab
+redraws only when the count does.
+
+- **Undefined until known.** `isOnDevice` is true for a loaded pack, and for
+  any other pack undefined until the first look has finished; the row then
+  shows no count rather than one that changes a moment later. A failed
+  listing leaves it undefined.
+- **Kept current without a look.** `loadFromDisk` records what it found
+  (`missing` → absent; refused → `bad`), a download's `persist` records
+  present, `remove` records absent. A `bad` file stays not counted when a later
+  listing sees it again; only a read that accepts it counts it.
+- **A listing older than a change does not undo it.** A read, write or
+  deletion that lands while a look is under way marks that pack
+  (`learnedDuringLook`), and the look leaves it alone: its listing may have
+  been taken before the change.
+- **Seen is not verified.** A listed file is counted before anything checks
+  its bytes. If it turns out to be bad when the picker or the page reads it
+  (`loadAllFromDisk`), the count drops by one then.
 
 **Every read - download or disk - is SHA-256-verified against
 `PACK_MANIFEST` baked into the build.** Two URLs are tried in order
@@ -408,11 +441,13 @@ source: it holds the half-typed callout under a placeholder id so it can be
 *drawn*, it is cleared and restored by other modals, and a rename of the id
 field would make it disagree with the real callout it shadows.
 
-The settings' **Icon libraries** row is the window's other door, and it has no
+The settings' **Icon libraries** page draws the same list, and it has no
 editor behind it: it passes no `editing`, and it could not learn an unsaved
-icon if one existed. So it refuses while `plugin.settingsEditOpen` is true,
-rather than let a library an unsaved icon came from be deleted without a word
-(26 § The Colors and icons box).
+icon if one existed (an editor opened from a note, beside the settings'
+window). So while `plugin.settingsEditOpen` is true it deletes no library,
+alone or by the reset arrow, and says why, rather than let a library an unsaved
+icon came from be deleted without a word
+(16 § `IconLibrariesModal`, 26 § The Colors and icons box).
 
 `fetchArtwork` returns early for an icon that `isIconFullyCached`, before it
 looks at the pack. Confirming a callout's own icon in the picker - on a device

@@ -22,7 +22,9 @@ import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { SettingsSaveStatus } from "../src/manager/settingsSaveStatus";
 import { CalloutStudioSettingsTab } from "../src/settings/SettingsTab";
 import type { SettingsTabPlugin } from "../src/settings/sections/types";
-import type { CalloutDefinition } from "../src/types";
+import { libraryFiles } from "../src/icons/iconLibraries";
+import { ICON_SOURCE_IDS } from "../src/icons/registry";
+import type { CalloutDefinition, IconPackId } from "../src/types";
 
 installFakeDom();
 
@@ -82,6 +84,25 @@ function fakePlugin() {
 	const visits = { opened: 0, ended: 0 };
 	const unloads: (() => void)[] = [];
 	const app = { workspace: { on: () => ({}), offref: () => {} }, customCss: { theme: "" } };
+	// The pack files on this device; the folder already looked at, with none.
+	const packListeners = new Set<() => void>();
+	const packs = {
+		files: new Set<IconPackId>(),
+		looks: 0,
+		state: (id: IconPackId) => (packs.files.has(id) ? "ready" : "unavailable"),
+		isOnDevice: (id: IconPackId): boolean | undefined => packs.files.has(id),
+		lookOnDisk: () => {
+			packs.looks++;
+			return Promise.resolve();
+		},
+		onChange: (cb: () => void) => {
+			packListeners.add(cb);
+			return () => {
+				packListeners.delete(cb);
+			};
+		},
+		notify: () => packListeners.forEach((cb) => cb()),
+	};
 	const plugin = {
 		app,
 		registry,
@@ -103,6 +124,7 @@ function fakePlugin() {
 		manifest: { id: "callout-studio", name: "Callout Studio", version: "2.18.0" },
 		recovery: {},
 		onIconCacheChange: () => () => {},
+		icons: { packs },
 		cssInjector: {
 			inject: () => {},
 			metadataCatalog: { snippetWords: () => new Set<string>(), sourcesNow: () => [] },
@@ -112,7 +134,7 @@ function fakePlugin() {
 			unloads.push(unload);
 		},
 	};
-	return { plugin, app, registry, visits, unload: () => unloads.forEach((unload) => unload()) };
+	return { plugin, app, registry, visits, packs, unload: () => unloads.forEach((unload) => unload()) };
 }
 
 /** The tab, with the test renderer drawing what Obsidian would. */
@@ -307,8 +329,8 @@ describe("the settings tab as a tree", () => {
 		assert.ok(names("fallback").includes(t("settings.fallbackCallout")));
 		assert.ok(names("palette").includes(t("settings.customPalettes")));
 		assert.ok(
-			names("font awesome").includes(t("iconLibraries.title")),
-			"the libraries are found by their own names",
+			names("icon libraries").includes(t("iconLibraries.title")),
+			"the Icon libraries page, by its name (a page that draws itself is found by nothing else)",
 		);
 		assert.deepEqual(names("recite"), ["Recite"]);
 		assert.ok(names("corner").length >= 3);
@@ -331,5 +353,53 @@ describe("the settings tab as a tree", () => {
 		win(tab).flushFrames();
 		win(tab).flushTimers();
 		assert.equal((tab as unknown as { updateCount: number }).updateCount, before + 1, "nothing after the unload");
+	});
+	it("ends the Icon libraries row with its count, and draws it again only when the count changes", () => {
+		const { tab, harness, packs, unload } = drawTab();
+		const total = ICON_SOURCE_IDS.length;
+		const builtIn = ICON_SOURCE_IDS.filter((id) => libraryFiles(id).length === 0).length;
+		const value = (): unknown => harness.row(t("iconLibraries.title"))?.def.displayValue;
+		const updates = (): number => (tab as unknown as { updateCount: number }).updateCount;
+		assert.equal(value(), t("settings.iconLibrariesCount", { available: builtIn, total }));
+
+		const before = updates();
+		packs.notify();
+		win(tab).flushFrames();
+		assert.equal(updates(), before, "a pack change that leaves the count alone draws nothing");
+
+		for (const id of ICON_SOURCE_IDS) libraryFiles(id).forEach((file) => packs.files.add(file));
+		packs.notify();
+		win(tab).flushFrames();
+		assert.equal(updates(), before + 1);
+		assert.equal(value(), t("settings.iconLibrariesAll", { total }));
+
+		unload();
+		packs.files.clear();
+		packs.notify();
+		win(tab).flushFrames();
+		win(tab).flushTimers();
+		assert.equal(updates(), before + 1, "nothing after the unload");
+	});
+
+	it("draws no count for Icon libraries until the pack folder has been looked at", () => {
+		const made = fakePlugin();
+		made.packs.isOnDevice = () => undefined;
+		const tab = new CalloutStudioSettingsTab(
+			made.app as unknown as App,
+			made.plugin as unknown as SettingsTabPlugin,
+		);
+		const harness = new DeclarativeHarness(tab as never);
+		tab.update();
+		assert.equal(harness.row(t("iconLibraries.title"))?.def.displayValue, undefined);
+	});
+
+	it("looks at the pack folder once per visit, to catch a file a sync brought", () => {
+		const { tab, packs } = drawTab();
+		assert.equal(packs.looks, 1);
+		tab.update();
+		assert.equal(packs.looks, 1, "a redraw is the same visit");
+		tab.hide();
+		tab.update();
+		assert.equal(packs.looks, 2);
 	});
 });

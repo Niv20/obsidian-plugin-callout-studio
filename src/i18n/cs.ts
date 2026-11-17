@@ -652,7 +652,8 @@ export const cs: Record<string, string> = {
 	"iconPack.diskWriteFailed":
 		"Callout Studio nemohlo uložit balíček ikon na disk, takže ho bude nutné příště stáhnout znovu. Vybrané ikony jsou stále uloženy ve vašem nastavení.",
 	"settings.colorsAndIcons": "Barvy a ikony",
-	"settings.iconLibrariesDesc": "Změna pořadí a stažení dalších knihoven ikon.",
+	"settings.iconLibrariesCount": "Dostupné: {{available}} z {{total}}",
+	"settings.iconLibrariesAll": "Dostupné: všechny ({{total}})",
 	"settings.iconLibrariesEditorOpen":
 		"Nejprve dokončete práci v editoru calloutu. Jeho neuložená ikona může pocházet z knihovny, kterou zde smažete.",
 	"iconLibraries.manage": "Spravovat knihovny ikon",

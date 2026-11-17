@@ -136,8 +136,8 @@ describe("the boxes at the foot of the main page", () => {
 		const names = (query: string): string[] => searchSettings(tab.settingItems, query).map((hit) => hit.name);
 		assert.deepEqual(names("Admonition"), ["Import callouts"]);
 		assert.deepEqual(names("publish to the web"), ["Publish to the web"]);
-		// The Icon libraries row is not at the foot of the page: it is in the
-		// Colors and icons box (declarativeIconLibrariesRow.test.ts).
+		// The Icon libraries page is not at the foot of the page: it is in the
+		// Colors and icons box (declarativeIconLibrariesPage.test.ts).
 		assert.deepEqual(names("icon"), []);
 		assert.deepEqual(names("tabler"), []);
 		assert.deepEqual(names("reset"), ["Reset everything"]);

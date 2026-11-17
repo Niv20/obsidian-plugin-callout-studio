@@ -119,6 +119,10 @@ export class IconService implements IconResolver {
 			.map((def) => def.icon);
 		const results = await this.packs.loadUsed(icons.map((icon) => icon.type));
 		if (this.destroyed) return;
+		// Which other pack files are on disk, without reading them (one folder
+		// listing), so the settings' Icon libraries row can say how many
+		// libraries are available before the settings are ever opened.
+		void this.packs.lookOnDisk();
 		// Repaint: pack artwork read from disk arrives after the first inject.
 		this.host.cssInjector.inject();
 		if (this.destroyed) return;

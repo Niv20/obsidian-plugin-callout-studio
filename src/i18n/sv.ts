@@ -723,7 +723,8 @@ export const sv: Record<string, string> = {
 	"iconPack.diskWriteFailed":
 		"Callout Studio kunde inte spara ikonpaketet på disk, så det måste laddas ner igen nästa gång. Ikonerna du väljer sparas fortfarande med dina inställningar.",
 	"settings.colorsAndIcons": "Färger och ikoner",
-	"settings.iconLibrariesDesc": "Ändra ordning på och ladda ner fler ikonbibliotek.",
+	"settings.iconLibrariesCount": "{{available}} av {{total}} tillgängliga",
+	"settings.iconLibrariesAll": "Alla {{total}} tillgängliga",
 	"settings.iconLibrariesEditorOpen":
 		"Gör klart i callout-redigeraren först. Dess osparade ikon kan komma från ett bibliotek som du tar bort här.",
 	"iconLibraries.manage": "Hantera ikonbibliotek",

@@ -780,7 +780,8 @@ immediately. Network availability is not a prerequisite for keeping a callout.
 grid, driven entirely by its `IconPack`), `IconGrid` (paging + keyboard
 navigation), `ImagePanel` ("Your images" upload/manage), `allSources.ts` (the
 pooled cross-source search), `IconLibrariesModal` (the **Manage icon libraries**
-window - see [Settings UI and modals](16-settings-ui-and-modals.md#iconlibrariesmodal---libraries-in-three-obsidian-groups)).
+window) and `IconLibrariesView` (the list it shows, which the settings' Icon
+libraries page shows too) - see [Settings UI and modals](16-settings-ui-and-modals.md#iconlibrariesmodal---libraries-in-three-obsidian-groups).
 
 `IconGrid` is one Tab stop, as Obsidian's own pick lists are (finding S8-V1):
 a "roving tabindex". One cell has `tabindex="0"` - the chosen icon, or else
@@ -867,8 +868,9 @@ picker hands the window the callout being edited (`EditedCallout`: that id and
 name plus the icon it was opened on) so deleting a library the draft uses
 asks first - see [Icons](13-icons.md#the-callout-being-edited-counts-as-a-user).
 `openLibraries()` opens the window through `openIconLibraries`
-([`iconpicker/openIconLibraries.ts`](../../src/settings/iconpicker/openIconLibraries.ts),
-the same opener the settings' Icon libraries row uses), which first awaits
+([`iconpicker/openIconLibraries.ts`](../../src/settings/iconpicker/openIconLibraries.ts);
+the settings' Icon libraries page draws the same list and does the same read
+itself), which first awaits
 `packs.loadAllFromDisk()`, the same read the picker does before its first paint
 (cheap once done): a library downloaded in an earlier session reads as missing
 until its file is read back, and a quick press on **Manage libraries** would

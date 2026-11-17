@@ -226,7 +226,7 @@ or restores:
 Callouts supplied by the active theme are not deleted from the theme. They
 remain available while that theme is active. Icon libraries you downloaded stay
 on the device; delete them from **Manage icon libraries** (the **Manage libraries** button in the icon
-picker, or **Icon libraries** under **Colors and icons** in the settings) if you no longer want them - the reset arrow there removes them all at once.
+picker) or the **Icon libraries** page under **Colors and icons** in the settings if you no longer want them - the reset arrow there removes them all at once.
 
 Before the reset runs, Callout Studio shows a confirmation. It opens with a
 reminder that everything you built is about to be deleted, then lists, as a

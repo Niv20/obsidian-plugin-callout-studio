@@ -72,7 +72,44 @@ export function isInstalled(id: IconSourceId, packs: PackStates): boolean {
 
 /** Whether Pick an icon offers this library on this device. */
 export function isInPicker(id: IconSourceId, prefs: IconLibrarySettings, packs: PackStates): boolean {
-	return isDownloadable(id) ? isDownloaded(id, packs) : !prefs.hidden.includes(id);
+	return offeredWhen(id, prefs, (file) => packs.state(file) === "ready");
+}
+
+/**
+ * The rule `isInPicker` applies, with the question "is this file here?" left
+ * open, so the settings row's count (`availableCount`) can ask it before the
+ * files are read and still never count by a different rule.
+ */
+function offeredWhen(id: IconSourceId, prefs: IconLibrarySettings, fileHere: (file: IconPackId) => boolean): boolean {
+	if (!isDownloadable(id)) return !prefs.hidden.includes(id);
+	const files = libraryFiles(id);
+	return files.length > 0 && files.every(fileHere);
+}
+
+/** How many libraries Pick an icon offers here, out of how many there are. */
+export interface AvailableCount {
+	readonly available: number;
+	readonly total: number;
+}
+
+/**
+ * The count at the end of the settings' Icon libraries row: the rows of the
+ * page's Available libraries group, out of all its rows. `total` is every
+ * library this build knows, so a library a later release adds is counted as
+ * soon as it exists, and shows as one more to download.
+ *
+ * `onDevice` answers for one pack file (PackDataStore.isOnDevice), undefined
+ * while that is not known; the count is then undefined too, since a number
+ * drawn from a guess would change in front of the reader a moment later.
+ */
+export function availableCount(
+	prefs: IconLibrarySettings,
+	onDevice: (file: IconPackId) => boolean | undefined,
+): AvailableCount | undefined {
+	const files = ICON_SOURCE_IDS.flatMap((id) => libraryFiles(id));
+	if (files.some((file) => onDevice(file) === undefined)) return undefined;
+	const available = ICON_SOURCE_IDS.filter((id) => offeredWhen(id, prefs, (file) => onDevice(file) === true));
+	return { available: available.length, total: ICON_SOURCE_IDS.length };
 }
 
 /**

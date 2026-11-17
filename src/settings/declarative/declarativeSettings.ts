@@ -14,15 +14,16 @@
  *   most once a frame, only when something on the pages has changed (the
  *   signature), and not while the user is in the middle of something;
  * - **the signals** that ask it: the registry and the theme (the four in
- *   sections/tabSubscriptions.ts), the saving status, and the language's
- *   download.
+ *   sections/tabSubscriptions.ts), the saving status, the language's
+ *   download, and the icon pack files (the Icon libraries row's count).
  *   They are wired the first time Obsidian asks for the tree, which
  *   `addSettingTab` does while the plugin loads, and undone when it unloads;
  * - **the visit**: Obsidian has no "the tab opened" hook, so a row with
  *   nothing on screen, drawn on every opening of the main page, starts one
  *   (one version in the history per visit, the theme's styles switch in the
  *   settings window, Escape for the plugin's own pickers, the brush mascot of
- *   an empty list, a look at whether the vault is published). `hide()` ends it.
+ *   an empty list, a look at whether the vault is published, a look at the
+ *   icon pack folder). `hide()` ends it.
  */
 import type { App } from "obsidian";
 import { getLocale } from "../../i18n";
@@ -41,6 +42,7 @@ import { revealCalloutRow } from "./calloutPages";
 import { jumpToRow } from "./jumpToRow";
 import { PersistentParts } from "./persistentParts";
 import { RowRegistry } from "./rowRegistry";
+import { iconLibrariesValue } from "./iconLibrariesPage";
 import { buildTreeSafely, treeAfterFailure } from "./safeTree";
 import { settingsTree } from "./settingsTree";
 import { interactionInProgress, nextFrameOrSoon, TreeUpdater } from "./treeUpdater";
@@ -138,6 +140,10 @@ export class DeclarativeSettings {
 			subscribeSettingsTab(app, plugin, request),
 			plugin.settingsWriter.status?.subscribe(() => request(false)),
 			plugin.locales.onChange(() => request(false)),
+			// A download, a deletion or a look at the folder can change the Icon
+			// libraries row's count; the signature reads it, so any other change
+			// of a pack (one starting to download) draws nothing.
+			plugin.icons.packs.onChange(() => request(false)),
 		];
 		this.stopListening = () => {
 			for (const stop of stops) stop?.();
@@ -182,6 +188,11 @@ export class DeclarativeSettings {
 		void refreshWebOffer(app, plugin).then((changed) => {
 			if (changed) this.ctx.redraw();
 		});
+		// The Icon libraries row's count was known before the tab opened (the
+		// look at startup). Looking again catches a pack file a sync brought or
+		// someone dropped in since; the row is drawn again only if its count
+		// changed, through the packs' signal above.
+		void plugin.icons.packs.lookOnDisk();
 		// Escape closes the plugin's own pickers first, not the settings. On the
 		// content area, not the main page: sub-pages are drawn beside it.
 		const releaseEscape = registerMenuScopeHost(containerEl.parentElement ?? containerEl, app);
@@ -218,6 +229,7 @@ export class DeclarativeSettings {
 				scanRunning(plugin),
 				competitorsToOffer(app, plugin).map((competitor) => competitor.id),
 				webServicesToOffer(plugin),
+				iconLibrariesValue(plugin) ?? null,
 			],
 			(key, value: unknown) => (key === "userImages" ? undefined : value),
 		);

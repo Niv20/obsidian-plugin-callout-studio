@@ -29,7 +29,7 @@ import { IconLibrariesModal } from "../src/settings/iconpicker/IconLibrariesModa
 import { IconPicker, type IconPickerPlugin } from "../src/settings/iconpicker/IconPickerModal";
 import { PackPanel, type PackPanelHost } from "../src/settings/iconpicker/PackPanel";
 import type { CalloutIcon, IconPackId, IconSourceId, PluginSettings } from "../src/types";
-import type { IconLibrariesHost } from "../src/settings/iconpicker/IconLibrariesModal";
+import type { IconLibrariesHost } from "../src/settings/iconpicker/IconLibrariesView";
 import { blankLiterals, readRepoFile } from "./support/sourceScan";
 import { asEl, fakeDom, type FakeElement } from "./support/fakeDom";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";

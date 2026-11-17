@@ -725,7 +725,8 @@ export const vi: Record<string, string> = {
 	"iconPack.diskWriteFailed":
 		"Callout Studio không thể lưu gói biểu tượng vào đĩa, vì vậy cần tải xuống lại lần sau. Các biểu tượng bạn chọn vẫn được lưu cùng cài đặt.",
 	"settings.colorsAndIcons": "Màu sắc và biểu tượng",
-	"settings.iconLibrariesDesc": "Sắp xếp lại và tải xuống các thư viện biểu tượng bổ sung.",
+	"settings.iconLibrariesCount": "Có sẵn {{available}}/{{total}}",
+	"settings.iconLibrariesAll": "Có sẵn cả {{total}}",
 	"settings.iconLibrariesEditorOpen":
 		"Hãy hoàn tất công việc trong trình chỉnh sửa callout trước. Biểu tượng chưa lưu trong đó có thể đến từ một thư viện mà bạn xóa ở đây.",
 	"iconLibraries.manage": "Quản lý thư viện biểu tượng",

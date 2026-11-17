@@ -652,7 +652,8 @@ export const fi: Record<string, string> = {
 	"iconPack.diskWriteFailed":
 		"Callout Studio ei voinut tallentaa kuvakepakettia levylle, joten se on ladattava uudelleen ensi kerralla. Valitsemasi kuvakkeet on silti tallennettu asetuksiisi.",
 	"settings.colorsAndIcons": "Värit ja kuvakkeet",
-	"settings.iconLibrariesDesc": "Järjestä kuvakekirjastot uudelleen ja lataa lisää kirjastoja.",
+	"settings.iconLibrariesCount": "{{available}}/{{total}} saatavilla",
+	"settings.iconLibrariesAll": "Kaikki {{total}} saatavilla",
 	"settings.iconLibrariesEditorOpen":
 		"Lopeta ensin työ callout-editorissa. Sen tallentamaton kuvake voi olla peräisin kirjastosta, jonka poistat täällä.",
 	"iconLibraries.manage": "Hallitse kuvakekirjastoja",

@@ -549,7 +549,10 @@ export const en: Record<string, string> = {
 
 	// Settings — the Colors and icons box: Saved color palettes and Icon libraries
 	"settings.colorsAndIcons": "Colors and icons",
-	"settings.iconLibrariesDesc": "Reorder and download additional icon libraries.",
+	// The end of the Icon libraries row: the libraries Pick an icon offers on
+	// this device (the page's "Available libraries"), out of all of them
+	"settings.iconLibrariesCount": "{{available}} of {{total}} available",
+	"settings.iconLibrariesAll": "All {{total}} available",
 	"settings.iconLibrariesEditorOpen":
 		"Finish with the callout editor first. Its unsaved icon could come from a library you delete here.",
 
@@ -1264,8 +1267,8 @@ export const en: Record<string, string> = {
 	"iconPack.diskWriteFailed":
 		"Callout Studio could not save the icon pack to disk, so it will need downloading again next time. The icons you pick are still saved with your settings.",
 
-	// Icon libraries window (the button beside Pick an icon's library menu, and
-	// the Icon libraries row of the settings, which opens the same window)
+	// Icon libraries: the window the button beside Pick an icon's library menu
+	// opens, and the Icon libraries page of the settings, which shows the same list
 	"iconLibraries.manage": "Manage icon libraries",
 	"iconLibraries.title": "Icon libraries",
 	"iconLibraries.desc":

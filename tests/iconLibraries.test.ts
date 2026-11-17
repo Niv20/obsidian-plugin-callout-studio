@@ -22,6 +22,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
 	FALLBACK_LIBRARY,
+	availableCount,
 	calloutNamesUsingLibrary,
 	calloutsUsingLibrary,
 	editedUsingLibrary,
@@ -486,5 +487,80 @@ describe("editedUsingLibrary — the edit, when it is the library's", () => {
 		assert.equal(editedUsingLibrary(edit, "tabler"), null);
 		assert.equal(editedUsingLibrary(undefined, "fa"), null);
 		assert.equal(editedUsingLibrary(null, "fa"), null);
+	});
+});
+
+describe("availableCount — the count at the end of the settings' Icon libraries row", () => {
+	const ALL_FILES = ICON_SOURCE_IDS.flatMap((id) => [...libraryFiles(id)]);
+	const BUILT_IN = ICON_SOURCE_IDS.filter((id) => !isDownloadable(id));
+	/** Answers for a device holding exactly these files, the folder already looked at. */
+	const on =
+		(files: readonly IconPackId[]) =>
+		(file: IconPackId): boolean =>
+			files.includes(file);
+
+	it("has no count while any file is not known, rather than a number that changes a moment later", () => {
+		assert.equal(
+			availableCount(prefs(), () => undefined),
+			undefined,
+		);
+		assert.equal(
+			availableCount(prefs(), (file) => (file === "octicons" ? undefined : false)),
+			undefined,
+		);
+	});
+
+	it("counts every library this build knows, so one a later release adds is counted at once", () => {
+		assert.equal(availableCount(prefs(), on([]))?.total, ICON_SOURCE_IDS.length);
+	});
+
+	it("counts the libraries that ship with the plugin when nothing is downloaded", () => {
+		assert.deepEqual(availableCount(prefs(), on([])), {
+			available: BUILT_IN.length,
+			total: ICON_SOURCE_IDS.length,
+		});
+	});
+
+	it("leaves out a built-in library the user hid", () => {
+		assert.equal(availableCount(prefs({ hidden: ["emoji"] }), on([]))?.available, BUILT_IN.length - 1);
+	});
+
+	it("counts a downloaded library only when every one of its files is here", () => {
+		assert.equal(availableCount(prefs(), on(["fa-brands", "fa-solid"]))?.available, BUILT_IN.length);
+		assert.equal(
+			availableCount(prefs(), on(["fa-brands", "fa-solid", "fa-regular"]))?.available,
+			BUILT_IN.length + 1,
+		);
+	});
+
+	it("reaches every library once everything is downloaded and nothing hidden", () => {
+		const count = availableCount(prefs(), on(ALL_FILES));
+		assert.ok(count);
+		assert.equal(count.available, count.total);
+	});
+
+	it("agrees with what the page lists under Available libraries, on any device", () => {
+		// The page's group is libraryOrder filtered by isInPicker; the row must
+		// never say a different number than the page it opens shows.
+		const devices: IconPackId[][] = [
+			[],
+			ALL_FILES,
+			["octicons"],
+			["fa-solid", "tabler-outline"],
+			["tabler-outline", "tabler-filled", "simple-icons"],
+		];
+		const hiddens: string[][] = [
+			[],
+			["lucide"],
+			["material", "emoji", "image"],
+			["lucide", "material", "emoji", "image"],
+		];
+		for (const files of devices) {
+			for (const hidden of hiddens) {
+				const p = prefs({ hidden });
+				const page = libraryOrder(p).filter((id) => isInPicker(id, p, device(files))).length;
+				assert.equal(availableCount(p, on(files))?.available, page, `${files.join(",")} | ${hidden.join(",")}`);
+			}
+		}
 	});
 });

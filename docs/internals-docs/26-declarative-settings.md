@@ -175,8 +175,8 @@ holds everything the tree is built with:
   [`declarative/settingsTree.ts`](../../src/settings/declarative/settingsTree.ts):
   the notices; the callouts box (`callouts`: Callouts from your theme, My
   callout types, Built-in callouts, Default fallback callout); Colors and icons
-  (`colors-and-icons`: Saved color palettes, a page, and Icon libraries, a row
-  that opens a window); Global styling (the three style pages);
+  (`colors-and-icons`: Saved color palettes and Icon libraries, two pages);
+  Global styling (the three style pages);
   Editor (`menus-and-commands`, the id from when it was called Menus and
   commands: Autocomplete and metadata, Customize right-click menu, Commands and
   shortcuts); Website (`website`: its one row, Publish to the web); Import
@@ -193,8 +193,9 @@ holds everything the tree is built with:
 - **The signals.** The first `definitions()` call (which `addSettingTab`
   makes while the plugin loads) wires, for the plugin's whole life, the old
   page's four (`subscribeSettingsTab`: the registry, the editor's preview, an
-  icon download, `css-change`), the saving status, and the language's
-  download, all into the `TreeUpdater`. `plugin.register` undoes them on
+  icon download, `css-change`), the saving status, the language's
+  download, and the icon pack store's `onChange` (the Icon libraries row's
+  count), all into the `TreeUpdater`. `plugin.register` undoes them on
   unload. They stay wired while the settings are closed because opening the
   settings draws the stored tree; the cost while closed is one signature, about
   0.1 ms (0.36 ms to build the whole tree; measured in Obsidian 1.14.5 with the
@@ -204,7 +205,8 @@ holds everything the tree is built with:
   `plugin.settings` (so a field added later cannot be missed; the uploaded
   pictures are left out, being large and drawn through the callouts and the
   icon signal), whether saving is paused and why, the language download, a scan
-  running, and the plugins the import offer names.
+  running, the plugins the import offer names, the services the website offer
+  names, and the Icon libraries row's count.
 - **The visit.** Obsidian has no "the tab opened" hook. The notices' box
   starts with a hidden row (`settings-visit`) whose `render` Obsidian runs
   whenever it draws the main page, which it does on every opening of the tab;
@@ -307,23 +309,25 @@ has **Beta**), which the row's cleanup takes away before the next draw.
 | Danger zone (`danger-zone`) | Restore an earlier version (`earlier-versions`): a page, `versionHistoryPage.ts`, drawn by the plugin; the saving notice's **Go to version history** opens it (`openPagePath`, so not on 1.13.x, where the button is left out); the row shows only on a host with a recovery service. Convert to standard Markdown, Reset everything (Obsidian's Log out look: `setDestructive()`, the red every red button wears) | The version page works (browsing); Reset dimmed; the conversion review works (it changes notes, not settings) |
 | Footer (`footer`, no heading) | one render row, not searchable (`footerGroup.ts`): a line of tiles (`footer-tiles`, `cs-footer-row`), each an icon with its name beside it and no tooltip: the language (a globe and the language in use, which opens the menu), Open an issue, Source code, License (opens `LicenseModal`), and the version | the globe is disabled; the rest works |
 
-Manage icon libraries is a window
-([`iconpicker/IconLibrariesModal.ts`](../../src/settings/iconpicker/IconLibrariesModal.ts),
-16 § `IconLibrariesModal`), never a page, with two doors: Pick an icon's
-**Manage libraries**, and the **Icon libraries** row of the Colors and icons
-box (below). Both go through one opener
-([`iconpicker/openIconLibraries.ts`](../../src/settings/iconpicker/openIconLibraries.ts)),
-so neither can open it half ready. The shapes tried before this one:
+The icon libraries are one list
+([`iconpicker/IconLibrariesView.ts`](../../src/settings/iconpicker/IconLibrariesView.ts),
+16 § `IconLibrariesModal`) in two frames: the **Manage icon libraries** window
+that Pick an icon's **Manage libraries** opens, and the **Icon libraries** page
+of the Colors and icons box (below). The window stays with the picker, because
+the picker and the callout editor under it are windows that cover the settings.
+The shapes tried before this one:
 
 - A settings row that opened the window, until 2026-10-27, removed as a second
-  door to the same window. It is back (2026-11-02) with the two doors sharing
-  one opener, which the first version did not have (it counted the icons and
-  read the disk in a copy of its own), and with a guard for the one thing the
-  second door cannot see: an open callout editor's unsaved icon.
-- A settings **page** (`icon-libraries`, 2026-10-29), which could in practice be
-  reached only from the picker, and the picker and the callout editor under it
-  are windows that cover the settings: touching the page meant closing them, and
-  with them the icon the person had just chosen and not yet saved.
+  door to the same window.
+- A settings **page** (`icon-libraries`, 2026-10-29) and no window, which could
+  in practice be reached only from the picker: touching the page meant closing
+  the picker and the editor under it, and with them the icon the person had
+  just chosen and not yet saved.
+- The row again (2026-11-02 to 2026-11-17), opening the same window through
+  the picker's opener, refused while a callout editor was open. It gave way to
+  the page at Niv's ask: the settings show a page, as every other box of them
+  does, and the picker keeps its window. Unlike the 2026-10-29 page, this one is
+  drawn by the code the window draws with, so the two cannot disagree.
 
 Search words that are names (Admonition, Callout Manager)
 are `aliases` and are not translated. Every button calls a flow of its own
@@ -557,38 +561,61 @@ many callouts link to the palette.
 `settingsTree.ts`'s `colorsAndIconsBox` (`colors-and-icons`, heading **Colors
 and icons**) sits between the callouts box and Global styling and holds what a
 callout's colour and icon come from: the **Saved color palettes** page above,
-and the **Icon libraries** row. Before 2026-11-02 the palettes were a row of
+and the **Icon libraries** page. Before 2026-11-02 the palettes were a row of
 the callouts box, above Default fallback callout; their ids (`palettes`,
 `palette-list`) did not change with the move.
 
-[`declarative/iconLibrariesRow.ts`](../../src/settings/declarative/iconLibrariesRow.ts)
-is a `buttonRow` (`icon-libraries`, a jump target) named **Icon libraries**,
-whose button reads **Manage libraries**, the words of the picker's button, so
-the two doors agree. It is a door and not a page: the press counts the icons of
-every library (`iconpicker/sourceCounts.ts`, the same counting the picker does
-in the background as it opens), then opens the window through
-`openIconLibraries`, which first reads the pack files back from disk. `onClick`
-returns the promise, so Obsidian's spinner stays on the button until the window
-closes, which also keeps a second press from opening a second window while the
-counts are made.
+[`declarative/iconLibrariesPage.ts`](../../src/settings/declarative/iconLibrariesPage.ts):
+`iconLibrariesPage(ctx)` is the row that opens the page (`icon-libraries`),
+named **Icon libraries**, with no `desc`, like Saved color palettes above it
+(until 2026-11-17 it had a sentence, which the row above lacked). At its end
+(`displayValue`, `iconLibrariesValue`) is how many libraries Pick an icon
+offers here out of all of them: "4 of 9 available", or "All 9 available" when
+the two are equal. The word is the page's own (its first group is Available
+libraries), and the total is every library the build knows, so a library a
+later release adds shows at once as one more to download. The count is per
+device. It is drawn from what the pack store knows without reading the
+files (13 § Knowing what is on disk without reading it), and while that is not
+known yet the row shows no count at all, never a guess that would change in
+front of the reader. The signature reads the value and the pack store's
+`onChange` is one of the tab's signals, so a download, a deletion or a look
+that changes the count draws the row again, and nothing else does. Going back
+from the page redraws the main page from the stored tree, so the count there
+is already the new one. The page draws
+itself (`page: () => new IconLibrariesPage(ctx)`, a `SettingPage`, like Built-in
+callouts): its list drags, slides and follows a download as it runs, and
+Obsidian drawing an `items` page again row by row on every `update()` would
+undo all three. `display()` reads the pack files back from disk and counts the
+icons of every library (`iconpicker/sourceCounts.ts`, the same counting the
+picker does in the background as it opens), both at once, and only then draws
+the list (`IconLibrariesView`) under Obsidian's page sentence
+(`setting-page-desc`). A page left before that is done draws nothing
+(`generation`); `hide()` takes the list away and stops it following the pack
+files, and a deletion under way goes on by itself.
 
-- **No callout is being edited.** Pick an icon hands the window the icon the
-  editor holds unsaved (`editing`) so that deleting the library it came from
-  asks first (13 § The callout being edited counts as a user). The row has no
-  way to learn it, so it refuses while `plugin.settingsEditOpen` is true (the
-  flag the callout editor and the two previewing modals raise): the button is
-  dimmed and a press says **Finish with the callout editor first**. The flag is
-  also true for a moment after the editor closes while its save is still
-  running. Nothing should reach the row with an editor on top, since modals stack;
-  this is the cheap guard for the day something does.
-- **While saving is paused** the row is not dimmed. The window guards what
-  needs it (deleting a library callouts use) and says why, as it does from the
-  picker.
-- **The settings search** finds the row by its name, its sentence (which says
-  where to download) and the libraries' own names (`aliases`, not translated:
-  Tabler, Font Awesome, and the rest).
-- **No end value.** Which libraries are on this device is per device, and the
-  window says it.
+- **No callout is being edited behind it**, but one can be beside it: in
+  Obsidian 1.14 the settings are a window of their own, and an editor can be
+  opened from a note. Pick an icon hands the window the icon the editor holds
+  unsaved (`editing`) so that deleting the library it came from asks first (13
+  § The callout being edited counts as a user). The page has no way to learn
+  it, so while `plugin.settingsEditOpen` is true (the flag the callout editor
+  and the two previewing modals raise, also true for a moment after the editor
+  closes while its save is still running) the list deletes no library and a
+  press says **Finish with the callout editor first** (16 § `IconLibrariesModal`).
+  Until 2026-11-17 the row refused to open the window at all then.
+- **While saving is paused** the page opens as ever. The list guards what needs
+  it (deleting a library callouts use) and says why, as it does in the window.
+- **The settings search** finds the page by its name only. A page that draws
+  itself is not indexed, and pages are found by name (§ How Obsidian draws the
+  tree; an alias on a page's own entry does nothing, § Fallback, language and
+  the theme's styles). Until 2026-11-17 the row
+  was also found by a sentence of its own and the libraries' own names (Tabler, Font
+  Awesome, and the rest); that is the cost of the page.
+- **Not a jump target.** A page's row cannot register itself (§ Jumping to a
+  row), and nothing jumped to the old row.
+- **A count, per device.** Until 2026-11-17 the row had no end value, because
+  which libraries are on this device differs between devices. It has one now,
+  and it is just as per device: the guide says so.
 
 ## The style pages
 

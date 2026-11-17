@@ -659,7 +659,8 @@ export const es: Record<string, string> = {
 	"iconPack.diskWriteFailed":
 		"Callout Studio no pudo guardar el paquete de iconos en disco, por lo que tendrá que descargarse de nuevo la próxima vez. Los iconos que elijas siguen guardados en tu configuración.",
 	"settings.colorsAndIcons": "Colores e iconos",
-	"settings.iconLibrariesDesc": "Reordena y descarga bibliotecas de iconos adicionales.",
+	"settings.iconLibrariesCount": "{{available}} de {{total}} disponibles",
+	"settings.iconLibrariesAll": "Todas disponibles ({{total}})",
 	"settings.iconLibrariesEditorOpen":
 		"Termina primero con el editor de callouts. Su icono sin guardar podría venir de una biblioteca que elimines aquí.",
 	"iconLibraries.manage": "Administrar bibliotecas de iconos",

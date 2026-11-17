@@ -36,8 +36,8 @@ The main page, top to bottom: the notices (saving paused, the import offer,
 the website offer);
 the callouts box (Callouts from your theme, My callout types, Built-in
 callouts, Default fallback callout); Colors and icons (Saved color palettes, a
-page, and Icon libraries, a row whose button opens the Manage icon libraries
-window - [`iconLibrariesRow.ts`](../../src/settings/declarative/iconLibrariesRow.ts));
+page, and Icon libraries, a page that draws the list the Manage icon libraries
+window draws - [`iconLibrariesPage.ts`](../../src/settings/declarative/iconLibrariesPage.ts));
 Global styling (Heading, Inline and Block callout); Editor (Autocomplete and
 metadata, the right-click menu, the commands); Website (its one row opens
 the Publish to the web panel in the sidebar); Import and export; Danger zone (first row: Restore an earlier version); the
@@ -2589,20 +2589,30 @@ when it is handed a `scroller` (finding S4-12): within 50px of the scroller's
 top or bottom edge (or a third of its height, if less), a frame loop scrolls it
 up to 15px a frame and finds the slot again, and a wheel scroll mid-drag
 re-tracks the row too. It keeps scrolling under reduced motion, which only
-removes the slides. Manage icon libraries passes its window body.
+removes the slides. The list of icon libraries passes its frame's scroller:
+the window's body, or the settings pane under the Icon libraries page.
 
 ### `IconLibrariesModal` - libraries in three Obsidian groups
 
-Opened by the **Manage libraries** text button at the end of Pick an icon's
-source row, and by the **Icon libraries** row of the settings' Colors and icons
-box (26 § The Colors and icons box). Both go through
-[`iconpicker/openIconLibraries.ts`](../../src/settings/iconpicker/openIconLibraries.ts),
-which reads the pack files back from disk before the window opens and takes
-from the door the icon counts and, from the picker, the callout being edited
-(`editing`). Titled **Manage icon libraries** - the button's words with "icon"
-put back, since the button is read inside a window already about icons and the
-title has to stand on its own
-([`iconpicker/IconLibrariesModal.ts`](../../src/settings/iconpicker/IconLibrariesModal.ts)).
+One list of libraries in two frames.
+[`iconpicker/IconLibrariesView.ts`](../../src/settings/iconpicker/IconLibrariesView.ts)
+draws the list; the frames give it the element to draw in, the element that
+scrolls, the description's class, and what they know:
+
+| Frame | Opened by | Description | Scroller | Knows |
+| --- | --- | --- | --- | --- |
+| The **Manage icon libraries** window ([`IconLibrariesModal.ts`](../../src/settings/iconpicker/IconLibrariesModal.ts)) | the **Manage libraries** text button at the end of Pick an icon's source row, through [`openIconLibraries.ts`](../../src/settings/iconpicker/openIconLibraries.ts) | `setting-item-description`, 24px above the first group | the window body | the picker's icon counts, and the callout being edited (`editing`) |
+| The **Icon libraries** page of the settings ([`iconLibrariesPage.ts`](../../src/settings/declarative/iconLibrariesPage.ts), 26 § The Colors and icons box) | its row in the Colors and icons box | Obsidian's `setting-page-desc` | the settings pane (`scrollParentOf`, `ui/foldAnchor.ts`), minus the sticky title bar (`coveredTop`) | its own icon counts, and whether an editor is open (`editorOpen`) |
+
+The window's opener reads the pack files back from disk before the window
+opens; the page does the same read, and counts, before it draws. The window is
+titled **Manage icon libraries** - the button's words with "icon" put back,
+since the button is read inside a window already about icons and the title has
+to stand on its own; the page takes its title from its row, **Icon libraries**.
+The window answers the picker, once it has closed and every deletion it started
+has finished (`close()` hands them back), whether anything changed; the page
+answers no one, and a deletion under way when it is left goes on by itself.
+
 The libraries are three Obsidian setting groups (`SettingGroup` with
 `mod-list`, finding S4-13): a heading over one rounded box of rows, thin lines
 between the rows, 24px between the groups, rows a little tighter and kept on
@@ -2614,7 +2624,7 @@ very end. Nothing is faded. Until 2026-10-23 it was one banded list of grey
 pills, with hand-drawn headings, captions and rules matched to Built-in
 commands.
 
-This window is also the only place a new library is downloaded: the Choose
+This list is also the only place a new library is downloaded: the Choose
 source menu lists only the libraries the picker offers (see
 [Callout editor](14-callout-editor.md#the-icon-picker)), and closes with a line
 counting the ones left to download here.
@@ -2701,7 +2711,7 @@ Behaviour to keep in mind before changing it:
   mid-drag waits for the drag's `pointerup`, `pointercancel` or
   `lostpointercapture`: rebuilding under the pointer would detach the dragged
   row.
-- **The page scrolls by itself in exactly one case: the library whose button
+- **The list scrolls by itself in exactly one case: the library whose button
   was pressed changed group and landed out of view.** Then the list scrolls with the
   row, just far enough to show where it went - down to **Libraries to download**
   or **Hidden libraries** for a delete or a hide, up into **Available
@@ -2709,7 +2719,7 @@ Behaviour to keep in mind before changing it:
   it: not a drag, an arrow key, the reset arrow, a download still running
   (the row only shows its spinner in place), a press that was refused, declined
   or failed, a library that arrives from the picker's own prompt, or a move
-  that lands in view anyway. The page keeps a set, `following`, of the
+  that lands in view anyway. The list keeps a set, `following`, of the
   libraries whose button is being pressed through (`run()` adds the id and
   removes it in a `finally`, so a press that ends without the row moving is
   forgotten and a later move of that library by someone else scrolls nothing).
@@ -2717,16 +2727,22 @@ Behaviour to keep in mind before changing it:
   since the last rows - a hide at once, a delete when its first file is gone, a
   download when its last file has arrived - and hands that key to
   `animateAvailable(change, follow)`. There, after the rebuild and before the
-  slide is measured, `scrollToReveal()` (`ui/scrollToReveal.ts`) moves the page's
-  root - `rootEl`, the `.vertical-tab-content` that is a settings page's one
-  scroll container - by the least that puts the row inside it with
-  `REVEAL_MARGIN_PX` (40px, room for a group's heading above its first row) to
-  spare, and not at all when it is already in. Because the scroll is instant
+  slide is measured, `scrollToReveal()` (`ui/scrollToReveal.ts`) moves the
+  frame's scroller - the window's body, or on the page its root, `rootEl`, the
+  `.vertical-tab-content` that is a settings page's one scroll container, less
+  the sticky title bar at its top (`coveredTop`) - by the least that puts the
+  row inside it with `REVEAL_MARGIN_PX` (40px, room for a group's heading above
+  its first row) to spare, and not at all when it is already in. Because the
+  scroll is instant
   and happens *before* `animateReorder` reads where the rows now are, the
   Available rows slide from where each was on screen to where it now is.
-  Reduced motion skips the slide but still scrolls. (A drag scrolls the page
-  too, when the row is held near its edge - that is the drag's own doing, see
-  the `DragSortList` section above.)
+  Reduced motion skips the slide but still scrolls. (A drag scrolls the
+  scroller too, when the row is held near its edge - that is the drag's own
+  doing, see the `DragSortList` section above.) On the page a dragged row
+  (`z-index: 1`) would paint over the sticky title bar, which has the same
+  level and comes earlier in the document, so the page is its own stacking
+  context (`.cs-icon-libraries-page { isolation: isolate }`), as Version history
+  is.
 - **A rebuild never leaves a box empty.** `render()` builds each group's rows
   in a detached element and puts them in with one `replaceChildren()` per box;
   the list used to be `empty()`-ed and appended to. The row whose button was just pressed has
@@ -2772,6 +2788,17 @@ Behaviour to keep in mind before changing it:
   the libraries (the same seal as a single delete), and a library that cannot
   be deleted raises its own notice, leaves the arrow showing, and does not stop
   the rest.
+- **On the page, an open callout editor stops every deletion.** In Obsidian
+  1.14 the settings are a window of their own, and an editor can be opened
+  beside them from a note; the page cannot see its unsaved icon, which could
+  come from the library deleted. So while `editorOpen()` (the page's
+  `plugin.settingsEditOpen`) is true, a trash button is dimmed and a press says
+  **Finish with the callout editor first** (`settings.iconLibrariesEditorOpen`),
+  and so does a reset that would delete a library; one that deletes nothing goes
+  ahead, and hiding and showing are unaffected. The reason is asked again at the
+  press, so an editor closed since the rows were drawn no longer blocks. The
+  last-library reason comes first: closing an editor would not make that one go.
+  The window leaves `editorOpen` out, since the picker hands it `editing`.
 - **`openAndWait()` resolves with whether anything changed** when the window
   closes, which is what tells the picker to take it in: it rebuilds its menu
   and, only if what the panel shows changed, the panel

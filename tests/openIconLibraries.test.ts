@@ -1,11 +1,11 @@
 /**
- * tests/openIconLibraries.test.ts — the one way into the Manage icon libraries
+ * tests/openIconLibraries.test.ts — the way into the Manage icon libraries
  * window (settings/iconpicker/openIconLibraries.ts) and the icon counts it is
  * given (settings/iconpicker/sourceCounts.ts).
  *
- * Pick an icon's Manage libraries button and the settings' Icon libraries row
- * both come through the opener, so what is held to it is what neither door may
- * get wrong: the pack files are read back before anything else (a library
+ * Pick an icon's Manage libraries button (the door) comes through the opener,
+ * so what is held to it is what the door may not get wrong: the pack files are
+ * read back before anything else (a library
  * downloaded in an earlier session reads as missing until then, and the window
  * would list it under "to download"); the door can still say no once they have
  * been read; what a door knows (the counts, the callout being edited) reaches
@@ -18,7 +18,7 @@ import { describe, it } from "node:test";
 import { DEFAULT_SETTINGS } from "../src/constants";
 import { ICON_SOURCE_IDS } from "../src/icons/registry";
 import type { EditedCallout } from "../src/icons/iconLibraries";
-import type { IconLibrariesHost } from "../src/settings/iconpicker/IconLibrariesModal";
+import type { IconLibrariesHost } from "../src/settings/iconpicker/IconLibrariesView";
 import { openIconLibraries, type IconLibrariesPlugin } from "../src/settings/iconpicker/openIconLibraries";
 import { loadSourceCounts } from "../src/settings/iconpicker/sourceCounts";
 import type { IconSourceId } from "../src/types";

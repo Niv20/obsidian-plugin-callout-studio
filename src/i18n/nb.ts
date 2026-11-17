@@ -641,7 +641,8 @@ export const nb: Record<string, string> = {
 	"iconPack.diskWriteFailed":
 		"Callout Studio kunne ikke lagre ikonpakken til disk, så den må lastes ned igjen neste gang. Ikonene du velger er fortsatt lagret med innstillingene dine.",
 	"settings.colorsAndIcons": "Farger og ikoner",
-	"settings.iconLibrariesDesc": "Endre rekkefølgen på ikonbibliotekene og last ned flere.",
+	"settings.iconLibrariesCount": "{{available}} av {{total}} tilgjengelige",
+	"settings.iconLibrariesAll": "Alle {{total}} tilgjengelige",
 	"settings.iconLibrariesEditorOpen":
 		"Bli ferdig i callout-redigeringsprogrammet først. Det ulagrede ikonet der kan komme fra et bibliotek du sletter her.",
 	"iconLibraries.manage": "Administrer ikonbiblioteker",

@@ -663,7 +663,8 @@ export const hu: Record<string, string> = {
 	"iconPack.diskWriteFailed":
 		"A Callout Studio nem tudta menteni az ikoncsomagot a lemezre, ezért legközelebb újra le kell tölteni. A választott ikonok továbbra is mentve vannak a beállításaiban.",
 	"settings.colorsAndIcons": "Színek és ikonok",
-	"settings.iconLibrariesDesc": "Az ikonkönyvtárak átrendezése és további könyvtárak letöltése.",
+	"settings.iconLibrariesCount": "{{available}}/{{total}} elérhető",
+	"settings.iconLibrariesAll": "Mind elérhető ({{total}})",
 	"settings.iconLibrariesEditorOpen":
 		"Előbb fejezd be a munkát a callout-szerkesztőben. A még nem mentett ikonja olyan könyvtárból is származhat, amelyet itt törölsz.",
 	"iconLibraries.manage": "Ikonkönyvtárak kezelése",

@@ -727,7 +727,8 @@ export const ru: Record<string, string> = {
 	"iconPack.diskWriteFailed":
 		"Callout Studio не смог сохранить пакет иконок на диск, поэтому его придётся загрузить снова в следующий раз. Выбранные вами иконки по-прежнему сохранены в настройках.",
 	"settings.colorsAndIcons": "Цвета и иконки",
-	"settings.iconLibrariesDesc": "Изменение порядка и загрузка дополнительных библиотек иконок.",
+	"settings.iconLibrariesCount": "Доступно: {{available}} из {{total}}",
+	"settings.iconLibrariesAll": "Доступны все ({{total}})",
 	"settings.iconLibrariesEditorOpen":
 		"Сначала завершите работу в редакторе callout. Его несохранённая иконка может быть из библиотеки, которую вы здесь удаляете.",
 	"iconLibraries.manage": "Управление библиотеками иконок",

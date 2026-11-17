@@ -27,9 +27,10 @@ import assert from "node:assert";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
+import { setImmediate } from "node:timers/promises";
 import type { App, PluginManifest } from "obsidian";
 import { PackDataStore } from "../src/icons/PackDataStore";
-import { isPackLoaded, getPackData } from "../src/icons/packData";
+import { forgetPackData, isPackLoaded, getPackData } from "../src/icons/packData";
 import { PACK_MANIFEST } from "../src/icons/data/packManifest";
 import type { IconPackId } from "../src/types";
 
@@ -48,6 +49,18 @@ interface Harness {
 	/** Paths whose deletion must throw, standing in for a locked file. */
 	undeletable: Set<string>;
 	removeCalls: string[];
+	/** Every folder the store listed, in order. */
+	listCalls: string[];
+	/** Folders that exist (a pack's own folder only once a test or a write makes it). */
+	dirs: Set<string>;
+	/** Set to make the next listings fail, standing in for an unreadable folder. */
+	listFails: boolean;
+	/**
+	 * Set to make the next listing wait: it takes its snapshot of the folder
+	 * when asked, and answers only when the test calls `releaseList()`.
+	 */
+	holdList: boolean;
+	releaseList: () => void;
 	notifications: number;
 }
 
@@ -80,6 +93,15 @@ function harness(): Harness {
 			dirs.add(path);
 			return Promise.resolve();
 		},
+		list(path: string): Promise<{ files: string[]; folders: string[] }> {
+			h.listCalls.push(path);
+			if (h.listFails) return Promise.reject(new Error("EACCES"));
+			const snapshot = { files: [...files.keys()].filter((file) => file.startsWith(`${path}/`)), folders: [] };
+			if (!h.holdList) return Promise.resolve(snapshot);
+			return new Promise((resolve) => {
+				h.releaseList = () => resolve(snapshot);
+			});
+		},
 		remove(path: string): Promise<void> {
 			removeCalls.push(path);
 			if (undeletable.has(path)) return Promise.reject(new Error("EPERM"));
@@ -103,6 +125,11 @@ function harness(): Harness {
 		unreadable,
 		undeletable,
 		removeCalls,
+		listCalls: [],
+		dirs,
+		listFails: false,
+		holdList: false,
+		releaseList: () => {},
 		notifications: 0,
 	};
 	h.store.onChange(() => {
@@ -453,5 +480,133 @@ describe("remove — deleting a downloaded pack", () => {
 		h.store.destroy();
 		assert.equal(await h.store.remove("simple-icons"), false);
 		assert.deepStrictEqual(h.removeCalls, []);
+	});
+});
+
+/* ------------------------------------------------------------------ *
+ * What is on disk, without reading it — the settings row's count
+ * ------------------------------------------------------------------ */
+
+describe("isOnDevice and lookOnDisk — what is on disk, without reading it", () => {
+	const PACKS = ".obsidian/plugins/callout-studio/icon-packs";
+	/** A store with nothing loaded yet; earlier tests leave packs in memory. */
+	function fresh(): Harness {
+		for (const id of Object.keys(PACK_MANIFEST) as IconPackId[]) forgetPackData(id);
+		return harness();
+	}
+	/** Put a file in the folder, and the folder on the disk. */
+	function drop(h: Harness, id: IconPackId, damage?: (text: string) => string): void {
+		h.dirs.add(PACKS);
+		place(h, id, damage);
+	}
+
+	it("gives no answer before the folder is looked at, so no count is drawn from a guess", () => {
+		const h = fresh();
+		drop(h, "octicons");
+		assert.equal(h.store.isOnDevice("octicons"), undefined);
+		assert.equal(h.store.isOnDevice("fa-solid"), undefined);
+	});
+
+	it("knows a pack is here once it is loaded, even before any look", async () => {
+		const h = fresh();
+		drop(h, "octicons");
+		assert.equal(await h.store.loadFromDisk("octicons"), "ready");
+		assert.equal(h.store.isOnDevice("octicons"), true);
+		assert.equal(h.store.isOnDevice("fa-solid"), undefined, "the other files are still unknown");
+	});
+
+	it("looks with one listing and reads no file", async () => {
+		const h = fresh();
+		drop(h, "octicons");
+		drop(h, "fa-brands");
+		await h.store.lookOnDisk();
+		assert.deepStrictEqual(h.listCalls, [PACKS]);
+		assert.deepStrictEqual(h.readCalls, [], "a listing, never a read: some packs are hundreds of KB");
+		assert.equal(h.store.isOnDevice("octicons"), true);
+		assert.equal(h.store.isOnDevice("fa-brands"), true);
+		assert.equal(h.store.isOnDevice("fa-solid"), false);
+		assert.ok(!isPackLoaded("octicons"), "seen is not loaded: the picker still reads and verifies it");
+	});
+
+	it("does not list a folder that is not there, and then nothing is here", async () => {
+		const h = fresh();
+		await h.store.lookOnDisk();
+		assert.deepStrictEqual(h.listCalls, []);
+		for (const id of Object.keys(PACK_MANIFEST) as IconPackId[]) assert.equal(h.store.isOnDevice(id), false, id);
+	});
+
+	it("tells its listeners when the answer changes, and only then", async () => {
+		const h = fresh();
+		drop(h, "octicons");
+		await h.store.lookOnDisk();
+		assert.equal(h.notifications, 1, "unknown became known");
+		await h.store.lookOnDisk();
+		assert.equal(h.notifications, 1, "the same folder again: nothing to redraw");
+		drop(h, "rpg-awesome");
+		await h.store.lookOnDisk();
+		assert.equal(h.notifications, 2, "a file a sync brought, or someone dropped in");
+		assert.equal(h.store.isOnDevice("rpg-awesome"), true);
+	});
+
+	it("shares one listing between two looks asked at once", async () => {
+		const h = fresh();
+		h.dirs.add(PACKS);
+		await Promise.all([h.store.lookOnDisk(), h.store.lookOnDisk()]);
+		assert.equal(h.listCalls.length, 1);
+	});
+
+	it("keeps the answer unknown when the folder cannot be listed", async () => {
+		const h = fresh();
+		drop(h, "octicons");
+		h.listFails = true;
+		await h.store.lookOnDisk();
+		assert.equal(h.store.isOnDevice("octicons"), undefined, "no answer rather than a wrong one");
+		assert.equal(h.notifications, 0);
+		h.listFails = false;
+		await h.store.lookOnDisk();
+		assert.equal(h.store.isOnDevice("octicons"), true, "the next look answers");
+	});
+
+	it("does not count a file that was read and refused, though it is still in the folder", async () => {
+		const h = fresh();
+		drop(h, "octicons", (text) => text.replace("{", "{ "));
+		assert.equal(await h.store.loadFromDisk("octicons"), "corrupt");
+		await h.store.lookOnDisk();
+		assert.equal(h.store.isOnDevice("octicons"), false, "the picker would not offer it");
+		drop(h, "octicons");
+		assert.equal(await h.store.loadFromDisk("octicons"), "ready", "a good copy put back");
+		assert.equal(h.store.isOnDevice("octicons"), true);
+	});
+
+	it("counts a deletion at once", async () => {
+		const h = fresh();
+		drop(h, "octicons");
+		await h.store.lookOnDisk();
+		assert.equal(await h.store.remove("octicons"), true);
+		assert.equal(h.store.isOnDevice("octicons"), false);
+	});
+
+	it("does not let a listing older than a deletion bring the file back", async () => {
+		const h = fresh();
+		drop(h, "octicons");
+		await h.store.lookOnDisk();
+		h.holdList = true;
+		const look = h.store.lookOnDisk();
+		// The listing has taken its snapshot, with the file still in it.
+		await setImmediate();
+		assert.equal(await h.store.remove("octicons"), true);
+		h.releaseList();
+		await look;
+		assert.equal(h.store.isOnDevice("octicons"), false);
+	});
+
+	it("forgets everything once destroyed", async () => {
+		const h = fresh();
+		drop(h, "octicons");
+		await h.store.lookOnDisk();
+		h.store.destroy();
+		assert.equal(h.store.isOnDevice("octicons"), false, "a destroyed store has nothing");
+		await h.store.lookOnDisk();
+		assert.equal(h.listCalls.length, 1, "and looks no more");
 	});
 });

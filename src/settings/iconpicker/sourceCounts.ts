@@ -2,12 +2,13 @@
  * settings/iconpicker/sourceCounts.ts — how many icons each library offers.
  *
  * Who calls it. Pick an icon (IconPickerModal.ts), which counts in the
- * background while it opens, and the settings' Icon libraries row
- * (declarative/iconLibrariesRow.ts), which counts before it opens the window.
+ * background while it opens, and the settings' Icon libraries page
+ * (declarative/iconLibrariesPage.ts), which counts before it draws.
  *
  * The main idea. Every library describes itself with an index that ships with
  * the plugin, so counting is offline. A library whose index cannot be read has
- * no count - the menu and the window then show none - rather than a wrong one.
+ * no count - the menu and the list of libraries then show none - rather than a
+ * wrong one.
  */
 import type { IconSourceId } from "../../types";
 import { ICON_SOURCE_IDS, getSource } from "../../icons/registry";

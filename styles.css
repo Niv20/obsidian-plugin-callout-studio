@@ -535,18 +535,31 @@
 	}
 }
 
-/* ─── Icon Libraries Window ───────────────────────────────────── */
+/* ─── Icon Libraries (window and settings page) ───────────────── */
 
 /* Three Obsidian setting groups (`SettingGroup` with `mod-list`, finding
    S4-13): app.css draws the headings, the boxes, the thin lines between rows,
    the 24px between groups, a row's emblem (`.setting-item-icon`), name and
    detail line, and keeps a row on one line on a phone. What follows is only
-   what is the window's own. */
+   what is the list's own. The same list is drawn in the window over Pick an
+   icon and on the settings' Icon libraries page (IconLibrariesView.ts). */
 
-/* 24px between the description and the first group. Obsidian sets a group off
-   from the group before it, and the first one has none. */
-.cs-icon-library-list {
+/* 24px between the window's description, a plain paragraph, and the first
+   group. Obsidian sets a group off from the group before it, and the first one
+   has none. On the page the description is Obsidian's own page sentence
+   (`.setting-page-desc`), which app.css spaces itself. */
+.setting-item-description + .cs-icon-library-list {
 	margin-top: var(--size-4-6);
+}
+
+/* The page's title bar is Obsidian's sticky `.setting-page-titlebar` (z-index
+   1), placed before the list. A row being dragged is lifted to the same level
+   (`.cs-icon-library-row.is-dragging`, z-index 1), and later in the document
+   wins a tie, so a row dragged up under the bar was painted over it. As on
+   Version history (`.cs-recovery-page`), the page is its own stacking context,
+   all of it one layer at level 0, under the bar. */
+.cs-icon-libraries-page {
+	isolation: isolate;
 }
 
 /* Available libraries is where a drag happens. Its drop placeholder is laid

@@ -17,7 +17,7 @@
  *   Default fallback callout               generalRows.ts
  *   Colors and icons
  *     Saved color palettes ›               palettesPage.ts
- *     Icon libraries (opens a window)      iconLibrariesRow.ts
+ *     Icon libraries ›                     iconLibrariesPage.ts
  *   Global styling                         stylePages.ts
  *   Editor                                 autocompletePage.ts, menuPage.ts,
  *                                            commandsPage.ts
@@ -40,7 +40,7 @@ import { myCalloutsPage } from "./calloutPages";
 import { commandsPage } from "./commandsPage";
 import { footerGroup } from "./footerGroup";
 import { fallbackRow } from "./generalRows";
-import { iconLibrariesRow } from "./iconLibrariesRow";
+import { iconLibrariesPage } from "./iconLibrariesPage";
 import { dangerZoneGroup, importExportGroup, websiteGroup } from "./mainPageGroups";
 import { menuPage } from "./menuPage";
 import { palettesPage } from "./palettesPage";
@@ -94,16 +94,16 @@ function calloutsBox(ctx: TreeContext): CsGroup {
 
 /**
  * Colors and icons: what a callout is drawn from, apart from its own
- * definition. The saved palettes are a page, as ever; the icon libraries are a
- * row that opens the window Pick an icon opens too, so the one window has two
- * doors and no second copy on a page.
+ * definition. Both are pages. The icon libraries page draws the same list as
+ * the window Pick an icon opens (iconpicker/IconLibrariesView.ts), so the two
+ * are one list in two frames.
  */
 function colorsAndIconsBox(ctx: TreeContext): CsGroup {
 	return {
 		type: "group",
 		id: MAIN_PAGE_BOXES.colorsAndIcons,
 		heading: t("settings.colorsAndIcons"),
-		items: [palettesPage(ctx), iconLibrariesRow(ctx)],
+		items: [palettesPage(ctx), iconLibrariesPage(ctx)],
 	};
 }
 

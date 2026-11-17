@@ -642,7 +642,8 @@ export const bg: Record<string, string> = {
 	"iconPack.diskWriteFailed":
 		"Callout Studio не успя да запази пакета с икони на диска, затова ще трябва да бъде изтеглен отново следващия път. Избраните от вас икони са все още запазени с настройките ви.",
 	"settings.colorsAndIcons": "Цветове и икони",
-	"settings.iconLibrariesDesc": "Пренареждане и изтегляне на допълнителни библиотеки с икони.",
+	"settings.iconLibrariesCount": "Налични: {{available}} от {{total}}",
+	"settings.iconLibrariesAll": "Налични: всички ({{total}})",
 	"settings.iconLibrariesEditorOpen":
 		"Първо приключете с редактора на callout. Незаписаната му икона може да е от библиотека, която изтривате тук.",
 	"iconLibraries.manage": "Управление на библиотеките с икони",

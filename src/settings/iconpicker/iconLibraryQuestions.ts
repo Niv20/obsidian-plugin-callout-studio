@@ -2,8 +2,9 @@
  * settings/iconpicker/iconLibraryQuestions.ts — the two questions Manage icon
  * libraries asks before it deletes files.
  *
- * Who calls it. IconLibrariesModal: before deleting a library that callouts
- * use, and before its reset arrow deletes every downloaded library.
+ * Who calls it. The list of libraries (IconLibrariesView.ts, in the window and
+ * on the settings page): before deleting a library that callouts use, and
+ * before its reset arrow deletes every downloaded library.
  *
  * The main idea. Each question names what goes — the callouts that use the
  * library, or the libraries themselves — and says what stays: the callouts

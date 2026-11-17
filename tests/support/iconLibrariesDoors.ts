@@ -1,14 +1,15 @@
 /**
- * tests/support/iconLibrariesDoors.ts — stand-ins for what the two doors of the
- * Manage icon libraries window reach: the window itself, and the icon indexes
- * the counts are made from.
+ * tests/support/iconLibrariesDoors.ts — stand-ins for what the ways into the
+ * list of icon libraries reach: the Manage icon libraries window itself, and
+ * the icon indexes the counts are made from.
  *
- * Who uses it. The suites of the two doors (declarativeIconLibrariesRow.test.ts)
- * and of the opener they share (openIconLibraries.test.ts).
+ * Who uses it. The suites of the window's opener (openIconLibraries.test.ts)
+ * and of the settings' Icon libraries page (declarativeIconLibrariesPage.test.ts).
  */
 import { ICON_SOURCE_IDS, getSource } from "../../src/icons/registry";
 import type { IconIndex } from "../../src/icons/types";
-import { IconLibrariesModal, type IconLibrariesHost } from "../../src/settings/iconpicker/IconLibrariesModal";
+import { IconLibrariesModal } from "../../src/settings/iconpicker/IconLibrariesModal";
+import type { IconLibrariesHost } from "../../src/settings/iconpicker/IconLibrariesView";
 import type { IconSourceId } from "../../src/types";
 
 /**

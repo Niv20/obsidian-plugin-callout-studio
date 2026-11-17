@@ -23,9 +23,10 @@
 /**
  * The element `el` scrolls inside, or null: the nearest ancestor whose
  * `overflow-y` lets it scroll. (Obsidian's settings pane, `.vertical-tab-content`,
- * is found by name first, without asking for styles.)
+ * is found by name first, without asking for styles.) The Icon libraries page
+ * asks it too, for the element its list scrolls in.
  */
-function scrollParentOf(el: HTMLElement): HTMLElement | null {
+export function scrollParentOf(el: HTMLElement): HTMLElement | null {
 	const known = el.closest<HTMLElement>(".vertical-tab-content, .vertical-tab-content-container");
 	if (known) return known;
 	const view = el.ownerDocument?.defaultView;

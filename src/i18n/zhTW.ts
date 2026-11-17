@@ -685,7 +685,8 @@ export const zhTW: Record<string, string> = {
 	"iconPack.diskWriteFailed":
 		"Callout Studio 無法將圖示包儲存至磁碟，下次需要重新下載。您選擇的圖示仍已儲存在您的設定中。",
 	"settings.colorsAndIcons": "顏色與圖示",
-	"settings.iconLibrariesDesc": "重新排序並下載其他圖示庫。",
+	"settings.iconLibrariesCount": "可用 {{available}}/{{total}}",
+	"settings.iconLibrariesAll": "全部 {{total}} 個可用",
 	"settings.iconLibrariesEditorOpen":
 		"請先完成 callout 編輯器中的操作。其中未儲存的圖示可能來自你在此處刪除的圖示庫。",
 	"iconLibraries.manage": "管理圖示庫",
