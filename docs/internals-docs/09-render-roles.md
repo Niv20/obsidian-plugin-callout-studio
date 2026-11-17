@@ -439,6 +439,240 @@ Two things it does not reach: a `![[transclusion]]` inside another note's
 reading view (the host's text does not mention the embedded note's tokens),
 and a hover preview, which renders fresh each time anyway.
 
+## A published site: one renderer, three hosts
+
+Obsidian Publish, Quartz and Digital Garden render a vault without running its
+plugins, so there a heading or inline token is literal text. The third render
+surface is [`src/web/core.ts`](../../src/web/core.ts): it finds the tokens in
+finished HTML and builds the same DOM the two surfaces above build.
+
+The services differ in *where* code may run, not in what a callout looks like,
+and where it runs decides what a feed reader, a search index and a reader with
+JavaScript off get to see. So there is one renderer and a **host** per place:
+
+| Host | Runs | Used for | A reader without JavaScript sees |
+| --- | --- | --- | --- |
+| [`web/browser.ts`](../../src/web/browser.ts) | in the visitor's browser | Obsidian Publish | the text as typed |
+| [`web/static/quartz.ts`](../../src/web/static/quartz.ts) | in the Quartz build, on the HAST tree | Quartz 4 and 5, as the Callout Studio Quartz plugin | the callout |
+| [`web/static/eleventy.ts`](../../src/web/static/eleventy.ts), wrapped by [`web/static/garden.ts`](../../src/web/static/garden.ts) | in the Digital Garden build, on markdown-it's HTML | Digital Garden, as the Callout Studio garden plugin | the callout |
+
+A host carries no renderer. It imports `core.ts` for its types only and takes
+the core as an argument, so each is compiled without it and the exporter joins
+the pieces as text (for Quartz and Digital Garden, the release does: each
+plugin is built once, not per vault, and reads the vault's snapshot while the
+site is built) - see
+[Build § The web renderer](20-build-test-release.md#the-web-renderer-four-bundles)
+for the bundles and
+[Import and export § Three export formats](15-import-export.md#three-export-formats)
+for what each service is given.
+
+### What the renderer shares, and what it cannot
+
+It is a port of the reading-view post-processor, not a second copy of the
+rules:
+
+- **The grammar is imported.** `RENDERED_HEADING_TOKEN_RE`, the inline scan,
+  `matchContentParts`, `parseOutlineHeadingText`, `splitCalloutMetadata`,
+  `calloutIdentity` and `calloutTokenLabel` are the same functions. The inline
+  scan is reached through `scanVisibleLineForCalloutTokens`, the half of
+  `scanLineForCalloutTokens` that takes the visible line as an argument:
+  rendered text is its own visible line, so the Markdown lexer stays out of
+  the bundle.
+- **The class names are imported** from
+  [`editor/tokenClasses.ts`](../../src/editor/tokenClasses.ts), a module with no
+  imports at all. `renderShared` re-exports it, so nothing else changed; the
+  renderer cannot import `renderShared` itself, because that pulls in the icon
+  painter and with it `obsidian`.
+- **The registry and the icon painter are replaced by a snapshot**
+  (`WebBundleData` in [`web/webBundleData.ts`](../../src/web/webBundleData.ts)):
+  each callout's id, name, aliases and its icon already painted to markup. The
+  renderer rebuilds the registry's three lookups from it - id, alias, attribute
+  form, most literal first - and ports `calloutDomId`, so a token resolves, is
+  labelled and is stamped exactly as `resolveCalloutDef` does it.
+
+`tests/webExport.test.ts` runs the same markup through reading view (with no
+section source) and through the renderer and compares whole elements. That
+suite, not this page, is what keeps the two from drifting.
+
+Four things differ, each because of where the code runs:
+
+- **There is no source line.** Reading view asks `getSectionInfo` whether a
+  token was escaped. Finished HTML has only rendered text, in which `\[!id]`
+  and `[!id]` are the same characters, so an escaped token is drawn as a
+  callout - on every host, build-time ones included, since they too run after
+  the Markdown was parsed. Inline code is the way to show the literal text.
+  This is a documented limitation, not an oversight.
+- **The theme is not consulted at all.** `shouldRenderToken` stands down for a
+  callout the active theme owns; on a published site that theme is not there,
+  so every callout is drawn - with its own definition's icon and colours, not
+  the theme's. The export also leaves out the rows only the theme adds, which
+  the site then draws as unknown ids. Theme state is a runtime reading of one
+  device; see [Import and export § The website export](15-import-export.md#one-snapshot-four-targets)
+  for why the files must not depend on it.
+- **The page belongs to someone else.** Quartz appends an anchor link to every
+  heading and styles it as `h2[id] > a`, and Publish appends a copy-link button.
+  `isChrome` recognises that furniture: it never counts as a title, and the
+  `cs-heading-title` wrapper stops before it instead of swallowing everything
+  after the token, so the child combinator still matches.
+- **A block callout may not be a callout yet.** Publish and Quartz have turned
+  `> [!tip] Title` into their own element before the renderer runs. Digital
+  Garden converts it *later* in its build, by finding that text at the top of
+  a `<blockquote>`. So the token that opens a blockquote is never a pill
+  (`isBlockCalloutLead`), on any host: by Obsidian's own syntax that position
+  is a block callout's header.
+- **The block callout is styled, never built.** The renderer leaves the
+  site's element exactly as the site made it. The user's colours and icons
+  reach it through the stylesheet alone, written per site - see
+  [Import and export § Block callouts](15-import-export.md#block-callouts-a-stylesheet-in-each-sites-own-terms).
+
+### Running without a DOM: `web/static/`
+
+The renderer is written against the DOM, and a build has none. Rather than a
+dependency every site would have to install, or a second renderer written
+against an abstract tree, the build-time hosts give it
+[`liteDom.ts`](../../src/web/static/liteDom.ts): a DOM cut down to exactly the
+members `core.ts` calls. Selectors are a tag, classes or both, in a comma
+list, and anything else throws; a tree walker yields text nodes from a
+snapshot.
+
+> [!IMPORTANT]
+> **Every DOM member used in `core.ts` must exist in `liteDom`.**
+> `tests/webRuntime.test.ts` runs each renderer case over both DOMs and
+> compares the results, so using a new member fails there. Add it to
+> `liteDom` in the same change.
+
+Two modules stand between `liteDom` and a platform's own tree, and both keep
+what they were given so that **a node the renderer did not touch goes back out
+exactly as it came in**:
+
+- [`htmlFragment.ts`](../../src/web/static/htmlFragment.ts) turns HTML into a
+  `liteDom` tree and back (Digital Garden, and every baked icon). It is not an
+  HTML parser in the specification's sense - no implied end tags, no
+  namespaces - and does not need to be: an element remembers its own opening
+  and closing tags, a text node its own spelling, a comment or a stray
+  `</div>` is carried whole. A misreading can cost a callout that stays text;
+  it cannot damage the page around it. Text is decoded only as far as it can
+  be re-encoded (the entities markdown-it writes, and numeric ones); a text
+  node with any other `&` is kept verbatim.
+- [`hastBridge.ts`](../../src/web/static/hastBridge.ts) does the same for
+  Quartz's HAST. An untouched node is handed back as the very object Quartz
+  supplied, with its `position` and `data`; only changed children and the
+  properties the renderer set are written. `class`, `data-*` and `aria-*` are
+  translated to HAST's `className`, `dataX` and `ariaX`; an icon's SVG
+  attributes go out as written, which HAST's own lookups accept.
+
+### Quartz
+
+`quartz(core, node)` returns the factory a site calls - the Callout Studio
+Quartz plugin's, holding nobody's callouts. The instance has the shape Quartz
+4 and 5 both read (`name`, `htmlPlugins`, `externalResources`), and a filter's
+`shouldPublish` beside it, so one plugin serves both; they differ only in how
+a site names the plugin. It finds the snapshot in the note Callout Studio
+writes, wherever in the content folder it is and whatever a publishing tool
+did to its properties, and keeps that note off the site
+([Import & export § Quartz: the snapshot as a note](15-import-export.md#quartz-the-snapshot-as-a-note)).
+
+- **Position in the pipeline is the site's to set, and matters.** After the
+  plugin that assigns heading ids, so `#tip-title` still derives from the text
+  the author wrote and links to the heading keep working. Before Description,
+  which computes the search text, the RSS description and the link-preview
+  text from the same tree. Placed after it, the host logs one warning.
+- **The contents list** is built earlier, from the Markdown, into
+  `file.data.toc`. Each entry's `text` is cleaned with the renderer's
+  `outlineTitle`; its `slug` is left alone.
+- **The stylesheet** goes out through `additionalHead`, as an element built by
+  hand (`styleElement`). Not as an inline `css` resource: Quartz renders that
+  as the text of a `<style>`, and Preact escapes text, which turns every `"`
+  and `&` of the sheet into an entity inside an element that does not decode
+  entities.
+- **Dark mode** needs no script: `targets.ts` rewrites `.theme-dark` to
+  `[saved-theme="dark"]`, Quartz's own attribute, which weighs the same in the
+  cascade. The heading band's own rule is weighed up there too, against the
+  heading rules of a Quartz 4 theme.
+
+### Digital Garden
+
+Two files. `eleventy(core, data)` is the drawing: given a snapshot, it returns
+a `setupMarkdown` that wraps the site's one markdown-it instance's `render`, so
+the HTML of every note passes through the renderer.
+
+[`garden.ts`](../../src/web/static/garden.ts) is the Callout Studio garden
+plugin's hooks - the one plugin every garden installs, with nobody's callouts
+in it - and it finds the snapshot first. The snapshot reaches a garden as a
+note ([Import & export § Digital Garden: the snapshot as a note](15-import-export.md#digital-garden-the-snapshot-as-a-note)),
+so at config time, before Eleventy reads a note, `garden(core, node)`:
+
+1. walks `src/site/notes/` (from the hook context's `pluginDir`, so a garden
+   under a content base folder works too) for notes whose front matter carries
+   `callout-studio-web` - at the top or under `dg-note-properties`;
+2. tries them in the shared order (the usual path, then by path), skipping one
+   whose format is newer than it reads or whose data does not match its
+   fingerprint, and takes the first that passes;
+3. in `setupMarkdown`, hands that snapshot to `eleventy`;
+4. in `setupEleventy`, adds **every** such note to `eleventyConfig.ignores` -
+   the note is data, not a page, whether or not it could be read - and, when
+   there is a snapshot, publishes its stylesheet: global data
+   `calloutStudio = { stylesheet, css }`, plus a virtual template whose only
+   output is `{{ calloutStudio.css | safe }}` at
+   `/plugins/callout-studio/callout-studio.css`. The rules are data there, so
+   Nunjucks never parses a byte of them. The plugin's `head.njk`, in the
+   `common.head` slot, links the file when the global is set.
+
+Node is passed in rather than required (`fs`, `path`, `crypto`, the working
+directory), because this file is bundled for no platform; the last line of
+the plugin's `index.js` passes the real modules. Every outcome that leaves the
+callouts as text - no note, a note changed by hand, a newer format - is one
+`[Callout Studio]` line in the build log, said once however many hooks run.
+
+That early, rather than as an Eleventy transform on the finished page, because
+the garden's feed and search index are both built from the rendered note
+before the layout and its transforms run. Heading ids are assigned on
+markdown-it's tokens, before any HTML exists, so they still derive from the
+original text.
+
+One thing happens before the renderer can see it: the garden's
+`markdown-it-attrs` reads `{…}` at the very end of a paragraph, a heading or a
+list item as attributes and removes it. `[!note]{my text}` in that position
+therefore reaches the renderer as `[!note]` and shows the callout's name. This
+is a documented limitation.
+
+A build never fails because of either file: anything thrown is logged once,
+and the note - or the garden - goes out as it would have without them.
+
+### In a browser
+
+`browser.ts` adds what a browser needs and a build does not: time.
+
+Tokens are turned only inside a content root - `article`, `main`,
+`.markdown-rendered`, `.markdown-preview-view`. A site's navigation, search
+results and file tree show note text too, and rewriting a platform's own
+widgets is a different promise. A page with no such element gets its whole
+body, rather than nothing.
+
+A table of contents (`.toc`, Publish's `.outline-view`) is never pilled. Its
+entries are cleaned as text instead: the token is dropped when a title follows
+it and replaced by the callout's label when none does. Publish's outline shows
+the bracketless form (`!id Title`), which is accepted only when the id names a
+real callout - the same ambiguity `OutlineDecorator` resolves against the
+file's headings, resolved here against the snapshot.
+
+Every pass is idempotent: a processed subtree holds no token left to turn. That
+is what lets one `MutationObserver` on `<body>` stand in for every platform's
+event - Publish's lazily rendered sections, its navigation between notes -
+with no bookkeeping. It watches text changes as well as inserted nodes, because
+a navigation that morphs the page in place rewrites a text node rather than
+replacing its element. On Publish the host also registers with
+`publish.registerMarkdownPostProcessor`, so a block is turned before it is
+painted.
+
+The host styles nothing. The Publish export leaves the stylesheet out of the
+script: its rules are in `publish.css`, which the site loads before it paints,
+and Publish puts `.theme-dark` on the page itself. Until 2026-11-16 the host
+also served a script for any other site, which carried the stylesheet; it
+injected it as a `<style>`, and mirrored Quartz's `saved-theme` onto
+`.theme-dark` for a Quartz site that loaded that script by hand. Both went
+with that target - see [The Another site target](web-target-another-site.md).
+
 ## The Outline pane, PDF export, and gradient text
 
 - **`OutlineDecorator`** - see

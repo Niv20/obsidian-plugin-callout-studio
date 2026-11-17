@@ -652,7 +652,11 @@ Only flat style rules and an allow-list of drawing declarations survive.
 All at-rules, nested rules, custom properties, substitutions and external
 references are discarded, including escaped CSS spellings. Safe class-based
 colors, inline drawing styles and literal local gradient/clip references remain;
-`isolateSvgCopy` scopes selectors and renames local references per displayed copy.
+`isolateSvgCopy` scopes selectors and renames local references per displayed copy,
+with a running number - or, inside `withSvgCopyToken`, with the caller's token:
+the website export reads a painted copy back as markup, and a number that runs
+would make the same callouts different bytes on every write
+(see [Import & export](15-import-export.md#keeping-files-up-to-date)).
 Every style element takes the same event/attribute cleanup as the shapes.
 Render realms without constructable stylesheets omit style blocks safely and
 retain ordinary presentation attributes.

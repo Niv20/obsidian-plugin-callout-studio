@@ -70,14 +70,15 @@ home.
 
 The one exception is `then`: an animation played once, with nothing held, that
 names another animation hands over to it at the end of its `body`, starting
-from the face it has, instead of going home first. `lookTwice` is the only
-one that does (`then: NO_RESULTS_MOOD`, which is `sad`). If something is held
+from the face it has, instead of going home first. Two do: `lookTwice`
+(`then: NO_RESULTS_MOOD`, which is `sad`) and `greet` (`then: "happy"`). If something is held
 when it ends, the hold wins, as for every one-shot. `then` is a plain `string`, because a type made of
 the animations' names cannot be used inside the object it is made from
 (TS2502); a test checks that each one names a real animation.
 
-The twenty-one animations, by what they are for: `peek` (only the eyes, for
-idling), `hello`, `wink`, `look`, `lookTwice` (one round of
+The twenty-two animations, by what they are for: `peek` (only the eyes, for
+idling), `hello`, `greet` (`hello`'s intro and body, then straight on as one
+`happy` jump: for the offers at the top of the settings), `wink`, `look`, `lookTwice` (one round of
 looking and then a shake of the head, then sad: a search that found nothing), `nod`, `no`, `surprised`, `happy`,
 `excited`, `celebrate`, `sad`, `cry`, `scared`, `relief`, `paint` (work in
 progress), `hold` (still and calm, for "paused"), and three for the pointer
@@ -155,9 +156,14 @@ callouts, and what `lookTwice` carries on as), so they cannot disagree.
 
 ## Played with
 
-Every mascot except those of the `"notice"` size (a notice's, and the import
-offer's: `interactive: false`, which `addMascot` passes for that size) answers the
-pointer, and **every one answers a press the same way, whatever mood it holds**.
+Every mascot except a notice's answers the pointer, the 28px ones of the banners
+at the top of the settings (the saving banner and both offers) included, and
+**every one answers a press the same way, whatever mood it holds**. The one
+exception is asked for by name, not by size: `addNoticeMascot` in
+`mascotNotices.ts` passes `{ interactive: false }` to `addMascot`, because a
+notice is gone in a few seconds. Until 2026-11-16 `addMascot` took every mascot
+of the `"notice"` size to be a notice's, which left the offers' brush deaf to
+the pointer while the saving banner's (a `KeptMascot`, which never asked) answered it.
 [`mascotPlay.ts`](../../src/ui/mascot/mascotPlay.ts)
 wires it to the box the mascot is drawn in (`is-playful`, which styles.css
 stretches 6px past the icon, so being near counts), and the engine gives it the
@@ -277,10 +283,11 @@ being the icon, with an occasional peek at most.
 | Replace in vault: a search that found nothing | `lookTwice`, then `sad` while nothing matches; `look` while typing and `no` when the typing pauses, as in the icon picker. Only for a non-empty query, drawn over the empty state's words (`cs-mascot-line`), and put away in `onClose` | `SearchMascot`; `utils/ReplaceCalloutModal.ts` |
 | Find callouts: nothing found | `lookTwice` once each time the list turns empty, which hands over to the held `sad` with no step through the icon in between; `sad` stays, resting still, while the list is empty (it used to play once and go back to the icon) | `KeptMascot`; `usage/occurrenceResults.ts` |
 | Review conversion: nothing to convert | `nod`, once | `KeptMascot`; `portable/PortableConversionView.ts` |
+| Publish to the web: no service chosen yet | `hello`, held still, medium, in the middle of the panel under the list of services, over the line that asks for one; put away when a service is chosen | `KeptMascot`; `webPanel/WebPanelView.ts` (`drawChoose`) |
 | Version history: no versions | `look`, held still: the glances once, then the face rests with no frames | `addMascot`; `declarative/versionHistoryPage.ts` |
 | Every red question: deleting a callout, a palette, a command, a picture, a version or a library; Reset everything; converting notes; restoring a version; replacing the settings file; overwriting the CSS snippet | `scared` while open; `cry` while the pointer is on the confirm button; `relief` while it is on Cancel or on the window's ✕. Beside a two-line heading (the title, and a subtitle under it) at the start of the row (the right in RTL), 48px, in the title's own colour, the same in every one; none on a phone (see the notes below) | `ConfirmModal.withMascot(subtitle)`; `addConfirmMascot` in `mascotPlaces.ts`; called from `sections/calloutVaultActions.ts`, `sections/paletteFlows.ts`, `command/commandFlows.ts`, `iconpicker/ImagePanel.ts`, `iconpicker/iconLibraryQuestions.ts`, `declarative/versionHistoryPage.ts`, `resetEverything.ts`, `saveStatusBanner.ts`, `ExportFormatModal.ts`, `PortableConversionView.ts` |
 | Saving is paused / settings were not saved | `hold` / `sad`, in place of the warning triangle at the start of the banner's title, drawn in `--text-warning`, 28px | `KeptMascot`; `saveStatusBanner.ts` |
-| The first-install import offer (Callout Manager / Admonition) | `hello` once, 28px, in `--interactive-accent`; stops itself when the banner is removed | `addMascot`; `competitorImportBanner.ts` |
+| The offers at the top of the settings: the first-install import offer (Callout Manager / Admonition) and the website offer | `greet` once (hello, then a `happy` jump with no step through the icon between, then the icon), 28px, in `--interactive-accent`; then `happy` while the pointer (or keyboard focus) is on the offer's button and `cry` while it is on ✕, as a confirmation's mascot answers its buttons, but with no mood held underneath, so between visits it is the still icon; answers the pointer; stops itself when the banner is removed | `addMascot`, `hover`; `offerBanner.ts` |
 | Every notice | still for 0.4 s, then the animation of its kind until the notice goes (see [Notices](#notices)) | `showNotice`, `showActionNotice`; `mascotNotices.ts` |
 | An import that worked | `celebrate` in the notice | `showNotice("celebrate", …)`; `sections/backupImport.ts`, `pluginImport/PluginImportModal.ts` |
 | The clipboard is empty on Paste | `look` in the notice | `showNotice("notFound", …)`; `PluginImportModal.ts` |
@@ -362,6 +369,16 @@ Notes on a few of them:
   constructor; the older `.modal-close-button` is no longer created; the phone hides it) closes
   it just as fast, so it gets the same `relief`. Cost: one more
   `pointerenter`/`pointerleave` pair on one element, nothing per mouse move.
+- **An offer answers its buttons as a confirmation does, but only then.** Its
+  button holds `happy` and its ✕ `cry` through `hover` (`offerBanner.ts`,
+  added 2026-11-16). There is no `hold` underneath, unlike a confirmation's
+  `scared`: an offer can stay up for days, so between visits it is the still
+  icon, and `cry` starts from the icon with no tremble. A pointer that arrives
+  during the opening `greet` waits for it to end, as any hold does during a
+  one-shot. ✕ removes the banner at once, so `cry` is seen only while the
+  pointer is on it, like `relief` on Cancel. A finger has no hover, so on a
+  touch screen neither plays. `tests/brushMascot.test.ts` holds the two
+  targets and that nothing is held.
 - **A library download's success has no reaction**: the grid replaces the
   message, mascot and all, the moment the download ends.
 - **`workNotice` exists to give the painting mascot a place.** Where the

@@ -171,6 +171,11 @@ and
 | [cssSnippetExport.ts](../../src/manager/cssSnippetExport.ts) | `readExisting()` | reading an existing CSS snippet file (for the overwrite-confirmation check) throws |
 | [cssSnippetExport.ts](../../src/manager/cssSnippetExport.ts) | `runExport()` | building the exported snippet throws |
 | [cssSnippetExport.ts](../../src/manager/cssSnippetExport.ts) | `runExport()` | writing the exported snippet to disk throws |
+| [writeTarget.ts](../../src/manager/web/writeTarget.ts) | `readFile()` | reading an existing website file (to decide whether it is ours) throws |
+| [writeTarget.ts](../../src/manager/web/writeTarget.ts) | `planBlock()` | `publish.js` or `publish.css` has a `callout-studio:start` marker with no end marker; the file is not touched |
+| [writeTarget.ts](../../src/manager/web/writeTarget.ts) | `runExport()` | building a target's files throws |
+| [writeTarget.ts](../../src/manager/web/writeTarget.ts) | `runExport()` | classifying what is on disk throws |
+| [writeTarget.ts](../../src/manager/web/writeTarget.ts) | `runExport()` | writing a target's files to disk throws |
 | [legacyStartupSnippet.ts](../../src/manager/legacyStartupSnippet.ts) | `removeLegacyStartupSnippet()` | removing the legacy startup CSS snippet throws on launch |
 
 ### The declarative settings tree - `console.error` / `console.warn`

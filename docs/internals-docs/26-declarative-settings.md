@@ -179,7 +179,8 @@ holds everything the tree is built with:
   that opens a window); Global styling (the three style pages);
   Editor (`menus-and-commands`, the id from when it was called Menus and
   commands: Autocomplete and metadata, Customize right-click menu, Commands and
-  shortcuts); Import and export; Danger zone (its first row is
+  shortcuts); Website (`website`: its one row, Publish to the web); Import
+  and export; Danger zone (its first row is
   Restore an earlier version); the language notice (`language-box`, hidden
   while nothing is missing); the footer (`footer`: the language and the links,
   as tiles of an icon and a name). The file only puts the parts in order; each is built in its own
@@ -276,6 +277,15 @@ Callout rows register themselves (`calloutRowId(def)`), so
 `revealCalloutRow(ctx, def)` takes the reader to a callout just made, in My
 callout types (where a duplicate lands, even one of a theme's callouts).
 
+**A page's row cannot register itself**: Obsidian draws it from the `page`
+definition, which has no `render` and hands out no element. No page's row is
+a jump target now. Until 2026-11-16 the Publish to the web row was one (it
+opened a page), and a row with nothing on screen after it (`pageRowAnchor`:
+`visible: false`, not searchable) registered the element before its own:
+rows are drawn in order and a hidden row is still drawn. That row now opens a
+sidebar panel, so it is an ordinary button row and registers itself
+(`MAIN_PAGE_ROWS.website`); the website offer's **Show me** scrolls to it.
+
 ## The main page, part by part
 
 Each part of the tree is a function returning a box (or a row), built from a
@@ -286,10 +296,13 @@ registry, the parts store and `jumpTo`). Most rows are "name, sentence, one butt
 `buttonRow` builds them the way every blockable button in the plugin works
 (ui/blockedButton.ts): while it cannot act it is dimmed (`aria-disabled`), and a
 press says why instead of doing nothing. Obsidian's own `disabled` would leave
-it silently dead. `pausedReason(writer)` is the usual reason.
+it silently dead. `pausedReason(writer)` is the usual reason. A row can carry a
+small grey tag after its name (`tag`, drawn by `betaBadge.ts`; Publish to the web
+has **Beta**), which the row's cleanup takes away before the next draw.
 
 | Box (`id`) | Rows | While saving is paused |
 |---|---|---|
+| Website (`website`) | Publish to the web (`publish-to-web`, a jump target): opens the Publish to the web panel in the sidebar ([below](#the-website-row)) | works |
 | Import and export (`import-export`) | Import callouts (`import-callouts`, a jump target), Export callouts | Import dimmed; Export works |
 | Danger zone (`danger-zone`) | Restore an earlier version (`earlier-versions`): a page, `versionHistoryPage.ts`, drawn by the plugin; the saving notice's **Go to version history** opens it (`openPagePath`, so not on 1.13.x, where the button is left out); the row shows only on a host with a recovery service. Convert to standard Markdown, Reset everything (Obsidian's Log out look: `setDestructive()`, the red every red button wears) | The version page works (browsing); Reset dimmed; the conversion review works (it changes notes, not settings) |
 | Footer (`footer`, no heading) | one render row, not searchable (`footerGroup.ts`): a line of tiles (`footer-tiles`, `cs-footer-row`), each an icon with its name beside it and no tooltip: the language (a globe and the language in use, which opens the menu), Open an issue, Source code, License (opens `LicenseModal`), and the version | the globe is disabled; the rest works |
@@ -320,8 +333,8 @@ module (`resetEverything.ts`, the import and export windows, …), never a copy.
 
 [`declarative/bannerRows.ts`](../../src/settings/declarative/bannerRows.ts)'s
 `bannersGroup` is the first box on the main page (`banners`): one box without
-a heading and two nameless render rows, which the settings search skips
-(`searchable: false`). When neither shows, Obsidian hides the box.
+a heading and three nameless render rows, which the settings search skips
+(`searchable: false`). When none shows, Obsidian hides the box.
 
 - **Saving is paused** (`saving-notice`) shows while saving is paused or a save
   failed (`savingNeedsAttention`). It is the notice the callout editor shows too
@@ -333,13 +346,35 @@ a heading and two nameless render rows, which the settings search skips
   a plugin. **Import** jumps to `import-callouts`; ✕ stops offering and redraws.
   It holds no state, so it is built again on every draw, and the row's cleanup
   removes it (it sits outside the controls `setting.clear()` empties).
+- **The website offer** (`web-offer`) shows while `webServicesToOffer` names a
+  service the vault looks published with
+  ([Import & export § The offer on the settings page](15-import-export.md#the-offer-on-the-settings-page)).
+  **Show me** jumps to `publish-to-web`, the Publish to the web row, as **Import**
+  jumps to its row; ✕ stops offering and redraws. It is drawn like the import
+  offer, by the same builder
+  ([`offerBanner.ts`](../../src/settings/offerBanner.ts)).
 
-Both keep the plugin's own markup and look (`.cs-readonly-banner`,
-`.cs-competitor-import-banner`, GAP-08), never a real `.callout`: the plugin
+**One offer at a time** (`webOfferShows`). An offer is an invitation, and two
+invitations at once are a queue the reader has to sort. So the website offer
+waits while saving needs attention - a problem comes before an invitation -
+and while the import offer is up, since callouts are brought in before they
+are published. And one offer speaks for everything of its kind: several
+plugins to import from, or several services, are one sentence with a list
+(`nameList`), never a notice each. The saving notice and the import offer may
+still show together, as they always have: the first is a problem, not an
+offer.
+
+All three are drawn in the same box, built by `createBanner`
+([`bannerBox.ts`](../../src/settings/bannerBox.ts)) and styled by the one
+`.cs-banner` rule, so the box changes in one place
+([Settings UI § Saving-status banner](16-settings-ui-and-modals.md#saving-status-banner)).
+Inside the box each keeps its own layout class (`.cs-readonly-banner`, or
+`.cs-competitor-import-banner` - the class both offers wear, named when the
+import offer was the only one - GAP-08). None is a real `.callout`: the plugin
 styles every `.callout[data-callout]` on screen, so the notice would wear the
 user's own `[!warning]`. The `.cs-banners` rules in `styles.css` make the box
-and the two rows invisible, so only the notices show, with the box's gap
-between them.
+and its rows invisible, so only the notices show, with the box's gap between
+them.
 
 ## Fallback, language and the theme's styles
 
@@ -750,6 +785,23 @@ each role (heading, inline, block) two of Obsidian's lists:
   settings when pressed, and is saved at once.
 - **While saving is paused** ✕, a hidden item and ↺ say why, and a drag says
   why and draws the page again, which puts the row Obsidian moved back.
+
+## The Website row
+
+The **Website** box holds one row, **Publish to the web** (`websiteGroup` in
+[`mainPageGroups.ts`](../../src/settings/declarative/mainPageGroups.ts)). Its
+**Open** closes the settings and opens the Publish to the web panel in the
+right sidebar (`webPanel/registerWebPanel.openWebPanel`), as the conversion
+review's row does: the steps are done elsewhere in Obsidian, and the settings
+would be in the way. The row stays usable while saving is paused, since the
+panel changes no setting. It registers itself in `ctx.rows`
+(`MAIN_PAGE_ROWS.website`), which is what the website offer's **Show me**
+scrolls to and flashes.
+
+Until 2026-11-16 the row opened a page of the settings (`declarative/webPage.ts`),
+whose row Obsidian draws itself, so a hidden row beside it did the
+registering. What the panel shows, and why, is in
+[Import & export § The Publish to the web panel](15-import-export.md#the-publish-to-the-web-panel).
 
 ## Read-only while saving is paused
 
