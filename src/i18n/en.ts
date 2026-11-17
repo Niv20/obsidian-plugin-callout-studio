@@ -1621,7 +1621,7 @@ export const en: Record<string, string> = {
 	// The line under the panel's row on the main settings page, in the Website
 	// box, and the row's button.
 	"web.desc": "Show your callouts as you set them up on Obsidian Publish, Quartz or Digital Garden.",
-	"web.open": "Open",
+	"web.setUp": "Set up",
 	// A small grey tag after the row's name: the whole feature is still new.
 	"web.beta": "Beta",
 	"web.openFailed": "The Publish to the web sidebar could not be opened.",

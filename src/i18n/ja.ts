@@ -1073,7 +1073,7 @@ export const ja: Record<string, string> = {
 	"web.title": "Webに公開",
 	"web.command": "Webに公開",
 	"web.desc": "Obsidian Publish、Quartz、Digital Gardenで、設定したとおりにcalloutを表示します。",
-	"web.open": "開く",
+	"web.setUp": "設定する",
 	"web.beta": "ベータ",
 	"web.openFailed": "サイドバーの「Webに公開」を開けませんでした。",
 	"web.closeSettings": "設定を閉じると、サイドバーで「Webに公開」を確認できます。",

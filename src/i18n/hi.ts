@@ -1061,7 +1061,7 @@ export const hi: Record<string, string> = {
 	"web.command": "वेब पर प्रकाशित करें",
 	"web.desc":
 		"अपने callouts को वैसे ही दिखाएँ जैसे आपने उन्हें Obsidian Publish, Quartz या Digital Garden पर सेट किया है।",
-	"web.open": "खोलें",
+	"web.setUp": "सेट अप करें",
 	"web.beta": "बीटा",
 	"web.openFailed": "साइडबार में “वेब पर प्रकाशित करें” नहीं खोला जा सका।",
 	"web.closeSettings": "साइडबार में “वेब पर प्रकाशित करें” देखने के लिए सेटिंग बंद करें।",

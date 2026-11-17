@@ -1040,7 +1040,7 @@ export const nb: Record<string, string> = {
 	"web.title": "Publiser på nettet",
 	"web.command": "Publiser på nettet",
 	"web.desc": "Vis calloutsene dine slik du har satt dem opp, på Obsidian Publish, Quartz eller Digital Garden.",
-	"web.open": "Åpne",
+	"web.setUp": "Sett opp",
 	"web.beta": "Beta",
 	"web.openFailed": "Sidepanelet Publiser på nettet kunne ikke åpnes.",
 	"web.closeSettings": "Lukk innstillingene for å se Publiser på nettet i sidepanelet.",

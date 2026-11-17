@@ -21,7 +21,7 @@ Block callouts are the same on every service: the site draws them, and the files
 
 ## Open the panel
 
-Open **Settings → Callout Studio**, scroll to **Website**, and select **Open** beside **Publish to the web**. The row carries a **Beta** tag: this feature is new, so how it works and what the panel says may still change. The settings close, and the panel opens in the right sidebar, so you can follow its steps while you work elsewhere in Obsidian. You can also run **Callout Studio: Publish to the web** from the command palette.
+Open **Settings → Callout Studio**, scroll to **Website**, and select **Set up** beside **Publish to the web**. The row carries a **Beta** tag: this feature is new, so how it works and what the panel says may still change. The settings close, and the panel opens in the right sidebar, so you can follow its steps while you work elsewhere in Obsidian. You can also run **Callout Studio: Publish to the web** from the command palette.
 
 The panel is for setting up, so it doesn't stay: close its tab when you're done. It doesn't open again by itself when Obsidian starts.
 

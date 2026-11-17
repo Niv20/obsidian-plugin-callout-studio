@@ -1136,7 +1136,7 @@ export const ru: Record<string, string> = {
 	"web.title": "Опубликовать в вебе",
 	"web.command": "Опубликовать в вебе",
 	"web.desc": "Показывайте свои callout так, как вы их настроили, в Obsidian Publish, Quartz или Digital Garden.",
-	"web.open": "Открыть",
+	"web.setUp": "Настроить",
 	"web.beta": "Бета",
 	"web.openFailed": "Не удалось открыть боковую панель «Опубликовать в вебе».",
 	"web.closeSettings": "Закройте настройки, чтобы увидеть «Опубликовать в вебе» в боковой панели.",

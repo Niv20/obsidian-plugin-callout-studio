@@ -1047,7 +1047,7 @@ export const zhTW: Record<string, string> = {
 	"web.title": "發布到網路",
 	"web.command": "發布到網路",
 	"web.desc": "依照您在 Obsidian Publish、Quartz 或 Digital Garden 上的設定顯示您的 callout。",
-	"web.open": "開啟",
+	"web.setUp": "設定",
 	"web.beta": "測試版",
 	"web.openFailed": "無法開啟側邊欄中的「發布到網路」。",
 	"web.closeSettings": "關閉設定即可在側邊欄中看到「發布到網路」。",

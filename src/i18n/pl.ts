@@ -1066,7 +1066,7 @@ export const pl: Record<string, string> = {
 	"web.title": "Opublikuj w sieci",
 	"web.command": "Opublikuj w sieci",
 	"web.desc": "Pokaż swoje callouty tak, jak je skonfigurowałeś, w Obsidian Publish, Quartz lub Digital Garden.",
-	"web.open": "Otwórz",
+	"web.setUp": "Skonfiguruj",
 	"web.beta": "Beta",
 	"web.openFailed": "Nie udało się otworzyć paska bocznego Opublikuj w sieci.",
 	"web.closeSettings": "Zamknij ustawienia, aby zobaczyć Opublikuj w sieci na pasku bocznym.",

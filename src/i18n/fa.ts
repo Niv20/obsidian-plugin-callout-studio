@@ -1129,7 +1129,7 @@ export const fa: Record<string, string> = {
 	"web.command": "انتشار در وب",
 	"web.desc":
 		"callout‌های خود را همان‌طور که در Obsidian Publish، Quartz یا Digital Garden تنظیم کرده‌اید نمایش دهید.",
-	"web.open": "باز کردن",
+	"web.setUp": "راه‌اندازی",
 	"web.beta": "آزمایشی",
 	"web.openFailed": "نوار کناری «انتشار در وب» باز نشد.",
 	"web.closeSettings": "برای دیدن «انتشار در وب» در نوار کناری، تنظیمات را ببندید.",

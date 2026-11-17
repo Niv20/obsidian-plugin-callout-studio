@@ -1048,7 +1048,7 @@ export const ms: Record<string, string> = {
 	"web.title": "Terbitkan ke web",
 	"web.command": "Terbitkan ke web",
 	"web.desc": "Paparkan callout anda seperti yang anda tetapkan di Obsidian Publish, Quartz atau Digital Garden.",
-	"web.open": "Buka",
+	"web.setUp": "Sediakan",
 	"web.beta": "Beta",
 	"web.openFailed": "Bar sisi Terbitkan ke web tidak dapat dibuka.",
 	"web.closeSettings": "Tutup tetapan untuk melihat Terbitkan ke web di bar sisi.",

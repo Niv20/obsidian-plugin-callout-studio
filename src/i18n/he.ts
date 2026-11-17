@@ -1151,7 +1151,7 @@ export const he: Record<string, string> = {
 	"web.title": "פרסום באינטרנט",
 	"web.command": "פרסום באינטרנט",
 	"web.desc": "הציגו את תיבות־ההבלטה שלכם כפי שהגדרתם אותן ב־Obsidian Publish, ב־Quartz או ב־Digital Garden.",
-	"web.open": "פתיחה",
+	"web.setUp": "הגדרה",
 	"web.beta": "בטא",
 	"web.openFailed": "לא ניתן היה לפתוח את סרגל הצד „פרסום באינטרנט”.",
 	"web.closeSettings": "סגרו את ההגדרות כדי לראות את „פרסום באינטרנט” בסרגל הצד.",

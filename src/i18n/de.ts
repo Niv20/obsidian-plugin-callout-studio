@@ -1158,7 +1158,7 @@ export const de: Record<string, string> = {
 	"web.command": "Im Web veröffentlichen",
 	"web.desc":
 		"Zeigen Sie Ihre Callouts auf Obsidian Publish, Quartz oder Digital Garden so an, wie Sie sie eingerichtet haben.",
-	"web.open": "Öffnen",
+	"web.setUp": "Einrichten",
 	"web.beta": "Beta",
 	"web.openFailed": "Die Seitenleiste „Im Web veröffentlichen“ konnte nicht geöffnet werden.",
 	"web.closeSettings": "Schließen Sie die Einstellungen, um „Im Web veröffentlichen“ in der Seitenleiste zu sehen.",

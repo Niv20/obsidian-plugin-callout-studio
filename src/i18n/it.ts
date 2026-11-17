@@ -1084,7 +1084,7 @@ export const it: Record<string, string> = {
 	"web.title": "Pubblica sul web",
 	"web.command": "Pubblica sul web",
 	"web.desc": "Mostra i tuoi callout come li hai impostati su Obsidian Publish, Quartz o Digital Garden.",
-	"web.open": "Apri",
+	"web.setUp": "Configura",
 	"web.beta": "Beta",
 	"web.openFailed": "Impossibile aprire la barra laterale Pubblica sul web.",
 	"web.closeSettings": "Chiudi le impostazioni per vedere Pubblica sul web nella barra laterale.",

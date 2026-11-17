@@ -46,7 +46,7 @@ export function makeHost() {
 			// Export → Website's memory; a scene sets it to open on a service.
 			webExport: {}, setWebExport(next) { this.webExport = next; },
 		},
-		icons: { packs: { state: () => "unavailable", info: id => PACK_MANIFEST[id], onChange: () => () => {}, loadAllFromDisk: async () => {} }, deleteLibrary: async () => {} },
+		icons: { packs: { state: () => "unavailable", isOnDevice: () => false, info: id => PACK_MANIFEST[id], onChange: () => () => {}, loadAllFromDisk: async () => {} }, deleteLibrary: async () => {} },
 		locales: { isReady: () => true, state: () => "ready", onChange: () => () => {} }, ensureLocale: async () => true, applyLocaleChange() {},
 		customCommands: { list: () => [], migrateCalloutId() {}, refresh() {} },
 		saveSettings: async () => {}, ensureIconArtwork: async () => {}, ensureIconArtworkFor: async () => {},

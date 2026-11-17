@@ -60,7 +60,7 @@ export function websiteGroup(ctx: TreeContext): CsGroup {
 				tag: t("web.beta"),
 				// Names, not words to translate: the services it is for.
 				aliases: ["Obsidian Publish", "Quartz", "Digital Garden"],
-				buttonText: t("web.open"),
+				buttonText: t("web.setUp"),
 				registerIn: ctx.rows,
 				onClick: () => {
 					void openWebPanel(ctx.app);

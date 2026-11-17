@@ -1069,7 +1069,7 @@ export const id: Record<string, string> = {
 	"web.title": "Publikasikan ke web",
 	"web.command": "Publikasikan ke web",
 	"web.desc": "Tampilkan callout Anda seperti yang Anda atur di Obsidian Publish, Quartz, atau Digital Garden.",
-	"web.open": "Buka",
+	"web.setUp": "Siapkan",
 	"web.beta": "Beta",
 	"web.openFailed": "Bilah samping Publikasikan ke web tidak dapat dibuka.",
 	"web.closeSettings": "Tutup pengaturan untuk melihat Publikasikan ke web di bilah samping.",

@@ -1137,7 +1137,7 @@ export const vi: Record<string, string> = {
 	"web.title": "Xuất bản lên web",
 	"web.command": "Xuất bản lên web",
 	"web.desc": "Hiển thị callout của bạn như đã thiết lập trên Obsidian Publish, Quartz hoặc Digital Garden.",
-	"web.open": "Mở",
+	"web.setUp": "Thiết lập",
 	"web.beta": "Beta",
 	"web.openFailed": "Không thể mở thanh bên Xuất bản lên web.",
 	"web.closeSettings": "Đóng cài đặt để xem Xuất bản lên web trong thanh bên.",

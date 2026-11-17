@@ -1140,7 +1140,7 @@ export const ro: Record<string, string> = {
 	"web.title": "Publică pe web",
 	"web.command": "Publică pe web",
 	"web.desc": "Afișați callout-urile dvs. așa cum le-ați configurat pe Obsidian Publish, Quartz sau Digital Garden.",
-	"web.open": "Deschide",
+	"web.setUp": "Configurează",
 	"web.beta": "Beta",
 	"web.openFailed": "Bara laterală Publică pe web nu a putut fi deschisă.",
 	"web.closeSettings": "Închideți setările pentru a vedea Publică pe web în bara laterală.",

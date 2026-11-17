@@ -1121,7 +1121,7 @@ export const bg: Record<string, string> = {
 	"web.command": "Публикуване в мрежата",
 	"web.desc":
 		"Показвайте вашите callout-и така, както сте ги настроили, в Obsidian Publish, Quartz или Digital Garden.",
-	"web.open": "Отваряне",
+	"web.setUp": "Настройване",
 	"web.beta": "Бета",
 	"web.openFailed": "Страничната лента „Публикуване в мрежата“ не можа да бъде отворена.",
 	"web.closeSettings": "Затворете настройките, за да видите „Публикуване в мрежата“ в страничната лента.",

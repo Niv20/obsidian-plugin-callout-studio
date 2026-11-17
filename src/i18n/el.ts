@@ -1140,7 +1140,7 @@ export const el: Record<string, string> = {
 	"web.title": "Δημοσίευση στον ιστό",
 	"web.command": "Δημοσίευση στον ιστό",
 	"web.desc": "Εμφανίστε τα callouts σας όπως τα ρυθμίσατε στο Obsidian Publish, στο Quartz ή στο Digital Garden.",
-	"web.open": "Άνοιγμα",
+	"web.setUp": "Ρύθμιση",
 	"web.beta": "Beta",
 	"web.openFailed": "Δεν ήταν δυνατό το άνοιγμα της πλευρικής στήλης Δημοσίευση στον ιστό.",
 	"web.closeSettings": "Κλείστε τις ρυθμίσεις για να δείτε τη Δημοσίευση στον ιστό στην πλευρική στήλη.",

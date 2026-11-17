@@ -1083,7 +1083,7 @@ export const nl: Record<string, string> = {
 	"web.title": "Publiceren op het web",
 	"web.command": "Publiceren op het web",
 	"web.desc": "Toon uw callouts zoals u ze hebt ingesteld op Obsidian Publish, Quartz of Digital Garden.",
-	"web.open": "Openen",
+	"web.setUp": "Instellen",
 	"web.beta": "Bèta",
 	"web.openFailed": "De zijbalk Publiceren op het web kon niet worden geopend.",
 	"web.closeSettings": "Sluit de instellingen om Publiceren op het web in de zijbalk te zien.",

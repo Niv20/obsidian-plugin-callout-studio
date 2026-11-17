@@ -1078,7 +1078,7 @@ export const hu: Record<string, string> = {
 	"web.command": "Közzététel a weben",
 	"web.desc":
 		"Jelenítse meg a callout-jait úgy, ahogy beállította őket az Obsidian Publishen, a Quartzon vagy a Digital Gardenen.",
-	"web.open": "Megnyitás",
+	"web.setUp": "Beállítás",
 	"web.beta": "Béta",
 	"web.openFailed": "A Közzététel a weben oldalsáv nem nyitható meg.",
 	"web.closeSettings": "Zárja be a beállításokat, hogy lássa a Közzététel a weben részt az oldalsávban.",

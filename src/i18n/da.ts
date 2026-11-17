@@ -1103,7 +1103,7 @@ export const da: Record<string, string> = {
 	"web.title": "Udgiv på nettet",
 	"web.command": "Udgiv på nettet",
 	"web.desc": "Vis dine callouts, som du har sat dem op, på Obsidian Publish, Quartz eller Digital Garden.",
-	"web.open": "Åbn",
+	"web.setUp": "Opsæt",
 	"web.beta": "Beta",
 	"web.openFailed": "Sidepanelet Udgiv på nettet kunne ikke åbnes.",
 	"web.closeSettings": "Luk indstillingerne for at se Udgiv på nettet i sidepanelet.",

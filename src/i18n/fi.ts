@@ -1123,7 +1123,7 @@ export const fi: Record<string, string> = {
 	"web.command": "Julkaise verkossa",
 	"web.desc":
 		"Näytä callouttisi sellaisina kuin olet ne määrittänyt Obsidian Publishissa, Quartzissa tai Digital Gardenissa.",
-	"web.open": "Avaa",
+	"web.setUp": "Ota käyttöön",
 	"web.beta": "Beta",
 	"web.openFailed": "Sivupalkkia Julkaise verkossa ei voitu avata.",
 	"web.closeSettings": "Sulje asetukset nähdäksesi Julkaise verkossa sivupalkissa.",

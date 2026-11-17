@@ -1103,7 +1103,7 @@ export const th: Record<string, string> = {
 	"web.title": "เผยแพร่บนเว็บ",
 	"web.command": "เผยแพร่บนเว็บ",
 	"web.desc": "แสดง callout ของคุณตามที่คุณตั้งค่าไว้บน Obsidian Publish, Quartz หรือ Digital Garden",
-	"web.open": "เปิด",
+	"web.setUp": "ตั้งค่า",
 	"web.beta": "เบตา",
 	"web.openFailed": "ไม่สามารถเปิดแถบด้านข้าง “เผยแพร่บนเว็บ” ได้",
 	"web.closeSettings": "ปิดการตั้งค่าเพื่อดู “เผยแพร่บนเว็บ” ในแถบด้านข้าง",

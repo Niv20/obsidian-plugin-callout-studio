@@ -1123,7 +1123,7 @@ export const cs: Record<string, string> = {
 	"web.title": "Publikovat na webu",
 	"web.command": "Publikovat na webu",
 	"web.desc": "Zobrazte své callouty tak, jak jste je nastavili, v Obsidian Publish, Quartz nebo Digital Garden.",
-	"web.open": "Otevřít",
+	"web.setUp": "Nastavit",
 	"web.beta": "Beta",
 	"web.openFailed": "Postranní panel Publikovat na webu se nepodařilo otevřít.",
 	"web.closeSettings": "Zavřete nastavení, abyste viděli Publikovat na webu v postranním panelu.",

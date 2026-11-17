@@ -1130,7 +1130,7 @@ export const tr: Record<string, string> = {
 	"web.title": "Web'de yayımla",
 	"web.command": "Web'de yayımla",
 	"web.desc": "Callout'larınızı Obsidian Publish, Quartz veya Digital Garden üzerinde ayarladığınız gibi gösterin.",
-	"web.open": "Aç",
+	"web.setUp": "Kur",
 	"web.beta": "Beta",
 	"web.openFailed": "Web'de yayımla kenar çubuğu açılamadı.",
 	"web.closeSettings": "Kenar çubuğunda Web'de yayımla'yı görmek için ayarları kapatın.",

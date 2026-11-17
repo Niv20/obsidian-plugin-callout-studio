@@ -83,7 +83,7 @@ A callout your active theme draws entirely is left out of the file. A callout th
 
 ## Show callouts on a website
 
-A site made with Obsidian Publish, Quartz or Digital Garden doesn't run Callout Studio. Heading and Inline callouts show there as the text you typed, and a Block callout loses the color and icon you gave it. Under **Website** in the settings, select **Open** beside **Publish to the web**. A panel opens in the right sidebar. Choose your service, then select **Create files** (**Create note** for Quartz and Digital Garden). Callout Studio writes what that service needs into your vault, and the panel lists the steps to do once on your site.
+A site made with Obsidian Publish, Quartz or Digital Garden doesn't run Callout Studio. Heading and Inline callouts show there as the text you typed, and a Block callout loses the color and icon you gave it. Under **Website** in the settings, select **Set up** beside **Publish to the web**. A panel opens in the right sidebar. Choose your service, then select **Create files** (**Create note** for Quartz and Digital Garden). Callout Studio writes what that service needs into your vault, and the panel lists the steps to do once on your site.
 
 The files are **not a Callout Studio backup**. They are a copy of your callouts, and once written Callout Studio writes them again by itself after you change a callout. [Publish to the web](19-publish-to-the-web.md) explains each service.
 

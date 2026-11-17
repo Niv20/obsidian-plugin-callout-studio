@@ -1069,7 +1069,7 @@ export const zh: Record<string, string> = {
 	"web.title": "发布到网络",
 	"web.command": "发布到网络",
 	"web.desc": "按照您在 Obsidian Publish、Quartz 或 Digital Garden 上的设置显示您的 callout。",
-	"web.open": "打开",
+	"web.setUp": "设置",
 	"web.beta": "测试版",
 	"web.openFailed": "无法打开侧边栏中的“发布到网络”。",
 	"web.closeSettings": "关闭设置即可在侧边栏中看到“发布到网络”。",

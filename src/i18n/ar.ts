@@ -1108,7 +1108,7 @@ export const ar: Record<string, string> = {
 	"web.title": "النشر على الويب",
 	"web.command": "النشر على الويب",
 	"web.desc": "اعرض callouts الخاصة بك كما أعددتها على Obsidian Publish أو Quartz أو Digital Garden.",
-	"web.open": "فتح",
+	"web.setUp": "إعداد",
 	"web.beta": "تجريبي",
 	"web.openFailed": "تعذّر فتح الشريط الجانبي «النشر على الويب».",
 	"web.closeSettings": "أغلق الإعدادات لرؤية «النشر على الويب» في الشريط الجانبي.",

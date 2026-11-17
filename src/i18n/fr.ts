@@ -1162,7 +1162,7 @@ export const fr: Record<string, string> = {
 	"web.command": "Publier sur le web",
 	"web.desc":
 		"Affichez vos callouts tels que vous les avez configurés sur Obsidian Publish, Quartz ou Digital Garden.",
-	"web.open": "Ouvrir",
+	"web.setUp": "Configurer",
 	"web.beta": "Bêta",
 	"web.openFailed": "Impossible d'ouvrir la barre latérale Publier sur le web.",
 	"web.closeSettings": "Fermez les paramètres pour voir Publier sur le web dans la barre latérale.",

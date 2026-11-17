@@ -1063,7 +1063,7 @@ export const ko: Record<string, string> = {
 	"web.title": "웹에 게시",
 	"web.command": "웹에 게시",
 	"web.desc": "Obsidian Publish, Quartz 또는 Digital Garden에서 설정한 대로 callout을 표시합니다.",
-	"web.open": "열기",
+	"web.setUp": "설정",
 	"web.beta": "베타",
 	"web.openFailed": "사이드바의 '웹에 게시'를 열 수 없습니다.",
 	"web.closeSettings": "설정을 닫으면 사이드바에서 '웹에 게시'를 볼 수 있습니다.",

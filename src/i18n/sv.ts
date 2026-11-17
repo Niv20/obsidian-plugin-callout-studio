@@ -1128,7 +1128,7 @@ export const sv: Record<string, string> = {
 	"web.title": "Publicera på webben",
 	"web.command": "Publicera på webben",
 	"web.desc": "Visa dina callouts som du har ställt in dem på Obsidian Publish, Quartz eller Digital Garden.",
-	"web.open": "Öppna",
+	"web.setUp": "Ställ in",
 	"web.beta": "Beta",
 	"web.openFailed": "Sidofältet Publicera på webben kunde inte öppnas.",
 	"web.closeSettings": "Stäng inställningarna för att se Publicera på webben i sidofältet.",
