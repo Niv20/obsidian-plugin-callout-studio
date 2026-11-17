@@ -75,11 +75,17 @@ The CSS file is a one-way styling snapshot, **not a Callout Studio backup**. The
 
 If the snapshot is all you have, the Callout Manager importer can still read it: open the file, copy its contents, and select **Copied styles**. That recovers each callout's name, icon, and one color, and nothing else.
 
-Use the snippet for Obsidian Publish, a static website, or another place where the plugin itself is not running. The export is a snapshot: export it again after changing your designs.
+Use the snippet in another vault where Callout Studio isn't installed, or on a website that isn't made with Obsidian Publish, Quartz or Digital Garden. For those three, use **Publish to the web** instead (see **Show callouts on a website** below). The export is a snapshot: export it again after changing your designs.
 
-The CSS export covers Block callouts. Heading and Inline callouts depend on the plugin's renderer and are not reproduced by the standalone snippet.
+The CSS export covers Block callouts, as Obsidian draws them. Heading and Inline callouts depend on the plugin's renderer and are not reproduced by the standalone snippet. For those, and for Block callouts on a site that draws them its own way, see **Show callouts on a website** below.
 
 A callout your active theme draws entirely is left out of the file. A callout the theme draws under only some of its IDs is exported with all of them, because the snippet is meant for places where that theme may not be active.
+
+## Show callouts on a website
+
+A site made with Obsidian Publish, Quartz or Digital Garden doesn't run Callout Studio. Heading and Inline callouts show there as the text you typed, and a Block callout loses the color and icon you gave it. Under **Website** in the settings, select **Open** beside **Publish to the web**. A panel opens in the right sidebar. Choose your service, then select **Create files** (**Create note** for Quartz and Digital Garden). Callout Studio writes what that service needs into your vault, and the panel lists the steps to do once on your site.
+
+The files are **not a Callout Studio backup**. They are a copy of your callouts, and once written Callout Studio writes them again by itself after you change a callout. [Publish to the web](19-publish-to-the-web.md) explains each service.
 
 ---
 **Next:** [Languages](11-languages.md)

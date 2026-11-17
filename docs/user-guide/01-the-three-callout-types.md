@@ -76,7 +76,7 @@ Obsidian can attach metadata after a pipe, such as `[!note|purple]`. The metadat
 
 A color in the metadata paints that one callout: `[!note|purple]` is a purple Note, and every other Note keeps its color. See [Callout metadata](18-callout-metadata.md).
 
-All three formats render in Live Preview, Reading view, and PDF exports.
+All three formats render in Live Preview, Reading view, and PDF exports. On a website made from your vault, none of the three looks right until you set the site up: see [Publish to the web](19-publish-to-the-web.md).
 
 ---
 **Next:** [Create your first callout](02-create-your-first-callout.md)

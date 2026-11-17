@@ -11,13 +11,14 @@ import { setLocale } from "../../src/i18n/index.ts";
 import { scenes as designScenes } from "./scenes-design.mjs";
 import { scenes as managementScenes } from "./scenes-management.mjs";
 import { scenes as sidebarScenes } from "./scenes-sidebars.mjs";
+import { scenes as webScenes } from "./scenes-web.mjs";
 import { scenes as formatScenes } from "./scenes-formats.mjs";
 import { scenes as integrationScenes } from "./scenes-integration.mjs";
 import { makeHost as sharedHost } from "./fixture-host.mjs";
 import { mountSettingsPage } from "./settingsPage.mjs";
 import "./mascotStill.mjs";
 
-const mounts = { "create-settings": mountSettings, "create-editor": mountEditor, "create-autocomplete": mountAutocomplete, ...designScenes, ...managementScenes, ...sidebarScenes, ...formatScenes, ...integrationScenes };
+const mounts = { "create-settings": mountSettings, "create-editor": mountEditor, "create-autocomplete": mountAutocomplete, ...designScenes, ...managementScenes, ...sidebarScenes, ...webScenes, ...formatScenes, ...integrationScenes };
 export const sceneNames = Object.keys(mounts);
 
 function makeHost() {
