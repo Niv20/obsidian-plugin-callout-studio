@@ -43,6 +43,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { performance } from "node:perf_hooks";
 import { describe, it } from "node:test";
 // Listed first among the project imports: it installs the DOM globals before
 // anything under test loads (see tests/support/fakeDom.ts).
@@ -358,13 +359,22 @@ function mount(options: MountOptions = {}): Mounted {
  * microtask turns is not enough; a condition is. The fake window's timers
  * fire only when told to, so each turn fires what is due: that is the moment
  * the panel reads the vault again after a change.
+ *
+ * The limit is wall-clock time, not a count of turns. Web Crypto answers from
+ * a thread of its own, in real time, while a turn with nothing to do takes
+ * microseconds: 500 turns came to about 8 ms, which a busy CI runner's hashes
+ * once outlasted (2026-11-17, Node 22). Ten seconds is never needed by a
+ * passing test and is only spent by one that would fail anyway.
  */
+const UNTIL_MS = 10_000;
 async function until(check: () => boolean, what: string): Promise<void> {
-	for (let turn = 0; turn < 500; turn++) {
+	const deadline = performance.now() + UNTIL_MS;
+	do {
 		if (check()) return;
 		fakeDom.window.flushTimers();
 		await new Promise((resolve) => setImmediate(resolve));
-	}
+	} while (performance.now() < deadline);
+	if (check()) return;
 	throw new Error(`the panel never showed ${what}`);
 }
 

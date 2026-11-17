@@ -503,6 +503,24 @@ Obsidian 1.14.4's renderer rebuilt step for step, so a test can draw the tree,
 redraw it, open its pages and run the settings search
 ([26 § Testing the tree](26-declarative-settings.md#testing-the-tree)).
 
+### Waiting for asynchronous work
+
+Most code under test awaits only promises the fakes resolve at once, so a
+fixed number of `await Promise.resolve()` or `setImmediate` turns is
+deterministic. Code that awaits **Web Crypto** (`sha256` in
+`manager/cssSnippetFile.ts`, used by the web export's fingerprints, pack and
+locale checks) or a `Blob`'s contents is not: that work finishes on another
+thread in wall-clock time, while an idle turn takes microseconds. A test of
+such code waits for a condition with a **time** limit, as `until()` in
+`tests/webPanel.test.ts` does, never for a count of turns - its 500-turn limit
+came to about 8 ms and once failed on a busy CI runner.
+
+To find a test that depends on that timing, run the built suite with those
+APIs slowed down, for example by a `--import` preload that delays
+`crypto.subtle.digest` and `Blob.prototype.arrayBuffer` by 25-100 ms (through
+the real `setTimeout`, captured before `fakeDom` loads). Every suite passes
+that way as of 2026-11-17.
+
 ### Recovery table browser check
 
 `node scripts/test-recovery-table-corners.mjs` renders the real comparison table
