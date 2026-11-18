@@ -145,13 +145,14 @@ describe("isBuiltInModified — the persistence gate", () => {
 	});
 
 	it("does not read a bare-vs-prefixed Lucide spelling as an edit", () => {
-		// `constants.ts` spells a built-in's icon `pencil`; the picker spells
-		// the same drawing `lucide-pencil`. An untouched built-in would read as
-		// customized the moment its owner merely opened the picker.
+		// Older versions saved the built-in's icon as bare `pencil`, which
+		// Obsidian draws as a different icon (`edit-3`); the default is now
+		// `lucide-pencil`, core's own. Either spelling of the same name must not
+		// read as customized.
 		const registry = loaded();
-		assert.deepStrictEqual(note(registry).icon, { type: "lucide", value: "pencil" });
+		assert.deepStrictEqual(note(registry).icon, { type: "lucide", value: "lucide-pencil" });
 
-		registry.update("note", { icon: { type: "lucide", value: "lucide-pencil" } });
+		registry.update("note", { icon: { type: "lucide", value: "pencil" } });
 		assert.strictEqual(registry.isBuiltInModified("note"), false);
 	});
 

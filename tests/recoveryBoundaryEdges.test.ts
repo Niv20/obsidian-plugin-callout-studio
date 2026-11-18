@@ -41,7 +41,10 @@ describe("recovery across missing files and awaited storage boundaries", () => {
 	});
 	it("keeps the plugin loaded when the migration write fails, then retries it", async () => {
 		const h = recoveryActionHarness();
-		h.state.disk = JSON.stringify({ callouts: [definition({ id: "legacy" })] });
+		h.state.disk = JSON.stringify({
+			// The removed `svg` icon type is what makes this load owe a migration write.
+			callouts: [definition({ id: "legacy", icon: { type: "svg", value: "x" } as never })],
+		});
 		h.state.failWrite = true;
 		await assert.doesNotReject(h.boot());
 		assert.equal(h.host.settingsWriter.status.reason, "write");

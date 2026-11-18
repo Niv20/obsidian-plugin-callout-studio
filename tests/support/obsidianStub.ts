@@ -116,7 +116,9 @@ export function setTooltip(el: { dataset?: Record<string, string> }, text: strin
 }
 
 export function getIconIds(): string[] {
-	return seams.__CS_ICON_IDS__ ?? [];
+	// Real Obsidian lists both spellings of the built-in `note` icon, so a
+	// load that sees the shipped default must not read it as a repair.
+	return seams.__CS_ICON_IDS__ ?? ["pencil", "lucide-pencil"];
 }
 
 export function normalizePath(p: string): string {

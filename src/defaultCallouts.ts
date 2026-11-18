@@ -31,7 +31,7 @@ export const DEFAULT_CALLOUTS: CalloutDefinition[] = [
 	{
 		id: "note",
 		displayName: "Note",
-		icon: { type: "lucide", value: "pencil" },
+		icon: { type: "lucide", value: "lucide-pencil" },
 		colorLight: "#086ddd",
 		colorDark: "#027aff",
 		foldable: false,

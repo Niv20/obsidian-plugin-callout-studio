@@ -143,7 +143,7 @@ describe("load() — seeding the built-ins", () => {
 		assert.strictEqual(note?.colorLight, "#ff0000");
 		assert.strictEqual(note?.colorDark, "#027aff", "kept from the default");
 		assert.strictEqual(note?.displayName, "Note", "kept from the default");
-		assert.deepStrictEqual(note?.icon, { type: "lucide", value: "pencil" });
+		assert.deepStrictEqual(note?.icon, { type: "lucide", value: "lucide-pencil" });
 		assert.strictEqual(note?.builtIn, true, "re-stamped, never trusted");
 		assert.strictEqual(note?.source, "builtin", "re-stamped, never trusted");
 	});
