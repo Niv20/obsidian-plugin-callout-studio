@@ -7,6 +7,8 @@ Obsidian Publish, Quartz and Digital Garden turn a vault into a website, but non
 
 Callout Studio fixes both, in a different way for each service, because each service gives a different place to do it. Your notes stay exactly as they are.
 
+To share a single note rather than a whole site, the Share Note plugin works with Callout Studio with nothing to set up. See [Share Note](#share-note).
+
 ## Which way for which service
 
 | Your site | Where the callouts are drawn | Readers without JavaScript, search, RSS | After you change a callout |
@@ -244,6 +246,23 @@ Don't edit the text between `callout-studio:start` and `callout-studio:end`. If 
 
 Callout Studio rewrites its section of `publish.js` and `publish.css` by itself. The files show as changed in **Publish changes**: select **Open Publish changes** and publish them again.
 
+## Share Note
+
+[Share Note](https://github.com/alangrainger/share-note) is a community plugin that shares one note at a time as a web page. It copies the note the way Obsidian shows it in Reading view, with your theme and styles, so your callouts go with it: block, heading and inline callouts, their colors, backgrounds and icons, and metadata colors.
+
+There is nothing to set up, and the **Publish to the web** panel doesn't list it. Turn Share Note on in the same vault, and Callout Studio does the rest.
+
+What Callout Studio adds is the icons. Share Note's server draws the icon of every block callout again, from an older copy of Obsidian's icons. An icon that copy doesn't have, such as `circle-help`, would show as an empty space. While Share Note is on, Callout Studio puts the icons your callouts use into the styles Share Note uploads, so every block callout keeps its icon. Nothing changes inside Obsidian.
+
+### After you change a callout
+
+Share Note uploads your styles once, with the first note you share, and uses them for every note you share after that. So, on any note, run **Share Note: Force re-upload of all data for this note**:
+
+- after you change a callout's name, icon or color, or a setting under **Global callout style**;
+- once, if you shared notes before you installed or updated Callout Studio, or before you turned Share Note on. Sharing a note the usual way keeps the styles Share Note uploaded the first time.
+
+That updates every note you shared, not just that one. If a page still looks the same, do a hard refresh in your browser.
+
 ## Block callouts
 
 The site draws its block callouts itself. Callout Studio adds styles on top, so that each one looks the way you set it up:
@@ -276,7 +295,9 @@ Nothing here needs JavaScript. The styles are part of the files Callout Studio a
 - **Digital Garden: text in braces at the very end of a paragraph.** The garden reads `{…}` at the end of a paragraph, a heading or a list item as its own syntax, and removes it. An inline callout such as `[!note]{my text}` then shows the callout's name instead of your text. Put any character after the closing brace, such as a period, and it works.
 - **Quartz: the note has to reach the folder your site is built from.** It does when your vault is that folder, or the whole Quartz repository, and through Obsidian Sync or Git. A plugin that copies only the notes you choose sends it only if you publish it (see [If a plugin publishes your notes](#if-a-plugin-publishes-your-notes)).
 - **Quartz: a theme can restyle block callouts.** A Quartz theme draws block callouts its own way, for example their titles in its text color. Your colors, backgrounds and icons stay. Heading and inline callouts look as you set them up.
-- **Only these three services.** Callout Studio writes files for Obsidian Publish, Quartz and Digital Garden only. On a site made some other way, heading and inline callouts show as the text you typed.
+- **Only these services.** Callout Studio writes files for Obsidian Publish, Quartz and Digital Garden only, and works with the Share Note plugin. On a site made some other way, heading and inline callouts show as the text you typed.
+- **Share Note: an unknown callout far down a long note.** A callout type that isn't in your callout list, and wasn't on screen yet when you shared the note, can show a pencil instead of your fallback callout's icon. Its colors are right. Scroll through the note in Reading view before you share it.
+- **Share Note: printing a page.** A block callout whose icon is a picture, an emoji or an icon from another library prints with a pencil instead. The colors print.
 - **Obsidian Publish needs a custom domain**, as described above. On Obsidian Publish, a reader with JavaScript off sees `[!tip]` as text. So do search results and link previews.
 - **The text of a link to a heading callout is not changed.** A link such as `[[Note#[!tip] Title]]` shows the heading as you typed it. Give the link its own text: `[[Note#[!tip] Title|Title]]`. Quartz 4 does not turn such a link into a link at all.
 - **A block callout whose name isn't plain letters.** Quartz and Digital Garden recognize a block callout only when its name is made of English letters, digits, hyphens and underscores. A name in another script, such as `[!הערה]`, stays a quotation there, and styles cannot change that. Obsidian Publish has no such limit.

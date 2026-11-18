@@ -239,6 +239,18 @@ function parseViewBox(value: string | null): { width: number; height: number } |
 	return { width, height };
 }
 
+/**
+ * `markup` as an SVG that stands on its own, or `null` when it is not one
+ * drawing. An icon read back from the DOM is an element of a page, which does
+ * not need to say what namespace it is in; the same text as an image does.
+ */
+export function standaloneSvg(markup: string): string | null {
+	const text = markup.trim();
+	if (!/^<svg[\s>]/.test(text) || !text.endsWith("</svg>") || text.indexOf("<svg", 1) !== -1) return null;
+	const open = text.slice(0, text.indexOf(">"));
+	return /\sxmlns=/.test(open) ? text : text.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+}
+
 /** Encode SVG markup for use in a CSS `url()` value. */
 export function svgToDataUri(svg: string): string {
 	const encoded = encodeURIComponent(svg).replace(/'/g, "%27").replace(/"/g, "%22");

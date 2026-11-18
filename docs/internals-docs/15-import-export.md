@@ -162,6 +162,12 @@ flair, and shown in capitals by Obsidian's own `.flair` rule): the feature is
 new, and the tag says it may still change. It is on the row, not on the panel,
 whose tab carries only the feature's name.
 
+The **Share Note** plugin is not a service of the panel, and has no target: it
+uploads a note's reading view with the window's own stylesheets, so there is
+no file to write and nothing for the user to set up. What it needs - drawings
+for the icons it cannot name - rides in the live stylesheet while Share Note
+is on ([CSS generation § A page shared with Share Note](06-css-generation.md#a-page-shared-with-share-note)).
+
 ### The Publish to the web panel
 
 [`WebPanelView.ts`](../../src/webPanel/WebPanelView.ts), a view in the right

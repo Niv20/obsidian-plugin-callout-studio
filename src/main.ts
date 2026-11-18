@@ -14,6 +14,7 @@ import { Platform, Plugin, type App, type PluginManifest } from "obsidian";
 import type { CalloutIcon, CalloutRenderRole, PluginSettings } from "./types";
 import { CalloutRegistry } from "./manager/CalloutRegistry";
 import { CSSInjector } from "./manager/CSSInjector";
+import { watchShareNote } from "./manager/css/shareNoteCSS";
 import { IconService } from "./icons/IconService";
 import { startMaterialFontLoader, stopMaterialFontLoader } from "./icons/packs/materialFont";
 import { clearMaterialFontStore, setMaterialFontStore } from "./icons/materialFontStore";
@@ -323,6 +324,13 @@ export default class CalloutStudioPlugin extends Plugin {
 			// announcing a move of it must not pay for a save pass.
 			if (change.persists) void this.saveSettings();
 		});
+		// A page shared with Share Note gets rules written only while that plugin
+		// is on, and Obsidian announces no plugin being switched on or off.
+		this.register(
+			watchShareNote(this.app, this.app.workspace.containerEl.ownerDocument, () => {
+				if (!this.settingsWriter.isDestroyed) this.cssInjector.inject();
+			}),
+		);
 		// After the repaint above: what reading view baked (which names are
 		// callouts, which tokens have an icon) only a re-render can change.
 		const readingStructure = new ReadingStructureWatch(this.app, this.registry);

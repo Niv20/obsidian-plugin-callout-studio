@@ -9,13 +9,14 @@
  */
 import { getIcon, setIcon } from "obsidian";
 import { createIconResolver } from "../../icons/resolver";
-import { renderIconInto } from "../../icons/renderIcon";
+import { renderIconInto, type RenderIconResult } from "../../icons/renderIcon";
 import { userImageFor } from "../../icons/packs/userImages";
 import type { CalloutIcon } from "../../types";
 import type { CalloutRegistry } from "../CalloutRegistry";
 import { FALLBACK_ICON_SENTINEL } from "./calloutIconProp";
 import { coreIconValue, importCoreIconSvg } from "./coreIcon";
 import { iconBoxWidth } from "./iconBox";
+import { SHARE_NOTE_FALLBACK_CLASS } from "./shareNoteCSS";
 
 export const CSS_FALLBACK_ICON = "cs-fallback-icon";
 export const CSS_FALLBACK_ICON_HIDDEN = "cs-fallback-icon-hidden";
@@ -41,13 +42,28 @@ export function paintUnknownFallbackIcon(calloutEl: HTMLElement, iconEl: HTMLEle
 	}
 
 	iconEl.removeClass(CSS_FALLBACK_ICON_HIDDEN);
-	renderIconInto(iconEl, fallback.icon, createIconResolver(registry), {
+	const result = renderIconInto(iconEl, fallback.icon, createIconResolver(registry), {
 		role: "regular",
 		fill: "currentColor",
 		missing: { kind: "placeholder", lucideId: "lucide-pencil" },
 		className: CSS_FALLBACK_ICON,
 		rootStyle: fallbackIconRootStyle(fallback.icon),
 	});
+	nameFallbackDrawing(iconEl, result);
+}
+
+/**
+ * Give the fallback's painted drawing a name a page shared with Share Note
+ * keeps. Share Note keeps nothing of an icon but its `lucide-` class, and
+ * draws it again by that name (`shareNoteCSS.ts`). Only the artwork itself is
+ * named: a placeholder is Obsidian's pencil, which has a name of its own, and
+ * an emoji is text, which Share Note leaves alone.
+ */
+export function nameFallbackDrawing(iconEl: HTMLElement, result: RenderIconResult): void {
+	const drawing = iconEl.firstElementChild;
+	if (result === "painted" && drawing?.tagName.toLowerCase() === "svg") {
+		drawing.classList.add(SHARE_NOTE_FALLBACK_CLASS);
+	}
 }
 
 /** The slice of an icon slot {@link slotAlreadyShows} looks at. */

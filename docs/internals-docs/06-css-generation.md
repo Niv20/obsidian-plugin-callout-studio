@@ -358,7 +358,9 @@ registry actually holds data) replaces it with a real generated pass.
 5. generateFallbackCSS(callouts) - styles any data-callout Obsidian rendered that this
                                        plugin does not recognize
 6. generateMetadataColorCSS() - one group per metadata colour word, weakest first;
-                                LAST on purpose (see "Metadata colours" below)
+                                last of the vault's own rules on purpose (see "Metadata colours" below)
+7. generateShareNoteCSS() - only while the Share Note plugin is on: drawings for a
+                            shared page, inert in the vault (see "A page shared with Share Note")
 ```
 
 While a preview is lifted into the [preview layer](#the-preview-layer---a-previews-rules-in-a-sheet-of-their-own),
@@ -661,6 +663,113 @@ fallback icon without Callout Studio reading the snippet file.
 > Pinned by `tests/restoreCoreIcon.test.ts`, and the end state of every icon
 > slot was compared before and after across theme, mode, accent and font-size
 > changes in a real Obsidian.
+
+### A callout that is not in the document yet
+
+Both of those branches - the unknown id and the theme's name - decide from the
+computed `--callout-icon`, and an element outside the document has no computed
+style: `getCssPropertyValue` returns `""`. Reading view runs its
+post-processors on a section *before* the section is on the page, and a section
+first shown by scrolling is never swept again, so the painter used to read that
+empty value as "no icon", empty the slot, and leave it so: an unknown callout
+below the fold showed no icon at all, whatever the fallback's icon, and so did
+a name the theme claims.
+
+`paintIcons` now leaves such a slot exactly as core drew it and asks to be told
+when the callout is inserted (`paintWhenInserted`, Obsidian's
+`onNodeInserted(…, once)`), then decides it there. Core reads the same empty
+value for a detached callout and leaves an empty `<svg>` in the slot; a
+callout never inserted keeps it, and Share Note names an `<svg>` it cannot
+place `pencil` - which is what a page shared with it shows for an unknown
+callout below the fold ([below](#a-page-shared-with-share-note)). Once per element, kept in a
+`WeakSet` so a section Obsidian drops before it is shown takes its entry with
+it; a hook that fires after unload finds the injector destroyed. A callout this
+plugin paints is not held back - nothing in its paint reads the cascade.
+`tests/printMediaIcons.test.ts` (*a callout that is not on the page yet*) pins
+it; the fake DOM's elements say for themselves whether they are on the page
+(`isConnected`), and `insert()` plays the insertion.
+
+## A page shared with Share Note
+
+[`css/shareNoteCSS.ts`](../../src/manager/css/shareNoteCSS.ts). The Share Note
+community plugin (`share-note`) does not render Markdown: it serves a note's
+reading view as it stands, its DOM plus every stylesheet in
+`document.styleSheets`. That is why this sheet's `<style>` element matters
+there too ([Two write targets](#two-write-targets-and-why-both-are-necessary)):
+`adoptedStyleSheets` are not in that list. Colours, backgrounds, heading and
+inline tokens, metadata colours and the `::after` icons all arrive with nothing
+done for them.
+
+One thing is rebuilt on the way, and it is a block callout's icon. Share Note
+(1.6.2) empties the first `<svg>` in `.callout-icon` down to a placeholder
+carrying one name, `data-share-note-lucide`: the drawing's `lucide-<name>`
+class, else the `--callout-icon` of the first top-level rule whose selector
+contains `data-callout="<type>"`, else `pencil`. Its server then draws that name
+with its own Lucide, **0.287.0** (October 2023). A name added to Lucide later
+is not in it, and the placeholder stays an empty `<svg>` - no icon. Obsidian's
+Lucide is newer, so these are the names a picker offers today (`circle-help`,
+`triangle-alert`, `house`…), and so is Obsidian's bare `pencil`: it resolves to
+an internal drawing whose class is `lucide-edit-3`, where core's own rule says
+`lucide-pencil`. The untouched `[!note]` does not hit this - its default is
+`lucide-pencil` (core's own spelling), which Share Note can draw - but a `note`
+saved with the bare `pencil` by an older version still does.
+
+The rules key on **the name, not the callout**:
+
+```css
+:where(body.share-note-plugin) .callout-icon > svg[data-share-note-lucide="edit-3"]:empty {
+  --cs-share-icon: url("data:image/svg+xml,…");
+  mask-image: var(--cs-share-icon);
+  background-color: currentColor;
+}
+```
+
+- **The name is read off what Obsidian painted**, so ownership comes along for
+  free: an unknown callout a theme or snippet gives its own icon carries the
+  theme's name, not the fallback's. Keying on the callout would have had to
+  decide ownership again, without the computed cascade, and would paint over a
+  theme's icon on every shared page.
+- **`:empty` leaves Share Note alone where it can draw.** A name its Lucide has
+  is replaced by a filled `<svg>`, which no rule here matches; before its
+  script runs, the empty placeholder shows ours, so there is no blank moment.
+- **One rule per name**, for every Obsidian icon this sheet has the painter draw
+  on a block callout (untouched built-ins included, theme-owned and hidden ones
+  not), drawn from `getIcon(resolveLucideId(value))` and kept per id. An icon
+  another plugin registered has no `lucide-` class, so its name is the
+  callout's `--callout-icon`, as Share Note reads it. Pack glyphs, pictures and
+  emoji need nothing: their `::after` already hides whatever is in the slot.
+- **The fallback's own artwork has no name to carry**, so
+  `nameFallbackDrawing` gives the SVG `paintUnknownFallbackIcon` paints the
+  class `lucide-callout-studio-fallback`, and one more rule draws the fallback
+  under that name - a mask, or the picture itself when it keeps its colours.
+  A placeholder is Obsidian's pencil and has its own name; an emoji is a text
+  span, which Share Note leaves alone.
+- **Inert in the vault.** `body.share-note-plugin` is on a shared page's body
+  and nowhere else; `:where()` keeps the scope weightless. Not wrapped in
+  `@media screen`: Share Note drops only a top-level `@media print`, and the
+  masks print.
+- **Written only while Share Note is on** (`isShareNoteEnabled`: enabled, or
+  loaded). Obsidian announces no plugin being switched, so `watchShareNote`
+  (wired in `main.ts`) observes the main document's `<head>` children - a
+  plugin's stylesheet goes in on the way in and out on the way out - and
+  re-injects when the answer moves. Obsidian adds a plugin to its enabled list
+  only after it loaded, by which time its stylesheet is already in, hence
+  "or loaded". Without the watch a vault that had just turned Share Note on
+  could share before the next pass, and Share Note keeps the stylesheet it
+  uploads first until **Force re-upload** replaces it.
+
+Share Note uploads every `url("data:…")` in the sheet as a file of its own and
+points the rule at it. Its scan stops at the first `)`, and `svgToDataUri` does
+not escape parentheses, so a drawing with one would be left inline instead -
+still a working data URI. The drawing is declared once into `--cs-share-icon`,
+as `iconOverrides.ts` does, so it is one upload, not two.
+
+`tests/shareNote.test.ts` runs the sheet and the painted DOM through
+[`tests/support/shareNoteSim.ts`](../../tests/support/shareNoteSim.ts), Share
+Note's own lines ported, and asks that every name it produces has a drawing.
+What it cannot see - whether the mask paints, whether Share Note's Lucide fills
+a name - is checked by hand against a real server
+([Build, test, and release](20-build-test-release.md#checking-share-note-by-hand)).
 
 ## Where the generated CSS actually lands in the cascade
 

@@ -56,7 +56,7 @@ mutate → CSS → repaint loop everything else builds on.
 | [03-plugin-lifecycle.md](03-plugin-lifecycle.md) | `onload()` walked step by step in its real order, and `onunload()` cleanup. |
 | [04-data-model.md](04-data-model.md) | Every persisted type (`CalloutDefinition`, `PluginSettings`, …) and the callout-id normalization rules. |
 | [05-callout-registry.md](05-callout-registry.md) | The single source of truth: CRUD, load-time migrations, the built-in-deference mechanism, the live-preview slot. |
-| [06-css-generation.md](06-css-generation.md) | How the registry becomes a stylesheet: the injector's two write targets, icon painting, theme ownership and selector escaping. |
+| [06-css-generation.md](06-css-generation.md) | How the registry becomes a stylesheet: the injector's two write targets, icon painting, a page shared with Share Note, theme ownership and selector escaping. |
 | [07-persistence-and-caching.md](07-persistence-and-caching.md) | What is stored in `data.json`, device storage and vault caches; what is runtime-only; the startup CSS snapshot. |
 | [08-settings-sync-and-recovery.md](08-settings-sync-and-recovery.md) | Saving and sync authorization, the recovery incident and repair, causal merges, verified writes, checkpoints and backups, recovery UI, provider differences, and edge cases. |
 | [09-render-roles.md](09-render-roles.md) | The token grammar, and how heading/inline callouts render in Live Preview, Reading view and on a published site (one renderer, a host per service). |

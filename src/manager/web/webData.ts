@@ -21,6 +21,7 @@ import { withSvgCopyToken } from "../../icons/isolateSvg";
 import { followsCalloutColor, userImageFor } from "../../icons/packs/userImages";
 import { packFor } from "../../icons/registry";
 import { createIconResolver } from "../../icons/resolver";
+import { standaloneSvg } from "../../icons/svg";
 import type { CalloutDefinition, CalloutIcon, CalloutRenderRole } from "../../types";
 import type { WebBundleData, WebCalloutDef } from "../../web/webBundleData";
 import type { CalloutRegistry } from "../CalloutRegistry";
@@ -113,18 +114,6 @@ function bakeIcon(def: CalloutDefinition, registry: CalloutRegistry, role: Callo
  * cannot be one of the document's either.
  */
 const iconToken = (index: number): string => `0${index.toString(36)}`;
-
-/**
- * `markup` as an SVG that stands on its own, or `null` when it is not one
- * drawing. An icon read back from the DOM is an element of a page, which does
- * not need to say what namespace it is in; the same text as an image does.
- */
-function standaloneSvg(markup: string): string | null {
-	const text = markup.trim();
-	if (!/^<svg[\s>]/.test(text) || !text.endsWith("</svg>") || text.indexOf("<svg", 1) !== -1) return null;
-	const open = text.slice(0, text.indexOf(">"));
-	return /\sxmlns=/.test(open) ? text : text.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
-}
 
 /**
  * A callout's block icon, as what a stylesheet can do with it — see

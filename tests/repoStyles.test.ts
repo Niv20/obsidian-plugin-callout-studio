@@ -209,6 +209,7 @@ describe("class names in styles.css and src/ agree", () => {
 		"callout-studio-quartz", // the exported Quartz plugin's folder (manager/web/targets.ts)
 		"callout-studio-stylesheet", // the garden plugin's virtual template for its stylesheet (web/static/garden.ts)
 		"callout-studio-web-assets", // virtual module the build resolves (scripts/lib/webAssets.mjs)
+		"callout-studio-fallback", // the name a page shared with Share Note gives the painted fallback icon, a data-share-note-lucide value (manager/css/shareNoteCSS.ts)
 		"callout-studio-welcome", // obsidian:// URI action
 		"callout-studio-context-menu", // Menu section id
 		"callout-studio-occurrences", // Registered ItemView type, not a DOM class

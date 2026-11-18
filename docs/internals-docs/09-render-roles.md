@@ -466,6 +466,12 @@ for the bundles and
 [Import and export § Three export formats](15-import-export.md#three-export-formats)
 for what each service is given.
 
+A note shared with the **Share Note** plugin is not a fourth host. Share Note
+serves the reading view itself - the DOM the post-processor already built and
+the stylesheets of the window - so heading and inline callouts arrive drawn,
+and nothing here runs on the page. What it rebuilds is a block callout's icon,
+by name; see [CSS generation § A page shared with Share Note](06-css-generation.md#a-page-shared-with-share-note).
+
 ### What the renderer shares, and what it cannot
 
 It is a port of the reading-view post-processor, not a second copy of the

@@ -521,6 +521,47 @@ APIs slowed down, for example by a `--import` preload that delays
 the real `setTimeout`, captured before `fakeDom` loads). Every suite passes
 that way as of 2026-11-17.
 
+### Checking Share Note by hand
+
+`tests/shareNote.test.ts` proves every name Share Note's own lines produce has
+a drawing in the sheet ([06 § A page shared with Share
+Note](06-css-generation.md#a-page-shared-with-share-note)). Whether the page
+then shows it is checked against the real plugin and its real server, whenever
+`css/shareNoteCSS.ts`, the fallback painter or Share Note itself changes. No
+account and no network share are needed: the server is open source and runs
+locally.
+
+1. **The server.** Clone `note-sx/server`, then in `app/`: `npm install`,
+   `npx tsc --noCheck`, and a `.env` with `BASE_WEB_URL=http://localhost:<port>`,
+   `PORT=<port>`, a `HASH_SALT`, and no Cloudflare keys (no captcha). Run
+   `node dist/index.js`. `GET /v1/account/get-key?id=<any uid>` answers with
+   the key in its `obsidian://share-note?key=…` redirect.
+2. **The vault.** An isolated Obsidian (its own `--user-data-dir`, the usual
+   `--remote-debugging-port`) with this build and the Share Note release
+   (`gh release download <version> -R alangrainger/share-note`), whose
+   `data.json` holds `server`, that `uid`, the key, `shareStyleChosen: true` and
+   `shareUnencrypted: true`. A note with: an untouched `[!note]` and
+   `[!warning]`, a built-in recoloured with a newer Lucide icon
+   (`triangle-alert`), callouts of the user's own with a newer and an older
+   Lucide name (`circle-help`, `flame`), a pack icon, a picture, an emoji, a
+   `[!tip|pink]`, a heading and an inline callout, and an unknown id under a
+   fallback whose icon is a pack glyph or a picture.
+3. **Share** with `share-note:share` (once with `shareUnencrypted: false` too),
+   and open the link in Chromium and WebKit. Every block callout shows exactly
+   one icon, in its colour; Share Note's console warns *icon name was not
+   found* for the newer names, and they show anyway. The stylesheet the page
+   links (`/css/<hash>.css`) holds the `data-share-note-lucide` rules, their
+   drawings uploaded as `/files/*.svg`. Toggle the page's 🌓, narrow it to a
+   phone's width, and print it to PDF: Lucide drawings print, the `::after`
+   icons print as Share Note's pencil.
+4. **The things around it.** Recolour a callout and share normally: the page
+   keeps the old look; `share-note:force-upload` brings the new. Switch Share
+   Note off and on in the vault: the rules leave and come back with it, without
+   a restart. Share a long note straight from source mode: an unknown callout
+   Obsidian never put on screen comes out with Share Note's pencil, and after
+   scrolling the note in reading view, with the fallback's icon - which the
+   user guide says.
+
 ### Recovery table browser check
 
 `node scripts/test-recovery-table-corners.mjs` renders the real comparison table

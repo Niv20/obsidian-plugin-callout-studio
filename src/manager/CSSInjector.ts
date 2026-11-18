@@ -64,7 +64,16 @@ import { calloutIconProp, fallbackCalloutIconProp } from "./css/calloutIconProp"
 import { emojiOverrideCSS, iconOverrideCSS } from "./css/iconOverrides";
 import { iconBoxWidth } from "./css/iconBox";
 import { blockAlignmentCSS } from "./css/alignmentCSS";
-import { userImageFor } from "../icons/packs/userImages";
+import { followsCalloutColor, userImageFor } from "../icons/packs/userImages";
+import { packFor } from "../icons/registry";
+import { resolveLucideId } from "../icons/lucideId";
+import {
+	SHARE_NOTE_FALLBACK_NAME,
+	isShareNoteEnabled,
+	obsidianShareNoteIcon,
+	shareNoteIconCSS,
+	type ShareNoteIcon,
+} from "./css/shareNoteCSS";
 import { transparentBorderProps } from "./css/transparentBorder";
 import {
 	CSS_FALLBACK_ICON,
@@ -199,6 +208,12 @@ export class CSSInjector {
 	 * leaves the ones that already show it — see `icons/iconPaintMemo.ts`.
 	 */
 	private readonly iconMemo = new IconPaintMemo();
+	/**
+	 * Callouts whose icon waits for them to be in the document — see
+	 * {@link paintWhenInserted}. Weak, so a section Obsidian drops before it is
+	 * ever shown takes its entry with it.
+	 */
+	private readonly awaitingInsert = new WeakSet<HTMLElement>();
 	/**
 	 * A settings window's preview, whose rules ride in a small sheet of their
 	 * own while the main sheet leaves them out — see `css/previewRepaint.ts`.
@@ -493,6 +508,41 @@ export class CSSInjector {
 	}
 
 	/**
+	 * The drawings a page shared with Share Note may need back — see
+	 * `css/shareNoteCSS.ts`. Every Obsidian icon this sheet has the painter
+	 * draw on a block callout, under the name Share Note will read off it, and
+	 * the fallback's artwork when it is not Obsidian's, under the name
+	 * `fallbackIcon.ts` gives the drawing it paints.
+	 *
+	 * A callout the theme owns is the theme's to draw, and a hidden icon has
+	 * nothing to bring back. Pack glyphs, pictures and emoji need nothing: their
+	 * `::after` already hides whatever Share Note leaves in the slot.
+	 */
+	private generateShareNoteCSS(callouts: readonly CalloutDefinition[]): string {
+		const icons: ShareNoteIcon[] = [];
+		for (const def of callouts) {
+			if (def.hideIcon === true || this.registry.themeOwns(def)) continue;
+			if (packFor(def.icon)?.kind !== "builtin") continue;
+			const icon = obsidianShareNoteIcon(resolveLucideId(def.icon.value), calloutIconProp(def));
+			if (icon) icons.push(icon);
+		}
+		const fallback = this.registry.get(this.registry.settings.fallbackCalloutId);
+		const kind = fallback ? packFor(fallback.icon)?.kind : undefined;
+		if (fallback && kind && kind !== "builtin" && kind !== "glyph" && fallback.hideIcon !== true) {
+			const svg = this.registry.themeOwns(fallback) ? null : this.icons.resolveSvg(fallback.icon, "regular");
+			const picture = userImageFor(fallback.icon);
+			if (svg) {
+				icons.push({
+					name: SHARE_NOTE_FALLBACK_NAME,
+					svg,
+					keepsColors: picture !== undefined && !followsCalloutColor(fallback.icon, picture),
+				});
+			}
+		}
+		return shareNoteIconCSS(icons);
+	}
+
+	/**
 	 * The fallback and metadata rules, which close the main sheet. The
 	 * metadata colours read `metadataDefs` (all but a reserved demo).
 	 */
@@ -551,6 +601,8 @@ export class CSSInjector {
 		}
 
 		rules.push(...this.fallbackAndMetadata(callouts, others ?? callouts));
+		// Inert in the vault: these rules name a class only a shared page has.
+		if (isShareNoteEnabled(this.app)) rules.push(this.generateShareNoteCSS(callouts));
 
 		const cssText = rules.join("\n\n");
 		// Write the CSS to BOTH targets:
@@ -1572,6 +1624,18 @@ export class CSSInjector {
 			// Per-grapheme print colors for a gradient title (PDF export
 			// support — see gradientTitleText.ts).
 			const titleInner = calloutEl.querySelector<HTMLElement>(".callout-title .callout-title-inner");
+			const asksCascade = !def || this.registry.themeOwns(def) || this.registry.leavesBlockName(def, id);
+			if (asksCascade && iconEl && !calloutEl.isConnected) {
+				// Both branches below decide from the computed `--callout-icon`,
+				// and an element out of the document has none: they used to read
+				// that as "no icon" and empty the slot. Reading view post-processes
+				// a section before it is on the page, and a section first shown by
+				// scrolling was never swept again, so an unknown callout below the
+				// fold showed no icon at all. Decide once it is in the document.
+				this.paintWhenInserted(calloutEl);
+				if (titleInner) clearGradientChars(titleInner);
+				continue;
+			}
 			if (!def) {
 				// An unknown id is the one icon path where CSS decides whether the
 				// fallback or an exact snippet owns the slot. The fallback painter
@@ -1647,6 +1711,22 @@ export class CSSInjector {
 			if (tokenEl.classList.contains(CSS_CM_WIDGET)) continue;
 			this.paintTokenEl(tokenEl, painted);
 		}
+	}
+
+	/**
+	 * Paint `calloutEl` again once Obsidian puts it in the document, where its
+	 * computed `--callout-icon` can be read. Once per element, however many
+	 * passes meet it first. The hook unhooks itself when it fires; one on an
+	 * element that is never shown goes when the element does, and a late one
+	 * after unload finds the injector destroyed and does nothing.
+	 */
+	private paintWhenInserted(calloutEl: HTMLElement): void {
+		if (this.awaitingInsert.has(calloutEl)) return;
+		this.awaitingInsert.add(calloutEl);
+		calloutEl.onNodeInserted(() => {
+			this.awaitingInsert.delete(calloutEl);
+			if (!this.destroyed && calloutEl.isConnected) this.paintIcons(calloutEl);
+		}, true);
 	}
 
 	/**

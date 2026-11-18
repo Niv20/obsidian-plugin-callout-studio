@@ -222,6 +222,7 @@ describe("paintIcons — a name the theme claims", () => {
 		h.registry.setThemeOwnedIds(new Set(["description"]));
 		const blockFor = (id: string) => {
 			const callout = el({ cls: "callout", attrs: { "data-callout": id } });
+			callout.isConnected = true;
 			const icon = callout.createDiv({ cls: "callout-title" }).createDiv({ cls: "callout-icon" });
 			h.injector.paintIcons(asEl(callout));
 			return icon;
@@ -240,6 +241,7 @@ describe("paintIcons — a name the theme claims", () => {
 		h.registry.setThemeOwnedIds(new Set(["quote"]));
 		const blockFor = (id: string) => {
 			const callout = el({ cls: "callout", attrs: { "data-callout": id } });
+			callout.isConnected = true;
 			const icon = callout.createDiv({ cls: "callout-title" }).createDiv({ cls: "callout-icon" });
 			h.injector.paintIcons(asEl(callout));
 			return icon;
@@ -254,8 +256,10 @@ describe("paintIcons — a name the theme claims", () => {
 /* -------------------------------------------------------------------------- */
 
 describe("paintIcons — weak unknown-callout fallback", () => {
-	const block = (id = "mystery") => {
+	/** A callout on the page: the computed cascade the painter reads exists. */
+	const block = (id = "mystery", onPage = true) => {
 		const callout = el({ cls: "callout", attrs: { "data-callout": id } });
+		callout.isConnected = onPage;
 		const title = callout.createDiv({ cls: "callout-title" });
 		const icon = title.createDiv({ cls: "callout-icon" });
 		return { callout, icon };
@@ -344,6 +348,73 @@ describe("paintIcons — weak unknown-callout fallback", () => {
 
 		assert.strictEqual(outer.icon.textContent, "");
 		assert.strictEqual(inner.icon.textContent, EMOJI.value);
+	});
+
+	/*
+	 * Reading view post-processes a section before it is on the page, and a
+	 * detached element has no computed `--callout-icon`. The painter used to
+	 * read that empty value as "no icon", empty the slot, and never come back:
+	 * an unknown callout below the fold showed no icon in Obsidian, and a page
+	 * shared with Share Note captured the empty slot.
+	 */
+	describe("a callout that is not on the page yet", () => {
+		it("keeps what core drew, then paints once it is inserted", () => {
+			const { injector } = emojiFallback();
+			const { callout, icon } = block("mystery", false);
+			const core = icon.createSpan({ cls: "core-drawing" });
+
+			injector.paintIcons(asEl(callout));
+			assert.deepStrictEqual(icon.children, [core], "a detached slot is left as core drew it");
+			assert.strictEqual(callout.insertHookCount, 1);
+
+			callout.setCssProp("--callout-icon", FALLBACK_ICON_SENTINEL);
+			callout.insert();
+			assert.strictEqual(icon.textContent, EMOJI.value);
+			assert.ok(icon.children[0]?.classList.contains(CSS_FALLBACK_ICON));
+			assert.strictEqual(callout.insertHookCount, 0, "the hook unhooks itself");
+		});
+
+		it("asks to be told once, however many passes meet it first", () => {
+			const { injector } = emojiFallback();
+			const { callout } = block("mystery", false);
+			injector.paintIcons(asEl(callout));
+			injector.paintIcons(asEl(callout));
+			injector.paintIcons(asEl(callout));
+			assert.strictEqual(callout.insertHookCount, 1);
+		});
+
+		it("waits the same way for a name the theme claims", () => {
+			const h = harness();
+			h.registry.update("quote", { icon: EMOJI });
+			h.registry.setThemeOwnedIds(new Set(["quote"]));
+			const { callout, icon } = block("quote", false);
+			const core = icon.createSpan({ cls: "core-drawing" });
+
+			h.injector.paintIcons(asEl(callout));
+			assert.deepStrictEqual(icon.children, [core]);
+			assert.strictEqual(callout.insertHookCount, 1);
+		});
+
+		it("paints a callout of its own at once: nothing there reads the cascade", () => {
+			const h = harness();
+			h.registry.add(definition({ id: "mine", icon: EMOJI }));
+			const { callout, icon } = block("mine", false);
+
+			h.injector.paintIcons(asEl(callout));
+			assert.strictEqual(icon.textContent, EMOJI.value);
+			assert.strictEqual(callout.insertHookCount, 0);
+		});
+
+		it("does nothing when it is inserted after the plugin unloaded", () => {
+			const { injector } = emojiFallback();
+			const { callout, icon } = block("mystery", false);
+			injector.paintIcons(asEl(callout));
+			injector.destroy();
+
+			callout.setCssProp("--callout-icon", FALLBACK_ICON_SENTINEL);
+			callout.insert();
+			assert.strictEqual(icon.textContent, "");
+		});
 	});
 
 	it("preserves a wide uploaded picture's live fallback aspect", () => {

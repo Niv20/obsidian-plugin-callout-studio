@@ -342,6 +342,35 @@ export class FakeElement {
 
 	private readonly attrs = new Map<string, string>();
 	private datasetView?: Record<string, string | undefined>;
+	/** What {@link onNodeInserted} was handed, until {@link insert} runs it. */
+	private readonly insertListeners: { listener: () => unknown; once: boolean }[] = [];
+
+	/**
+	 * Obsidian's hook for "this element is now in the document". Nothing is
+	 * ever inserted here on its own, so a suite says when with {@link insert}.
+	 */
+	onNodeInserted(listener: () => unknown, once = false): () => void {
+		const entry = { listener, once };
+		this.insertListeners.push(entry);
+		return () => {
+			const at = this.insertListeners.indexOf(entry);
+			if (at !== -1) this.insertListeners.splice(at, 1);
+		};
+	}
+
+	/** Put the element in the document: `isConnected`, then the insertion hooks. */
+	insert(): void {
+		this.isConnected = true;
+		for (const entry of [...this.insertListeners]) {
+			if (entry.once) this.insertListeners.splice(this.insertListeners.indexOf(entry), 1);
+			entry.listener();
+		}
+	}
+
+	/** How many insertion hooks are waiting, for a suite asserting there is exactly one. */
+	get insertHookCount(): number {
+		return this.insertListeners.length;
+	}
 
 	constructor(tagName: string, ownerDocument?: FakeDocument) {
 		this.tagName = tagName.toUpperCase();
