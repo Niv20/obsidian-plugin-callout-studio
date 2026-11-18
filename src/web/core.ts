@@ -132,6 +132,15 @@ const ELEMENT_NODE = 1;
 /** `NodeFilter.SHOW_TEXT`. */
 const SHOW_TEXT = 4;
 
+/**
+ * The document the token builders below make their elements with: only
+ * `createElement`, the call `liteDom` answers. Narrower than `Document` on
+ * purpose. Handed a whole `Document`, Obsidian's lint rule asks for
+ * `doc.win.createSpan()`, and a published page or a site's build has neither
+ * `win` nor `createSpan`. Those helpers are Obsidian's.
+ */
+type TokenDocument = Pick<Document, "createElement">;
+
 /** What one typed id resolved to. `def` is the fallback's when `unknown`. */
 interface Resolved {
 	def: WebCalloutDef | undefined;
@@ -344,7 +353,7 @@ export function createWebRenderer(data: WebBundleData, env: WebEnv = {}): WebRen
 	};
 
 	/** The icon span, or null when the callout draws none. */
-	const iconSpan = (doc: Document, def: WebCalloutDef | undefined, heading: boolean): HTMLElement | null => {
+	const iconSpan = (doc: TokenDocument, def: WebCalloutDef | undefined, heading: boolean): HTMLElement | null => {
 		if (def?.hideIcon === true) return null;
 		const iconEl = doc.createElement("span");
 		iconEl.classList.add(CSS_TOKEN_ICON);
@@ -355,7 +364,7 @@ export function createWebRenderer(data: WebBundleData, env: WebEnv = {}): WebRen
 
 	/** `renderShared.buildCalloutTokenDom`, for the two variants a page has. */
 	const buildToken = (
-		doc: Document,
+		doc: TokenDocument,
 		rawId: string,
 		metadata: string,
 		heading: boolean,
@@ -379,7 +388,7 @@ export function createWebRenderer(data: WebBundleData, env: WebEnv = {}): WebRen
 
 	/** `renderShared.buildContentPillDom`: the shell, and the element to fill. */
 	const buildContentPill = (
-		doc: Document,
+		doc: TokenDocument,
 		rawId: string,
 		metadata: string,
 	): { root: HTMLElement; payload: HTMLElement } => {
@@ -426,11 +435,12 @@ export function createWebRenderer(data: WebBundleData, env: WebEnv = {}): WebRen
 		stamp(h, parts.id, parts.metadata, resolved);
 
 		textNode.data = textNode.data.slice(match[0].length);
-		const tokenEl = buildToken(h.ownerDocument, parts.id, parts.metadata, true, !hasTitle);
+		const doc: TokenDocument = h.ownerDocument;
+		const tokenEl = buildToken(doc, parts.id, parts.metadata, true, !hasTitle);
 		h.insertBefore(tokenEl, textNode);
 
 		if (lastContent) {
-			const titleEl = h.ownerDocument.createElement("span");
+			const titleEl = doc.createElement("span");
 			titleEl.classList.add(CSS_HEADING_TITLE);
 			// The stripped prefix took the separating space with it, so the gap
 			// comes back as a margin — and only when the source had one.

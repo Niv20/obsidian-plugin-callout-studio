@@ -614,6 +614,26 @@ describe("the HAST bridge", () => {
 		toHast(root, tree);
 		assert.deepStrictEqual(original.properties, { id: "x", className: ["a", "b"], dataCalloutMetadata: "wide" });
 	});
+
+	it("reads each kind of value HAST holds, and leaves a value of any other kind in the page", () => {
+		const odd = { toString: () => "odd" };
+		const original = element(
+			"h2",
+			{ className: ["a", 1], width: -1, hidden: true, inert: false, title: undefined, lang: null, dataOdd: odd },
+			[],
+		);
+		const tree: HastNode = { type: "root", children: [original] };
+		const root = fromHast(tree);
+		const h2 = root.children[0] as LiteElement;
+		assert.strictEqual(h2.getAttribute("class"), "a 1");
+		assert.strictEqual(h2.getAttribute("width"), "-1");
+		assert.strictEqual(h2.getAttribute("hidden"), "true");
+		for (const absent of ["inert", "title", "lang", "data-odd"]) assert.strictEqual(h2.getAttribute(absent), null);
+		h2.classList.add("b");
+		toHast(root, tree);
+		assert.strictEqual(original.properties?.dataOdd, odd);
+		assert.strictEqual(original.properties?.inert, false);
+	});
 });
 
 /* -------------------------------------------------------------------------- */

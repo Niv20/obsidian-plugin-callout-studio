@@ -47,10 +47,18 @@ const propertyName = (attr: string): string => {
 const propertyValue = (attr: string, value: string): unknown =>
 	attr === "class" ? value.split(/\s+/).filter((cls) => cls !== "") : value;
 
+/**
+ * A HAST property as attribute text, or null for none. HAST holds strings,
+ * numbers, booleans and lists of the first two; anything else (absent, `false`
+ * or a kind HAST has no attribute for) reads as no attribute. Reading is all
+ * that happens to it: `write` puts back only what the renderer set, so the
+ * page keeps it as it was.
+ */
 function attrValue(value: unknown): string | null {
-	if (value === null || value === undefined || value === false) return null;
 	if (Array.isArray(value)) return value.map(String).join(" ");
-	return typeof value === "string" ? value : String(value as number | boolean);
+	if (typeof value === "string") return value;
+	if (typeof value === "number" || value === true) return String(value);
+	return null;
 }
 
 function read(node: HastNode): LiteNode {

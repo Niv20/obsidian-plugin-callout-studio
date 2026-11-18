@@ -122,7 +122,7 @@ const internals = (app: App): AppInternals => app as unknown as AppInternals;
 
 function gardenPlugin(app: App): GardenPlugin | null {
 	const plugin = internals(app).plugins?.getPlugin?.(GARDEN_PLUGIN);
-	return plugin && typeof plugin === "object" ? (plugin as GardenPlugin) : null;
+	return plugin && typeof plugin === "object" ? plugin : null;
 }
 
 /** Whether the command `id` is there: a plugin's commands go when it is turned off. */

@@ -84,7 +84,7 @@ function walk(
 	}
 	for (let i = 0; i < rules.length; i++) {
 		try {
-			const rule = rules[i] as RuleLike | undefined;
+			const rule: RuleLike | undefined = rules[i];
 			if (!rule) continue;
 			if (typeof rule.selectorText === "string") {
 				const selector = parent === null ? rule.selectorText : nestedSelector(parent, rule.selectorText);

@@ -34,7 +34,7 @@ export async function recoverSettingsAtBoot(
 		if (host.settingsWriter.isDestroyed) return incoming;
 		if (isFromNewerBuild(saved))
 			throw new SettingsPersistenceError("newer-version", "Settings recovery copy is from a newer build");
-		const itself = copyIsTheFile && saved !== null && rejoinsAsItself(incoming.data as Record<string, unknown>);
+		const itself = copyIsTheFile && saved !== null && rejoinsAsItself(incoming.data);
 		const joined = () => (saved ? host.settingsWriter.recover(incoming.data, saved) : incoming.data);
 		const recovered = itself ? incoming.data : joined();
 		const conflicts = await readSettingsConflictFiles(host);
