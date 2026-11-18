@@ -34,7 +34,7 @@ import type { RestoreOutcome, SetupDifference } from "../../manager/settingsReco
 import type { PluginData } from "../../types";
 import type { SetupVersion } from "../../manager/setupVersions";
 import { explainIfBlocked, paintBlocked } from "../../ui/blockedButton";
-import type { MascotAnimationName } from "../../ui/mascot/mascotAnimations";
+import { NO_RESULTS_MOOD, type MascotAnimationName } from "../../ui/mascot/mascotAnimations";
 import { showNotice } from "../../ui/mascot/mascotNotices";
 import { addMascot } from "../../ui/mascot/mascotPlaces";
 import { appendLines } from "../../ui/textLines";
@@ -144,8 +144,14 @@ export class VersionHistoryPage extends SettingPage {
 	 *
 	 * @param mood For "No versions": the brush mascot over the words, holding this
 	 *   animation's face while the page is open (ui/mascot/mascotPlaces.ts).
+	 * @param glance Played once over that face, which comes back after it.
 	 */
-	private renderStatus(list: HTMLElement, text: string, mood?: MascotAnimationName): void {
+	private renderStatus(
+		list: HTMLElement,
+		text: string,
+		mood?: MascotAnimationName,
+		glance?: MascotAnimationName,
+	): void {
 		list.empty();
 		const line = list.createEl("p", { text, cls: "cs-recovery-status" });
 		if (!mood) return;
@@ -154,6 +160,7 @@ export class VersionHistoryPage extends SettingPage {
 		const mascot = addMascot(line, "large", "start");
 		if (mascot) line.addClass("cs-mascot-line");
 		mascot?.hold(mood, "still");
+		if (glance) void mascot?.play(glance);
 	}
 
 	/**
@@ -164,8 +171,9 @@ export class VersionHistoryPage extends SettingPage {
 	 */
 	private render(list: HTMLElement, versions: SetupVersion[]): void {
 		if (versions.length === 0) {
-			// Nothing has happened yet, so there is nothing to look back at: the mascot looks around.
-			this.renderStatus(list, t("versions.empty"), "look");
+			// Nothing has happened yet, so there is nothing to look back at: the mascot looks
+			// around for it, shakes its head, and is sad, the way a search that found nothing is.
+			this.renderStatus(list, t("versions.empty"), NO_RESULTS_MOOD, "lookTwice");
 			return;
 		}
 		list.empty();

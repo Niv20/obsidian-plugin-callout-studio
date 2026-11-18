@@ -6974,6 +6974,15 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	color: var(--text-muted);
 }
 
+/* "No versions were found" with the mascot over its words: a picture and a line
+   in the upper-middle of the page (not hugging the title bar), centred by
+   `.cs-mascot-line`. A fixed gap, not a share of the screen, so a short window
+   or a phone neither clips it nor leaves it floating. */
+.cs-recovery-status.cs-mascot-line {
+	margin: 0;
+	padding-block: clamp(var(--size-4-8), 12vh, 120px) var(--size-4-8);
+}
+
 .cs-recovery-paused {
 	color: var(--text-warning);
 }
